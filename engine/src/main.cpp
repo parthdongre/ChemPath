@@ -158,6 +158,7 @@ int main(int argc, char** argv) {
             << ",\"directedEdges\":" << graph.edgeCount()
             << ",\"structures\":[\"Graph\",\"Adjacency List\",\"Queue\",\"Stack\",\"Hash Table\",\"Trie\",\"Priority Queue\",\"Low-link Stack\"]"
             << ",\"algorithms\":[\"BFS\",\"Dijkstra\",\"Bidirectional BFS\",\"DFS\",\"Directed Cycle Detection\",\"Tarjan SCC\",\"Prefix Search\"]"
+            << ",\"chemistryAudit\":\"curated-v1\""
             << "}\n";
         return 0;
     }

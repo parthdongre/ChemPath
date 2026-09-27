@@ -1,41 +1,708 @@
-id|name|reactants|products|note
-0|Hydrogen combustion|Hydrogen;Oxygen|Water|Simplified combustion connectivity
-1|Water electrolysis|Water|Hydrogen;Oxygen|Reverse connectivity used to demonstrate reaction-network cycles
-2|Hydrogen peroxide decomposition|Hydrogen Peroxide|Water;Oxygen|Common decomposition pathway
-3|Hydrogen peroxide formation|Hydrogen;Oxygen|Hydrogen Peroxide|Simplified educational pathway
-4|Methane combustion|Methane;Oxygen|Carbon Dioxide;Water|Complete combustion
-5|Methane incomplete combustion|Methane;Oxygen|Carbon Monoxide;Water|Simplified incomplete combustion
-6|Carbon monoxide oxidation|Carbon Monoxide;Oxygen|Carbon Dioxide|Oxidation step
-7|Carbon dioxide hydration|Carbon Dioxide;Water|Carbonic Acid|CO2 hydration in water
-8|Carbonic acid dissociation|Carbonic Acid|Bicarbonate|First dissociation represented as compound connectivity
-9|Bicarbonate protonation|Bicarbonate|Carbonic Acid|Reverse equilibrium direction
-10|Bicarbonate deprotonation|Bicarbonate|Carbonate|Second dissociation represented as connectivity
-11|Carbonate protonation|Carbonate|Bicarbonate|Reverse equilibrium direction
-12|Methane partial oxidation|Methane;Oxygen|Methanol|Simplified educational oxidation step
-13|Methanol oxidation|Methanol;Oxygen|Formaldehyde;Water|Simplified oxidation
-14|Formaldehyde oxidation|Formaldehyde;Oxygen|Methanoic Acid|Simplified oxidation
-15|Methanoic acid oxidation|Methanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation
-16|Ethanol oxidation|Ethanol;Oxygen|Acetaldehyde;Water|Simplified oxidation
-17|Acetaldehyde oxidation|Acetaldehyde;Oxygen|Acetic Acid|Simplified oxidation
-18|Acetic acid oxidation|Acetic Acid;Oxygen|Carbon Dioxide;Water|Simplified oxidation
-19|Ethanol dehydration|Ethanol|Ethene;Water|Simplified dehydration
-20|Ethene hydrogenation|Ethene;Hydrogen|Ethane|Hydrogenation connectivity
-21|Ethane dehydrogenation|Ethane|Ethene;Hydrogen|Reverse connectivity for demonstration
-22|Glucose glycolysis|Glucose|Pyruvate|Highly simplified biochemical pathway
-23|Lactic fermentation|Pyruvate|Lactic Acid|Simplified biochemical pathway
-24|Lactate oxidation|Lactic Acid|Pyruvate|Reverse biochemical connectivity
-25|Ammonia protonation|Ammonia|Ammonium|Acid-base connectivity
-26|Ammonium deprotonation|Ammonium|Ammonia|Reverse acid-base connectivity
-27|Nitrogen oxidation|Nitrogen;Oxygen|Nitric Oxide|High-temperature oxidation represented as connectivity
-28|Nitric oxide oxidation|Nitric Oxide;Oxygen|Nitrogen Dioxide|Atmospheric oxidation
-29|Nitrogen dioxide hydrolysis|Nitrogen Dioxide;Water|Nitrous Acid;Nitric Acid|Simplified hydrolysis products
-30|Nitrous acid oxidation|Nitrous Acid;Oxygen|Nitric Acid|Simplified oxidation
-31|Sulfur dioxide oxidation|Sulfur Dioxide;Oxygen|Sulfur Trioxide|Oxidation step
-32|Sulfur trioxide hydration|Sulfur Trioxide;Water|Sulfuric Acid|Hydration step
-33|Hydrogen sulfide oxidation|Hydrogen Sulfide;Oxygen|Sulfur Dioxide;Water|Simplified oxidation
-34|Sulfite oxidation|Sulfite;Oxygen|Sulfate|Oxidation of sulfite
-35|Sulfuric acid dissociation|Sulfuric Acid|Sulfate|Simplified connectivity
-36|Sulfate protonation|Sulfate|Sulfuric Acid|Reverse connectivity for demonstration
-37|Sulfur dioxide to sulfite|Sulfur Dioxide|Sulfite|Simplified aqueous-network connection
-38|Methanol combustion|Methanol;Oxygen|Carbon Dioxide;Water|Complete oxidation connectivity
-39|Ethanol combustion|Ethanol;Oxygen|Carbon Dioxide;Water|Complete oxidation connectivity
+id|name|reactants|products|note|cost
+0|Hydrogen combustion|Hydrogen;Oxygen|Water|Simplified combustion connectivity|2
+1|Water electrolysis|Water|Hydrogen;Oxygen|Reverse connectivity used to demonstrate reaction-network cycles|6
+2|Hydrogen peroxide decomposition|Hydrogen Peroxide|Water;Oxygen|Common decomposition pathway|2
+3|Hydrogen peroxide formation|Hydrogen;Oxygen|Hydrogen Peroxide|Simplified educational pathway|5
+4|Methane combustion|Methane;Oxygen|Carbon Dioxide;Water|Complete combustion|3
+5|Methane incomplete combustion|Methane;Oxygen|Carbon Monoxide;Water|Simplified incomplete combustion|4
+6|Carbon monoxide oxidation|Carbon Monoxide;Oxygen|Carbon Dioxide|Oxidation step|2
+7|Carbon dioxide hydration|Carbon Dioxide;Water|Carbonic Acid|CO2 hydration in water|1
+8|Carbonic acid dissociation|Carbonic Acid|Bicarbonate|First dissociation represented as compound connectivity|1
+9|Bicarbonate protonation|Bicarbonate|Carbonic Acid|Reverse equilibrium direction|1
+10|Bicarbonate deprotonation|Bicarbonate|Carbonate|Second dissociation represented as connectivity|2
+11|Carbonate protonation|Carbonate|Bicarbonate|Reverse equilibrium direction|1
+12|Methane partial oxidation|Methane;Oxygen|Methanol|Simplified educational oxidation step|5
+13|Methanol oxidation|Methanol;Oxygen|Formaldehyde;Water|Simplified oxidation|3
+14|Formaldehyde oxidation|Formaldehyde;Oxygen|Methanoic Acid|Simplified oxidation|2
+15|Methanoic acid oxidation|Methanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation|3
+16|Ethanol oxidation|Ethanol;Oxygen|Acetaldehyde;Water|Simplified oxidation|3
+17|Acetaldehyde oxidation|Acetaldehyde;Oxygen|Acetic Acid|Simplified oxidation|2
+18|Acetic acid oxidation|Acetic Acid;Oxygen|Carbon Dioxide;Water|Simplified oxidation|3
+19|Ethanol dehydration|Ethanol|Ethene;Water|Simplified dehydration|4
+20|Ethene hydrogenation|Ethene;Hydrogen|Ethane|Hydrogenation connectivity|2
+21|Ethane dehydrogenation|Ethane|Ethene;Hydrogen|Reverse connectivity for demonstration|5
+22|Glucose glycolysis|Glucose|Pyruvate|Highly simplified biochemical pathway|3
+23|Lactic fermentation|Pyruvate|Lactic Acid|Simplified biochemical pathway|2
+24|Lactate oxidation|Lactic Acid|Pyruvate|Reverse biochemical connectivity|4
+25|Ammonia protonation|Ammonia|Ammonium|Acid-base connectivity|1
+26|Ammonium deprotonation|Ammonium|Ammonia|Reverse acid-base connectivity|1
+27|Nitrogen oxidation|Nitrogen;Oxygen|Nitric Oxide|High-temperature oxidation represented as connectivity|6
+28|Nitric oxide oxidation|Nitric Oxide;Oxygen|Nitrogen Dioxide|Atmospheric oxidation|2
+29|Nitrogen dioxide hydrolysis|Nitrogen Dioxide;Water|Nitrous Acid;Nitric Acid|Simplified hydrolysis products|3
+30|Nitrous acid oxidation|Nitrous Acid;Oxygen|Nitric Acid|Simplified oxidation|2
+31|Sulfur dioxide oxidation|Sulfur Dioxide;Oxygen|Sulfur Trioxide|Oxidation step|3
+32|Sulfur trioxide hydration|Sulfur Trioxide;Water|Sulfuric Acid|Hydration step|2
+33|Hydrogen sulfide oxidation|Hydrogen Sulfide;Oxygen|Sulfur Dioxide;Water|Simplified oxidation|3
+34|Sulfite oxidation|Sulfite;Oxygen|Sulfate|Oxidation of sulfite|2
+35|Sulfuric acid dissociation|Sulfuric Acid|Sulfate|Simplified connectivity|1
+36|Sulfate protonation|Sulfate|Sulfuric Acid|Reverse connectivity for demonstration|1
+37|Sulfur dioxide to sulfite|Sulfur Dioxide|Sulfite|Simplified aqueous-network connection|2
+38|Methanol combustion|Methanol;Oxygen|Carbon Dioxide;Water|Complete oxidation connectivity|3
+39|Ethanol combustion|Ethanol;Oxygen|Carbon Dioxide;Water|Complete oxidation connectivity|3
+40|Ethane dehydrogenation|Ethane|Ethene;Hydrogen|Generalized dehydrogenation connectivity|5
+41|Ethene hydrogenation|Ethene;Hydrogen|Ethane|Generalized hydrogenation connectivity|2
+42|Ethyne partial hydrogenation|Ethyne;Hydrogen|Ethene|Generalized partial hydrogenation connectivity|3
+43|Ethene hydration|Ethene;Water|Ethanol|Generalized hydration connectivity|3
+44|Ethanol dehydration|Ethanol|Ethene;Water|Generalized dehydration connectivity|4
+45|Chloroethane hydrolysis|Chloroethane;Water|Ethanol|Generalized substitution connectivity|3
+46|Ethanol chlorination|Ethanol|Chloroethane|Generalized substitution connectivity|4
+47|Ethane combustion|Ethane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+48|Ethene combustion|Ethene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+49|Ethanol combustion|Ethanol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+50|Ethyne combustion|Ethyne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+51|Propane dehydrogenation|Propane|Propene;Hydrogen|Generalized dehydrogenation connectivity|5
+52|Propene hydrogenation|Propene;Hydrogen|Propane|Generalized hydrogenation connectivity|2
+53|Propyne partial hydrogenation|Propyne;Hydrogen|Propene|Generalized partial hydrogenation connectivity|3
+54|Propene hydration|Propene;Water|Propan-1-ol|Generalized hydration connectivity|3
+55|Propan-1-ol dehydration|Propan-1-ol|Propene;Water|Generalized dehydration connectivity|4
+56|1-Chloropropane hydrolysis|1-Chloropropane;Water|Propan-1-ol|Generalized substitution connectivity|3
+57|Propan-1-ol chlorination|Propan-1-ol|1-Chloropropane|Generalized substitution connectivity|4
+58|Propane combustion|Propane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+59|Propene combustion|Propene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+60|Propan-1-ol combustion|Propan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+61|Propyne combustion|Propyne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+62|Butane dehydrogenation|Butane|But-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+63|But-1-ene hydrogenation|But-1-ene;Hydrogen|Butane|Generalized hydrogenation connectivity|2
+64|But-1-yne partial hydrogenation|But-1-yne;Hydrogen|But-1-ene|Generalized partial hydrogenation connectivity|3
+65|But-1-ene hydration|But-1-ene;Water|Butan-1-ol|Generalized hydration connectivity|3
+66|Butan-1-ol dehydration|Butan-1-ol|But-1-ene;Water|Generalized dehydration connectivity|4
+67|1-Chlorobutane hydrolysis|1-Chlorobutane;Water|Butan-1-ol|Generalized substitution connectivity|3
+68|Butan-1-ol chlorination|Butan-1-ol|1-Chlorobutane|Generalized substitution connectivity|4
+69|Butane combustion|Butane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+70|But-1-ene combustion|But-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+71|Butan-1-ol combustion|Butan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+72|But-1-yne combustion|But-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+73|Pentane dehydrogenation|Pentane|Pent-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+74|Pent-1-ene hydrogenation|Pent-1-ene;Hydrogen|Pentane|Generalized hydrogenation connectivity|2
+75|Pent-1-yne partial hydrogenation|Pent-1-yne;Hydrogen|Pent-1-ene|Generalized partial hydrogenation connectivity|3
+76|Pent-1-ene hydration|Pent-1-ene;Water|Pentan-1-ol|Generalized hydration connectivity|3
+77|Pentan-1-ol dehydration|Pentan-1-ol|Pent-1-ene;Water|Generalized dehydration connectivity|4
+78|1-Chloropentane hydrolysis|1-Chloropentane;Water|Pentan-1-ol|Generalized substitution connectivity|3
+79|Pentan-1-ol chlorination|Pentan-1-ol|1-Chloropentane|Generalized substitution connectivity|4
+80|Pentane combustion|Pentane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+81|Pent-1-ene combustion|Pent-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+82|Pentan-1-ol combustion|Pentan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+83|Pent-1-yne combustion|Pent-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+84|Hexane dehydrogenation|Hexane|Hex-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+85|Hex-1-ene hydrogenation|Hex-1-ene;Hydrogen|Hexane|Generalized hydrogenation connectivity|2
+86|Hex-1-yne partial hydrogenation|Hex-1-yne;Hydrogen|Hex-1-ene|Generalized partial hydrogenation connectivity|3
+87|Hex-1-ene hydration|Hex-1-ene;Water|Hexan-1-ol|Generalized hydration connectivity|3
+88|Hexan-1-ol dehydration|Hexan-1-ol|Hex-1-ene;Water|Generalized dehydration connectivity|4
+89|1-Chlorohexane hydrolysis|1-Chlorohexane;Water|Hexan-1-ol|Generalized substitution connectivity|3
+90|Hexan-1-ol chlorination|Hexan-1-ol|1-Chlorohexane|Generalized substitution connectivity|4
+91|Hexane combustion|Hexane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+92|Hex-1-ene combustion|Hex-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+93|Hexan-1-ol combustion|Hexan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+94|Hex-1-yne combustion|Hex-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+95|Heptane dehydrogenation|Heptane|Hept-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+96|Hept-1-ene hydrogenation|Hept-1-ene;Hydrogen|Heptane|Generalized hydrogenation connectivity|2
+97|Hept-1-yne partial hydrogenation|Hept-1-yne;Hydrogen|Hept-1-ene|Generalized partial hydrogenation connectivity|3
+98|Hept-1-ene hydration|Hept-1-ene;Water|Heptan-1-ol|Generalized hydration connectivity|3
+99|Heptan-1-ol dehydration|Heptan-1-ol|Hept-1-ene;Water|Generalized dehydration connectivity|4
+100|1-Chloroheptane hydrolysis|1-Chloroheptane;Water|Heptan-1-ol|Generalized substitution connectivity|3
+101|Heptan-1-ol chlorination|Heptan-1-ol|1-Chloroheptane|Generalized substitution connectivity|4
+102|Heptane combustion|Heptane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+103|Hept-1-ene combustion|Hept-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+104|Heptan-1-ol combustion|Heptan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+105|Hept-1-yne combustion|Hept-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+106|Octane dehydrogenation|Octane|Oct-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+107|Oct-1-ene hydrogenation|Oct-1-ene;Hydrogen|Octane|Generalized hydrogenation connectivity|2
+108|Oct-1-yne partial hydrogenation|Oct-1-yne;Hydrogen|Oct-1-ene|Generalized partial hydrogenation connectivity|3
+109|Oct-1-ene hydration|Oct-1-ene;Water|Octan-1-ol|Generalized hydration connectivity|3
+110|Octan-1-ol dehydration|Octan-1-ol|Oct-1-ene;Water|Generalized dehydration connectivity|4
+111|1-Chlorooctane hydrolysis|1-Chlorooctane;Water|Octan-1-ol|Generalized substitution connectivity|3
+112|Octan-1-ol chlorination|Octan-1-ol|1-Chlorooctane|Generalized substitution connectivity|4
+113|Octane combustion|Octane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+114|Oct-1-ene combustion|Oct-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+115|Octan-1-ol combustion|Octan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+116|Oct-1-yne combustion|Oct-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+117|Nonane dehydrogenation|Nonane|Non-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+118|Non-1-ene hydrogenation|Non-1-ene;Hydrogen|Nonane|Generalized hydrogenation connectivity|2
+119|Non-1-yne partial hydrogenation|Non-1-yne;Hydrogen|Non-1-ene|Generalized partial hydrogenation connectivity|3
+120|Non-1-ene hydration|Non-1-ene;Water|Nonan-1-ol|Generalized hydration connectivity|3
+121|Nonan-1-ol dehydration|Nonan-1-ol|Non-1-ene;Water|Generalized dehydration connectivity|4
+122|1-Chlorononane hydrolysis|1-Chlorononane;Water|Nonan-1-ol|Generalized substitution connectivity|3
+123|Nonan-1-ol chlorination|Nonan-1-ol|1-Chlorononane|Generalized substitution connectivity|4
+124|Nonane combustion|Nonane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+125|Non-1-ene combustion|Non-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+126|Nonan-1-ol combustion|Nonan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+127|Non-1-yne combustion|Non-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+128|Decane dehydrogenation|Decane|Dec-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+129|Dec-1-ene hydrogenation|Dec-1-ene;Hydrogen|Decane|Generalized hydrogenation connectivity|2
+130|Dec-1-yne partial hydrogenation|Dec-1-yne;Hydrogen|Dec-1-ene|Generalized partial hydrogenation connectivity|3
+131|Dec-1-ene hydration|Dec-1-ene;Water|Decan-1-ol|Generalized hydration connectivity|3
+132|Decan-1-ol dehydration|Decan-1-ol|Dec-1-ene;Water|Generalized dehydration connectivity|4
+133|1-Chlorodecane hydrolysis|1-Chlorodecane;Water|Decan-1-ol|Generalized substitution connectivity|3
+134|Decan-1-ol chlorination|Decan-1-ol|1-Chlorodecane|Generalized substitution connectivity|4
+135|Decane combustion|Decane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+136|Dec-1-ene combustion|Dec-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+137|Decan-1-ol combustion|Decan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+138|Dec-1-yne combustion|Dec-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+139|Undecane dehydrogenation|Undecane|Undec-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+140|Undec-1-ene hydrogenation|Undec-1-ene;Hydrogen|Undecane|Generalized hydrogenation connectivity|2
+141|Undec-1-yne partial hydrogenation|Undec-1-yne;Hydrogen|Undec-1-ene|Generalized partial hydrogenation connectivity|3
+142|Undec-1-ene hydration|Undec-1-ene;Water|Undecan-1-ol|Generalized hydration connectivity|3
+143|Undecan-1-ol dehydration|Undecan-1-ol|Undec-1-ene;Water|Generalized dehydration connectivity|4
+144|1-Chloroundecane hydrolysis|1-Chloroundecane;Water|Undecan-1-ol|Generalized substitution connectivity|3
+145|Undecan-1-ol chlorination|Undecan-1-ol|1-Chloroundecane|Generalized substitution connectivity|4
+146|Undecane combustion|Undecane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+147|Undec-1-ene combustion|Undec-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+148|Undecan-1-ol combustion|Undecan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+149|Undec-1-yne combustion|Undec-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+150|Dodecane dehydrogenation|Dodecane|Dodec-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+151|Dodec-1-ene hydrogenation|Dodec-1-ene;Hydrogen|Dodecane|Generalized hydrogenation connectivity|2
+152|Dodec-1-yne partial hydrogenation|Dodec-1-yne;Hydrogen|Dodec-1-ene|Generalized partial hydrogenation connectivity|3
+153|Dodec-1-ene hydration|Dodec-1-ene;Water|Dodecan-1-ol|Generalized hydration connectivity|3
+154|Dodecan-1-ol dehydration|Dodecan-1-ol|Dodec-1-ene;Water|Generalized dehydration connectivity|4
+155|1-Chlorododecane hydrolysis|1-Chlorododecane;Water|Dodecan-1-ol|Generalized substitution connectivity|3
+156|Dodecan-1-ol chlorination|Dodecan-1-ol|1-Chlorododecane|Generalized substitution connectivity|4
+157|Dodecane combustion|Dodecane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+158|Dodec-1-ene combustion|Dodec-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+159|Dodecan-1-ol combustion|Dodecan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+160|Dodec-1-yne combustion|Dodec-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+161|Tridecane dehydrogenation|Tridecane|Tridec-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+162|Tridec-1-ene hydrogenation|Tridec-1-ene;Hydrogen|Tridecane|Generalized hydrogenation connectivity|2
+163|Tridec-1-yne partial hydrogenation|Tridec-1-yne;Hydrogen|Tridec-1-ene|Generalized partial hydrogenation connectivity|3
+164|Tridec-1-ene hydration|Tridec-1-ene;Water|Tridecan-1-ol|Generalized hydration connectivity|3
+165|Tridecan-1-ol dehydration|Tridecan-1-ol|Tridec-1-ene;Water|Generalized dehydration connectivity|4
+166|1-Chlorotridecane hydrolysis|1-Chlorotridecane;Water|Tridecan-1-ol|Generalized substitution connectivity|3
+167|Tridecan-1-ol chlorination|Tridecan-1-ol|1-Chlorotridecane|Generalized substitution connectivity|4
+168|Tridecane combustion|Tridecane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+169|Tridec-1-ene combustion|Tridec-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+170|Tridecan-1-ol combustion|Tridecan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+171|Tridec-1-yne combustion|Tridec-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+172|Tetradecane dehydrogenation|Tetradecane|Tetradec-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+173|Tetradec-1-ene hydrogenation|Tetradec-1-ene;Hydrogen|Tetradecane|Generalized hydrogenation connectivity|2
+174|Tetradec-1-yne partial hydrogenation|Tetradec-1-yne;Hydrogen|Tetradec-1-ene|Generalized partial hydrogenation connectivity|3
+175|Tetradec-1-ene hydration|Tetradec-1-ene;Water|Tetradecan-1-ol|Generalized hydration connectivity|3
+176|Tetradecan-1-ol dehydration|Tetradecan-1-ol|Tetradec-1-ene;Water|Generalized dehydration connectivity|4
+177|1-Chlorotetradecane hydrolysis|1-Chlorotetradecane;Water|Tetradecan-1-ol|Generalized substitution connectivity|3
+178|Tetradecan-1-ol chlorination|Tetradecan-1-ol|1-Chlorotetradecane|Generalized substitution connectivity|4
+179|Tetradecane combustion|Tetradecane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+180|Tetradec-1-ene combustion|Tetradec-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+181|Tetradecan-1-ol combustion|Tetradecan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+182|Tetradec-1-yne combustion|Tetradec-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+183|Pentadecane dehydrogenation|Pentadecane|Pentadec-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+184|Pentadec-1-ene hydrogenation|Pentadec-1-ene;Hydrogen|Pentadecane|Generalized hydrogenation connectivity|2
+185|Pentadec-1-yne partial hydrogenation|Pentadec-1-yne;Hydrogen|Pentadec-1-ene|Generalized partial hydrogenation connectivity|3
+186|Pentadec-1-ene hydration|Pentadec-1-ene;Water|Pentadecan-1-ol|Generalized hydration connectivity|3
+187|Pentadecan-1-ol dehydration|Pentadecan-1-ol|Pentadec-1-ene;Water|Generalized dehydration connectivity|4
+188|1-Chloropentadecane hydrolysis|1-Chloropentadecane;Water|Pentadecan-1-ol|Generalized substitution connectivity|3
+189|Pentadecan-1-ol chlorination|Pentadecan-1-ol|1-Chloropentadecane|Generalized substitution connectivity|4
+190|Pentadecane combustion|Pentadecane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+191|Pentadec-1-ene combustion|Pentadec-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+192|Pentadecan-1-ol combustion|Pentadecan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+193|Pentadec-1-yne combustion|Pentadec-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+194|Hexadecane dehydrogenation|Hexadecane|Hexadec-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+195|Hexadec-1-ene hydrogenation|Hexadec-1-ene;Hydrogen|Hexadecane|Generalized hydrogenation connectivity|2
+196|Hexadec-1-yne partial hydrogenation|Hexadec-1-yne;Hydrogen|Hexadec-1-ene|Generalized partial hydrogenation connectivity|3
+197|Hexadec-1-ene hydration|Hexadec-1-ene;Water|Hexadecan-1-ol|Generalized hydration connectivity|3
+198|Hexadecan-1-ol dehydration|Hexadecan-1-ol|Hexadec-1-ene;Water|Generalized dehydration connectivity|4
+199|1-Chlorohexadecane hydrolysis|1-Chlorohexadecane;Water|Hexadecan-1-ol|Generalized substitution connectivity|3
+200|Hexadecan-1-ol chlorination|Hexadecan-1-ol|1-Chlorohexadecane|Generalized substitution connectivity|4
+201|Hexadecane combustion|Hexadecane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+202|Hexadec-1-ene combustion|Hexadec-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+203|Hexadecan-1-ol combustion|Hexadecan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+204|Hexadec-1-yne combustion|Hexadec-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+205|Heptadecane dehydrogenation|Heptadecane|Heptadec-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+206|Heptadec-1-ene hydrogenation|Heptadec-1-ene;Hydrogen|Heptadecane|Generalized hydrogenation connectivity|2
+207|Heptadec-1-yne partial hydrogenation|Heptadec-1-yne;Hydrogen|Heptadec-1-ene|Generalized partial hydrogenation connectivity|3
+208|Heptadec-1-ene hydration|Heptadec-1-ene;Water|Heptadecan-1-ol|Generalized hydration connectivity|3
+209|Heptadecan-1-ol dehydration|Heptadecan-1-ol|Heptadec-1-ene;Water|Generalized dehydration connectivity|4
+210|1-Chloroheptadecane hydrolysis|1-Chloroheptadecane;Water|Heptadecan-1-ol|Generalized substitution connectivity|3
+211|Heptadecan-1-ol chlorination|Heptadecan-1-ol|1-Chloroheptadecane|Generalized substitution connectivity|4
+212|Heptadecane combustion|Heptadecane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+213|Heptadec-1-ene combustion|Heptadec-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+214|Heptadecan-1-ol combustion|Heptadecan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+215|Heptadec-1-yne combustion|Heptadec-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+216|Octadecane dehydrogenation|Octadecane|Octadec-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+217|Octadec-1-ene hydrogenation|Octadec-1-ene;Hydrogen|Octadecane|Generalized hydrogenation connectivity|2
+218|Octadec-1-yne partial hydrogenation|Octadec-1-yne;Hydrogen|Octadec-1-ene|Generalized partial hydrogenation connectivity|3
+219|Octadec-1-ene hydration|Octadec-1-ene;Water|Octadecan-1-ol|Generalized hydration connectivity|3
+220|Octadecan-1-ol dehydration|Octadecan-1-ol|Octadec-1-ene;Water|Generalized dehydration connectivity|4
+221|1-Chlorooctadecane hydrolysis|1-Chlorooctadecane;Water|Octadecan-1-ol|Generalized substitution connectivity|3
+222|Octadecan-1-ol chlorination|Octadecan-1-ol|1-Chlorooctadecane|Generalized substitution connectivity|4
+223|Octadecane combustion|Octadecane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+224|Octadec-1-ene combustion|Octadec-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+225|Octadecan-1-ol combustion|Octadecan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+226|Octadec-1-yne combustion|Octadec-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+227|Nonadecane dehydrogenation|Nonadecane|Nonadec-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+228|Nonadec-1-ene hydrogenation|Nonadec-1-ene;Hydrogen|Nonadecane|Generalized hydrogenation connectivity|2
+229|Nonadec-1-yne partial hydrogenation|Nonadec-1-yne;Hydrogen|Nonadec-1-ene|Generalized partial hydrogenation connectivity|3
+230|Nonadec-1-ene hydration|Nonadec-1-ene;Water|Nonadecan-1-ol|Generalized hydration connectivity|3
+231|Nonadecan-1-ol dehydration|Nonadecan-1-ol|Nonadec-1-ene;Water|Generalized dehydration connectivity|4
+232|1-Chlorononadecane hydrolysis|1-Chlorononadecane;Water|Nonadecan-1-ol|Generalized substitution connectivity|3
+233|Nonadecan-1-ol chlorination|Nonadecan-1-ol|1-Chlorononadecane|Generalized substitution connectivity|4
+234|Nonadecane combustion|Nonadecane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+235|Nonadec-1-ene combustion|Nonadec-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+236|Nonadecan-1-ol combustion|Nonadecan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+237|Nonadec-1-yne combustion|Nonadec-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+238|Eicosane dehydrogenation|Eicosane|Eicos-1-ene;Hydrogen|Generalized dehydrogenation connectivity|5
+239|Eicos-1-ene hydrogenation|Eicos-1-ene;Hydrogen|Eicosane|Generalized hydrogenation connectivity|2
+240|Eicos-1-yne partial hydrogenation|Eicos-1-yne;Hydrogen|Eicos-1-ene|Generalized partial hydrogenation connectivity|3
+241|Eicos-1-ene hydration|Eicos-1-ene;Water|Eicosan-1-ol|Generalized hydration connectivity|3
+242|Eicosan-1-ol dehydration|Eicosan-1-ol|Eicos-1-ene;Water|Generalized dehydration connectivity|4
+243|1-Chloroeicosane hydrolysis|1-Chloroeicosane;Water|Eicosan-1-ol|Generalized substitution connectivity|3
+244|Eicosan-1-ol chlorination|Eicosan-1-ol|1-Chloroeicosane|Generalized substitution connectivity|4
+245|Eicosane combustion|Eicosane;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+246|Eicos-1-ene combustion|Eicos-1-ene;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+247|Eicosan-1-ol combustion|Eicosan-1-ol;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+248|Eicos-1-yne combustion|Eicos-1-yne;Oxygen|Carbon Dioxide;Water|Complete combustion represented as connectivity|3
+249|Methanol oxidation to aldehyde|Methanol;Oxygen|Formaldehyde;Water|Primary alcohol oxidation connectivity|3
+250|Formaldehyde oxidation to acid|Formaldehyde;Oxygen|Methanoic Acid|Aldehyde oxidation connectivity|2
+251|Formaldehyde reduction|Formaldehyde;Hydrogen|Methanol|Generalized reduction connectivity|3
+252|Ethanol oxidation to aldehyde|Ethanol;Oxygen|Acetaldehyde;Water|Primary alcohol oxidation connectivity|3
+253|Acetaldehyde oxidation to acid|Acetaldehyde;Oxygen|Acetic Acid|Aldehyde oxidation connectivity|2
+254|Acetaldehyde reduction|Acetaldehyde;Hydrogen|Ethanol|Generalized reduction connectivity|3
+255|Propan-1-ol oxidation to aldehyde|Propan-1-ol;Oxygen|Propanal;Water|Primary alcohol oxidation connectivity|3
+256|Propanal oxidation to acid|Propanal;Oxygen|Propanoic Acid|Aldehyde oxidation connectivity|2
+257|Propanal reduction|Propanal;Hydrogen|Propan-1-ol|Generalized reduction connectivity|3
+258|Butan-1-ol oxidation to aldehyde|Butan-1-ol;Oxygen|Butanal;Water|Primary alcohol oxidation connectivity|3
+259|Butanal oxidation to acid|Butanal;Oxygen|Butanoic Acid|Aldehyde oxidation connectivity|2
+260|Butanal reduction|Butanal;Hydrogen|Butan-1-ol|Generalized reduction connectivity|3
+261|Pentan-1-ol oxidation to aldehyde|Pentan-1-ol;Oxygen|Pentanal;Water|Primary alcohol oxidation connectivity|3
+262|Pentanal oxidation to acid|Pentanal;Oxygen|Pentanoic Acid|Aldehyde oxidation connectivity|2
+263|Pentanal reduction|Pentanal;Hydrogen|Pentan-1-ol|Generalized reduction connectivity|3
+264|Hexan-1-ol oxidation to aldehyde|Hexan-1-ol;Oxygen|Hexanal;Water|Primary alcohol oxidation connectivity|3
+265|Hexanal oxidation to acid|Hexanal;Oxygen|Hexanoic Acid|Aldehyde oxidation connectivity|2
+266|Hexanal reduction|Hexanal;Hydrogen|Hexan-1-ol|Generalized reduction connectivity|3
+267|Heptan-1-ol oxidation to aldehyde|Heptan-1-ol;Oxygen|Heptanal;Water|Primary alcohol oxidation connectivity|3
+268|Heptanal oxidation to acid|Heptanal;Oxygen|Heptanoic Acid|Aldehyde oxidation connectivity|2
+269|Heptanal reduction|Heptanal;Hydrogen|Heptan-1-ol|Generalized reduction connectivity|3
+270|Octan-1-ol oxidation to aldehyde|Octan-1-ol;Oxygen|Octanal;Water|Primary alcohol oxidation connectivity|3
+271|Octanal oxidation to acid|Octanal;Oxygen|Octanoic Acid|Aldehyde oxidation connectivity|2
+272|Octanal reduction|Octanal;Hydrogen|Octan-1-ol|Generalized reduction connectivity|3
+273|Nonan-1-ol oxidation to aldehyde|Nonan-1-ol;Oxygen|Nonanal;Water|Primary alcohol oxidation connectivity|3
+274|Nonanal oxidation to acid|Nonanal;Oxygen|Nonanoic Acid|Aldehyde oxidation connectivity|2
+275|Nonanal reduction|Nonanal;Hydrogen|Nonan-1-ol|Generalized reduction connectivity|3
+276|Decan-1-ol oxidation to aldehyde|Decan-1-ol;Oxygen|Decanal;Water|Primary alcohol oxidation connectivity|3
+277|Decanal oxidation to acid|Decanal;Oxygen|Decanoic Acid|Aldehyde oxidation connectivity|2
+278|Decanal reduction|Decanal;Hydrogen|Decan-1-ol|Generalized reduction connectivity|3
+279|Undecan-1-ol oxidation to aldehyde|Undecan-1-ol;Oxygen|Undecanal;Water|Primary alcohol oxidation connectivity|3
+280|Undecanal oxidation to acid|Undecanal;Oxygen|Undecanoic Acid|Aldehyde oxidation connectivity|2
+281|Undecanal reduction|Undecanal;Hydrogen|Undecan-1-ol|Generalized reduction connectivity|3
+282|Dodecan-1-ol oxidation to aldehyde|Dodecan-1-ol;Oxygen|Dodecanal;Water|Primary alcohol oxidation connectivity|3
+283|Dodecanal oxidation to acid|Dodecanal;Oxygen|Dodecanoic Acid|Aldehyde oxidation connectivity|2
+284|Dodecanal reduction|Dodecanal;Hydrogen|Dodecan-1-ol|Generalized reduction connectivity|3
+285|Tridecan-1-ol oxidation to aldehyde|Tridecan-1-ol;Oxygen|Tridecanal;Water|Primary alcohol oxidation connectivity|3
+286|Tridecanal oxidation to acid|Tridecanal;Oxygen|Tridecanoic Acid|Aldehyde oxidation connectivity|2
+287|Tridecanal reduction|Tridecanal;Hydrogen|Tridecan-1-ol|Generalized reduction connectivity|3
+288|Tetradecan-1-ol oxidation to aldehyde|Tetradecan-1-ol;Oxygen|Tetradecanal;Water|Primary alcohol oxidation connectivity|3
+289|Tetradecanal oxidation to acid|Tetradecanal;Oxygen|Tetradecanoic Acid|Aldehyde oxidation connectivity|2
+290|Tetradecanal reduction|Tetradecanal;Hydrogen|Tetradecan-1-ol|Generalized reduction connectivity|3
+291|Pentadecan-1-ol oxidation to aldehyde|Pentadecan-1-ol;Oxygen|Pentadecanal;Water|Primary alcohol oxidation connectivity|3
+292|Pentadecanal oxidation to acid|Pentadecanal;Oxygen|Pentadecanoic Acid|Aldehyde oxidation connectivity|2
+293|Pentadecanal reduction|Pentadecanal;Hydrogen|Pentadecan-1-ol|Generalized reduction connectivity|3
+294|Methanoic Acid esterification|Methanoic Acid;Methanol|Methyl Methanoate;Water|Generalized Fischer esterification connectivity|4
+295|Methyl Methanoate hydrolysis|Methyl Methanoate;Water|Methanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+296|Methanoic Acid complete oxidation|Methanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+297|Methylamine protonation|Methylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+298|Chloromethane combustion|Chloromethane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+299|Acetic Acid esterification|Acetic Acid;Methanol|Methyl Acetate;Water|Generalized Fischer esterification connectivity|4
+300|Methyl Acetate hydrolysis|Methyl Acetate;Water|Acetic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+301|Acetic Acid complete oxidation|Acetic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+302|Ethylamine protonation|Ethylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+303|Chloroethane combustion|Chloroethane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+304|Propanoic Acid esterification|Propanoic Acid;Methanol|Methyl Propanoate;Water|Generalized Fischer esterification connectivity|4
+305|Methyl Propanoate hydrolysis|Methyl Propanoate;Water|Propanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+306|Propanoic Acid complete oxidation|Propanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+307|Propylamine protonation|Propylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+308|1-Chloropropane combustion|1-Chloropropane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+309|Butanoic Acid esterification|Butanoic Acid;Methanol|Methyl Butanoate;Water|Generalized Fischer esterification connectivity|4
+310|Methyl Butanoate hydrolysis|Methyl Butanoate;Water|Butanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+311|Butanoic Acid complete oxidation|Butanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+312|Butylamine protonation|Butylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+313|1-Chlorobutane combustion|1-Chlorobutane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+314|Pentanoic Acid esterification|Pentanoic Acid;Methanol|Methyl Pentanoate;Water|Generalized Fischer esterification connectivity|4
+315|Methyl Pentanoate hydrolysis|Methyl Pentanoate;Water|Pentanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+316|Pentanoic Acid complete oxidation|Pentanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+317|Pentylamine protonation|Pentylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+318|1-Chloropentane combustion|1-Chloropentane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+319|Hexanoic Acid esterification|Hexanoic Acid;Methanol|Methyl Hexanoate;Water|Generalized Fischer esterification connectivity|4
+320|Methyl Hexanoate hydrolysis|Methyl Hexanoate;Water|Hexanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+321|Hexanoic Acid complete oxidation|Hexanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+322|Hexylamine protonation|Hexylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+323|1-Chlorohexane combustion|1-Chlorohexane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+324|Heptanoic Acid esterification|Heptanoic Acid;Methanol|Methyl Heptanoate;Water|Generalized Fischer esterification connectivity|4
+325|Methyl Heptanoate hydrolysis|Methyl Heptanoate;Water|Heptanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+326|Heptanoic Acid complete oxidation|Heptanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+327|Heptylamine protonation|Heptylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+328|1-Chloroheptane combustion|1-Chloroheptane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+329|Octanoic Acid esterification|Octanoic Acid;Methanol|Methyl Octanoate;Water|Generalized Fischer esterification connectivity|4
+330|Methyl Octanoate hydrolysis|Methyl Octanoate;Water|Octanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+331|Octanoic Acid complete oxidation|Octanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+332|Octylamine protonation|Octylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+333|1-Chlorooctane combustion|1-Chlorooctane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+334|Nonanoic Acid esterification|Nonanoic Acid;Methanol|Methyl Nonanoate;Water|Generalized Fischer esterification connectivity|4
+335|Methyl Nonanoate hydrolysis|Methyl Nonanoate;Water|Nonanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+336|Nonanoic Acid complete oxidation|Nonanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+337|Nonylamine protonation|Nonylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+338|1-Chlorononane combustion|1-Chlorononane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+339|Decanoic Acid esterification|Decanoic Acid;Methanol|Methyl Decanoate;Water|Generalized Fischer esterification connectivity|4
+340|Methyl Decanoate hydrolysis|Methyl Decanoate;Water|Decanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+341|Decanoic Acid complete oxidation|Decanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+342|Decylamine protonation|Decylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+343|1-Chlorodecane combustion|1-Chlorodecane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+344|Undecanoic Acid esterification|Undecanoic Acid;Methanol|Methyl Undecanoate;Water|Generalized Fischer esterification connectivity|4
+345|Methyl Undecanoate hydrolysis|Methyl Undecanoate;Water|Undecanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+346|Undecanoic Acid complete oxidation|Undecanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+347|Undecylamine protonation|Undecylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+348|1-Chloroundecane combustion|1-Chloroundecane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+349|Dodecanoic Acid esterification|Dodecanoic Acid;Methanol|Methyl Dodecanoate;Water|Generalized Fischer esterification connectivity|4
+350|Methyl Dodecanoate hydrolysis|Methyl Dodecanoate;Water|Dodecanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+351|Dodecanoic Acid complete oxidation|Dodecanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+352|Dodecylamine protonation|Dodecylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+353|1-Chlorododecane combustion|1-Chlorododecane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+354|Tridecanoic Acid esterification|Tridecanoic Acid;Methanol|Methyl Tridecanoate;Water|Generalized Fischer esterification connectivity|4
+355|Methyl Tridecanoate hydrolysis|Methyl Tridecanoate;Water|Tridecanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+356|Tridecanoic Acid complete oxidation|Tridecanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+357|Tridecylamine protonation|Tridecylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+358|1-Chlorotridecane combustion|1-Chlorotridecane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+359|Tetradecanoic Acid esterification|Tetradecanoic Acid;Methanol|Methyl Tetradecanoate;Water|Generalized Fischer esterification connectivity|4
+360|Methyl Tetradecanoate hydrolysis|Methyl Tetradecanoate;Water|Tetradecanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+361|Tetradecanoic Acid complete oxidation|Tetradecanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+362|Tetradecylamine protonation|Tetradecylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+363|1-Chlorotetradecane combustion|1-Chlorotetradecane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+364|Pentadecanoic Acid esterification|Pentadecanoic Acid;Methanol|Methyl Pentadecanoate;Water|Generalized Fischer esterification connectivity|4
+365|Methyl Pentadecanoate hydrolysis|Methyl Pentadecanoate;Water|Pentadecanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+366|Pentadecanoic Acid complete oxidation|Pentadecanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+367|Pentadecylamine protonation|Pentadecylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+368|1-Chloropentadecane combustion|1-Chloropentadecane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+369|Hexadecanoic Acid esterification|Hexadecanoic Acid;Methanol|Methyl Hexadecanoate;Water|Generalized Fischer esterification connectivity|4
+370|Methyl Hexadecanoate hydrolysis|Methyl Hexadecanoate;Water|Hexadecanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+371|Hexadecanoic Acid complete oxidation|Hexadecanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+372|Hexadecylamine protonation|Hexadecylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+373|1-Chlorohexadecane combustion|1-Chlorohexadecane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+374|Heptadecanoic Acid esterification|Heptadecanoic Acid;Methanol|Methyl Heptadecanoate;Water|Generalized Fischer esterification connectivity|4
+375|Methyl Heptadecanoate hydrolysis|Methyl Heptadecanoate;Water|Heptadecanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+376|Heptadecanoic Acid complete oxidation|Heptadecanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+377|Heptadecylamine protonation|Heptadecylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+378|1-Chloroheptadecane combustion|1-Chloroheptadecane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+379|Octadecanoic Acid esterification|Octadecanoic Acid;Methanol|Methyl Octadecanoate;Water|Generalized Fischer esterification connectivity|4
+380|Methyl Octadecanoate hydrolysis|Methyl Octadecanoate;Water|Octadecanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+381|Octadecanoic Acid complete oxidation|Octadecanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+382|Octadecylamine protonation|Octadecylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+383|1-Chlorooctadecane combustion|1-Chlorooctadecane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+384|Nonadecanoic Acid esterification|Nonadecanoic Acid;Methanol|Methyl Nonadecanoate;Water|Generalized Fischer esterification connectivity|4
+385|Methyl Nonadecanoate hydrolysis|Methyl Nonadecanoate;Water|Nonadecanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+386|Nonadecanoic Acid complete oxidation|Nonadecanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+387|Nonadecylamine protonation|Nonadecylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+388|1-Chlorononadecane combustion|1-Chlorononadecane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+389|Eicosanoic Acid esterification|Eicosanoic Acid;Methanol|Methyl Eicosanoate;Water|Generalized Fischer esterification connectivity|4
+390|Methyl Eicosanoate hydrolysis|Methyl Eicosanoate;Water|Eicosanoic Acid;Methanol|Generalized ester hydrolysis connectivity|3
+391|Eicosanoic Acid complete oxidation|Eicosanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+392|Eicosylamine protonation|Eicosylamine|Ammonium|Generalized basic-amine connectivity to ammonium pool|2
+393|1-Chloroeicosane combustion|1-Chloroeicosane;Oxygen|Carbon Dioxide;Water|Simplified oxidation connectivity|5
+394|Chloroethane cyanide substitution|Chloroethane|Propanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+395|1-Chloropropane cyanide substitution|1-Chloropropane|Butanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+396|1-Chlorobutane cyanide substitution|1-Chlorobutane|Pentanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+397|1-Chloropentane cyanide substitution|1-Chloropentane|Hexanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+398|1-Chlorohexane cyanide substitution|1-Chlorohexane|Heptanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+399|1-Chloroheptane cyanide substitution|1-Chloroheptane|Octanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+400|1-Chlorooctane cyanide substitution|1-Chlorooctane|Nonanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+401|1-Chlorononane cyanide substitution|1-Chlorononane|Decanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+402|1-Chlorodecane cyanide substitution|1-Chlorodecane|Undecanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+403|1-Chloroundecane cyanide substitution|1-Chloroundecane|Dodecanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+404|1-Chlorododecane cyanide substitution|1-Chlorododecane|Tridecanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+405|1-Chlorotridecane cyanide substitution|1-Chlorotridecane|Tetradecanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+406|1-Chlorotetradecane cyanide substitution|1-Chlorotetradecane|Pentadecanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+407|1-Chloropentadecane cyanide substitution|1-Chloropentadecane|Hexadecanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+408|1-Chlorohexadecane cyanide substitution|1-Chlorohexadecane|Heptadecanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+409|1-Chloroheptadecane cyanide substitution|1-Chloroheptadecane|Octadecanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+410|1-Chlorooctadecane cyanide substitution|1-Chlorooctadecane|Nonadecanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+411|1-Chlorononadecane cyanide substitution|1-Chlorononadecane|Eicosanenitrile|Generalized carbon-chain extension via nitrile connectivity|5
+412|Acetonitrile hydrolysis|Acetonitrile;Water|Acetic Acid|Generalized nitrile hydrolysis connectivity|5
+413|Propanenitrile hydrolysis|Propanenitrile;Water|Propanoic Acid|Generalized nitrile hydrolysis connectivity|5
+414|Butanenitrile hydrolysis|Butanenitrile;Water|Butanoic Acid|Generalized nitrile hydrolysis connectivity|5
+415|Pentanenitrile hydrolysis|Pentanenitrile;Water|Pentanoic Acid|Generalized nitrile hydrolysis connectivity|5
+416|Hexanenitrile hydrolysis|Hexanenitrile;Water|Hexanoic Acid|Generalized nitrile hydrolysis connectivity|5
+417|Heptanenitrile hydrolysis|Heptanenitrile;Water|Heptanoic Acid|Generalized nitrile hydrolysis connectivity|5
+418|Octanenitrile hydrolysis|Octanenitrile;Water|Octanoic Acid|Generalized nitrile hydrolysis connectivity|5
+419|Nonanenitrile hydrolysis|Nonanenitrile;Water|Nonanoic Acid|Generalized nitrile hydrolysis connectivity|5
+420|Decanenitrile hydrolysis|Decanenitrile;Water|Decanoic Acid|Generalized nitrile hydrolysis connectivity|5
+421|Undecanenitrile hydrolysis|Undecanenitrile;Water|Undecanoic Acid|Generalized nitrile hydrolysis connectivity|5
+422|Dodecanenitrile hydrolysis|Dodecanenitrile;Water|Dodecanoic Acid|Generalized nitrile hydrolysis connectivity|5
+423|Tridecanenitrile hydrolysis|Tridecanenitrile;Water|Tridecanoic Acid|Generalized nitrile hydrolysis connectivity|5
+424|Tetradecanenitrile hydrolysis|Tetradecanenitrile;Water|Tetradecanoic Acid|Generalized nitrile hydrolysis connectivity|5
+425|Pentadecanenitrile hydrolysis|Pentadecanenitrile;Water|Pentadecanoic Acid|Generalized nitrile hydrolysis connectivity|5
+426|Hexadecanenitrile hydrolysis|Hexadecanenitrile;Water|Hexadecanoic Acid|Generalized nitrile hydrolysis connectivity|5
+427|Heptadecanenitrile hydrolysis|Heptadecanenitrile;Water|Heptadecanoic Acid|Generalized nitrile hydrolysis connectivity|5
+428|Octadecanenitrile hydrolysis|Octadecanenitrile;Water|Octadecanoic Acid|Generalized nitrile hydrolysis connectivity|5
+429|Nonadecanenitrile hydrolysis|Nonadecanenitrile;Water|Nonadecanoic Acid|Generalized nitrile hydrolysis connectivity|5
+430|Eicosanenitrile hydrolysis|Eicosanenitrile;Water|Eicosanoic Acid|Generalized nitrile hydrolysis connectivity|5
+431|Propan-2-ol oxidation|Propan-2-ol;Oxygen|Acetone;Water|Secondary alcohol oxidation connectivity|3
+432|Acetone reduction|Acetone;Hydrogen|Propan-2-ol|Ketone reduction connectivity|3
+433|Acetone combustion|Acetone;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+434|Butan-2-ol oxidation|Butan-2-ol;Oxygen|Butan-2-one;Water|Secondary alcohol oxidation connectivity|3
+435|Butan-2-one reduction|Butan-2-one;Hydrogen|Butan-2-ol|Ketone reduction connectivity|3
+436|Butan-2-one combustion|Butan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+437|Pentan-2-ol oxidation|Pentan-2-ol;Oxygen|Pentan-2-one;Water|Secondary alcohol oxidation connectivity|3
+438|Pentan-2-one reduction|Pentan-2-one;Hydrogen|Pentan-2-ol|Ketone reduction connectivity|3
+439|Pentan-2-one combustion|Pentan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+440|Hexan-2-ol oxidation|Hexan-2-ol;Oxygen|Hexan-2-one;Water|Secondary alcohol oxidation connectivity|3
+441|Hexan-2-one reduction|Hexan-2-one;Hydrogen|Hexan-2-ol|Ketone reduction connectivity|3
+442|Hexan-2-one combustion|Hexan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+443|Heptan-2-ol oxidation|Heptan-2-ol;Oxygen|Heptan-2-one;Water|Secondary alcohol oxidation connectivity|3
+444|Heptan-2-one reduction|Heptan-2-one;Hydrogen|Heptan-2-ol|Ketone reduction connectivity|3
+445|Heptan-2-one combustion|Heptan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+446|Octan-2-ol oxidation|Octan-2-ol;Oxygen|Octan-2-one;Water|Secondary alcohol oxidation connectivity|3
+447|Octan-2-one reduction|Octan-2-one;Hydrogen|Octan-2-ol|Ketone reduction connectivity|3
+448|Octan-2-one combustion|Octan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+449|Nonan-2-ol oxidation|Nonan-2-ol;Oxygen|Nonan-2-one;Water|Secondary alcohol oxidation connectivity|3
+450|Nonan-2-one reduction|Nonan-2-one;Hydrogen|Nonan-2-ol|Ketone reduction connectivity|3
+451|Nonan-2-one combustion|Nonan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+452|Decan-2-ol oxidation|Decan-2-ol;Oxygen|Decan-2-one;Water|Secondary alcohol oxidation connectivity|3
+453|Decan-2-one reduction|Decan-2-one;Hydrogen|Decan-2-ol|Ketone reduction connectivity|3
+454|Decan-2-one combustion|Decan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+455|Undecan-2-ol oxidation|Undecan-2-ol;Oxygen|Undecan-2-one;Water|Secondary alcohol oxidation connectivity|3
+456|Undecan-2-one reduction|Undecan-2-one;Hydrogen|Undecan-2-ol|Ketone reduction connectivity|3
+457|Undecan-2-one combustion|Undecan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+458|Dodecan-2-ol oxidation|Dodecan-2-ol;Oxygen|Dodecan-2-one;Water|Secondary alcohol oxidation connectivity|3
+459|Dodecan-2-one reduction|Dodecan-2-one;Hydrogen|Dodecan-2-ol|Ketone reduction connectivity|3
+460|Dodecan-2-one combustion|Dodecan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+461|Tridecan-2-ol oxidation|Tridecan-2-ol;Oxygen|Tridecan-2-one;Water|Secondary alcohol oxidation connectivity|3
+462|Tridecan-2-one reduction|Tridecan-2-one;Hydrogen|Tridecan-2-ol|Ketone reduction connectivity|3
+463|Tridecan-2-one combustion|Tridecan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+464|Tetradecan-2-ol oxidation|Tetradecan-2-ol;Oxygen|Tetradecan-2-one;Water|Secondary alcohol oxidation connectivity|3
+465|Tetradecan-2-one reduction|Tetradecan-2-one;Hydrogen|Tetradecan-2-ol|Ketone reduction connectivity|3
+466|Tetradecan-2-one combustion|Tetradecan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+467|Pentadecan-2-ol oxidation|Pentadecan-2-ol;Oxygen|Pentadecan-2-one;Water|Secondary alcohol oxidation connectivity|3
+468|Pentadecan-2-one reduction|Pentadecan-2-one;Hydrogen|Pentadecan-2-ol|Ketone reduction connectivity|3
+469|Pentadecan-2-one combustion|Pentadecan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+470|Hexadecan-2-ol oxidation|Hexadecan-2-ol;Oxygen|Hexadecan-2-one;Water|Secondary alcohol oxidation connectivity|3
+471|Hexadecan-2-one reduction|Hexadecan-2-one;Hydrogen|Hexadecan-2-ol|Ketone reduction connectivity|3
+472|Hexadecan-2-one combustion|Hexadecan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+473|Heptadecan-2-ol oxidation|Heptadecan-2-ol;Oxygen|Heptadecan-2-one;Water|Secondary alcohol oxidation connectivity|3
+474|Heptadecan-2-one reduction|Heptadecan-2-one;Hydrogen|Heptadecan-2-ol|Ketone reduction connectivity|3
+475|Heptadecan-2-one combustion|Heptadecan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+476|Octadecan-2-ol oxidation|Octadecan-2-ol;Oxygen|Octadecan-2-one;Water|Secondary alcohol oxidation connectivity|3
+477|Octadecan-2-one reduction|Octadecan-2-one;Hydrogen|Octadecan-2-ol|Ketone reduction connectivity|3
+478|Octadecan-2-one combustion|Octadecan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+479|Nonadecan-2-ol oxidation|Nonadecan-2-ol;Oxygen|Nonadecan-2-one;Water|Secondary alcohol oxidation connectivity|3
+480|Nonadecan-2-one reduction|Nonadecan-2-one;Hydrogen|Nonadecan-2-ol|Ketone reduction connectivity|3
+481|Nonadecan-2-one combustion|Nonadecan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+482|Eicosan-2-ol oxidation|Eicosan-2-ol;Oxygen|Eicosan-2-one;Water|Secondary alcohol oxidation connectivity|3
+483|Eicosan-2-one reduction|Eicosan-2-one;Hydrogen|Eicosan-2-ol|Ketone reduction connectivity|3
+484|Eicosan-2-one combustion|Eicosan-2-one;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation connectivity|4
+485|Lithium Chloride ionic dissociation|Lithium Chloride|Lithium Ion;Chloride|Educational ionic connectivity; not a solubility claim|1
+486|Lithium Chloride ion association|Lithium Ion;Chloride|Lithium Chloride|Reverse ionic association for graph connectivity|2
+487|Lithium Bromide ionic dissociation|Lithium Bromide|Lithium Ion;Bromide|Educational ionic connectivity; not a solubility claim|1
+488|Lithium Bromide ion association|Lithium Ion;Bromide|Lithium Bromide|Reverse ionic association for graph connectivity|2
+489|Lithium Iodide ionic dissociation|Lithium Iodide|Lithium Ion;Iodide|Educational ionic connectivity; not a solubility claim|1
+490|Lithium Iodide ion association|Lithium Ion;Iodide|Lithium Iodide|Reverse ionic association for graph connectivity|2
+491|Lithium Hydroxide ionic dissociation|Lithium Hydroxide|Lithium Ion;Hydroxide|Educational ionic connectivity; not a solubility claim|1
+492|Lithium Hydroxide ion association|Lithium Ion;Hydroxide|Lithium Hydroxide|Reverse ionic association for graph connectivity|2
+493|Lithium Nitrate ionic dissociation|Lithium Nitrate|Lithium Ion;Nitrate|Educational ionic connectivity; not a solubility claim|1
+494|Lithium Nitrate ion association|Lithium Ion;Nitrate|Lithium Nitrate|Reverse ionic association for graph connectivity|2
+495|Lithium Nitrite ionic dissociation|Lithium Nitrite|Lithium Ion;Nitrite|Educational ionic connectivity; not a solubility claim|1
+496|Lithium Nitrite ion association|Lithium Ion;Nitrite|Lithium Nitrite|Reverse ionic association for graph connectivity|2
+497|Lithium Phosphate ionic dissociation|Lithium Phosphate|Lithium Ion;Phosphate|Educational ionic connectivity; not a solubility claim|1
+498|Lithium Phosphate ion association|Lithium Ion;Phosphate|Lithium Phosphate|Reverse ionic association for graph connectivity|2
+499|Lithium Hydrogen Phosphate ionic dissociation|Lithium Hydrogen Phosphate|Lithium Ion;Hydrogen Phosphate|Educational ionic connectivity; not a solubility claim|1
+500|Lithium Hydrogen Phosphate ion association|Lithium Ion;Hydrogen Phosphate|Lithium Hydrogen Phosphate|Reverse ionic association for graph connectivity|2
+501|Sodium Chloride ionic dissociation|Sodium Chloride|Sodium Ion;Chloride|Educational ionic connectivity; not a solubility claim|1
+502|Sodium Chloride ion association|Sodium Ion;Chloride|Sodium Chloride|Reverse ionic association for graph connectivity|2
+503|Sodium Bromide ionic dissociation|Sodium Bromide|Sodium Ion;Bromide|Educational ionic connectivity; not a solubility claim|1
+504|Sodium Bromide ion association|Sodium Ion;Bromide|Sodium Bromide|Reverse ionic association for graph connectivity|2
+505|Sodium Iodide ionic dissociation|Sodium Iodide|Sodium Ion;Iodide|Educational ionic connectivity; not a solubility claim|1
+506|Sodium Iodide ion association|Sodium Ion;Iodide|Sodium Iodide|Reverse ionic association for graph connectivity|2
+507|Sodium Hydroxide ionic dissociation|Sodium Hydroxide|Sodium Ion;Hydroxide|Educational ionic connectivity; not a solubility claim|1
+508|Sodium Hydroxide ion association|Sodium Ion;Hydroxide|Sodium Hydroxide|Reverse ionic association for graph connectivity|2
+509|Sodium Nitrate ionic dissociation|Sodium Nitrate|Sodium Ion;Nitrate|Educational ionic connectivity; not a solubility claim|1
+510|Sodium Nitrate ion association|Sodium Ion;Nitrate|Sodium Nitrate|Reverse ionic association for graph connectivity|2
+511|Sodium Nitrite ionic dissociation|Sodium Nitrite|Sodium Ion;Nitrite|Educational ionic connectivity; not a solubility claim|1
+512|Sodium Nitrite ion association|Sodium Ion;Nitrite|Sodium Nitrite|Reverse ionic association for graph connectivity|2
+513|Sodium Phosphate ionic dissociation|Sodium Phosphate|Sodium Ion;Phosphate|Educational ionic connectivity; not a solubility claim|1
+514|Sodium Phosphate ion association|Sodium Ion;Phosphate|Sodium Phosphate|Reverse ionic association for graph connectivity|2
+515|Sodium Hydrogen Phosphate ionic dissociation|Sodium Hydrogen Phosphate|Sodium Ion;Hydrogen Phosphate|Educational ionic connectivity; not a solubility claim|1
+516|Sodium Hydrogen Phosphate ion association|Sodium Ion;Hydrogen Phosphate|Sodium Hydrogen Phosphate|Reverse ionic association for graph connectivity|2
+517|Potassium Chloride ionic dissociation|Potassium Chloride|Potassium Ion;Chloride|Educational ionic connectivity; not a solubility claim|1
+518|Potassium Chloride ion association|Potassium Ion;Chloride|Potassium Chloride|Reverse ionic association for graph connectivity|2
+519|Potassium Bromide ionic dissociation|Potassium Bromide|Potassium Ion;Bromide|Educational ionic connectivity; not a solubility claim|1
+520|Potassium Bromide ion association|Potassium Ion;Bromide|Potassium Bromide|Reverse ionic association for graph connectivity|2
+521|Potassium Iodide ionic dissociation|Potassium Iodide|Potassium Ion;Iodide|Educational ionic connectivity; not a solubility claim|1
+522|Potassium Iodide ion association|Potassium Ion;Iodide|Potassium Iodide|Reverse ionic association for graph connectivity|2
+523|Potassium Hydroxide ionic dissociation|Potassium Hydroxide|Potassium Ion;Hydroxide|Educational ionic connectivity; not a solubility claim|1
+524|Potassium Hydroxide ion association|Potassium Ion;Hydroxide|Potassium Hydroxide|Reverse ionic association for graph connectivity|2
+525|Potassium Nitrate ionic dissociation|Potassium Nitrate|Potassium Ion;Nitrate|Educational ionic connectivity; not a solubility claim|1
+526|Potassium Nitrate ion association|Potassium Ion;Nitrate|Potassium Nitrate|Reverse ionic association for graph connectivity|2
+527|Potassium Nitrite ionic dissociation|Potassium Nitrite|Potassium Ion;Nitrite|Educational ionic connectivity; not a solubility claim|1
+528|Potassium Nitrite ion association|Potassium Ion;Nitrite|Potassium Nitrite|Reverse ionic association for graph connectivity|2
+529|Potassium Phosphate ionic dissociation|Potassium Phosphate|Potassium Ion;Phosphate|Educational ionic connectivity; not a solubility claim|1
+530|Potassium Phosphate ion association|Potassium Ion;Phosphate|Potassium Phosphate|Reverse ionic association for graph connectivity|2
+531|Potassium Hydrogen Phosphate ionic dissociation|Potassium Hydrogen Phosphate|Potassium Ion;Hydrogen Phosphate|Educational ionic connectivity; not a solubility claim|1
+532|Potassium Hydrogen Phosphate ion association|Potassium Ion;Hydrogen Phosphate|Potassium Hydrogen Phosphate|Reverse ionic association for graph connectivity|2
+533|Magnesium Chloride ionic dissociation|Magnesium Chloride|Magnesium Ion;Chloride|Educational ionic connectivity; not a solubility claim|1
+534|Magnesium Chloride ion association|Magnesium Ion;Chloride|Magnesium Chloride|Reverse ionic association for graph connectivity|2
+535|Magnesium Bromide ionic dissociation|Magnesium Bromide|Magnesium Ion;Bromide|Educational ionic connectivity; not a solubility claim|1
+536|Magnesium Bromide ion association|Magnesium Ion;Bromide|Magnesium Bromide|Reverse ionic association for graph connectivity|2
+537|Magnesium Iodide ionic dissociation|Magnesium Iodide|Magnesium Ion;Iodide|Educational ionic connectivity; not a solubility claim|1
+538|Magnesium Iodide ion association|Magnesium Ion;Iodide|Magnesium Iodide|Reverse ionic association for graph connectivity|2
+539|Magnesium Hydroxide ionic dissociation|Magnesium Hydroxide|Magnesium Ion;Hydroxide|Educational ionic connectivity; not a solubility claim|1
+540|Magnesium Hydroxide ion association|Magnesium Ion;Hydroxide|Magnesium Hydroxide|Reverse ionic association for graph connectivity|2
+541|Magnesium Nitrate ionic dissociation|Magnesium Nitrate|Magnesium Ion;Nitrate|Educational ionic connectivity; not a solubility claim|1
+542|Magnesium Nitrate ion association|Magnesium Ion;Nitrate|Magnesium Nitrate|Reverse ionic association for graph connectivity|2
+543|Magnesium Nitrite ionic dissociation|Magnesium Nitrite|Magnesium Ion;Nitrite|Educational ionic connectivity; not a solubility claim|1
+544|Magnesium Nitrite ion association|Magnesium Ion;Nitrite|Magnesium Nitrite|Reverse ionic association for graph connectivity|2
+545|Magnesium Phosphate ionic dissociation|Magnesium Phosphate|Magnesium Ion;Phosphate|Educational ionic connectivity; not a solubility claim|1
+546|Magnesium Phosphate ion association|Magnesium Ion;Phosphate|Magnesium Phosphate|Reverse ionic association for graph connectivity|2
+547|Magnesium Hydrogen Phosphate ionic dissociation|Magnesium Hydrogen Phosphate|Magnesium Ion;Hydrogen Phosphate|Educational ionic connectivity; not a solubility claim|1
+548|Magnesium Hydrogen Phosphate ion association|Magnesium Ion;Hydrogen Phosphate|Magnesium Hydrogen Phosphate|Reverse ionic association for graph connectivity|2
+549|Calcium Chloride ionic dissociation|Calcium Chloride|Calcium Ion;Chloride|Educational ionic connectivity; not a solubility claim|1
+550|Calcium Chloride ion association|Calcium Ion;Chloride|Calcium Chloride|Reverse ionic association for graph connectivity|2
+551|Calcium Bromide ionic dissociation|Calcium Bromide|Calcium Ion;Bromide|Educational ionic connectivity; not a solubility claim|1
+552|Calcium Bromide ion association|Calcium Ion;Bromide|Calcium Bromide|Reverse ionic association for graph connectivity|2
+553|Calcium Iodide ionic dissociation|Calcium Iodide|Calcium Ion;Iodide|Educational ionic connectivity; not a solubility claim|1
+554|Calcium Iodide ion association|Calcium Ion;Iodide|Calcium Iodide|Reverse ionic association for graph connectivity|2
+555|Calcium Hydroxide ionic dissociation|Calcium Hydroxide|Calcium Ion;Hydroxide|Educational ionic connectivity; not a solubility claim|1
+556|Calcium Hydroxide ion association|Calcium Ion;Hydroxide|Calcium Hydroxide|Reverse ionic association for graph connectivity|2
+557|Calcium Nitrate ionic dissociation|Calcium Nitrate|Calcium Ion;Nitrate|Educational ionic connectivity; not a solubility claim|1
+558|Calcium Nitrate ion association|Calcium Ion;Nitrate|Calcium Nitrate|Reverse ionic association for graph connectivity|2
+559|Calcium Nitrite ionic dissociation|Calcium Nitrite|Calcium Ion;Nitrite|Educational ionic connectivity; not a solubility claim|1
+560|Calcium Nitrite ion association|Calcium Ion;Nitrite|Calcium Nitrite|Reverse ionic association for graph connectivity|2
+561|Calcium Phosphate ionic dissociation|Calcium Phosphate|Calcium Ion;Phosphate|Educational ionic connectivity; not a solubility claim|1
+562|Calcium Phosphate ion association|Calcium Ion;Phosphate|Calcium Phosphate|Reverse ionic association for graph connectivity|2
+563|Calcium Hydrogen Phosphate ionic dissociation|Calcium Hydrogen Phosphate|Calcium Ion;Hydrogen Phosphate|Educational ionic connectivity; not a solubility claim|1
+564|Calcium Hydrogen Phosphate ion association|Calcium Ion;Hydrogen Phosphate|Calcium Hydrogen Phosphate|Reverse ionic association for graph connectivity|2
+565|Barium Chloride ionic dissociation|Barium Chloride|Barium Ion;Chloride|Educational ionic connectivity; not a solubility claim|1
+566|Barium Chloride ion association|Barium Ion;Chloride|Barium Chloride|Reverse ionic association for graph connectivity|2
+567|Barium Bromide ionic dissociation|Barium Bromide|Barium Ion;Bromide|Educational ionic connectivity; not a solubility claim|1
+568|Barium Bromide ion association|Barium Ion;Bromide|Barium Bromide|Reverse ionic association for graph connectivity|2
+569|Barium Iodide ionic dissociation|Barium Iodide|Barium Ion;Iodide|Educational ionic connectivity; not a solubility claim|1
+570|Barium Iodide ion association|Barium Ion;Iodide|Barium Iodide|Reverse ionic association for graph connectivity|2
+571|Barium Hydroxide ionic dissociation|Barium Hydroxide|Barium Ion;Hydroxide|Educational ionic connectivity; not a solubility claim|1
+572|Barium Hydroxide ion association|Barium Ion;Hydroxide|Barium Hydroxide|Reverse ionic association for graph connectivity|2
+573|Barium Nitrate ionic dissociation|Barium Nitrate|Barium Ion;Nitrate|Educational ionic connectivity; not a solubility claim|1
+574|Barium Nitrate ion association|Barium Ion;Nitrate|Barium Nitrate|Reverse ionic association for graph connectivity|2
+575|Barium Nitrite ionic dissociation|Barium Nitrite|Barium Ion;Nitrite|Educational ionic connectivity; not a solubility claim|1
+576|Barium Nitrite ion association|Barium Ion;Nitrite|Barium Nitrite|Reverse ionic association for graph connectivity|2
+577|Barium Phosphate ionic dissociation|Barium Phosphate|Barium Ion;Phosphate|Educational ionic connectivity; not a solubility claim|1
+578|Barium Phosphate ion association|Barium Ion;Phosphate|Barium Phosphate|Reverse ionic association for graph connectivity|2
+579|Barium Hydrogen Phosphate ionic dissociation|Barium Hydrogen Phosphate|Barium Ion;Hydrogen Phosphate|Educational ionic connectivity; not a solubility claim|1
+580|Barium Hydrogen Phosphate ion association|Barium Ion;Hydrogen Phosphate|Barium Hydrogen Phosphate|Reverse ionic association for graph connectivity|2
+581|Zinc Chloride ionic dissociation|Zinc Chloride|Zinc Ion;Chloride|Educational ionic connectivity; not a solubility claim|1
+582|Zinc Chloride ion association|Zinc Ion;Chloride|Zinc Chloride|Reverse ionic association for graph connectivity|2
+583|Zinc Bromide ionic dissociation|Zinc Bromide|Zinc Ion;Bromide|Educational ionic connectivity; not a solubility claim|1
+584|Zinc Bromide ion association|Zinc Ion;Bromide|Zinc Bromide|Reverse ionic association for graph connectivity|2
+585|Zinc Iodide ionic dissociation|Zinc Iodide|Zinc Ion;Iodide|Educational ionic connectivity; not a solubility claim|1
+586|Zinc Iodide ion association|Zinc Ion;Iodide|Zinc Iodide|Reverse ionic association for graph connectivity|2
+587|Zinc Hydroxide ionic dissociation|Zinc Hydroxide|Zinc Ion;Hydroxide|Educational ionic connectivity; not a solubility claim|1
+588|Zinc Hydroxide ion association|Zinc Ion;Hydroxide|Zinc Hydroxide|Reverse ionic association for graph connectivity|2
+589|Zinc Nitrate ionic dissociation|Zinc Nitrate|Zinc Ion;Nitrate|Educational ionic connectivity; not a solubility claim|1
+590|Zinc Nitrate ion association|Zinc Ion;Nitrate|Zinc Nitrate|Reverse ionic association for graph connectivity|2
+591|Zinc Nitrite ionic dissociation|Zinc Nitrite|Zinc Ion;Nitrite|Educational ionic connectivity; not a solubility claim|1
+592|Zinc Nitrite ion association|Zinc Ion;Nitrite|Zinc Nitrite|Reverse ionic association for graph connectivity|2
+593|Zinc Phosphate ionic dissociation|Zinc Phosphate|Zinc Ion;Phosphate|Educational ionic connectivity; not a solubility claim|1
+594|Zinc Phosphate ion association|Zinc Ion;Phosphate|Zinc Phosphate|Reverse ionic association for graph connectivity|2
+595|Zinc Hydrogen Phosphate ionic dissociation|Zinc Hydrogen Phosphate|Zinc Ion;Hydrogen Phosphate|Educational ionic connectivity; not a solubility claim|1
+596|Zinc Hydrogen Phosphate ion association|Zinc Ion;Hydrogen Phosphate|Zinc Hydrogen Phosphate|Reverse ionic association for graph connectivity|2
+597|Copper(II) Chloride ionic dissociation|Copper(II) Chloride|Copper(II) Ion;Chloride|Educational ionic connectivity; not a solubility claim|1
+598|Copper(II) Chloride ion association|Copper(II) Ion;Chloride|Copper(II) Chloride|Reverse ionic association for graph connectivity|2
+599|Copper(II) Bromide ionic dissociation|Copper(II) Bromide|Copper(II) Ion;Bromide|Educational ionic connectivity; not a solubility claim|1
+600|Copper(II) Bromide ion association|Copper(II) Ion;Bromide|Copper(II) Bromide|Reverse ionic association for graph connectivity|2
+601|Copper(II) Iodide ionic dissociation|Copper(II) Iodide|Copper(II) Ion;Iodide|Educational ionic connectivity; not a solubility claim|1
+602|Copper(II) Iodide ion association|Copper(II) Ion;Iodide|Copper(II) Iodide|Reverse ionic association for graph connectivity|2
+603|Copper(II) Hydroxide ionic dissociation|Copper(II) Hydroxide|Copper(II) Ion;Hydroxide|Educational ionic connectivity; not a solubility claim|1
+604|Copper(II) Hydroxide ion association|Copper(II) Ion;Hydroxide|Copper(II) Hydroxide|Reverse ionic association for graph connectivity|2
+605|Copper(II) Nitrate ionic dissociation|Copper(II) Nitrate|Copper(II) Ion;Nitrate|Educational ionic connectivity; not a solubility claim|1
+606|Copper(II) Nitrate ion association|Copper(II) Ion;Nitrate|Copper(II) Nitrate|Reverse ionic association for graph connectivity|2
+607|Copper(II) Nitrite ionic dissociation|Copper(II) Nitrite|Copper(II) Ion;Nitrite|Educational ionic connectivity; not a solubility claim|1
+608|Copper(II) Nitrite ion association|Copper(II) Ion;Nitrite|Copper(II) Nitrite|Reverse ionic association for graph connectivity|2
+609|Copper(II) Phosphate ionic dissociation|Copper(II) Phosphate|Copper(II) Ion;Phosphate|Educational ionic connectivity; not a solubility claim|1
+610|Copper(II) Phosphate ion association|Copper(II) Ion;Phosphate|Copper(II) Phosphate|Reverse ionic association for graph connectivity|2
+611|Copper(II) Hydrogen Phosphate ionic dissociation|Copper(II) Hydrogen Phosphate|Copper(II) Ion;Hydrogen Phosphate|Educational ionic connectivity; not a solubility claim|1
+612|Copper(II) Hydrogen Phosphate ion association|Copper(II) Ion;Hydrogen Phosphate|Copper(II) Hydrogen Phosphate|Reverse ionic association for graph connectivity|2
+613|Iron(II) Chloride ionic dissociation|Iron(II) Chloride|Iron(II) Ion;Chloride|Educational ionic connectivity; not a solubility claim|1
+614|Iron(II) Chloride ion association|Iron(II) Ion;Chloride|Iron(II) Chloride|Reverse ionic association for graph connectivity|2
+615|Iron(II) Bromide ionic dissociation|Iron(II) Bromide|Iron(II) Ion;Bromide|Educational ionic connectivity; not a solubility claim|1
+616|Iron(II) Bromide ion association|Iron(II) Ion;Bromide|Iron(II) Bromide|Reverse ionic association for graph connectivity|2
+617|Iron(II) Iodide ionic dissociation|Iron(II) Iodide|Iron(II) Ion;Iodide|Educational ionic connectivity; not a solubility claim|1
+618|Iron(II) Iodide ion association|Iron(II) Ion;Iodide|Iron(II) Iodide|Reverse ionic association for graph connectivity|2
+619|Iron(II) Hydroxide ionic dissociation|Iron(II) Hydroxide|Iron(II) Ion;Hydroxide|Educational ionic connectivity; not a solubility claim|1
+620|Iron(II) Hydroxide ion association|Iron(II) Ion;Hydroxide|Iron(II) Hydroxide|Reverse ionic association for graph connectivity|2
+621|Iron(II) Nitrate ionic dissociation|Iron(II) Nitrate|Iron(II) Ion;Nitrate|Educational ionic connectivity; not a solubility claim|1
+622|Iron(II) Nitrate ion association|Iron(II) Ion;Nitrate|Iron(II) Nitrate|Reverse ionic association for graph connectivity|2
+623|Iron(II) Nitrite ionic dissociation|Iron(II) Nitrite|Iron(II) Ion;Nitrite|Educational ionic connectivity; not a solubility claim|1
+624|Iron(II) Nitrite ion association|Iron(II) Ion;Nitrite|Iron(II) Nitrite|Reverse ionic association for graph connectivity|2
+625|Iron(II) Phosphate ionic dissociation|Iron(II) Phosphate|Iron(II) Ion;Phosphate|Educational ionic connectivity; not a solubility claim|1
+626|Iron(II) Phosphate ion association|Iron(II) Ion;Phosphate|Iron(II) Phosphate|Reverse ionic association for graph connectivity|2
+627|Iron(II) Hydrogen Phosphate ionic dissociation|Iron(II) Hydrogen Phosphate|Iron(II) Ion;Hydrogen Phosphate|Educational ionic connectivity; not a solubility claim|1
+628|Iron(II) Hydrogen Phosphate ion association|Iron(II) Ion;Hydrogen Phosphate|Iron(II) Hydrogen Phosphate|Reverse ionic association for graph connectivity|2
+629|Iron(III) Chloride ionic dissociation|Iron(III) Chloride|Iron(III) Ion;Chloride|Educational ionic connectivity; not a solubility claim|1
+630|Iron(III) Chloride ion association|Iron(III) Ion;Chloride|Iron(III) Chloride|Reverse ionic association for graph connectivity|2
+631|Iron(III) Bromide ionic dissociation|Iron(III) Bromide|Iron(III) Ion;Bromide|Educational ionic connectivity; not a solubility claim|1
+632|Iron(III) Bromide ion association|Iron(III) Ion;Bromide|Iron(III) Bromide|Reverse ionic association for graph connectivity|2
+633|Iron(III) Iodide ionic dissociation|Iron(III) Iodide|Iron(III) Ion;Iodide|Educational ionic connectivity; not a solubility claim|1
+634|Iron(III) Iodide ion association|Iron(III) Ion;Iodide|Iron(III) Iodide|Reverse ionic association for graph connectivity|2
+635|Iron(III) Hydroxide ionic dissociation|Iron(III) Hydroxide|Iron(III) Ion;Hydroxide|Educational ionic connectivity; not a solubility claim|1
+636|Iron(III) Hydroxide ion association|Iron(III) Ion;Hydroxide|Iron(III) Hydroxide|Reverse ionic association for graph connectivity|2
+637|Iron(III) Nitrate ionic dissociation|Iron(III) Nitrate|Iron(III) Ion;Nitrate|Educational ionic connectivity; not a solubility claim|1
+638|Iron(III) Nitrate ion association|Iron(III) Ion;Nitrate|Iron(III) Nitrate|Reverse ionic association for graph connectivity|2
+639|Iron(III) Nitrite ionic dissociation|Iron(III) Nitrite|Iron(III) Ion;Nitrite|Educational ionic connectivity; not a solubility claim|1
+640|Iron(III) Nitrite ion association|Iron(III) Ion;Nitrite|Iron(III) Nitrite|Reverse ionic association for graph connectivity|2
+641|Iron(III) Phosphate ionic dissociation|Iron(III) Phosphate|Iron(III) Ion;Phosphate|Educational ionic connectivity; not a solubility claim|1
+642|Iron(III) Phosphate ion association|Iron(III) Ion;Phosphate|Iron(III) Phosphate|Reverse ionic association for graph connectivity|2
+643|Iron(III) Hydrogen Phosphate ionic dissociation|Iron(III) Hydrogen Phosphate|Iron(III) Ion;Hydrogen Phosphate|Educational ionic connectivity; not a solubility claim|1
+644|Iron(III) Hydrogen Phosphate ion association|Iron(III) Ion;Hydrogen Phosphate|Iron(III) Hydrogen Phosphate|Reverse ionic association for graph connectivity|2
+645|Aluminium Chloride ionic dissociation|Aluminium Chloride|Aluminium Ion;Chloride|Educational ionic connectivity; not a solubility claim|1
+646|Aluminium Chloride ion association|Aluminium Ion;Chloride|Aluminium Chloride|Reverse ionic association for graph connectivity|2
+647|Aluminium Bromide ionic dissociation|Aluminium Bromide|Aluminium Ion;Bromide|Educational ionic connectivity; not a solubility claim|1
+648|Aluminium Bromide ion association|Aluminium Ion;Bromide|Aluminium Bromide|Reverse ionic association for graph connectivity|2
+649|Aluminium Iodide ionic dissociation|Aluminium Iodide|Aluminium Ion;Iodide|Educational ionic connectivity; not a solubility claim|1
+650|Aluminium Iodide ion association|Aluminium Ion;Iodide|Aluminium Iodide|Reverse ionic association for graph connectivity|2
+651|Aluminium Hydroxide ionic dissociation|Aluminium Hydroxide|Aluminium Ion;Hydroxide|Educational ionic connectivity; not a solubility claim|1
+652|Aluminium Hydroxide ion association|Aluminium Ion;Hydroxide|Aluminium Hydroxide|Reverse ionic association for graph connectivity|2
+653|Aluminium Nitrate ionic dissociation|Aluminium Nitrate|Aluminium Ion;Nitrate|Educational ionic connectivity; not a solubility claim|1
+654|Aluminium Nitrate ion association|Aluminium Ion;Nitrate|Aluminium Nitrate|Reverse ionic association for graph connectivity|2
+655|Aluminium Nitrite ionic dissociation|Aluminium Nitrite|Aluminium Ion;Nitrite|Educational ionic connectivity; not a solubility claim|1
+656|Aluminium Nitrite ion association|Aluminium Ion;Nitrite|Aluminium Nitrite|Reverse ionic association for graph connectivity|2
+657|Aluminium Phosphate ionic dissociation|Aluminium Phosphate|Aluminium Ion;Phosphate|Educational ionic connectivity; not a solubility claim|1
+658|Aluminium Phosphate ion association|Aluminium Ion;Phosphate|Aluminium Phosphate|Reverse ionic association for graph connectivity|2
+659|Aluminium Hydrogen Phosphate ionic dissociation|Aluminium Hydrogen Phosphate|Aluminium Ion;Hydrogen Phosphate|Educational ionic connectivity; not a solubility claim|1
+660|Aluminium Hydrogen Phosphate ion association|Aluminium Ion;Hydrogen Phosphate|Aluminium Hydrogen Phosphate|Reverse ionic association for graph connectivity|2
+661|Silver Chloride ionic dissociation|Silver Chloride|Silver Ion;Chloride|Educational ionic connectivity; not a solubility claim|1
+662|Silver Chloride ion association|Silver Ion;Chloride|Silver Chloride|Reverse ionic association for graph connectivity|2
+663|Silver Bromide ionic dissociation|Silver Bromide|Silver Ion;Bromide|Educational ionic connectivity; not a solubility claim|1
+664|Silver Bromide ion association|Silver Ion;Bromide|Silver Bromide|Reverse ionic association for graph connectivity|2
+665|Silver Iodide ionic dissociation|Silver Iodide|Silver Ion;Iodide|Educational ionic connectivity; not a solubility claim|1
+666|Silver Iodide ion association|Silver Ion;Iodide|Silver Iodide|Reverse ionic association for graph connectivity|2
+667|Silver Hydroxide ionic dissociation|Silver Hydroxide|Silver Ion;Hydroxide|Educational ionic connectivity; not a solubility claim|1
+668|Silver Hydroxide ion association|Silver Ion;Hydroxide|Silver Hydroxide|Reverse ionic association for graph connectivity|2
+669|Silver Nitrate ionic dissociation|Silver Nitrate|Silver Ion;Nitrate|Educational ionic connectivity; not a solubility claim|1
+670|Silver Nitrate ion association|Silver Ion;Nitrate|Silver Nitrate|Reverse ionic association for graph connectivity|2
+671|Silver Nitrite ionic dissociation|Silver Nitrite|Silver Ion;Nitrite|Educational ionic connectivity; not a solubility claim|1
+672|Silver Nitrite ion association|Silver Ion;Nitrite|Silver Nitrite|Reverse ionic association for graph connectivity|2
+673|Silver Phosphate ionic dissociation|Silver Phosphate|Silver Ion;Phosphate|Educational ionic connectivity; not a solubility claim|1
+674|Silver Phosphate ion association|Silver Ion;Phosphate|Silver Phosphate|Reverse ionic association for graph connectivity|2
+675|Silver Hydrogen Phosphate ionic dissociation|Silver Hydrogen Phosphate|Silver Ion;Hydrogen Phosphate|Educational ionic connectivity; not a solubility claim|1
+676|Silver Hydrogen Phosphate ion association|Silver Ion;Hydrogen Phosphate|Silver Hydrogen Phosphate|Reverse ionic association for graph connectivity|2
+677|Benzene hydrogenation|Benzene;Hydrogen|Cyclohexane|Simplified hydrogenation connectivity|5
+678|Cyclohexane dehydrogenation|Cyclohexane|Benzene;Hydrogen|Simplified dehydrogenation connectivity|6
+679|Cyclohexene hydrogenation|Cyclohexene;Hydrogen|Cyclohexane|Hydrogenation connectivity|2
+680|Cyclohexanol dehydration|Cyclohexanol|Cyclohexene;Water|Dehydration connectivity|3
+681|Cyclohexene hydration|Cyclohexene;Water|Cyclohexanol|Hydration connectivity|3
+682|Toluene oxidation|Toluene;Oxygen|Benzoic Acid;Water|Simplified benzylic oxidation connectivity|4
+683|Benzaldehyde oxidation|Benzaldehyde;Oxygen|Benzoic Acid|Oxidation connectivity|2
+684|Benzaldehyde reduction|Benzaldehyde;Hydrogen|Benzene|Educational aromatic reduction link|6
+685|Ethylbenzene dehydrogenation|Ethylbenzene|Styrene;Hydrogen|Dehydrogenation connectivity|5
+686|Styrene hydrogenation|Styrene;Hydrogen|Ethylbenzene|Hydrogenation connectivity|2
+687|Phenol oxidation link|Phenol;Oxygen|Carbon Dioxide;Water|Simplified oxidation hub|5
+688|Aniline protonation link|Aniline|Ammonium|Educational base-network link|3
+689|Glucose isomerization|Glucose|Fructose|Simplified biochemical connectivity|2
+690|Fructose isomerization|Fructose|Glucose|Reverse connectivity|2
+691|Galactose conversion|Galactose|Glucose|Simplified carbohydrate connectivity|3
+692|Sucrose hydrolysis|Sucrose;Water|Glucose;Fructose|Simplified disaccharide hydrolysis|2
+693|Maltose hydrolysis|Maltose;Water|Glucose|Simplified disaccharide hydrolysis|2
+694|Lactose hydrolysis|Lactose;Water|Glucose;Galactose|Simplified disaccharide hydrolysis|2
+695|Pyruvate to acetyl-CoA|Pyruvate|Acetyl-CoA;Carbon Dioxide|Highly simplified metabolic connectivity|4
+696|Citrate formation|Acetyl-CoA;Oxaloacetic Acid|Citric Acid|Highly simplified TCA connectivity|3
+697|Citrate isomerization|Citric Acid|Isocitric Acid|Simplified TCA connectivity|2
+698|Isocitrate oxidation|Isocitric Acid|Alpha-Ketoglutarate;Carbon Dioxide|Simplified TCA connectivity|3
+699|Alpha-ketoglutarate oxidation|Alpha-Ketoglutarate|Succinic Acid;Carbon Dioxide|Simplified TCA connectivity|4
+700|Succinate oxidation|Succinic Acid|Fumaric Acid|Simplified TCA connectivity|2
+701|Fumarate hydration|Fumaric Acid;Water|Malic Acid|Simplified TCA connectivity|2
+702|Malate oxidation|Malic Acid|Oxaloacetic Acid|Simplified TCA connectivity|2
+703|ATP hydrolysis|ATP;Water|ADP|Simplified phosphate-transfer connectivity|1
+704|ADP phosphorylation|ADP|ATP|Simplified reverse energy-network link|4
+705|ADP hydrolysis|ADP;Water|AMP|Simplified phosphate hydrolysis connectivity|1
+706|AMP phosphorylation|AMP|ADP|Simplified reverse energy-network link|3

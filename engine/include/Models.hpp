@@ -18,11 +18,13 @@ struct Reaction {
     std::vector<int> reactants;
     std::vector<int> products;
     std::string note;
+    int cost{1};
 };
 
 struct Edge {
     int to{};
     int reactionId{};
+    int cost{1};
 };
 
 struct PathSegment {
@@ -35,6 +37,12 @@ struct PathResult {
     bool found{false};
     std::vector<int> compoundIds;
     std::vector<int> reactionIds;
+    std::vector<int> visitedOrder;
+    int totalCost{0};
+};
+
+struct SccResult {
+    std::vector<std::vector<int>> components;
     std::vector<int> visitedOrder;
 };
 

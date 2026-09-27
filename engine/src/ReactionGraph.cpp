@@ -3,8 +3,11 @@
 #include <algorithm>
 #include <cctype>
 #include <fstream>
+#include <functional>
+#include <limits>
 #include <queue>
 #include <stack>
+#include <utility>
 
 namespace chempath {
 
@@ -100,6 +103,9 @@ bool ReactionGraph::loadReactions(const std::string& path) {
         reaction.id = std::stoi(cols[0]);
         reaction.name = cols[1];
         reaction.note = cols[4];
+        if (cols.size() >= 6 && !cols[5].empty()) {
+            reaction.cost = std::max(1, std::stoi(cols[5]));
+        }
 
         bool valid = true;
         for (const auto& reactantName : split(cols[2], ';')) {
@@ -127,7 +133,7 @@ bool ReactionGraph::loadReactions(const std::string& path) {
 
         for (int from : reaction.reactants) {
             for (int to : reaction.products) {
-                adjacency_[from].push_back({to, reaction.id});
+                adjacency_[from].push_back({to, reaction.id, reaction.cost});
             }
         }
     }
@@ -216,6 +222,195 @@ PathResult ReactionGraph::shortestPathBfs(const std::string& from, const std::st
     std::reverse(reversedReactions.begin(), reversedReactions.end());
     result.compoundIds = std::move(reversedCompounds);
     result.reactionIds = std::move(reversedReactions);
+    result.totalCost = static_cast<int>(result.reactionIds.size());
+    return result;
+}
+
+PathResult ReactionGraph::shortestPathDijkstra(const std::string& from, const std::string& to) const {
+    PathResult result;
+
+    const auto start = compoundId(from);
+    const auto target = compoundId(to);
+    if (!start || !target) return result;
+
+    const int infinity = std::numeric_limits<int>::max() / 4;
+    std::vector<int> distance(compounds_.size(), infinity);
+    std::vector<int> parent(compounds_.size(), -1);
+    std::vector<int> parentReaction(compounds_.size(), -1);
+    std::vector<bool> settled(compounds_.size(), false);
+
+    using State = std::pair<int, int>;
+    std::priority_queue<State, std::vector<State>, std::greater<State>> queue;
+
+    distance[*start] = 0;
+    queue.push({0, *start});
+
+    while (!queue.empty()) {
+        const auto [currentDistance, current] = queue.top();
+        queue.pop();
+
+        if (settled[current]) continue;
+        settled[current] = true;
+        result.visitedOrder.push_back(current);
+
+        if (current == *target) break;
+
+        for (const auto& edge : adjacency_[current]) {
+            if (currentDistance + edge.cost < distance[edge.to]) {
+                distance[edge.to] = currentDistance + edge.cost;
+                parent[edge.to] = current;
+                parentReaction[edge.to] = edge.reactionId;
+                queue.push({distance[edge.to], edge.to});
+            }
+        }
+    }
+
+    if (distance[*target] == infinity) return result;
+
+    result.found = true;
+    result.totalCost = distance[*target];
+
+    std::vector<int> reversedCompounds;
+    std::vector<int> reversedReactions;
+    for (int cursor = *target; cursor != -1; cursor = parent[cursor]) {
+        reversedCompounds.push_back(cursor);
+        if (parentReaction[cursor] != -1) {
+            reversedReactions.push_back(parentReaction[cursor]);
+        }
+    }
+
+    std::reverse(reversedCompounds.begin(), reversedCompounds.end());
+    std::reverse(reversedReactions.begin(), reversedReactions.end());
+    result.compoundIds = std::move(reversedCompounds);
+    result.reactionIds = std::move(reversedReactions);
+    return result;
+}
+
+PathResult ReactionGraph::shortestPathBidirectional(const std::string& from, const std::string& to) const {
+    PathResult result;
+
+    const auto start = compoundId(from);
+    const auto target = compoundId(to);
+    if (!start || !target) return result;
+
+    if (*start == *target) {
+        result.found = true;
+        result.compoundIds = {*start};
+        result.visitedOrder = {*start};
+        return result;
+    }
+
+    std::vector<std::vector<Edge>> reverseAdjacency(compounds_.size());
+    for (std::size_t fromId = 0; fromId < adjacency_.size(); ++fromId) {
+        for (const auto& edge : adjacency_[fromId]) {
+            reverseAdjacency[edge.to].push_back(
+                {static_cast<int>(fromId), edge.reactionId, edge.cost});
+        }
+    }
+
+    std::vector<bool> visitedForward(compounds_.size(), false);
+    std::vector<bool> visitedBackward(compounds_.size(), false);
+    std::vector<int> parentForward(compounds_.size(), -1);
+    std::vector<int> reactionForward(compounds_.size(), -1);
+    std::vector<int> nextBackward(compounds_.size(), -1);
+    std::vector<int> reactionBackward(compounds_.size(), -1);
+
+    std::queue<int> forwardQueue;
+    std::queue<int> backwardQueue;
+
+    visitedForward[*start] = true;
+    visitedBackward[*target] = true;
+    forwardQueue.push(*start);
+    backwardQueue.push(*target);
+
+    int meeting = -1;
+
+    auto expandForward = [&]() {
+        if (forwardQueue.empty()) return;
+        const int current = forwardQueue.front();
+        forwardQueue.pop();
+        result.visitedOrder.push_back(current);
+
+        if (visitedBackward[current]) {
+            meeting = current;
+            return;
+        }
+
+        for (const auto& edge : adjacency_[current]) {
+            if (!visitedForward[edge.to]) {
+                visitedForward[edge.to] = true;
+                parentForward[edge.to] = current;
+                reactionForward[edge.to] = edge.reactionId;
+                forwardQueue.push(edge.to);
+            }
+            if (visitedBackward[edge.to]) {
+                meeting = edge.to;
+                return;
+            }
+        }
+    };
+
+    auto expandBackward = [&]() {
+        if (backwardQueue.empty()) return;
+        const int current = backwardQueue.front();
+        backwardQueue.pop();
+        if (std::find(result.visitedOrder.begin(), result.visitedOrder.end(), current)
+            == result.visitedOrder.end()) {
+            result.visitedOrder.push_back(current);
+        }
+
+        if (visitedForward[current]) {
+            meeting = current;
+            return;
+        }
+
+        for (const auto& reverseEdge : reverseAdjacency[current]) {
+            const int predecessor = reverseEdge.to;
+            if (!visitedBackward[predecessor]) {
+                visitedBackward[predecessor] = true;
+                nextBackward[predecessor] = current;
+                reactionBackward[predecessor] = reverseEdge.reactionId;
+                backwardQueue.push(predecessor);
+            }
+            if (visitedForward[predecessor]) {
+                meeting = predecessor;
+                return;
+            }
+        }
+    };
+
+    while (!forwardQueue.empty() && !backwardQueue.empty() && meeting == -1) {
+        if (forwardQueue.size() <= backwardQueue.size()) {
+            expandForward();
+        } else {
+            expandBackward();
+        }
+    }
+
+    if (meeting == -1) return result;
+
+    result.found = true;
+
+    std::vector<int> leftNodes;
+    std::vector<int> leftReactions;
+    for (int cursor = meeting; cursor != -1; cursor = parentForward[cursor]) {
+        leftNodes.push_back(cursor);
+        if (reactionForward[cursor] != -1) leftReactions.push_back(reactionForward[cursor]);
+    }
+    std::reverse(leftNodes.begin(), leftNodes.end());
+    std::reverse(leftReactions.begin(), leftReactions.end());
+
+    result.compoundIds = leftNodes;
+    result.reactionIds = leftReactions;
+
+    int cursor = meeting;
+    while (nextBackward[cursor] != -1) {
+        result.reactionIds.push_back(reactionBackward[cursor]);
+        cursor = nextBackward[cursor];
+        result.compoundIds.push_back(cursor);
+    }
+
+    result.totalCost = static_cast<int>(result.reactionIds.size());
     return result;
 }
 
@@ -284,6 +479,62 @@ std::vector<int> ReactionGraph::firstDirectedCycle() const {
         }
     }
     return {};
+}
+
+SccResult ReactionGraph::stronglyConnectedComponents() const {
+    SccResult result;
+    const int count = static_cast<int>(compounds_.size());
+
+    std::vector<int> index(count, -1);
+    std::vector<int> lowLink(count, -1);
+    std::vector<bool> onStack(count, false);
+    std::vector<int> stack;
+    int nextIndex = 0;
+
+    std::function<void(int)> visit = [&](int node) {
+        index[node] = nextIndex;
+        lowLink[node] = nextIndex;
+        ++nextIndex;
+
+        stack.push_back(node);
+        onStack[node] = true;
+        result.visitedOrder.push_back(node);
+
+        for (const auto& edge : adjacency_[node]) {
+            const int next = edge.to;
+            if (index[next] == -1) {
+                visit(next);
+                lowLink[node] = std::min(lowLink[node], lowLink[next]);
+            } else if (onStack[next]) {
+                lowLink[node] = std::min(lowLink[node], index[next]);
+            }
+        }
+
+        if (lowLink[node] == index[node]) {
+            std::vector<int> component;
+            while (!stack.empty()) {
+                const int top = stack.back();
+                stack.pop_back();
+                onStack[top] = false;
+                component.push_back(top);
+                if (top == node) break;
+            }
+            result.components.push_back(std::move(component));
+        }
+    };
+
+    for (int node = 0; node < count; ++node) {
+        if (index[node] == -1) visit(node);
+    }
+
+    std::sort(
+        result.components.begin(),
+        result.components.end(),
+        [](const auto& left, const auto& right) {
+            return left.size() > right.size();
+        });
+
+    return result;
 }
 
 std::vector<int> ReactionGraph::searchCompounds(const std::string& prefix, std::size_t limit) const {

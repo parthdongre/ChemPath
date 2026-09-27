@@ -17,7 +17,10 @@ struct Reaction {
     std::string name;
     std::vector<int> reactants;
     std::vector<int> products;
+    std::string equation;
+    std::string conditions;
     std::string note;
+    std::string sourceKey;
     int cost{1};
 };
 

@@ -1,0 +1,18 @@
+{
+  "name": "chempath",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "build:engine": "cmake -S engine -B engine/build && cmake --build engine/build",
+    "test:engine": "ctest --test-dir engine/build --output-on-failure",
+    "dev": "concurrently \"npm --workspace server run dev\" \"npm --workspace web run dev\"",
+    "build:web": "npm --workspace web run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

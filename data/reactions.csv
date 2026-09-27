@@ -1,0 +1,41 @@
+id|name|reactants|products|note
+0|Hydrogen combustion|Hydrogen;Oxygen|Water|Simplified combustion connectivity
+1|Water electrolysis|Water|Hydrogen;Oxygen|Reverse connectivity used to demonstrate reaction-network cycles
+2|Hydrogen peroxide decomposition|Hydrogen Peroxide|Water;Oxygen|Common decomposition pathway
+3|Hydrogen peroxide formation|Hydrogen;Oxygen|Hydrogen Peroxide|Simplified educational pathway
+4|Methane combustion|Methane;Oxygen|Carbon Dioxide;Water|Complete combustion
+5|Methane incomplete combustion|Methane;Oxygen|Carbon Monoxide;Water|Simplified incomplete combustion
+6|Carbon monoxide oxidation|Carbon Monoxide;Oxygen|Carbon Dioxide|Oxidation step
+7|Carbon dioxide hydration|Carbon Dioxide;Water|Carbonic Acid|CO2 hydration in water
+8|Carbonic acid dissociation|Carbonic Acid|Bicarbonate|First dissociation represented as compound connectivity
+9|Bicarbonate protonation|Bicarbonate|Carbonic Acid|Reverse equilibrium direction
+10|Bicarbonate deprotonation|Bicarbonate|Carbonate|Second dissociation represented as connectivity
+11|Carbonate protonation|Carbonate|Bicarbonate|Reverse equilibrium direction
+12|Methane partial oxidation|Methane;Oxygen|Methanol|Simplified educational oxidation step
+13|Methanol oxidation|Methanol;Oxygen|Formaldehyde;Water|Simplified oxidation
+14|Formaldehyde oxidation|Formaldehyde;Oxygen|Methanoic Acid|Simplified oxidation
+15|Methanoic acid oxidation|Methanoic Acid;Oxygen|Carbon Dioxide;Water|Simplified complete oxidation
+16|Ethanol oxidation|Ethanol;Oxygen|Acetaldehyde;Water|Simplified oxidation
+17|Acetaldehyde oxidation|Acetaldehyde;Oxygen|Acetic Acid|Simplified oxidation
+18|Acetic acid oxidation|Acetic Acid;Oxygen|Carbon Dioxide;Water|Simplified oxidation
+19|Ethanol dehydration|Ethanol|Ethene;Water|Simplified dehydration
+20|Ethene hydrogenation|Ethene;Hydrogen|Ethane|Hydrogenation connectivity
+21|Ethane dehydrogenation|Ethane|Ethene;Hydrogen|Reverse connectivity for demonstration
+22|Glucose glycolysis|Glucose|Pyruvate|Highly simplified biochemical pathway
+23|Lactic fermentation|Pyruvate|Lactic Acid|Simplified biochemical pathway
+24|Lactate oxidation|Lactic Acid|Pyruvate|Reverse biochemical connectivity
+25|Ammonia protonation|Ammonia|Ammonium|Acid-base connectivity
+26|Ammonium deprotonation|Ammonium|Ammonia|Reverse acid-base connectivity
+27|Nitrogen oxidation|Nitrogen;Oxygen|Nitric Oxide|High-temperature oxidation represented as connectivity
+28|Nitric oxide oxidation|Nitric Oxide;Oxygen|Nitrogen Dioxide|Atmospheric oxidation
+29|Nitrogen dioxide hydrolysis|Nitrogen Dioxide;Water|Nitrous Acid;Nitric Acid|Simplified hydrolysis products
+30|Nitrous acid oxidation|Nitrous Acid;Oxygen|Nitric Acid|Simplified oxidation
+31|Sulfur dioxide oxidation|Sulfur Dioxide;Oxygen|Sulfur Trioxide|Oxidation step
+32|Sulfur trioxide hydration|Sulfur Trioxide;Water|Sulfuric Acid|Hydration step
+33|Hydrogen sulfide oxidation|Hydrogen Sulfide;Oxygen|Sulfur Dioxide;Water|Simplified oxidation
+34|Sulfite oxidation|Sulfite;Oxygen|Sulfate|Oxidation of sulfite
+35|Sulfuric acid dissociation|Sulfuric Acid|Sulfate|Simplified connectivity
+36|Sulfate protonation|Sulfate|Sulfuric Acid|Reverse connectivity for demonstration
+37|Sulfur dioxide to sulfite|Sulfur Dioxide|Sulfite|Simplified aqueous-network connection
+38|Methanol combustion|Methanol;Oxygen|Carbon Dioxide;Water|Complete oxidation connectivity
+39|Ethanol combustion|Ethanol;Oxygen|Carbon Dioxide;Water|Complete oxidation connectivity

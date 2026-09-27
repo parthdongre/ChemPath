@@ -1,0 +1,35 @@
+id|name|formula|category
+0|Hydrogen|H2|Inorganic
+1|Oxygen|O2|Inorganic
+2|Water|H2O|Inorganic
+3|Hydrogen Peroxide|H2O2|Inorganic
+4|Methane|CH4|Organic
+5|Carbon Monoxide|CO|Inorganic
+6|Carbon Dioxide|CO2|Inorganic
+7|Carbonic Acid|H2CO3|Acid
+8|Bicarbonate|HCO3-|Ion
+9|Carbonate|CO3^2-|Ion
+10|Methanol|CH3OH|Organic
+11|Formaldehyde|CH2O|Organic
+12|Methanoic Acid|HCOOH|Acid
+13|Ethanol|C2H5OH|Organic
+14|Acetaldehyde|CH3CHO|Organic
+15|Acetic Acid|CH3COOH|Acid
+16|Ethene|C2H4|Organic
+17|Ethane|C2H6|Organic
+18|Glucose|C6H12O6|Biochemical
+19|Pyruvate|C3H4O3|Biochemical
+20|Lactic Acid|C3H6O3|Biochemical
+21|Ammonia|NH3|Base
+22|Ammonium|NH4+|Ion
+23|Nitrogen|N2|Inorganic
+24|Nitric Oxide|NO|Inorganic
+25|Nitrogen Dioxide|NO2|Inorganic
+26|Nitrous Acid|HNO2|Acid
+27|Nitric Acid|HNO3|Acid
+28|Sulfur Dioxide|SO2|Inorganic
+29|Sulfur Trioxide|SO3|Inorganic
+30|Sulfuric Acid|H2SO4|Acid
+31|Hydrogen Sulfide|H2S|Inorganic
+32|Sulfite|SO3^2-|Ion
+33|Sulfate|SO4^2-|Ion

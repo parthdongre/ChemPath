@@ -1,0 +1,15 @@
+# Build output
+engine/build/
+web/dist/
+
+# JavaScript dependencies
+node_modules/
+
+# Local environment
+.env
+.env.local
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

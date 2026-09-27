@@ -1,0 +1,38 @@
+name: ChemPath CI
+
+on:
+  push:
+    branches: [main, midsem-build]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install JavaScript dependencies
+        run: npm install
+
+      - name: Build C++ engine
+        run: npm run build:engine
+
+      - name: Test C++ engine
+        run: npm run test:engine
+
+      - name: Build frontend
+        run: npm run build:web
+
+      - name: Smoke-test CLI
+        run: |
+          ./engine/build/chempath stats
+          ./engine/build/chempath path Methane Bicarbonate
+          ./engine/build/chempath search meth

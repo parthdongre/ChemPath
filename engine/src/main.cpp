@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+using chempath::PathResult;
 using chempath::ReactionGraph;
 
 namespace {
@@ -82,12 +83,58 @@ std::vector<std::string> positionalArgs(int argc, char** argv) {
     return args;
 }
 
+void printPathResult(
+    const ReactionGraph& graph,
+    const PathResult& result,
+    const std::string& algorithm,
+    const std::string& from,
+    const std::string& to,
+    double elapsedMs) {
+
+    std::cout << "{\"ok\":true,\"algorithm\":\"" << jsonEscape(algorithm)
+              << "\",\"found\":" << (result.found ? "true" : "false")
+              << ",\"from\":\"" << jsonEscape(from)
+              << "\",\"to\":\"" << jsonEscape(to) << "\"";
+
+    if (result.found) {
+        std::cout << ",\"path\":";
+        printCompoundArray(graph, result.compoundIds);
+
+        std::cout << ",\"reactionPath\":[";
+        for (std::size_t i = 0; i < result.reactionIds.size(); ++i) {
+            if (i) std::cout << ",";
+            const auto* reaction = graph.reaction(result.reactionIds[i]);
+            const auto* source = graph.compound(result.compoundIds[i]);
+            const auto* target = graph.compound(result.compoundIds[i + 1]);
+            std::cout
+                << "{\"reactionId\":" << result.reactionIds[i]
+                << ",\"reaction\":\"" << jsonEscape(reaction ? reaction->name : "")
+                << "\",\"cost\":" << (reaction ? reaction->cost : 1)
+                << ",\"from\":\"" << jsonEscape(source ? source->name : "")
+                << "\",\"to\":\"" << jsonEscape(target ? target->name : "")
+                << "\"}";
+        }
+        std::cout << "]";
+    } else {
+        std::cout << ",\"path\":[],\"reactionPath\":[]";
+    }
+
+    std::cout << ",\"steps\":" << result.reactionIds.size()
+              << ",\"totalCost\":" << result.totalCost
+              << ",\"visitedCount\":" << result.visitedOrder.size()
+              << ",\"visitedOrder\":";
+    printCompoundArray(graph, result.visitedOrder);
+    std::cout << ",\"elapsedMs\":" << std::fixed << std::setprecision(4) << elapsedMs
+              << "}\n";
+}
+
 } // namespace
 
 int main(int argc, char** argv) {
     const auto args = positionalArgs(argc, argv);
     if (args.empty()) {
-        printError("Usage: chempath <network|path|reachable|cycles|search|stats> [args]");
+        printError(
+            "Usage: chempath <network|path|dijkstra|bidirectional|reachable|cycles|scc|search|stats> [args]");
         return 1;
     }
 
@@ -106,8 +153,8 @@ int main(int argc, char** argv) {
             << ",\"compounds\":" << graph.compounds().size()
             << ",\"reactions\":" << graph.reactions().size()
             << ",\"directedEdges\":" << graph.edgeCount()
-            << ",\"structures\":[\"Graph\",\"Adjacency List\",\"Queue\",\"Stack\",\"Hash Table\",\"Trie\"]"
-            << ",\"algorithms\":[\"BFS\",\"DFS\",\"Directed Cycle Detection\",\"Prefix Search\"]"
+            << ",\"structures\":[\"Graph\",\"Adjacency List\",\"Queue\",\"Stack\",\"Hash Table\",\"Trie\",\"Priority Queue\",\"Low-link Stack\"]"
+            << ",\"algorithms\":[\"BFS\",\"Dijkstra\",\"Bidirectional BFS\",\"DFS\",\"Directed Cycle Detection\",\"Tarjan SCC\",\"Prefix Search\"]"
             << "}\n";
         return 0;
     }
@@ -138,6 +185,7 @@ int main(int argc, char** argv) {
                     << "\",\"source\":" << from
                     << ",\"target\":" << edge.to
                     << ",\"reactionId\":" << edge.reactionId
+                    << ",\"cost\":" << edge.cost
                     << ",\"reaction\":\"" << jsonEscape(reaction->name)
                     << "\",\"note\":\"" << jsonEscape(reaction->note)
                     << "\"}";
@@ -147,50 +195,31 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    if (command == "path") {
+    if (command == "path" || command == "dijkstra" || command == "bidirectional") {
         if (args.size() < 3) {
-            printError("path requires <from> <to>");
+            printError(command + " requires <from> <to>");
             return 1;
         }
 
         const auto started = std::chrono::steady_clock::now();
-        const auto result = graph.shortestPathBfs(args[1], args[2]);
+        PathResult result;
+        std::string algorithm;
+
+        if (command == "dijkstra") {
+            result = graph.shortestPathDijkstra(args[1], args[2]);
+            algorithm = "Dijkstra";
+        } else if (command == "bidirectional") {
+            result = graph.shortestPathBidirectional(args[1], args[2]);
+            algorithm = "Bidirectional BFS";
+        } else {
+            result = graph.shortestPathBfs(args[1], args[2]);
+            algorithm = "BFS";
+        }
+
         const auto elapsed = std::chrono::duration<double, std::milli>(
             std::chrono::steady_clock::now() - started).count();
 
-        std::cout << "{\"ok\":true,\"algorithm\":\"BFS\",\"found\":"
-                  << (result.found ? "true" : "false")
-                  << ",\"from\":\"" << jsonEscape(args[1])
-                  << "\",\"to\":\"" << jsonEscape(args[2]) << "\"";
-
-        if (result.found) {
-            std::cout << ",\"path\":";
-            printCompoundArray(graph, result.compoundIds);
-
-            std::cout << ",\"reactionPath\":[";
-            for (std::size_t i = 0; i < result.reactionIds.size(); ++i) {
-                if (i) std::cout << ",";
-                const auto* reaction = graph.reaction(result.reactionIds[i]);
-                const auto* from = graph.compound(result.compoundIds[i]);
-                const auto* to = graph.compound(result.compoundIds[i + 1]);
-                std::cout
-                    << "{\"reactionId\":" << result.reactionIds[i]
-                    << ",\"reaction\":\"" << jsonEscape(reaction ? reaction->name : "")
-                    << "\",\"from\":\"" << jsonEscape(from ? from->name : "")
-                    << "\",\"to\":\"" << jsonEscape(to ? to->name : "")
-                    << "\"}";
-            }
-            std::cout << "]";
-        } else {
-            std::cout << ",\"path\":[],\"reactionPath\":[]";
-        }
-
-        std::cout << ",\"steps\":" << result.reactionIds.size()
-                  << ",\"visitedCount\":" << result.visitedOrder.size()
-                  << ",\"visitedOrder\":";
-        printCompoundArray(graph, result.visitedOrder);
-        std::cout << ",\"elapsedMs\":" << std::fixed << std::setprecision(4) << elapsed
-                  << "}\n";
+        printPathResult(graph, result, algorithm, args[1], args[2], elapsed);
         return 0;
     }
 
@@ -208,6 +237,8 @@ int main(int argc, char** argv) {
         std::cout << "{\"ok\":true,\"algorithm\":\"DFS\",\"from\":\""
                   << jsonEscape(args[1]) << "\",\"reachable\":";
         printCompoundArray(graph, order);
+        std::cout << ",\"visitedOrder\":";
+        printCompoundArray(graph, order);
         std::cout << ",\"count\":" << order.size()
                   << ",\"elapsedMs\":" << std::fixed << std::setprecision(4) << elapsed
                   << "}\n";
@@ -220,7 +251,33 @@ int main(int argc, char** argv) {
                   << ",\"hasCycle\":" << (!cycle.empty() ? "true" : "false")
                   << ",\"cycle\":";
         printCompoundArray(graph, cycle);
+        std::cout << ",\"visitedOrder\":";
+        printCompoundArray(graph, cycle);
         std::cout << "}\n";
+        return 0;
+    }
+
+    if (command == "scc") {
+        const auto started = std::chrono::steady_clock::now();
+        const auto result = graph.stronglyConnectedComponents();
+        const auto elapsed = std::chrono::duration<double, std::milli>(
+            std::chrono::steady_clock::now() - started).count();
+
+        std::cout << "{\"ok\":true,\"algorithm\":\"Tarjan SCC\",\"componentCount\":"
+                  << result.components.size()
+                  << ",\"visitedOrder\":";
+        printCompoundArray(graph, result.visitedOrder);
+        std::cout << ",\"components\":[";
+
+        for (std::size_t i = 0; i < result.components.size(); ++i) {
+            if (i) std::cout << ",";
+            printCompoundArray(graph, result.components[i]);
+        }
+
+        std::cout << "],\"largestComponentSize\":"
+                  << (result.components.empty() ? 0 : result.components.front().size())
+                  << ",\"elapsedMs\":" << std::fixed << std::setprecision(4) << elapsed
+                  << "}\n";
         return 0;
     }
 
@@ -230,7 +287,7 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        const auto ids = graph.searchCompounds(args[1], 10);
+        const auto ids = graph.searchCompounds(args[1], 12);
         std::cout << "{\"ok\":true,\"dataStructure\":\"Trie\",\"query\":\""
                   << jsonEscape(args[1]) << "\",\"matches\":";
         printCompoundArray(graph, ids);

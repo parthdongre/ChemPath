@@ -34,8 +34,8 @@ async function runEngine(args = []) {
       [...args, "--data", dataDir],
       {
         cwd: repoRoot,
-        timeout: 5000,
-        maxBuffer: 1024 * 1024
+        timeout: 10000,
+        maxBuffer: 4 * 1024 * 1024
       }
     );
 
@@ -99,12 +99,27 @@ app.get("/api/network", route(async () => runEngine(["network"])));
 
 app.get("/api/path", route(async (req) => {
   const { from, to } = req.query;
+  const algorithm = String(req.query.algorithm || "bfs").toLowerCase();
+
   if (!from || !to) {
     const error = new Error("Both 'from' and 'to' are required.");
     error.status = 400;
     throw error;
   }
-  return runEngine(["path", String(from), String(to)]);
+
+  const command = {
+    bfs: "path",
+    dijkstra: "dijkstra",
+    bidirectional: "bidirectional"
+  }[algorithm];
+
+  if (!command) {
+    const error = new Error("algorithm must be bfs, dijkstra, or bidirectional.");
+    error.status = 400;
+    throw error;
+  }
+
+  return runEngine([command, String(from), String(to)]);
 }));
 
 app.get("/api/reachable", route(async (req) => {
@@ -118,6 +133,7 @@ app.get("/api/reachable", route(async (req) => {
 }));
 
 app.get("/api/cycles", route(async () => runEngine(["cycles"])));
+app.get("/api/scc", route(async () => runEngine(["scc"])));
 
 app.get("/api/search", route(async (req) => {
   const q = String(req.query.q || "").trim();

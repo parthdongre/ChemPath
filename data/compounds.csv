@@ -137,7 +137,7 @@ id|name|formula|category
 135|Octadecanoic Acid|C18H36O2|Acid
 136|Nonadecanoic Acid|C19H38O2|Acid
 137|Eicosanoic Acid|C20H40O2|Acid
-138|Methylamine|C1H5N|Base
+138|Methylamine|CH5N|Base
 139|Ethylamine|C2H7N|Base
 140|Propylamine|C3H9N|Base
 141|Butylamine|C4H11N|Base
@@ -157,7 +157,7 @@ id|name|formula|category
 155|Octadecylamine|C18H39N|Base
 156|Nonadecylamine|C19H41N|Base
 157|Eicosylamine|C20H43N|Base
-158|Chloromethane|C1H3Cl|Organic
+158|Chloromethane|CH3Cl|Organic
 159|Chloroethane|C2H5Cl|Organic
 160|1-Chloropropane|C3H7Cl|Organic
 161|1-Chlorobutane|C4H9Cl|Organic
@@ -424,3 +424,92 @@ id|name|formula|category
 422|Cytosine|C4H5N3O|Biochemical
 423|Thymine|C5H6N2O2|Biochemical
 424|Uracil|C4H4N2O2|Biochemical
+425|Hydronium|H3O+|Ion
+426|Hydrogen Sulfate|HSO4-|Ion
+427|Hydrogen Chloride|HCl|Inorganic
+428|Ammonium Chloride|NH4Cl|Salt
+429|Thionyl Chloride|SOCl2|Inorganic
+430|Benzyl Alcohol|C7H8O|Organic
+431|Anilinium|C6H8N+|Ion
+432|Phenoxide|C6H5O-|Ion
+433|Barium Sulfate|BaSO4|Salt
+434|Calcium Carbonate|CaCO3|Salt
+435|Methylammonium|CH6N+|Ion
+436|Methylammonium Chloride|CH6NCl|Salt
+437|Methanoate|CH1O2-|Ion
+438|Sodium Methanoate|CH1NaO2|Salt
+439|Ethylammonium|C2H8N+|Ion
+440|Ethylammonium Chloride|C2H8NCl|Salt
+441|Sodium Acetate|C2H3NaO2|Salt
+442|Propylammonium|C3H10N+|Ion
+443|Propylammonium Chloride|C3H10NCl|Salt
+444|Propanoate|C3H5O2-|Ion
+445|Sodium Propanoate|C3H5NaO2|Salt
+446|Butylammonium|C4H12N+|Ion
+447|Butylammonium Chloride|C4H12NCl|Salt
+448|Butanoate|C4H7O2-|Ion
+449|Sodium Butanoate|C4H7NaO2|Salt
+450|Pentylammonium|C5H14N+|Ion
+451|Pentylammonium Chloride|C5H14NCl|Salt
+452|Pentanoate|C5H9O2-|Ion
+453|Sodium Pentanoate|C5H9NaO2|Salt
+454|Hexylammonium|C6H16N+|Ion
+455|Hexylammonium Chloride|C6H16NCl|Salt
+456|Hexanoate|C6H11O2-|Ion
+457|Sodium Hexanoate|C6H11NaO2|Salt
+458|Heptylammonium|C7H18N+|Ion
+459|Heptylammonium Chloride|C7H18NCl|Salt
+460|Heptanoate|C7H13O2-|Ion
+461|Sodium Heptanoate|C7H13NaO2|Salt
+462|Octylammonium|C8H20N+|Ion
+463|Octylammonium Chloride|C8H20NCl|Salt
+464|Octanoate|C8H15O2-|Ion
+465|Sodium Octanoate|C8H15NaO2|Salt
+466|Nonylammonium|C9H22N+|Ion
+467|Nonylammonium Chloride|C9H22NCl|Salt
+468|Nonanoate|C9H17O2-|Ion
+469|Sodium Nonanoate|C9H17NaO2|Salt
+470|Decylammonium|C10H24N+|Ion
+471|Decylammonium Chloride|C10H24NCl|Salt
+472|Decanoate|C10H19O2-|Ion
+473|Sodium Decanoate|C10H19NaO2|Salt
+474|Undecylammonium|C11H26N+|Ion
+475|Undecylammonium Chloride|C11H26NCl|Salt
+476|Undecanoate|C11H21O2-|Ion
+477|Sodium Undecanoate|C11H21NaO2|Salt
+478|Dodecylammonium|C12H28N+|Ion
+479|Dodecylammonium Chloride|C12H28NCl|Salt
+480|Dodecanoate|C12H23O2-|Ion
+481|Sodium Dodecanoate|C12H23NaO2|Salt
+482|Tridecylammonium|C13H30N+|Ion
+483|Tridecylammonium Chloride|C13H30NCl|Salt
+484|Tridecanoate|C13H25O2-|Ion
+485|Sodium Tridecanoate|C13H25NaO2|Salt
+486|Tetradecylammonium|C14H32N+|Ion
+487|Tetradecylammonium Chloride|C14H32NCl|Salt
+488|Tetradecanoate|C14H27O2-|Ion
+489|Sodium Tetradecanoate|C14H27NaO2|Salt
+490|Pentadecylammonium|C15H34N+|Ion
+491|Pentadecylammonium Chloride|C15H34NCl|Salt
+492|Pentadecanoate|C15H29O2-|Ion
+493|Sodium Pentadecanoate|C15H29NaO2|Salt
+494|Hexadecylammonium|C16H36N+|Ion
+495|Hexadecylammonium Chloride|C16H36NCl|Salt
+496|Hexadecanoate|C16H31O2-|Ion
+497|Sodium Hexadecanoate|C16H31NaO2|Salt
+498|Heptadecylammonium|C17H38N+|Ion
+499|Heptadecylammonium Chloride|C17H38NCl|Salt
+500|Heptadecanoate|C17H33O2-|Ion
+501|Sodium Heptadecanoate|C17H33NaO2|Salt
+502|Octadecylammonium|C18H40N+|Ion
+503|Octadecylammonium Chloride|C18H40NCl|Salt
+504|Octadecanoate|C18H35O2-|Ion
+505|Sodium Octadecanoate|C18H35NaO2|Salt
+506|Nonadecylammonium|C19H42N+|Ion
+507|Nonadecylammonium Chloride|C19H42NCl|Salt
+508|Nonadecanoate|C19H37O2-|Ion
+509|Sodium Nonadecanoate|C19H37NaO2|Salt
+510|Eicosylammonium|C20H44N+|Ion
+511|Eicosylammonium Chloride|C20H44NCl|Salt
+512|Eicosanoate|C20H39O2-|Ion
+513|Sodium Eicosanoate|C20H39NaO2|Salt

@@ -38,26 +38,50 @@ function PathResult({ result }) {
   if (!result?.found) return null;
 
   return (
-    <div className="path-line">
-      {result.path.map((compound, index) => (
-        <div className="path-node-wrap" key={compound.id}>
-          <div className="path-node">
-            <strong>{compound.formula}</strong>
-            <span>{compound.name}</span>
-          </div>
+    <>
+      <div className="path-line">
+        {result.path.map((compound, index) => (
+          <div className="path-node-wrap" key={compound.id}>
+            <div className="path-node">
+              <strong>{compound.formula}</strong>
+              <span>{compound.name}</span>
+            </div>
 
-          {index < result.path.length - 1 && (
-            <div className="reaction-edge">
-              <span>→</span>
-              <div>
-                <small>{result.reactionPath[index]?.reaction}</small>
-                <em>cost {result.reactionPath[index]?.cost ?? 1}</em>
+            {index < result.path.length - 1 && (
+              <div className="reaction-edge">
+                <span>→</span>
+                <div>
+                  <small>{result.reactionPath[index]?.reaction}</small>
+                  <em>graph weight {result.reactionPath[index]?.cost ?? 1}</em>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="reaction-audit-list">
+        {result.reactionPath.map((reaction, index) => (
+          <article className="reaction-audit-card" key={reaction.reactionId}>
+            <div className="reaction-audit-index">
+              {String(index + 1).padStart(2, "0")}
+            </div>
+            <div className="reaction-audit-body">
+              <div className="reaction-audit-title">
+                <strong>{reaction.reaction}</strong>
+                <span>{reaction.reversible ? "REVERSIBLE" : "DIRECTED"}</span>
+              </div>
+              <code>{reaction.equation || "Equation metadata unavailable"}</code>
+              <p>{reaction.conditions}</p>
+              <div className="reaction-audit-meta">
+                <span>{reaction.sourceKey}</span>
+                <span>graph weight {reaction.cost}</span>
               </div>
             </div>
-          )}
-        </div>
-      ))}
-    </div>
+          </article>
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -472,8 +496,8 @@ export default function App() {
           <p className="eyebrow">GRAPH-BASED CHEMICAL PATHWAYS</p>
           <h1>Trace the reaction.</h1>
           <p className="lede">
-            Watch C++ graph algorithms move through a dense educational reaction
-            network, one visited compound at a time.
+            Watch C++ graph algorithms move through a dense, chemistry-audited
+            reaction network, one visited compound at a time.
           </p>
         </div>
 
@@ -713,7 +737,7 @@ export default function App() {
               <div className="run-meta">
                 <span><b>{result.algorithm}</b> algorithm</span>
                 <span><b>{result.steps ?? 0}</b> reaction steps</span>
-                <span><b>{result.totalCost ?? 0}</b> total cost</span>
+                <span><b>{result.totalCost ?? 0}</b> graph weight</span>
                 <span><b>{result.visitedCount ?? 0}</b> visited</span>
                 <span><b>{result.elapsedMs ?? "—"}</b> ms C++ runtime</span>
               </div>

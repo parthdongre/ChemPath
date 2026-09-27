@@ -21,6 +21,7 @@ struct Reaction {
     std::string conditions;
     std::string note;
     std::string sourceKey;
+    bool reversible{false};
     int cost{1};
 };
 

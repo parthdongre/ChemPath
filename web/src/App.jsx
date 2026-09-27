@@ -4,12 +4,11 @@ import NetworkGraph from "./components/NetworkGraph.jsx";
 
 const EMPTY_HIGHLIGHT = { nodes: [], edges: [] };
 
-function Metric({ label, value, hint }) {
+function Stat({ value, label }) {
   return (
-    <div className="metric-card">
-      <span>{label}</span>
+    <div className="stat">
       <strong>{value ?? "—"}</strong>
-      {hint && <small>{hint}</small>}
+      <span>{label}</span>
     </div>
   );
 }
@@ -21,7 +20,7 @@ function CompoundSelect({ label, value, onChange, compounds }) {
       <select value={value} onChange={(event) => onChange(event.target.value)}>
         {compounds.map((compound) => (
           <option key={compound.id} value={compound.name}>
-            {compound.name} · {compound.formula}
+            {compound.formula} · {compound.name}
           </option>
         ))}
       </select>
@@ -29,32 +28,35 @@ function CompoundSelect({ label, value, onChange, compounds }) {
   );
 }
 
-function ResultPath({ result }) {
-  if (!result) return null;
-  if (!result.found) {
-    return (
-      <div className="empty-result">
-        No directed pathway was found between those compounds in the current dataset.
-      </div>
-    );
-  }
+function PathResult({ result }) {
+  if (!result?.found) return null;
 
   return (
-    <div className="path-result">
-      <div className="path-strip">
-        {result.path.map((compound, index) => (
-          <div className="path-step" key={compound.id}>
-            <div className="formula-chip">{compound.formula}</div>
+    <div className="path-line">
+      {result.path.map((compound, index) => (
+        <div className="path-node-wrap" key={compound.id}>
+          <div className="path-node">
+            <strong>{compound.formula}</strong>
             <span>{compound.name}</span>
-            {index < result.path.length - 1 && (
-              <div className="path-arrow">
-                <b>→</b>
-                <small>{result.reactionPath[index]?.reaction}</small>
-              </div>
-            )}
           </div>
-        ))}
-      </div>
+          {index < result.path.length - 1 && (
+            <div className="reaction-edge">
+              <span>→</span>
+              <small>{result.reactionPath[index]?.reaction}</small>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Status({ status }) {
+  const online = status.includes("online");
+  return (
+    <div className={`status-chip ${online ? "online" : ""}`}>
+      <span className="status-dot" />
+      <span>{status}</span>
     </div>
   );
 }
@@ -67,7 +69,7 @@ export default function App() {
   const [mode, setMode] = useState("path");
   const [result, setResult] = useState(null);
   const [highlight, setHighlight] = useState(EMPTY_HIGHLIGHT);
-  const [status, setStatus] = useState("Loading C++ engine…");
+  const [status, setStatus] = useState("Connecting to C++");
   const [busy, setBusy] = useState(false);
   const [search, setSearch] = useState("");
   const [matches, setMatches] = useState([]);
@@ -110,12 +112,15 @@ export default function App() {
     try {
       const data = await api.path(from, to);
       setResult(data);
+
       const nodeIds = data.path?.map((compound) => compound.id) ?? [];
-      const edgeIds = data.reactionPath?.map((reaction, index) => {
-        const source = data.path[index]?.id;
-        const target = data.path[index + 1]?.id;
-        return `${source}-${target}-${reaction.reactionId}`;
-      }) ?? [];
+      const edgeIds =
+        data.reactionPath?.map((reaction, index) => {
+          const source = data.path[index]?.id;
+          const target = data.path[index + 1]?.id;
+          return `${source}-${target}-${reaction.reactionId}`;
+        }) ?? [];
+
       setHighlight({ nodes: nodeIds, edges: edgeIds });
     } catch (error) {
       setResult({ error: error.message });
@@ -161,141 +166,166 @@ export default function App() {
     }
   }
 
-  function clearHighlight() {
+  function reset() {
     setResult(null);
     setHighlight(EMPTY_HIGHLIGHT);
   }
 
+  function setModeClean(nextMode) {
+    setMode(nextMode);
+    reset();
+  }
+
   return (
-    <main className="app-shell">
-      <header className="topbar">
-        <div className="brand">
-          <div className="brand-mark">C</div>
-          <div>
-            <h1>ChemPath</h1>
-            <p>Interactive reaction network explorer</p>
-          </div>
-        </div>
-        <div className={`engine-status ${status.includes("online") ? "online" : ""}`}>
-          <i />
-          {status}
-        </div>
+    <main className="site-shell">
+      <header className="nav">
+        <a className="wordmark" href="#top" aria-label="ChemPath home">
+          <span className="mark">CP</span>
+          <span>ChemPath</span>
+        </a>
+
+        <nav className="nav-links" aria-label="Primary">
+          <a href="#explorer">Explorer</a>
+          <a href="#engine">Engine</a>
+        </nav>
+
+        <Status status={status} />
       </header>
 
-      <section className="hero">
-        <div>
-          <div className="eyebrow">DATA STRUCTURES × CHEMISTRY</div>
-          <h2>Explore chemistry as a graph.</h2>
-          <p>
-            A scientific network interface backed by a C++17 engine implementing
-            graph traversal, hashing, cycle detection and Trie prefix search.
+      <section className="hero" id="top">
+        <div className="hero-copy">
+          <p className="eyebrow">GRAPH-BASED CHEMICAL PATHWAYS</p>
+          <h1>Trace the reaction.</h1>
+          <p className="lede">
+            Explore known transformations with graph algorithms implemented in C++.
           </p>
         </div>
-        <div className="hero-metrics">
-          <Metric label="Compounds" value={stats?.compounds} hint="graph vertices" />
-          <Metric label="Reactions" value={stats?.reactions} hint="known transformations" />
-          <Metric label="Edges" value={stats?.directedEdges} hint="adjacency-list links" />
+
+        <div className="hero-stats" aria-label="Dataset statistics">
+          <Stat value={stats?.compounds} label="compounds" />
+          <Stat value={stats?.reactions} label="reactions" />
+          <Stat value={stats?.directedEdges} label="directed edges" />
         </div>
       </section>
 
-      <section className="workspace">
-        <aside className="control-panel">
-          <div className="panel-heading">
-            <span>Analysis console</span>
-            <button className="text-button" onClick={clearHighlight}>Reset</button>
+      <div className="rule">
+        <span>01</span>
+        <p>Reaction explorer</p>
+      </div>
+
+      <section className="explorer" id="explorer">
+        <header className="explorer-head">
+          <div className="mode-switch" role="tablist" aria-label="Algorithm mode">
+            <button
+              className={mode === "path" ? "active" : ""}
+              onClick={() => setModeClean("path")}
+            >
+              BFS / Path
+            </button>
+            <button
+              className={mode === "dfs" ? "active" : ""}
+              onClick={() => setModeClean("dfs")}
+            >
+              DFS / Explore
+            </button>
+            <button
+              className={mode === "cycle" ? "active" : ""}
+              onClick={() => setModeClean("cycle")}
+            >
+              Cycle scan
+            </button>
           </div>
 
-          <div className="mode-tabs">
-            <button className={mode === "path" ? "active" : ""} onClick={() => setMode("path")}>Path</button>
-            <button className={mode === "dfs" ? "active" : ""} onClick={() => setMode("dfs")}>Explore</button>
-            <button className={mode === "cycle" ? "active" : ""} onClick={() => setMode("cycle")}>Cycles</button>
+          <button className="reset-button" onClick={reset}>
+            Clear result
+          </button>
+        </header>
+
+        <div className="command-bar">
+          <div className="command-primary">
+            {mode === "path" && (
+              <>
+                <CompoundSelect
+                  label="Start"
+                  value={from}
+                  onChange={setFrom}
+                  compounds={compounds}
+                />
+                <span className="command-arrow">→</span>
+                <CompoundSelect
+                  label="Target"
+                  value={to}
+                  onChange={setTo}
+                  compounds={compounds}
+                />
+                <button className="run-button" disabled={busy || !network} onClick={runPath}>
+                  {busy ? "Running…" : "Find path"}
+                </button>
+              </>
+            )}
+
+            {mode === "dfs" && (
+              <>
+                <CompoundSelect
+                  label="Explore from"
+                  value={from}
+                  onChange={setFrom}
+                  compounds={compounds}
+                />
+                <button className="run-button" disabled={busy || !network} onClick={runDfs}>
+                  {busy ? "Traversing…" : "Run DFS"}
+                </button>
+              </>
+            )}
+
+            {mode === "cycle" && (
+              <div className="cycle-command">
+                <div>
+                  <span className="command-kicker">Directed graph</span>
+                  <strong>Find the first cycle</strong>
+                </div>
+                <button className="run-button" disabled={busy || !network} onClick={runCycle}>
+                  {busy ? "Scanning…" : "Scan network"}
+                </button>
+              </div>
+            )}
           </div>
 
-          {mode === "path" && (
-            <div className="control-section">
-              <CompoundSelect label="Start compound" value={from} onChange={setFrom} compounds={compounds} />
-              <CompoundSelect label="Target compound" value={to} onChange={setTo} compounds={compounds} />
-              <button className="primary-button" disabled={busy || !network} onClick={runPath}>
-                {busy ? "Running BFS…" : "Find shortest pathway"}
-              </button>
-              <p className="algorithm-note">
-                <strong>BFS</strong> uses a queue, visited set and parent map to return
-                the minimum number of reaction edges.
-              </p>
-            </div>
-          )}
-
-          {mode === "dfs" && (
-            <div className="control-section">
-              <CompoundSelect label="Explore from" value={from} onChange={setFrom} compounds={compounds} />
-              <button className="primary-button" disabled={busy || !network} onClick={runDfs}>
-                {busy ? "Running DFS…" : "Explore reachable compounds"}
-              </button>
-              <p className="algorithm-note">
-                <strong>DFS</strong> uses an explicit stack to traverse the complete
-                reachable subnetwork from the selected compound.
-              </p>
-            </div>
-          )}
-
-          {mode === "cycle" && (
-            <div className="control-section">
-              <button className="primary-button" disabled={busy || !network} onClick={runCycle}>
-                {busy ? "Scanning graph…" : "Detect a directed cycle"}
-              </button>
-              <p className="algorithm-note">
-                A three-state DFS identifies back edges and reconstructs one cycle
-                from the recursion parent chain.
-              </p>
-            </div>
-          )}
-
-          <div className="divider" />
-
-          <div className="search-block">
-            <label className="field">
-              <span>Trie compound finder</span>
+          <div className="compound-search">
+            <label>
+              <span>Trie search</span>
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Try: meth"
+                placeholder="meth…"
+                aria-label="Search compounds using Trie"
               />
             </label>
 
-            <div className="search-results">
-              {matches.map((compound) => (
-                <button
-                  key={compound.id}
-                  onClick={() => {
-                    setFrom(compound.name);
-                    setSearch(compound.name);
-                    setMatches([]);
-                  }}
-                >
-                  <b>{compound.formula}</b>
-                  <span>{compound.name}</span>
-                </button>
-              ))}
-            </div>
+            {matches.length > 0 && (
+              <div className="search-popover">
+                {matches.map((compound) => (
+                  <button
+                    key={compound.id}
+                    onClick={() => {
+                      setFrom(compound.name);
+                      setSearch(compound.name);
+                      setMatches([]);
+                    }}
+                  >
+                    <span>{compound.formula}</span>
+                    <small>{compound.name}</small>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+        </div>
 
-          <div className="structure-list">
-            <span>Engine structures</span>
-            <div>
-              {(stats?.structures ?? []).map((structure) => (
-                <em key={structure}>{structure}</em>
-              ))}
-            </div>
-          </div>
-        </aside>
-
-        <div className="graph-panel">
-          <div className="graph-toolbar">
-            <div>
-              <span className="live-dot" />
-              Reaction network
-            </div>
-            <p>Drag nodes · scroll to zoom · arrows show direction</p>
+        <div className="graph-frame">
+          <div className="graph-caption">
+            <span>LIVE NETWORK</span>
+            <p>drag nodes · scroll to zoom · arrows show direction</p>
           </div>
 
           {network ? (
@@ -306,84 +336,119 @@ export default function App() {
               selectedNodeId={selectedFromId}
             />
           ) : (
-            <div className="graph-loading">Connecting to ChemPath C++ engine…</div>
+            <div className="graph-loading">Waiting for C++ engine</div>
           )}
 
-          <div className="legend">
+          <div className="graph-legend">
             <span><i className="organic" /> Organic</span>
             <span><i className="acid" /> Acid</span>
             <span><i className="ion" /> Ion</span>
-            <span><i className="biochemical" /> Biochemical</span>
+            <span><i className="bio" /> Biochemical</span>
             <span><i className="inorganic" /> Inorganic</span>
           </div>
         </div>
-      </section>
 
-      <section className="result-panel">
-        <div className="result-heading">
-          <div>
-            <span className="eyebrow">ALGORITHM OUTPUT</span>
-            <h3>
-              {mode === "path" && "Shortest reaction pathway"}
-              {mode === "dfs" && "Reachable reaction subnetwork"}
+        <section className="result-dock">
+          <div className="result-label">
+            <span>OUTPUT</span>
+            <strong>
+              {mode === "path" && "Shortest pathway"}
+              {mode === "dfs" && "Reachable compounds"}
               {mode === "cycle" && "Cycle analysis"}
-            </h3>
+            </strong>
           </div>
 
-          {result && !result.error && (
-            <div className="result-metrics">
-              {mode === "path" && <>
-                <Metric label="Steps" value={result.steps} />
-                <Metric label="Visited" value={result.visitedCount} />
-                <Metric label="Runtime" value={`${result.elapsedMs} ms`} />
-              </>}
-              {mode === "dfs" && <>
-                <Metric label="Reachable" value={result.count} />
-                <Metric label="Runtime" value={`${result.elapsedMs} ms`} />
-              </>}
-              {mode === "cycle" && <Metric label="Cycle found" value={result.hasCycle ? "Yes" : "No"} />}
+          {!result && (
+            <div className="result-empty">
+              Run an algorithm to inspect the network.
             </div>
           )}
+
+          {result?.error && <div className="result-error">{result.error}</div>}
+
+          {mode === "path" && result && !result.error && (
+            <>
+              <div className="run-meta">
+                <span><b>{result.steps ?? 0}</b> steps</span>
+                <span><b>{result.visitedCount ?? 0}</b> visited</span>
+                <span><b>{result.elapsedMs ?? "—"}</b> ms</span>
+              </div>
+
+              {result.found ? (
+                <PathResult result={result} />
+              ) : (
+                <div className="result-empty">No directed pathway found.</div>
+              )}
+            </>
+          )}
+
+          {mode === "dfs" && result?.reachable && (
+            <>
+              <div className="run-meta">
+                <span><b>{result.count ?? 0}</b> reachable</span>
+                <span><b>{result.elapsedMs ?? "—"}</b> ms</span>
+              </div>
+              <div className="compound-strip">
+                {result.reachable.map((compound, index) => (
+                  <div key={compound.id}>
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <strong>{compound.formula}</strong>
+                    <small>{compound.name}</small>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {mode === "cycle" && result?.cycle && (
+            <>
+              <div className="run-meta">
+                <span><b>{result.hasCycle ? "YES" : "NO"}</b> cycle</span>
+              </div>
+              <div className="cycle-path">
+                {result.cycle.length > 0
+                  ? result.cycle.map((compound, index) => (
+                      <span key={`${compound.id}-${index}`}>
+                        <b>{compound.formula}</b>
+                        {index < result.cycle.length - 1 && " → "}
+                      </span>
+                    ))
+                  : "No directed cycle found."}
+              </div>
+            </>
+          )}
+        </section>
+      </section>
+
+      <div className="rule" id="engine">
+        <span>02</span>
+        <p>What the C++ engine is doing</p>
+      </div>
+
+      <section className="engine-map">
+        <div className="engine-copy">
+          <p className="eyebrow">DATA STRUCTURES</p>
+          <h2>Frontend shows it. C++ decides it.</h2>
+          <p>
+            The browser renders the graph. Traversal, lookup, path reconstruction and
+            cycle detection stay inside the C++17 engine.
+          </p>
         </div>
 
-        {!result && (
-          <div className="empty-result">
-            Run an analysis from the left panel. Results returned by the C++ engine will appear here.
-          </div>
-        )}
-
-        {result?.error && <div className="error-result">{result.error}</div>}
-
-        {mode === "path" && result && !result.error && <ResultPath result={result} />}
-
-        {mode === "dfs" && result?.reachable && (
-          <div className="compound-grid">
-            {result.reachable.map((compound, index) => (
-              <div key={compound.id}>
-                <b>{index + 1}</b>
-                <span>{compound.formula}</span>
-                <small>{compound.name}</small>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {mode === "cycle" && result?.cycle && (
-          <div className="cycle-result">
-            {result.cycle.map((compound, index) => (
-              <span key={`${compound.id}-${index}`}>
-                <b>{compound.formula}</b>
-                {index < result.cycle.length - 1 && " → "}
-              </span>
-            ))}
-          </div>
-        )}
+        <div className="structure-table">
+          <div><span>01</span><strong>Adjacency list</strong><small>reaction graph</small></div>
+          <div><span>02</span><strong>Queue</strong><small>BFS frontier</small></div>
+          <div><span>03</span><strong>Stack</strong><small>iterative DFS</small></div>
+          <div><span>04</span><strong>Hash table</strong><small>compound → id</small></div>
+          <div><span>05</span><strong>Trie</strong><small>prefix search</small></div>
+          <div><span>06</span><strong>Parent map</strong><small>path rebuild</small></div>
+        </div>
       </section>
 
       <footer>
-        <span>ChemPath mid-sem build</span>
-        <span>C++17 engine · React interface · Cytoscape.js visualization</span>
-        <span>Educational network model — not a synthesis-planning tool</span>
+        <span>ChemPath / mid-sem build</span>
+        <span>C++17 · React · Cytoscape.js</span>
+        <span>Educational reaction-network model</span>
       </footer>
     </main>
   );

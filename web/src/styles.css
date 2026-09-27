@@ -726,6 +726,87 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
   font-style: normal;
 }
 
+
+.reaction-audit-list {
+  grid-column: 2;
+  display: grid;
+  gap: 1px;
+  padding: 0 22px 22px;
+}
+
+.reaction-audit-card {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 16px;
+  padding: 15px 0;
+  border-top: 1px solid var(--line);
+}
+
+.reaction-audit-index {
+  color: var(--ink-4);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  padding-top: 3px;
+}
+
+.reaction-audit-body {
+  min-width: 0;
+}
+
+.reaction-audit-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.reaction-audit-title strong {
+  color: var(--ink-1);
+  font-size: 11px;
+}
+
+.reaction-audit-title span {
+  flex: 0 0 auto;
+  padding: 4px 6px;
+  border: 1px solid var(--accent-line);
+  border-radius: 999px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 7px;
+  letter-spacing: .09em;
+}
+
+.reaction-audit-body code {
+  display: block;
+  margin-top: 8px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  background: var(--bg-0);
+  color: var(--accent);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.reaction-audit-body p {
+  margin: 8px 0 0;
+  color: var(--ink-3);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.reaction-audit-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 7px;
+  color: var(--ink-4);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8px;
+}
+
 .compound-strip {
   grid-column: 2;
   display: flex;
@@ -883,7 +964,7 @@ footer {
   .simulation-meta { grid-template-columns: repeat(2,1fr); }
   .result-dock { grid-template-columns: 1fr; }
   .result-label { border-right: 0; border-bottom: 1px solid var(--line); }
-  .run-meta, .path-line, .compound-strip, .cycle-path, .scc-preview { grid-column: 1; }
+  .run-meta, .path-line, .reaction-audit-list, .compound-strip, .cycle-path, .scc-preview { grid-column: 1; }
   .engine-map { padding-bottom: 48px; }
   .structure-table > div { grid-template-columns: 34px 1fr; }
   .structure-table small { grid-column: 2; padding-bottom: 10px; }

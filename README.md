@@ -1,77 +1,71 @@
 # ChemPath
 
-**ChemPath** is an interactive chemical reaction network explorer built for a Data Structures course project. The interface visualizes chemistry as a directed graph, while the actual algorithms and data-structure logic run in a **C++17 engine**.
+**ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The browser renders a dense directed network, while the graph algorithms and data-structure logic execute in a **C++17 engine**.
 
-> **Mid-sem goal:** a working, explainable application where the frontend displays results and C++ performs graph traversal, shortest-path search, cycle detection, hashing and Trie prefix lookup.
+> **Current build:** 425 compounds, 707 reaction records and 1,778 directed graph edges, with a deliberately slowed 10-second visualization of each algorithm's C++ visit order.
 
-## What it does
+## Core idea
 
-- Visualizes compounds as graph vertices and known transformations as directed edges.
-- Finds the **minimum-step reaction pathway** between two compounds using BFS.
-- Explores every reachable compound from a selected starting compound using DFS.
-- Detects a directed cycle using three-state DFS / recursion-stack logic.
-- Searches compound names and formulae using a **Trie**.
-- Reports algorithm metrics such as visited nodes and runtime.
-- Ships with a compact educational reaction dataset so every feature works offline.
+Chemical compounds are represented as graph vertices and known educational transformations as directed edges. ChemPath lets the user inspect that graph with multiple algorithms while seeing the traversal happen step by step.
 
-## Data Structures demonstrated
+The React frontend does **not** implement the algorithms. It requests a result from the C++ engine and then replays the returned visit order over 10 seconds for presentation and learning.
 
-| Structure / algorithm | ChemPath usage | Typical complexity |
-| --- | --- | --- |
-| Adjacency-list graph | Stores reaction connectivity | `O(V + E)` memory |
-| Queue | BFS frontier | `O(1)` enqueue/dequeue |
-| Stack | Iterative DFS frontier | `O(1)` push/pop |
-| Hash table | Compound name → integer ID | Average `O(1)` lookup |
-| Parent arrays | Reconstruct BFS pathway | `O(path length)` |
-| Trie | Prefix-based compound search | `O(L + K)` |
-| DFS state array | Directed cycle detection | `O(V + E)` |
-| BFS | Minimum-edge pathway | `O(V + E)` |
+## Algorithms and data structures
+
+| Structure / algorithm | ChemPath usage |
+| --- | --- |
+| Adjacency-list graph | Stores 425 compounds and 1,778 directed links |
+| Hash table | Compound name → integer vertex ID |
+| Queue + BFS | Minimum number of reaction edges |
+| Priority queue + Dijkstra | Minimum weighted reaction cost |
+| Two BFS frontiers | Bidirectional path search |
+| Explicit stack + DFS | Reachability exploration |
+| Three-state DFS | Directed cycle detection |
+| Low-link stack + Tarjan | Strongly connected components |
+| Parent arrays | Path reconstruction |
+| Trie | Compound/formula prefix search |
+
+## 10-second algorithm replay
+
+The actual C++ computation typically completes in milliseconds. ChemPath intentionally visualizes the returned traversal over **10 seconds**:
+
+1. the current compound expands,
+2. visited compounds remain marked,
+3. the camera follows the active vertex,
+4. the HUD shows step / visited count / elapsed time,
+5. the final solution is fitted into view,
+6. final reaction edges display their reaction names and costs.
+
+This means the animation represents the C++ traversal order while still making a fast algorithm understandable during a classroom presentation.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    UI[React + Cytoscape.js] -->|HTTP| API[Thin Node API]
-    API -->|execFile + JSON| CPP[C++17 ChemPath Engine]
-    CPP --> G[Adjacency-list Graph]
-    CPP --> T[Trie]
-    CPP --> H[Hash Table]
-    CPP --> D[(Reaction Dataset)]
+    UI[React + Cytoscape.js] -->|HTTP| API[Thin Node adapter]
+    API -->|execFile + JSON| CPP[C++17 ChemPath engine]
+    CPP --> G[Adjacency-list graph]
+    CPP --> Q[Queue / Stack / Priority Queue]
+    CPP --> T[Trie + Hash Map]
+    CPP --> D[(Dense educational dataset)]
 ```
-
-The Node process is intentionally only an adapter. It does **not** implement BFS, DFS, cycle detection, path reconstruction or Trie search.
-
-## Current mid-sem scope
-
-- [x] C++ compound and reaction model
-- [x] Adjacency-list graph
-- [x] Hash-based compound lookup
-- [x] BFS shortest pathway + parent reconstruction
-- [x] Iterative DFS reachability
-- [x] Directed cycle detection
-- [x] Trie prefix search
-- [x] Automated C++ tests
-- [x] JSON CLI interface
-- [x] Thin HTTP adapter
-- [x] Interactive graph frontend
-- [x] BFS path highlighting
-- [x] DFS reachable-node highlighting
-- [x] Cycle result display
-- [x] Trie-backed live compound finder
-- [ ] User-created reaction persistence
-- [ ] Weighted reaction paths / Dijkstra
-- [ ] Traversal animation timeline
-- [ ] Expanded validation and larger curated dataset
 
 ## Run locally
 
 ### Requirements
 
 - CMake 3.16+
-- C++17 compiler (Apple Clang / GCC / MSVC)
-- Node.js 20+ and npm
+- C++17 compiler
+- Node.js 20+
+- npm
 
-### Install, build and run
+On macOS with Homebrew:
+
+```bash
+brew install cmake
+```
+
+### First run
 
 ```bash
 npm install
@@ -80,50 +74,61 @@ npm run test:engine
 npm run dev
 ```
 
-Open `http://localhost:5173`. The API listens on `http://localhost:8787`.
+Open:
 
-## Run the C++ engine directly
+```text
+http://localhost:5173
+```
+
+The Node adapter runs on:
+
+```text
+http://localhost:8787
+```
+
+### After pulling C++ changes
+
+Rebuild the engine:
+
+```bash
+git pull
+npm run build:engine
+npm run test:engine
+npm run dev
+```
+
+## C++ CLI
 
 ```bash
 ./engine/build/chempath stats
-./engine/build/chempath network
+
 ./engine/build/chempath path Methane Bicarbonate
+./engine/build/chempath dijkstra Methane Bicarbonate
+./engine/build/chempath bidirectional Methane Bicarbonate
+
 ./engine/build/chempath reachable Methane
 ./engine/build/chempath cycles
+./engine/build/chempath scc
 ./engine/build/chempath search meth
 ```
 
-Example BFS pathway:
+## Suggested mid-sem demonstration
 
-```text
-Methane
-  ↓ Methane combustion
-Carbon Dioxide
-  ↓ Carbon dioxide hydration
-Carbonic Acid
-  ↓ Carbonic acid dissociation
-Bicarbonate
-```
+1. Show the full 425-node reaction network and explain the adjacency-list representation.
+2. Run **BFS** from Methane → Bicarbonate and let the 10-second replay finish.
+3. Switch to **Dijkstra** and explain the priority queue and weighted reaction cost.
+4. Run **Bidirectional BFS** and explain the two search directions.
+5. Run **DFS Explore** from Methane to show reachability.
+6. Run **Tarjan SCC** to highlight a mutually reachable region.
+7. Type `meth` in the compound finder and explain Trie prefix lookup.
+8. Show the C++ source/tests to establish that the algorithms are not JavaScript implementations.
 
-## Recommended mid-sem demonstration
+## Dataset limitation
 
-1. Open the reaction network and explain **vertices, directed edges and adjacency lists**.
-2. Search `meth` and show that the result comes from the C++ **Trie**.
-3. Find a path from **Methane → Bicarbonate** and explain why unweighted BFS finds the minimum number of edges.
-4. Switch to **Explore**, run DFS from Methane and highlight the reachable subnetwork.
-5. Run **Cycle Detection** and explain the `unvisited / visiting / complete` states used to identify a back edge.
-6. Show the C++ source and tests so it is clear the frontend is not implementing the algorithms.
+ChemPath is an **educational graph model**, not a laboratory synthesis planner.
 
-## Dataset model and scientific limitation
-
-ChemPath is an **educational reaction-network model**, not a laboratory synthesis planner.
-
-Each reaction stores one or more reactants and products. For graph analysis, every reactant creates a directed connectivity edge to every product in that known reaction. A returned route therefore describes **network connectivity through known transformations**; it does not prove that a target can be synthesized from one isolated starting compound without co-reactants, catalysts, conditions or stoichiometric balancing.
-
-## Course-learning outcomes
-
-The implementation demonstrates how to translate a real domain into a graph model, choose adjacency lists for a sparse graph, use BFS for minimum-edge paths, use DFS for reachability and cycles, reconstruct a route through parent information, apply hash tables for fast name lookup, and implement Trie-based prefix search.
+The expanded dataset combines common compounds, homologous organic series, ionic networks, aromatic examples and simplified biochemical pathways. Several edges intentionally represent generalized educational connectivity rather than complete balanced laboratory procedures. Reaction costs are illustrative graph weights used to demonstrate Dijkstra; they are **not** thermodynamic, kinetic or monetary measurements.
 
 ---
 
-**ChemPath — Explore chemistry as a network.**
+**ChemPath — watch graph algorithms move through chemistry.**

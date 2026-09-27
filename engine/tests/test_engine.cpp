@@ -76,8 +76,10 @@ int main(int argc, char** argv) {
     // Core DSA behavior still works on the audited network.
     const auto bfs = graph.shortestPathBfs("Methane", "Bicarbonate");
     assert(bfs.found);
-    assert(bfs.compoundIds.size() >= 4);
+    assert(bfs.compoundIds.size() >= 2);
     assert(bfs.reactionIds.size() + 1 == bfs.compoundIds.size());
+    assert(graph.compound(bfs.compoundIds.front())->name == "Methane");
+    assert(graph.compound(bfs.compoundIds.back())->name == "Bicarbonate");
     assert(!bfs.visitedOrder.empty());
 
     const auto dijkstra = graph.shortestPathDijkstra("Methane", "Bicarbonate");

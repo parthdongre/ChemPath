@@ -109,6 +109,9 @@ void printPathResult(
             std::cout
                 << "{\"reactionId\":" << result.reactionIds[i]
                 << ",\"reaction\":\"" << jsonEscape(reaction ? reaction->name : "")
+                << "\",\"equation\":\"" << jsonEscape(reaction ? reaction->equation : "")
+                << "\",\"conditions\":\"" << jsonEscape(reaction ? reaction->conditions : "")
+                << "\",\"sourceKey\":\"" << jsonEscape(reaction ? reaction->sourceKey : "")
                 << "\",\"cost\":" << (reaction ? reaction->cost : 1)
                 << ",\"from\":\"" << jsonEscape(source ? source->name : "")
                 << "\",\"to\":\"" << jsonEscape(target ? target->name : "")
@@ -187,6 +190,9 @@ int main(int argc, char** argv) {
                     << ",\"reactionId\":" << edge.reactionId
                     << ",\"cost\":" << edge.cost
                     << ",\"reaction\":\"" << jsonEscape(reaction->name)
+                    << "\",\"equation\":\"" << jsonEscape(reaction->equation)
+                    << "\",\"conditions\":\"" << jsonEscape(reaction->conditions)
+                    << "\",\"sourceKey\":\"" << jsonEscape(reaction->sourceKey)
                     << "\",\"note\":\"" << jsonEscape(reaction->note)
                     << "\"}";
             }

@@ -1,1 +1,426 @@
-id|name|formula|category\n0|Hydrogen|H2|Inorganic\n1|Oxygen|O2|Inorganic\n2|Water|H2O|Inorganic\n3|Hydrogen Peroxide|H2O2|Inorganic\n4|Methane|CH4|Organic\n5|Carbon Monoxide|CO|Inorganic\n6|Carbon Dioxide|CO2|Inorganic\n7|Carbonic Acid|H2CO3|Acid\n8|Bicarbonate|HCO3-|Ion\n9|Carbonate|CO3^2-|Ion\n10|Methanol|CH3OH|Organic\n11|Formaldehyde|CH2O|Organic\n12|Methanoic Acid|HCOOH|Acid\n13|Ethanol|C2H5OH|Organic\n14|Acetaldehyde|CH3CHO|Organic\n15|Acetic Acid|CH3COOH|Acid\n16|Ethene|C2H4|Organic\n17|Ethane|C2H6|Organic\n18|Glucose|C6H12O6|Biochemical\n19|Pyruvate|C3H4O3|Biochemical\n20|Lactic Acid|C3H6O3|Biochemical\n21|Ammonia|NH3|Base\n22|Ammonium|NH4+|Ion\n23|Nitrogen|N2|Inorganic\n24|Nitric Oxide|NO|Inorganic\n25|Nitrogen Dioxide|NO2|Inorganic\n26|Nitrous Acid|HNO2|Acid\n27|Nitric Acid|HNO3|Acid\n28|Sulfur Dioxide|SO2|Inorganic\n29|Sulfur Trioxide|SO3|Inorganic\n30|Sulfuric Acid|H2SO4|Acid\n31|Hydrogen Sulfide|H2S|Inorganic\n32|Sulfite|SO3^2-|Ion\n33|Sulfate|SO4^2-|Ion\n34|Propane|C3H8|Organic\n35|Butane|C4H10|Organic\n36|Pentane|C5H12|Organic\n37|Hexane|C6H14|Organic\n38|Heptane|C7H16|Organic\n39|Octane|C8H18|Organic\n40|Nonane|C9H20|Organic\n41|Decane|C10H22|Organic\n42|Undecane|C11H24|Organic\n43|Dodecane|C12H26|Organic\n44|Tridecane|C13H28|Organic\n45|Tetradecane|C14H30|Organic\n46|Pentadecane|C15H32|Organic\n47|Hexadecane|C16H34|Organic\n48|Heptadecane|C17H36|Organic\n49|Octadecane|C18H38|Organic\n50|Nonadecane|C19H40|Organic\n51|Eicosane|C20H42|Organic\n52|Propene|C3H6|Organic\n53|But-1-ene|C4H8|Organic\n54|Pent-1-ene|C5H10|Organic\n55|Hex-1-ene|C6H12|Organic\n56|Hept-1-ene|C7H14|Organic\n57|Oct-1-ene|C8H16|Organic\n58|Non-1-ene|C9H18|Organic\n59|Dec-1-ene|C10H20|Organic\n60|Undec-1-ene|C11H22|Organic\n61|Dodec-1-ene|C12H24|Organic\n62|Tridec-1-ene|C13H26|Organic\n63|Tetradec-1-ene|C14H28|Organic\n64|Pentadec-1-ene|C15H30|Organic\n65|Hexadec-1-ene|C16H32|Organic\n66|Heptadec-1-ene|C17H34|Organic\n67|Octadec-1-ene|C18H36|Organic\n68|Nonadec-1-ene|C19H38|Organic\n69|Eicos-1-ene|C20H40|Organic\n70|Ethyne|C2H2|Organic\n71|Propyne|C3H4|Organic\n72|But-1-yne|C4H6|Organic\n73|Pent-1-yne|C5H8|Organic\n74|Hex-1-yne|C6H10|Organic\n75|Hept-1-yne|C7H12|Organic\n76|Oct-1-yne|C8H14|Organic\n77|Non-1-yne|C9H16|Organic\n78|Dec-1-yne|C10H18|Organic\n79|Undec-1-yne|C11H20|Organic\n80|Dodec-1-yne|C12H22|Organic\n81|Tridec-1-yne|C13H24|Organic\n82|Tetradec-1-yne|C14H26|Organic\n83|Pentadec-1-yne|C15H28|Organic\n84|Hexadec-1-yne|C16H30|Organic\n85|Heptadec-1-yne|C17H32|Organic\n86|Octadec-1-yne|C18H34|Organic\n87|Nonadec-1-yne|C19H36|Organic\n88|Eicos-1-yne|C20H38|Organic\n89|Propan-1-ol|C3H8O|Organic\n90|Butan-1-ol|C4H10O|Organic\n91|Pentan-1-ol|C5H12O|Organic\n92|Hexan-1-ol|C6H14O|Organic\n93|Heptan-1-ol|C7H16O|Organic\n94|Octan-1-ol|C8H18O|Organic\n95|Nonan-1-ol|C9H20O|Organic\n96|Decan-1-ol|C10H22O|Organic\n97|Undecan-1-ol|C11H24O|Organic\n98|Dodecan-1-ol|C12H26O|Organic\n99|Tridecan-1-ol|C13H28O|Organic\n100|Tetradecan-1-ol|C14H30O|Organic\n101|Pentadecan-1-ol|C15H32O|Organic\n102|Hexadecan-1-ol|C16H34O|Organic\n103|Heptadecan-1-ol|C17H36O|Organic\n104|Octadecan-1-ol|C18H38O|Organic\n105|Nonadecan-1-ol|C19H40O|Organic\n106|Eicosan-1-ol|C20H42O|Organic\n107|Propanal|C3H6O|Organic\n108|Butanal|C4H8O|Organic\n109|Pentanal|C5H10O|Organic\n110|Hexanal|C6H12O|Organic\n111|Heptanal|C7H14O|Organic\n112|Octanal|C8H16O|Organic\n113|Nonanal|C9H18O|Organic\n114|Decanal|C10H20O|Organic\n115|Undecanal|C11H22O|Organic\n116|Dodecanal|C12H24O|Organic\n117|Tridecanal|C13H26O|Organic\n118|Tetradecanal|C14H28O|Organic\n119|Pentadecanal|C15H30O|Organic\n120|Propanoic Acid|C3H6O2|Acid\n121|Butanoic Acid|C4H8O2|Acid\n122|Pentanoic Acid|C5H10O2|Acid\n123|Hexanoic Acid|C6H12O2|Acid\n124|Heptanoic Acid|C7H14O2|Acid\n125|Octanoic Acid|C8H16O2|Acid\n126|Nonanoic Acid|C9H18O2|Acid\n127|Decanoic Acid|C10H20O2|Acid\n128|Undecanoic Acid|C11H22O2|Acid\n129|Dodecanoic Acid|C12H24O2|Acid\n130|Tridecanoic Acid|C13H26O2|Acid\n131|Tetradecanoic Acid|C14H28O2|Acid\n132|Pentadecanoic Acid|C15H30O2|Acid\n133|Hexadecanoic Acid|C16H32O2|Acid\n134|Heptadecanoic Acid|C17H34O2|Acid\n135|Octadecanoic Acid|C18H36O2|Acid\n136|Nonadecanoic Acid|C19H38O2|Acid\n137|Eicosanoic Acid|C20H40O2|Acid\n138|Methylamine|C1H5N|Base\n139|Ethylamine|C2H7N|Base\n140|Propylamine|C3H9N|Base\n141|Butylamine|C4H11N|Base\n142|Pentylamine|C5H13N|Base\n143|Hexylamine|C6H15N|Base\n144|Heptylamine|C7H17N|Base\n145|Octylamine|C8H19N|Base\n146|Nonylamine|C9H21N|Base\n147|Decylamine|C10H23N|Base\n148|Undecylamine|C11H25N|Base\n149|Dodecylamine|C12H27N|Base\n150|Tridecylamine|C13H29N|Base\n151|Tetradecylamine|C14H31N|Base\n152|Pentadecylamine|C15H33N|Base\n153|Hexadecylamine|C16H35N|Base\n154|Heptadecylamine|C17H37N|Base\n155|Octadecylamine|C18H39N|Base\n156|Nonadecylamine|C19H41N|Base\n157|Eicosylamine|C20H43N|Base\n158|Chloromethane|C1H3Cl|Organic\n159|Chloroethane|C2H5Cl|Organic\n160|1-Chloropropane|C3H7Cl|Organic\n161|1-Chlorobutane|C4H9Cl|Organic\n162|1-Chloropentane|C5H11Cl|Organic\n163|1-Chlorohexane|C6H13Cl|Organic\n164|1-Chloroheptane|C7H15Cl|Organic\n165|1-Chlorooctane|C8H17Cl|Organic\n166|1-Chlorononane|C9H19Cl|Organic\n167|1-Chlorodecane|C10H21Cl|Organic\n168|1-Chloroundecane|C11H23Cl|Organic\n169|1-Chlorododecane|C12H25Cl|Organic\n170|1-Chlorotridecane|C13H27Cl|Organic\n171|1-Chlorotetradecane|C14H29Cl|Organic\n172|1-Chloropentadecane|C15H31Cl|Organic\n173|1-Chlorohexadecane|C16H33Cl|Organic\n174|1-Chloroheptadecane|C17H35Cl|Organic\n175|1-Chlorooctadecane|C18H37Cl|Organic\n176|1-Chlorononadecane|C19H39Cl|Organic\n177|1-Chloroeicosane|C20H41Cl|Organic\n178|Acetonitrile|C2H3N|Organic\n179|Propanenitrile|C3H5N|Organic\n180|Butanenitrile|C4H7N|Organic\n181|Pentanenitrile|C5H9N|Organic\n182|Hexanenitrile|C6H11N|Organic\n183|Heptanenitrile|C7H13N|Organic\n184|Octanenitrile|C8H15N|Organic\n185|Nonanenitrile|C9H17N|Organic\n186|Decanenitrile|C10H19N|Organic\n187|Undecanenitrile|C11H21N|Organic\n188|Dodecanenitrile|C12H23N|Organic\n189|Tridecanenitrile|C13H25N|Organic\n190|Tetradecanenitrile|C14H27N|Organic\n191|Pentadecanenitrile|C15H29N|Organic\n192|Hexadecanenitrile|C16H31N|Organic\n193|Heptadecanenitrile|C17H33N|Organic\n194|Octadecanenitrile|C18H35N|Organic\n195|Nonadecanenitrile|C19H37N|Organic\n196|Eicosanenitrile|C20H39N|Organic\n197|Acetone|C3H6O|Organic\n198|Butan-2-one|C4H8O|Organic\n199|Pentan-2-one|C5H10O|Organic\n200|Hexan-2-one|C6H12O|Organic\n201|Heptan-2-one|C7H14O|Organic\n202|Octan-2-one|C8H16O|Organic\n203|Nonan-2-one|C9H18O|Organic\n204|Decan-2-one|C10H20O|Organic\n205|Undecan-2-one|C11H22O|Organic\n206|Dodecan-2-one|C12H24O|Organic\n207|Tridecan-2-one|C13H26O|Organic\n208|Tetradecan-2-one|C14H28O|Organic\n209|Pentadecan-2-one|C15H30O|Organic\n210|Hexadecan-2-one|C16H32O|Organic\n211|Heptadecan-2-one|C17H34O|Organic\n212|Octadecan-2-one|C18H36O|Organic\n213|Nonadecan-2-one|C19H38O|Organic\n214|Eicosan-2-one|C20H40O|Organic\n215|Propan-2-ol|C3H8O|Organic\n216|Butan-2-ol|C4H10O|Organic\n217|Pentan-2-ol|C5H12O|Organic\n218|Hexan-2-ol|C6H14O|Organic\n219|Heptan-2-ol|C7H16O|Organic\n220|Octan-2-ol|C8H18O|Organic\n221|Nonan-2-ol|C9H20O|Organic\n222|Decan-2-ol|C10H22O|Organic\n223|Undecan-2-ol|C11H24O|Organic\n224|Dodecan-2-ol|C12H26O|Organic\n225|Tridecan-2-ol|C13H28O|Organic\n226|Tetradecan-2-ol|C14H30O|Organic\n227|Pentadecan-2-ol|C15H32O|Organic\n228|Hexadecan-2-ol|C16H34O|Organic\n229|Heptadecan-2-ol|C17H36O|Organic\n230|Octadecan-2-ol|C18H38O|Organic\n231|Nonadecan-2-ol|C19H40O|Organic\n232|Eicosan-2-ol|C20H42O|Organic\n233|Methyl Methanoate|C2H4O2|Organic\n234|Methyl Acetate|C3H6O2|Organic\n235|Methyl Propanoate|C4H8O2|Organic\n236|Methyl Butanoate|C5H10O2|Organic\n237|Methyl Pentanoate|C6H12O2|Organic\n238|Methyl Hexanoate|C7H14O2|Organic\n239|Methyl Heptanoate|C8H16O2|Organic\n240|Methyl Octanoate|C9H18O2|Organic\n241|Methyl Nonanoate|C10H20O2|Organic\n242|Methyl Decanoate|C11H22O2|Organic\n243|Methyl Undecanoate|C12H24O2|Organic\n244|Methyl Dodecanoate|C13H26O2|Organic\n245|Methyl Tridecanoate|C14H28O2|Organic\n246|Methyl Tetradecanoate|C15H30O2|Organic\n247|Methyl Pentadecanoate|C16H32O2|Organic\n248|Methyl Hexadecanoate|C17H34O2|Organic\n249|Methyl Heptadecanoate|C18H36O2|Organic\n250|Methyl Octadecanoate|C19H38O2|Organic\n251|Methyl Nonadecanoate|C20H40O2|Organic\n252|Methyl Eicosanoate|C21H42O2|Organic\n253|Lithium Ion|Li+|Ion\n254|Sodium Ion|Na+|Ion\n255|Potassium Ion|K+|Ion\n256|Magnesium Ion|Mg^2+|Ion\n257|Calcium Ion|Ca^2+|Ion\n258|Barium Ion|Ba^2+|Ion\n259|Zinc Ion|Zn^2+|Ion\n260|Copper(II) Ion|Cu^2+|Ion\n261|Iron(II) Ion|Fe^2+|Ion\n262|Iron(III) Ion|Fe^3+|Ion\n263|Aluminium Ion|Al^3+|Ion\n264|Silver Ion|Ag+|Ion\n265|Chloride|Cl-|Ion\n266|Bromide|Br-|Ion\n267|Iodide|I-|Ion\n268|Hydroxide|OH-|Ion\n269|Nitrate|NO3-|Ion\n270|Nitrite|NO2-|Ion\n271|Phosphate|PO4^3-|Ion\n272|Hydrogen Phosphate|HPO4^2-|Ion\n273|Dihydrogen Phosphate|H2PO4-|Ion\n274|Acetate|CH3COO-|Ion\n275|Lithium Chloride|LiCl|Salt\n276|Lithium Bromide|LiBr|Salt\n277|Lithium Iodide|LiI|Salt\n278|Lithium Hydroxide|LiOH|Salt\n279|Lithium Nitrate|LiNO3|Salt\n280|Lithium Nitrite|LiNO2|Salt\n281|Lithium Phosphate|Li3PO4|Salt\n282|Lithium Hydrogen Phosphate|Li2HPO4|Salt\n283|Sodium Chloride|NaCl|Salt\n284|Sodium Bromide|NaBr|Salt\n285|Sodium Iodide|NaI|Salt\n286|Sodium Hydroxide|NaOH|Salt\n287|Sodium Nitrate|NaNO3|Salt\n288|Sodium Nitrite|NaNO2|Salt\n289|Sodium Phosphate|Na3PO4|Salt\n290|Sodium Hydrogen Phosphate|Na2HPO4|Salt\n291|Potassium Chloride|KCl|Salt\n292|Potassium Bromide|KBr|Salt\n293|Potassium Iodide|KI|Salt\n294|Potassium Hydroxide|KOH|Salt\n295|Potassium Nitrate|KNO3|Salt\n296|Potassium Nitrite|KNO2|Salt\n297|Potassium Phosphate|K3PO4|Salt\n298|Potassium Hydrogen Phosphate|K2HPO4|Salt\n299|Magnesium Chloride|MgCl2|Salt\n300|Magnesium Bromide|MgBr2|Salt\n301|Magnesium Iodide|MgI2|Salt\n302|Magnesium Hydroxide|MgOH2|Salt\n303|Magnesium Nitrate|MgNO32|Salt\n304|Magnesium Nitrite|MgNO22|Salt\n305|Magnesium Phosphate|Mg3PO42|Salt\n306|Magnesium Hydrogen Phosphate|MgHPO4|Salt\n307|Calcium Chloride|CaCl2|Salt\n308|Calcium Bromide|CaBr2|Salt\n309|Calcium Iodide|CaI2|Salt\n310|Calcium Hydroxide|CaOH2|Salt\n311|Calcium Nitrate|CaNO32|Salt\n312|Calcium Nitrite|CaNO22|Salt\n313|Calcium Phosphate|Ca3PO42|Salt\n314|Calcium Hydrogen Phosphate|CaHPO4|Salt\n315|Barium Chloride|BaCl2|Salt\n316|Barium Bromide|BaBr2|Salt\n317|Barium Iodide|BaI2|Salt\n318|Barium Hydroxide|BaOH2|Salt\n319|Barium Nitrate|BaNO32|Salt\n320|Barium Nitrite|BaNO22|Salt\n321|Barium Phosphate|Ba3PO42|Salt\n322|Barium Hydrogen Phosphate|BaHPO4|Salt\n323|Zinc Chloride|ZnCl2|Salt\n324|Zinc Bromide|ZnBr2|Salt\n325|Zinc Iodide|ZnI2|Salt\n326|Zinc Hydroxide|ZnOH2|Salt\n327|Zinc Nitrate|ZnNO32|Salt\n328|Zinc Nitrite|ZnNO22|Salt\n329|Zinc Phosphate|Zn3PO42|Salt\n330|Zinc Hydrogen Phosphate|ZnHPO4|Salt\n331|Copper(II) Chloride|CuCl2|Salt\n332|Copper(II) Bromide|CuBr2|Salt\n333|Copper(II) Iodide|CuI2|Salt\n334|Copper(II) Hydroxide|CuOH2|Salt\n335|Copper(II) Nitrate|CuNO32|Salt\n336|Copper(II) Nitrite|CuNO22|Salt\n337|Copper(II) Phosphate|Cu3PO42|Salt\n338|Copper(II) Hydrogen Phosphate|CuHPO4|Salt\n339|Iron(II) Chloride|FeCl2|Salt\n340|Iron(II) Bromide|FeBr2|Salt\n341|Iron(II) Iodide|FeI2|Salt\n342|Iron(II) Hydroxide|FeOH2|Salt\n343|Iron(II) Nitrate|FeNO32|Salt\n344|Iron(II) Nitrite|FeNO22|Salt\n345|Iron(II) Phosphate|Fe3PO42|Salt\n346|Iron(II) Hydrogen Phosphate|FeHPO4|Salt\n347|Iron(III) Chloride|FeCl3|Salt\n348|Iron(III) Bromide|FeBr3|Salt\n349|Iron(III) Iodide|FeI3|Salt\n350|Iron(III) Hydroxide|FeOH3|Salt\n351|Iron(III) Nitrate|FeNO33|Salt\n352|Iron(III) Nitrite|FeNO23|Salt\n353|Iron(III) Phosphate|FePO4|Salt\n354|Iron(III) Hydrogen Phosphate|Fe2HPO43|Salt\n355|Aluminium Chloride|AlCl3|Salt\n356|Aluminium Bromide|AlBr3|Salt\n357|Aluminium Iodide|AlI3|Salt\n358|Aluminium Hydroxide|AlOH3|Salt\n359|Aluminium Nitrate|AlNO33|Salt\n360|Aluminium Nitrite|AlNO23|Salt\n361|Aluminium Phosphate|AlPO4|Salt\n362|Aluminium Hydrogen Phosphate|Al2HPO43|Salt\n363|Silver Chloride|AgCl|Salt\n364|Silver Bromide|AgBr|Salt\n365|Silver Iodide|AgI|Salt\n366|Silver Hydroxide|AgOH|Salt\n367|Silver Nitrate|AgNO3|Salt\n368|Silver Nitrite|AgNO2|Salt\n369|Silver Phosphate|Ag3PO4|Salt\n370|Silver Hydrogen Phosphate|Ag2HPO4|Salt\n371|Benzene|C6H6|Organic\n372|Toluene|C7H8|Organic\n373|Ethylbenzene|C8H10|Organic\n374|Styrene|C8H8|Organic\n375|Phenol|C6H5OH|Organic\n376|Aniline|C6H5NH2|Base\n377|Benzoic Acid|C7H6O2|Acid\n378|Benzaldehyde|C7H6O|Organic\n379|Acetophenone|C8H8O|Organic\n380|Cyclohexane|C6H12|Organic\n381|Cyclohexene|C6H10|Organic\n382|Cyclohexanol|C6H12O|Organic\n383|Glycerol|C3H8O3|Organic\n384|Ethylene Glycol|C2H6O2|Organic\n385|Urea|CH4N2O|Biochemical\n386|Glycine|C2H5NO2|Biochemical\n387|Alanine|C3H7NO2|Biochemical\n388|Valine|C5H11NO2|Biochemical\n389|Leucine|C6H13NO2|Biochemical\n390|Isoleucine|C6H13NO2|Biochemical\n391|Serine|C3H7NO3|Biochemical\n392|Threonine|C4H9NO3|Biochemical\n393|Cysteine|C3H7NO2S|Biochemical\n394|Methionine|C5H11NO2S|Biochemical\n395|Aspartic Acid|C4H7NO4|Biochemical\n396|Glutamic Acid|C5H9NO4|Biochemical\n397|Lysine|C6H14N2O2|Biochemical\n398|Arginine|C6H14N4O2|Biochemical\n399|Histidine|C6H9N3O2|Biochemical\n400|Phenylalanine|C9H11NO2|Biochemical\n401|Tyrosine|C9H11NO3|Biochemical\n402|Tryptophan|C11H12N2O2|Biochemical\n403|Fructose|C6H12O6|Biochemical\n404|Galactose|C6H12O6|Biochemical\n405|Ribose|C5H10O5|Biochemical\n406|Sucrose|C12H22O11|Biochemical\n407|Maltose|C12H22O11|Biochemical\n408|Lactose|C12H22O11|Biochemical\n409|Citric Acid|C6H8O7|Biochemical\n410|Isocitric Acid|C6H8O7|Biochemical\n411|Alpha-Ketoglutarate|C5H6O5|Biochemical\n412|Succinic Acid|C4H6O4|Biochemical\n413|Fumaric Acid|C4H4O4|Biochemical\n414|Malic Acid|C4H6O5|Biochemical\n415|Oxaloacetic Acid|C4H4O5|Biochemical\n416|Acetyl-CoA|C23H38N7O17P3S|Biochemical\n417|ATP|C10H16N5O13P3|Biochemical\n418|ADP|C10H15N5O10P2|Biochemical\n419|AMP|C10H14N5O7P|Biochemical\n420|Adenine|C5H5N5|Biochemical\n421|Guanine|C5H5N5O|Biochemical\n422|Cytosine|C4H5N3O|Biochemical\n423|Thymine|C5H6N2O2|Biochemical\n424|Uracil|C4H4N2O2|Biochemical\n
+id|name|formula|category
+0|Hydrogen|H2|Inorganic
+1|Oxygen|O2|Inorganic
+2|Water|H2O|Inorganic
+3|Hydrogen Peroxide|H2O2|Inorganic
+4|Methane|CH4|Organic
+5|Carbon Monoxide|CO|Inorganic
+6|Carbon Dioxide|CO2|Inorganic
+7|Carbonic Acid|H2CO3|Acid
+8|Bicarbonate|HCO3-|Ion
+9|Carbonate|CO3^2-|Ion
+10|Methanol|CH3OH|Organic
+11|Formaldehyde|CH2O|Organic
+12|Methanoic Acid|HCOOH|Acid
+13|Ethanol|C2H5OH|Organic
+14|Acetaldehyde|CH3CHO|Organic
+15|Acetic Acid|CH3COOH|Acid
+16|Ethene|C2H4|Organic
+17|Ethane|C2H6|Organic
+18|Glucose|C6H12O6|Biochemical
+19|Pyruvate|C3H4O3|Biochemical
+20|Lactic Acid|C3H6O3|Biochemical
+21|Ammonia|NH3|Base
+22|Ammonium|NH4+|Ion
+23|Nitrogen|N2|Inorganic
+24|Nitric Oxide|NO|Inorganic
+25|Nitrogen Dioxide|NO2|Inorganic
+26|Nitrous Acid|HNO2|Acid
+27|Nitric Acid|HNO3|Acid
+28|Sulfur Dioxide|SO2|Inorganic
+29|Sulfur Trioxide|SO3|Inorganic
+30|Sulfuric Acid|H2SO4|Acid
+31|Hydrogen Sulfide|H2S|Inorganic
+32|Sulfite|SO3^2-|Ion
+33|Sulfate|SO4^2-|Ion
+34|Propane|C3H8|Organic
+35|Butane|C4H10|Organic
+36|Pentane|C5H12|Organic
+37|Hexane|C6H14|Organic
+38|Heptane|C7H16|Organic
+39|Octane|C8H18|Organic
+40|Nonane|C9H20|Organic
+41|Decane|C10H22|Organic
+42|Undecane|C11H24|Organic
+43|Dodecane|C12H26|Organic
+44|Tridecane|C13H28|Organic
+45|Tetradecane|C14H30|Organic
+46|Pentadecane|C15H32|Organic
+47|Hexadecane|C16H34|Organic
+48|Heptadecane|C17H36|Organic
+49|Octadecane|C18H38|Organic
+50|Nonadecane|C19H40|Organic
+51|Eicosane|C20H42|Organic
+52|Propene|C3H6|Organic
+53|But-1-ene|C4H8|Organic
+54|Pent-1-ene|C5H10|Organic
+55|Hex-1-ene|C6H12|Organic
+56|Hept-1-ene|C7H14|Organic
+57|Oct-1-ene|C8H16|Organic
+58|Non-1-ene|C9H18|Organic
+59|Dec-1-ene|C10H20|Organic
+60|Undec-1-ene|C11H22|Organic
+61|Dodec-1-ene|C12H24|Organic
+62|Tridec-1-ene|C13H26|Organic
+63|Tetradec-1-ene|C14H28|Organic
+64|Pentadec-1-ene|C15H30|Organic
+65|Hexadec-1-ene|C16H32|Organic
+66|Heptadec-1-ene|C17H34|Organic
+67|Octadec-1-ene|C18H36|Organic
+68|Nonadec-1-ene|C19H38|Organic
+69|Eicos-1-ene|C20H40|Organic
+70|Ethyne|C2H2|Organic
+71|Propyne|C3H4|Organic
+72|But-1-yne|C4H6|Organic
+73|Pent-1-yne|C5H8|Organic
+74|Hex-1-yne|C6H10|Organic
+75|Hept-1-yne|C7H12|Organic
+76|Oct-1-yne|C8H14|Organic
+77|Non-1-yne|C9H16|Organic
+78|Dec-1-yne|C10H18|Organic
+79|Undec-1-yne|C11H20|Organic
+80|Dodec-1-yne|C12H22|Organic
+81|Tridec-1-yne|C13H24|Organic
+82|Tetradec-1-yne|C14H26|Organic
+83|Pentadec-1-yne|C15H28|Organic
+84|Hexadec-1-yne|C16H30|Organic
+85|Heptadec-1-yne|C17H32|Organic
+86|Octadec-1-yne|C18H34|Organic
+87|Nonadec-1-yne|C19H36|Organic
+88|Eicos-1-yne|C20H38|Organic
+89|Propan-1-ol|C3H8O|Organic
+90|Butan-1-ol|C4H10O|Organic
+91|Pentan-1-ol|C5H12O|Organic
+92|Hexan-1-ol|C6H14O|Organic
+93|Heptan-1-ol|C7H16O|Organic
+94|Octan-1-ol|C8H18O|Organic
+95|Nonan-1-ol|C9H20O|Organic
+96|Decan-1-ol|C10H22O|Organic
+97|Undecan-1-ol|C11H24O|Organic
+98|Dodecan-1-ol|C12H26O|Organic
+99|Tridecan-1-ol|C13H28O|Organic
+100|Tetradecan-1-ol|C14H30O|Organic
+101|Pentadecan-1-ol|C15H32O|Organic
+102|Hexadecan-1-ol|C16H34O|Organic
+103|Heptadecan-1-ol|C17H36O|Organic
+104|Octadecan-1-ol|C18H38O|Organic
+105|Nonadecan-1-ol|C19H40O|Organic
+106|Eicosan-1-ol|C20H42O|Organic
+107|Propanal|C3H6O|Organic
+108|Butanal|C4H8O|Organic
+109|Pentanal|C5H10O|Organic
+110|Hexanal|C6H12O|Organic
+111|Heptanal|C7H14O|Organic
+112|Octanal|C8H16O|Organic
+113|Nonanal|C9H18O|Organic
+114|Decanal|C10H20O|Organic
+115|Undecanal|C11H22O|Organic
+116|Dodecanal|C12H24O|Organic
+117|Tridecanal|C13H26O|Organic
+118|Tetradecanal|C14H28O|Organic
+119|Pentadecanal|C15H30O|Organic
+120|Propanoic Acid|C3H6O2|Acid
+121|Butanoic Acid|C4H8O2|Acid
+122|Pentanoic Acid|C5H10O2|Acid
+123|Hexanoic Acid|C6H12O2|Acid
+124|Heptanoic Acid|C7H14O2|Acid
+125|Octanoic Acid|C8H16O2|Acid
+126|Nonanoic Acid|C9H18O2|Acid
+127|Decanoic Acid|C10H20O2|Acid
+128|Undecanoic Acid|C11H22O2|Acid
+129|Dodecanoic Acid|C12H24O2|Acid
+130|Tridecanoic Acid|C13H26O2|Acid
+131|Tetradecanoic Acid|C14H28O2|Acid
+132|Pentadecanoic Acid|C15H30O2|Acid
+133|Hexadecanoic Acid|C16H32O2|Acid
+134|Heptadecanoic Acid|C17H34O2|Acid
+135|Octadecanoic Acid|C18H36O2|Acid
+136|Nonadecanoic Acid|C19H38O2|Acid
+137|Eicosanoic Acid|C20H40O2|Acid
+138|Methylamine|C1H5N|Base
+139|Ethylamine|C2H7N|Base
+140|Propylamine|C3H9N|Base
+141|Butylamine|C4H11N|Base
+142|Pentylamine|C5H13N|Base
+143|Hexylamine|C6H15N|Base
+144|Heptylamine|C7H17N|Base
+145|Octylamine|C8H19N|Base
+146|Nonylamine|C9H21N|Base
+147|Decylamine|C10H23N|Base
+148|Undecylamine|C11H25N|Base
+149|Dodecylamine|C12H27N|Base
+150|Tridecylamine|C13H29N|Base
+151|Tetradecylamine|C14H31N|Base
+152|Pentadecylamine|C15H33N|Base
+153|Hexadecylamine|C16H35N|Base
+154|Heptadecylamine|C17H37N|Base
+155|Octadecylamine|C18H39N|Base
+156|Nonadecylamine|C19H41N|Base
+157|Eicosylamine|C20H43N|Base
+158|Chloromethane|C1H3Cl|Organic
+159|Chloroethane|C2H5Cl|Organic
+160|1-Chloropropane|C3H7Cl|Organic
+161|1-Chlorobutane|C4H9Cl|Organic
+162|1-Chloropentane|C5H11Cl|Organic
+163|1-Chlorohexane|C6H13Cl|Organic
+164|1-Chloroheptane|C7H15Cl|Organic
+165|1-Chlorooctane|C8H17Cl|Organic
+166|1-Chlorononane|C9H19Cl|Organic
+167|1-Chlorodecane|C10H21Cl|Organic
+168|1-Chloroundecane|C11H23Cl|Organic
+169|1-Chlorododecane|C12H25Cl|Organic
+170|1-Chlorotridecane|C13H27Cl|Organic
+171|1-Chlorotetradecane|C14H29Cl|Organic
+172|1-Chloropentadecane|C15H31Cl|Organic
+173|1-Chlorohexadecane|C16H33Cl|Organic
+174|1-Chloroheptadecane|C17H35Cl|Organic
+175|1-Chlorooctadecane|C18H37Cl|Organic
+176|1-Chlorononadecane|C19H39Cl|Organic
+177|1-Chloroeicosane|C20H41Cl|Organic
+178|Acetonitrile|C2H3N|Organic
+179|Propanenitrile|C3H5N|Organic
+180|Butanenitrile|C4H7N|Organic
+181|Pentanenitrile|C5H9N|Organic
+182|Hexanenitrile|C6H11N|Organic
+183|Heptanenitrile|C7H13N|Organic
+184|Octanenitrile|C8H15N|Organic
+185|Nonanenitrile|C9H17N|Organic
+186|Decanenitrile|C10H19N|Organic
+187|Undecanenitrile|C11H21N|Organic
+188|Dodecanenitrile|C12H23N|Organic
+189|Tridecanenitrile|C13H25N|Organic
+190|Tetradecanenitrile|C14H27N|Organic
+191|Pentadecanenitrile|C15H29N|Organic
+192|Hexadecanenitrile|C16H31N|Organic
+193|Heptadecanenitrile|C17H33N|Organic
+194|Octadecanenitrile|C18H35N|Organic
+195|Nonadecanenitrile|C19H37N|Organic
+196|Eicosanenitrile|C20H39N|Organic
+197|Acetone|C3H6O|Organic
+198|Butan-2-one|C4H8O|Organic
+199|Pentan-2-one|C5H10O|Organic
+200|Hexan-2-one|C6H12O|Organic
+201|Heptan-2-one|C7H14O|Organic
+202|Octan-2-one|C8H16O|Organic
+203|Nonan-2-one|C9H18O|Organic
+204|Decan-2-one|C10H20O|Organic
+205|Undecan-2-one|C11H22O|Organic
+206|Dodecan-2-one|C12H24O|Organic
+207|Tridecan-2-one|C13H26O|Organic
+208|Tetradecan-2-one|C14H28O|Organic
+209|Pentadecan-2-one|C15H30O|Organic
+210|Hexadecan-2-one|C16H32O|Organic
+211|Heptadecan-2-one|C17H34O|Organic
+212|Octadecan-2-one|C18H36O|Organic
+213|Nonadecan-2-one|C19H38O|Organic
+214|Eicosan-2-one|C20H40O|Organic
+215|Propan-2-ol|C3H8O|Organic
+216|Butan-2-ol|C4H10O|Organic
+217|Pentan-2-ol|C5H12O|Organic
+218|Hexan-2-ol|C6H14O|Organic
+219|Heptan-2-ol|C7H16O|Organic
+220|Octan-2-ol|C8H18O|Organic
+221|Nonan-2-ol|C9H20O|Organic
+222|Decan-2-ol|C10H22O|Organic
+223|Undecan-2-ol|C11H24O|Organic
+224|Dodecan-2-ol|C12H26O|Organic
+225|Tridecan-2-ol|C13H28O|Organic
+226|Tetradecan-2-ol|C14H30O|Organic
+227|Pentadecan-2-ol|C15H32O|Organic
+228|Hexadecan-2-ol|C16H34O|Organic
+229|Heptadecan-2-ol|C17H36O|Organic
+230|Octadecan-2-ol|C18H38O|Organic
+231|Nonadecan-2-ol|C19H40O|Organic
+232|Eicosan-2-ol|C20H42O|Organic
+233|Methyl Methanoate|C2H4O2|Organic
+234|Methyl Acetate|C3H6O2|Organic
+235|Methyl Propanoate|C4H8O2|Organic
+236|Methyl Butanoate|C5H10O2|Organic
+237|Methyl Pentanoate|C6H12O2|Organic
+238|Methyl Hexanoate|C7H14O2|Organic
+239|Methyl Heptanoate|C8H16O2|Organic
+240|Methyl Octanoate|C9H18O2|Organic
+241|Methyl Nonanoate|C10H20O2|Organic
+242|Methyl Decanoate|C11H22O2|Organic
+243|Methyl Undecanoate|C12H24O2|Organic
+244|Methyl Dodecanoate|C13H26O2|Organic
+245|Methyl Tridecanoate|C14H28O2|Organic
+246|Methyl Tetradecanoate|C15H30O2|Organic
+247|Methyl Pentadecanoate|C16H32O2|Organic
+248|Methyl Hexadecanoate|C17H34O2|Organic
+249|Methyl Heptadecanoate|C18H36O2|Organic
+250|Methyl Octadecanoate|C19H38O2|Organic
+251|Methyl Nonadecanoate|C20H40O2|Organic
+252|Methyl Eicosanoate|C21H42O2|Organic
+253|Lithium Ion|Li+|Ion
+254|Sodium Ion|Na+|Ion
+255|Potassium Ion|K+|Ion
+256|Magnesium Ion|Mg^2+|Ion
+257|Calcium Ion|Ca^2+|Ion
+258|Barium Ion|Ba^2+|Ion
+259|Zinc Ion|Zn^2+|Ion
+260|Copper(II) Ion|Cu^2+|Ion
+261|Iron(II) Ion|Fe^2+|Ion
+262|Iron(III) Ion|Fe^3+|Ion
+263|Aluminium Ion|Al^3+|Ion
+264|Silver Ion|Ag+|Ion
+265|Chloride|Cl-|Ion
+266|Bromide|Br-|Ion
+267|Iodide|I-|Ion
+268|Hydroxide|OH-|Ion
+269|Nitrate|NO3-|Ion
+270|Nitrite|NO2-|Ion
+271|Phosphate|PO4^3-|Ion
+272|Hydrogen Phosphate|HPO4^2-|Ion
+273|Dihydrogen Phosphate|H2PO4-|Ion
+274|Acetate|CH3COO-|Ion
+275|Lithium Chloride|LiCl|Salt
+276|Lithium Bromide|LiBr|Salt
+277|Lithium Iodide|LiI|Salt
+278|Lithium Hydroxide|LiOH|Salt
+279|Lithium Nitrate|LiNO3|Salt
+280|Lithium Nitrite|LiNO2|Salt
+281|Lithium Phosphate|Li3PO4|Salt
+282|Lithium Hydrogen Phosphate|Li2HPO4|Salt
+283|Sodium Chloride|NaCl|Salt
+284|Sodium Bromide|NaBr|Salt
+285|Sodium Iodide|NaI|Salt
+286|Sodium Hydroxide|NaOH|Salt
+287|Sodium Nitrate|NaNO3|Salt
+288|Sodium Nitrite|NaNO2|Salt
+289|Sodium Phosphate|Na3PO4|Salt
+290|Sodium Hydrogen Phosphate|Na2HPO4|Salt
+291|Potassium Chloride|KCl|Salt
+292|Potassium Bromide|KBr|Salt
+293|Potassium Iodide|KI|Salt
+294|Potassium Hydroxide|KOH|Salt
+295|Potassium Nitrate|KNO3|Salt
+296|Potassium Nitrite|KNO2|Salt
+297|Potassium Phosphate|K3PO4|Salt
+298|Potassium Hydrogen Phosphate|K2HPO4|Salt
+299|Magnesium Chloride|MgCl2|Salt
+300|Magnesium Bromide|MgBr2|Salt
+301|Magnesium Iodide|MgI2|Salt
+302|Magnesium Hydroxide|Mg(OH)2|Salt
+303|Magnesium Nitrate|Mg(NO3)2|Salt
+304|Magnesium Nitrite|Mg(NO2)2|Salt
+305|Magnesium Phosphate|Mg3(PO4)2|Salt
+306|Magnesium Hydrogen Phosphate|MgHPO4|Salt
+307|Calcium Chloride|CaCl2|Salt
+308|Calcium Bromide|CaBr2|Salt
+309|Calcium Iodide|CaI2|Salt
+310|Calcium Hydroxide|Ca(OH)2|Salt
+311|Calcium Nitrate|Ca(NO3)2|Salt
+312|Calcium Nitrite|Ca(NO2)2|Salt
+313|Calcium Phosphate|Ca3(PO4)2|Salt
+314|Calcium Hydrogen Phosphate|CaHPO4|Salt
+315|Barium Chloride|BaCl2|Salt
+316|Barium Bromide|BaBr2|Salt
+317|Barium Iodide|BaI2|Salt
+318|Barium Hydroxide|Ba(OH)2|Salt
+319|Barium Nitrate|Ba(NO3)2|Salt
+320|Barium Nitrite|Ba(NO2)2|Salt
+321|Barium Phosphate|Ba3(PO4)2|Salt
+322|Barium Hydrogen Phosphate|BaHPO4|Salt
+323|Zinc Chloride|ZnCl2|Salt
+324|Zinc Bromide|ZnBr2|Salt
+325|Zinc Iodide|ZnI2|Salt
+326|Zinc Hydroxide|Zn(OH)2|Salt
+327|Zinc Nitrate|Zn(NO3)2|Salt
+328|Zinc Nitrite|Zn(NO2)2|Salt
+329|Zinc Phosphate|Zn3(PO4)2|Salt
+330|Zinc Hydrogen Phosphate|ZnHPO4|Salt
+331|Copper(II) Chloride|CuCl2|Salt
+332|Copper(II) Bromide|CuBr2|Salt
+333|Copper(II) Iodide|CuI2|Salt
+334|Copper(II) Hydroxide|Cu(OH)2|Salt
+335|Copper(II) Nitrate|Cu(NO3)2|Salt
+336|Copper(II) Nitrite|Cu(NO2)2|Salt
+337|Copper(II) Phosphate|Cu3(PO4)2|Salt
+338|Copper(II) Hydrogen Phosphate|CuHPO4|Salt
+339|Iron(II) Chloride|FeCl2|Salt
+340|Iron(II) Bromide|FeBr2|Salt
+341|Iron(II) Iodide|FeI2|Salt
+342|Iron(II) Hydroxide|Fe(OH)2|Salt
+343|Iron(II) Nitrate|Fe(NO3)2|Salt
+344|Iron(II) Nitrite|Fe(NO2)2|Salt
+345|Iron(II) Phosphate|Fe3(PO4)2|Salt
+346|Iron(II) Hydrogen Phosphate|FeHPO4|Salt
+347|Iron(III) Chloride|FeCl3|Salt
+348|Iron(III) Bromide|FeBr3|Salt
+349|Iron(III) Iodide|FeI3|Salt
+350|Iron(III) Hydroxide|Fe(OH)3|Salt
+351|Iron(III) Nitrate|Fe(NO3)3|Salt
+352|Iron(III) Nitrite|Fe(NO2)3|Salt
+353|Iron(III) Phosphate|FePO4|Salt
+354|Iron(III) Hydrogen Phosphate|Fe2(HPO4)3|Salt
+355|Aluminium Chloride|AlCl3|Salt
+356|Aluminium Bromide|AlBr3|Salt
+357|Aluminium Iodide|AlI3|Salt
+358|Aluminium Hydroxide|Al(OH)3|Salt
+359|Aluminium Nitrate|Al(NO3)3|Salt
+360|Aluminium Nitrite|Al(NO2)3|Salt
+361|Aluminium Phosphate|AlPO4|Salt
+362|Aluminium Hydrogen Phosphate|Al2(HPO4)3|Salt
+363|Silver Chloride|AgCl|Salt
+364|Silver Bromide|AgBr|Salt
+365|Silver Iodide|AgI|Salt
+366|Silver Hydroxide|AgOH|Salt
+367|Silver Nitrate|AgNO3|Salt
+368|Silver Nitrite|AgNO2|Salt
+369|Silver Phosphate|Ag3PO4|Salt
+370|Silver Hydrogen Phosphate|Ag2HPO4|Salt
+371|Benzene|C6H6|Organic
+372|Toluene|C7H8|Organic
+373|Ethylbenzene|C8H10|Organic
+374|Styrene|C8H8|Organic
+375|Phenol|C6H5OH|Organic
+376|Aniline|C6H5NH2|Base
+377|Benzoic Acid|C7H6O2|Acid
+378|Benzaldehyde|C7H6O|Organic
+379|Acetophenone|C8H8O|Organic
+380|Cyclohexane|C6H12|Organic
+381|Cyclohexene|C6H10|Organic
+382|Cyclohexanol|C6H12O|Organic
+383|Glycerol|C3H8O3|Organic
+384|Ethylene Glycol|C2H6O2|Organic
+385|Urea|CH4N2O|Biochemical
+386|Glycine|C2H5NO2|Biochemical
+387|Alanine|C3H7NO2|Biochemical
+388|Valine|C5H11NO2|Biochemical
+389|Leucine|C6H13NO2|Biochemical
+390|Isoleucine|C6H13NO2|Biochemical
+391|Serine|C3H7NO3|Biochemical
+392|Threonine|C4H9NO3|Biochemical
+393|Cysteine|C3H7NO2S|Biochemical
+394|Methionine|C5H11NO2S|Biochemical
+395|Aspartic Acid|C4H7NO4|Biochemical
+396|Glutamic Acid|C5H9NO4|Biochemical
+397|Lysine|C6H14N2O2|Biochemical
+398|Arginine|C6H14N4O2|Biochemical
+399|Histidine|C6H9N3O2|Biochemical
+400|Phenylalanine|C9H11NO2|Biochemical
+401|Tyrosine|C9H11NO3|Biochemical
+402|Tryptophan|C11H12N2O2|Biochemical
+403|Fructose|C6H12O6|Biochemical
+404|Galactose|C6H12O6|Biochemical
+405|Ribose|C5H10O5|Biochemical
+406|Sucrose|C12H22O11|Biochemical
+407|Maltose|C12H22O11|Biochemical
+408|Lactose|C12H22O11|Biochemical
+409|Citric Acid|C6H8O7|Biochemical
+410|Isocitric Acid|C6H8O7|Biochemical
+411|Alpha-Ketoglutarate|C5H6O5|Biochemical
+412|Succinic Acid|C4H6O4|Biochemical
+413|Fumaric Acid|C4H4O4|Biochemical
+414|Malic Acid|C4H6O5|Biochemical
+415|Oxaloacetic Acid|C4H4O5|Biochemical
+416|Acetyl-CoA|C23H38N7O17P3S|Biochemical
+417|ATP|C10H16N5O13P3|Biochemical
+418|ADP|C10H15N5O10P2|Biochemical
+419|AMP|C10H14N5O7P|Biochemical
+420|Adenine|C5H5N5|Biochemical
+421|Guanine|C5H5N5O|Biochemical
+422|Cytosine|C4H5N3O|Biochemical
+423|Thymine|C5H6N2O2|Biochemical
+424|Uracil|C4H4N2O2|Biochemical

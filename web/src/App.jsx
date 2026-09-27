@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "./api";
 import NetworkGraph from "./components/NetworkGraph.jsx";
 
 const EMPTY_HIGHLIGHT = { nodes: [], edges: [] };
+const SIMULATION_MS = 10_000;
+const TRAVERSAL_MS = 9_000;
 
 function Stat({ value, label }) {
   return (
@@ -13,11 +15,15 @@ function Stat({ value, label }) {
   );
 }
 
-function CompoundSelect({ label, value, onChange, compounds }) {
+function CompoundSelect({ label, value, onChange, compounds, disabled }) {
   return (
     <label className="field">
       <span>{label}</span>
-      <select value={value} onChange={(event) => onChange(event.target.value)}>
+      <select
+        value={value}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.value)}
+      >
         {compounds.map((compound) => (
           <option key={compound.id} value={compound.name}>
             {compound.formula} · {compound.name}
@@ -39,10 +45,14 @@ function PathResult({ result }) {
             <strong>{compound.formula}</strong>
             <span>{compound.name}</span>
           </div>
+
           {index < result.path.length - 1 && (
             <div className="reaction-edge">
               <span>→</span>
-              <small>{result.reactionPath[index]?.reaction}</small>
+              <div>
+                <small>{result.reactionPath[index]?.reaction}</small>
+                <em>cost {result.reactionPath[index]?.cost ?? 1}</em>
+              </div>
             </div>
           )}
         </div>
@@ -53,10 +63,92 @@ function PathResult({ result }) {
 
 function Status({ status }) {
   const online = status.includes("online");
+
   return (
     <div className={`status-chip ${online ? "online" : ""}`}>
       <span className="status-dot" />
       <span>{status}</span>
+    </div>
+  );
+}
+
+function AlgorithmSelect({ value, onChange, disabled }) {
+  return (
+    <label className="field algorithm-select">
+      <span>Path algorithm</span>
+      <select
+        value={value}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.value)}
+      >
+        <option value="bfs">BFS · minimum reaction steps</option>
+        <option value="dijkstra">Dijkstra · minimum weighted cost</option>
+        <option value="bidirectional">Bidirectional BFS · two-front search</option>
+      </select>
+    </label>
+  );
+}
+
+function StructureSelect({ value, onChange, disabled }) {
+  return (
+    <label className="field algorithm-select">
+      <span>Structure algorithm</span>
+      <select
+        value={value}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.value)}
+      >
+        <option value="scc">Tarjan SCC · strongly connected regions</option>
+        <option value="cycle">DFS cycle detection · first directed cycle</option>
+      </select>
+    </label>
+  );
+}
+
+function SimulationHud({ simulation, currentCompound, onSkip }) {
+  if (!simulation.running) return null;
+
+  const progress = simulation.total > 0
+    ? Math.min(100, Math.round((simulation.step / simulation.total) * 100))
+    : 0;
+
+  return (
+    <div className="simulation-hud">
+      <div className="simulation-hud-top">
+        <div>
+          <span className="simulation-kicker">10 SECOND ALGORITHM REPLAY</span>
+          <strong>{simulation.algorithm}</strong>
+        </div>
+        <button onClick={onSkip}>Skip replay</button>
+      </div>
+
+      <div className="simulation-progress">
+        <i style={{ width: `${progress}%` }} />
+      </div>
+
+      <div className="simulation-meta">
+        <span>
+          STEP <b>{simulation.step}</b> / {simulation.total}
+        </span>
+        <span>
+          CURRENT{" "}
+          <b>{currentCompound ? currentCompound.formula : "—"}</b>
+        </span>
+        <span>
+          VISITED <b>{simulation.visited.length}</b>
+        </span>
+        <span>
+          ELAPSED <b>{simulation.elapsed.toFixed(1)}s</b>
+        </span>
+      </div>
+
+      {currentCompound && (
+        <div className="current-compound-card">
+          <span>{currentCompound.category}</span>
+          <strong>{currentCompound.formula}</strong>
+          <p>{currentCompound.name}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -67,12 +159,25 @@ export default function App() {
   const [from, setFrom] = useState("Methane");
   const [to, setTo] = useState("Bicarbonate");
   const [mode, setMode] = useState("path");
+  const [pathAlgorithm, setPathAlgorithm] = useState("bfs");
+  const [structureAlgorithm, setStructureAlgorithm] = useState("scc");
   const [result, setResult] = useState(null);
   const [highlight, setHighlight] = useState(EMPTY_HIGHLIGHT);
   const [status, setStatus] = useState("Connecting to C++");
   const [busy, setBusy] = useState(false);
   const [search, setSearch] = useState("");
   const [matches, setMatches] = useState([]);
+  const [simulation, setSimulation] = useState({
+    running: false,
+    algorithm: "",
+    step: 0,
+    total: 0,
+    visited: [],
+    active: null,
+    elapsed: 0
+  });
+
+  const runTokenRef = useRef(0);
 
   useEffect(() => {
     Promise.all([api.network(), api.stats()])
@@ -80,6 +185,13 @@ export default function App() {
         setNetwork(networkData);
         setStats(statsData);
         setStatus("C++ engine online");
+
+        if (networkData.nodes?.length > 0) {
+          const hasMethane = networkData.nodes.some((node) => node.name === "Methane");
+          const hasBicarbonate = networkData.nodes.some((node) => node.name === "Bicarbonate");
+          if (!hasMethane) setFrom(networkData.nodes[0].name);
+          if (!hasBicarbonate) setTo(networkData.nodes[Math.min(1, networkData.nodes.length - 1)].name);
+        }
       })
       .catch((error) => setStatus(error.message));
   }, []);
@@ -95,51 +207,182 @@ export default function App() {
       api.search(value)
         .then((data) => setMatches(data.matches || []))
         .catch(() => setMatches([]));
-    }, 140);
+    }, 120);
 
     return () => window.clearTimeout(timer);
   }, [search]);
 
   const compounds = network?.nodes ?? [];
+
   const selectedFromId = useMemo(
     () => compounds.find((compound) => compound.name === from)?.id ?? null,
     [compounds, from]
   );
 
+  const currentCompound = useMemo(
+    () => compounds.find((compound) => compound.id === simulation.active) ?? null,
+    [compounds, simulation.active]
+  );
+
+  const algorithmDescription = useMemo(() => {
+    if (mode === "dfs") {
+      return "DFS · explicit stack · full reachability traversal";
+    }
+
+    if (mode === "structure") {
+      return structureAlgorithm === "scc"
+        ? "Tarjan SCC · low-link values + stack"
+        : "Directed cycle detection · DFS recursion state";
+    }
+
+    if (pathAlgorithm === "dijkstra") {
+      return "Dijkstra · priority queue · lowest total reaction cost";
+    }
+
+    if (pathAlgorithm === "bidirectional") {
+      return "Bidirectional BFS · search from both ends";
+    }
+
+    return "BFS · queue · minimum number of reaction edges";
+  }, [mode, pathAlgorithm, structureAlgorithm]);
+
+  function cancelReplay() {
+    runTokenRef.current += 1;
+    setSimulation((previous) => ({
+      ...previous,
+      running: false,
+      active: null,
+      elapsed: previous.running ? Math.min(previous.elapsed, 10) : previous.elapsed
+    }));
+    setBusy(false);
+  }
+
+  async function replay(order, algorithm, finalHighlight) {
+    const ids = (order ?? []).map((item) => item.id);
+    const token = ++runTokenRef.current;
+
+    setHighlight(EMPTY_HIGHLIGHT);
+    setSimulation({
+      running: true,
+      algorithm,
+      step: 0,
+      total: ids.length,
+      visited: [],
+      active: null,
+      elapsed: 0
+    });
+
+    if (ids.length === 0) {
+      await new Promise((resolve) => window.setTimeout(resolve, SIMULATION_MS));
+      if (token !== runTokenRef.current) return false;
+      setHighlight(finalHighlight);
+      setSimulation((previous) => ({
+        ...previous,
+        running: false,
+        elapsed: 10
+      }));
+      return true;
+    }
+
+    const startedAt = performance.now();
+    const stepDuration = TRAVERSAL_MS / ids.length;
+
+    for (let index = 0; index < ids.length; index += 1) {
+      const targetTime = startedAt + (index + 1) * stepDuration;
+      const wait = Math.max(0, targetTime - performance.now());
+
+      await new Promise((resolve) => window.setTimeout(resolve, wait));
+
+      if (token !== runTokenRef.current) return false;
+
+      const elapsed = Math.min(9, (performance.now() - startedAt) / 1000);
+      setSimulation({
+        running: true,
+        algorithm,
+        step: index + 1,
+        total: ids.length,
+        visited: ids.slice(0, index + 1),
+        active: ids[index],
+        elapsed
+      });
+    }
+
+    const finalDelay = Math.max(
+      0,
+      SIMULATION_MS - (performance.now() - startedAt)
+    );
+
+    await new Promise((resolve) => window.setTimeout(resolve, finalDelay));
+
+    if (token !== runTokenRef.current) return false;
+
+    setHighlight(finalHighlight);
+    setSimulation({
+      running: false,
+      algorithm,
+      step: ids.length,
+      total: ids.length,
+      visited: ids,
+      active: null,
+      elapsed: 10
+    });
+
+    return true;
+  }
+
+  function buildPathHighlight(data) {
+    const nodeIds = data.path?.map((compound) => compound.id) ?? [];
+    const edgeIds =
+      data.reactionPath?.map((reaction, index) => {
+        const source = data.path[index]?.id;
+        const target = data.path[index + 1]?.id;
+        return `${source}-${target}-${reaction.reactionId}`;
+      }) ?? [];
+
+    return { nodes: nodeIds, edges: edgeIds };
+  }
+
   async function runPath() {
+    cancelReplay();
     setBusy(true);
     setMode("path");
+    setResult(null);
+
     try {
-      const data = await api.path(from, to);
+      const data = await api.path(from, to, pathAlgorithm);
       setResult(data);
 
-      const nodeIds = data.path?.map((compound) => compound.id) ?? [];
-      const edgeIds =
-        data.reactionPath?.map((reaction, index) => {
-          const source = data.path[index]?.id;
-          const target = data.path[index + 1]?.id;
-          return `${source}-${target}-${reaction.reactionId}`;
-        }) ?? [];
-
-      setHighlight({ nodes: nodeIds, edges: edgeIds });
+      await replay(
+        data.visitedOrder,
+        data.algorithm,
+        buildPathHighlight(data)
+      );
     } catch (error) {
       setResult({ error: error.message });
       setHighlight(EMPTY_HIGHLIGHT);
     } finally {
-      setBusy(false);
+      if (!simulation.running) setBusy(false);
     }
   }
 
   async function runDfs() {
+    cancelReplay();
     setBusy(true);
     setMode("dfs");
+    setResult(null);
+
     try {
       const data = await api.reachable(from);
       setResult(data);
-      setHighlight({
-        nodes: data.reachable?.map((compound) => compound.id) ?? [],
-        edges: []
-      });
+
+      await replay(
+        data.visitedOrder,
+        "DFS",
+        {
+          nodes: data.reachable?.map((compound) => compound.id) ?? [],
+          edges: []
+        }
+      );
     } catch (error) {
       setResult({ error: error.message });
       setHighlight(EMPTY_HIGHLIGHT);
@@ -148,16 +391,38 @@ export default function App() {
     }
   }
 
-  async function runCycle() {
+  async function runStructure() {
+    cancelReplay();
     setBusy(true);
-    setMode("cycle");
+    setMode("structure");
+    setResult(null);
+
     try {
-      const data = await api.cycles();
-      setResult(data);
-      setHighlight({
-        nodes: data.cycle?.map((compound) => compound.id) ?? [],
-        edges: []
-      });
+      if (structureAlgorithm === "scc") {
+        const data = await api.scc();
+        setResult(data);
+
+        await replay(
+          data.visitedOrder,
+          "Tarjan SCC",
+          {
+            nodes: data.components?.[0]?.map((compound) => compound.id) ?? [],
+            edges: []
+          }
+        );
+      } else {
+        const data = await api.cycles();
+        setResult(data);
+
+        await replay(
+          data.visitedOrder,
+          "Directed cycle detection",
+          {
+            nodes: data.cycle?.map((compound) => compound.id) ?? [],
+            edges: []
+          }
+        );
+      }
     } catch (error) {
       setResult({ error: error.message });
       setHighlight(EMPTY_HIGHLIGHT);
@@ -167,13 +432,23 @@ export default function App() {
   }
 
   function reset() {
+    cancelReplay();
     setResult(null);
     setHighlight(EMPTY_HIGHLIGHT);
+    setSimulation({
+      running: false,
+      algorithm: "",
+      step: 0,
+      total: 0,
+      visited: [],
+      active: null,
+      elapsed: 0
+    });
   }
 
   function setModeClean(nextMode) {
-    setMode(nextMode);
     reset();
+    setMode(nextMode);
   }
 
   return (
@@ -197,7 +472,8 @@ export default function App() {
           <p className="eyebrow">GRAPH-BASED CHEMICAL PATHWAYS</p>
           <h1>Trace the reaction.</h1>
           <p className="lede">
-            Explore known transformations with graph algorithms implemented in C++.
+            Watch C++ graph algorithms move through a dense educational reaction
+            network, one visited compound at a time.
           </p>
         </div>
 
@@ -219,25 +495,33 @@ export default function App() {
             <button
               className={mode === "path" ? "active" : ""}
               onClick={() => setModeClean("path")}
+              disabled={simulation.running}
             >
-              BFS / Path
+              Pathfinding
             </button>
             <button
               className={mode === "dfs" ? "active" : ""}
               onClick={() => setModeClean("dfs")}
+              disabled={simulation.running}
             >
               DFS / Explore
             </button>
             <button
-              className={mode === "cycle" ? "active" : ""}
-              onClick={() => setModeClean("cycle")}
+              className={mode === "structure" ? "active" : ""}
+              onClick={() => setModeClean("structure")}
+              disabled={simulation.running}
             >
-              Cycle scan
+              Structure
             </button>
           </div>
 
+          <div className="algorithm-readout">
+            <span>{algorithmDescription}</span>
+            <em>fixed 10.0s replay</em>
+          </div>
+
           <button className="reset-button" onClick={reset}>
-            Clear result
+            Clear
           </button>
         </header>
 
@@ -245,11 +529,17 @@ export default function App() {
           <div className="command-primary">
             {mode === "path" && (
               <>
+                <AlgorithmSelect
+                  value={pathAlgorithm}
+                  onChange={setPathAlgorithm}
+                  disabled={busy}
+                />
                 <CompoundSelect
                   label="Start"
                   value={from}
                   onChange={setFrom}
                   compounds={compounds}
+                  disabled={busy}
                 />
                 <span className="command-arrow">→</span>
                 <CompoundSelect
@@ -257,9 +547,14 @@ export default function App() {
                   value={to}
                   onChange={setTo}
                   compounds={compounds}
+                  disabled={busy}
                 />
-                <button className="run-button" disabled={busy || !network} onClick={runPath}>
-                  {busy ? "Running…" : "Find path"}
+                <button
+                  className="run-button"
+                  disabled={busy || !network}
+                  onClick={runPath}
+                >
+                  {simulation.running ? "Replaying…" : "Run algorithm"}
                 </button>
               </>
             )}
@@ -271,23 +566,45 @@ export default function App() {
                   value={from}
                   onChange={setFrom}
                   compounds={compounds}
+                  disabled={busy}
                 />
-                <button className="run-button" disabled={busy || !network} onClick={runDfs}>
-                  {busy ? "Traversing…" : "Run DFS"}
+                <div className="algorithm-summary">
+                  <span>STACK</span>
+                  <strong>Depth-first reachability</strong>
+                </div>
+                <button
+                  className="run-button"
+                  disabled={busy || !network}
+                  onClick={runDfs}
+                >
+                  {simulation.running ? "Replaying…" : "Run DFS"}
                 </button>
               </>
             )}
 
-            {mode === "cycle" && (
-              <div className="cycle-command">
-                <div>
-                  <span className="command-kicker">Directed graph</span>
-                  <strong>Find the first cycle</strong>
+            {mode === "structure" && (
+              <>
+                <StructureSelect
+                  value={structureAlgorithm}
+                  onChange={setStructureAlgorithm}
+                  disabled={busy}
+                />
+                <div className="algorithm-summary">
+                  <span>GRAPH STRUCTURE</span>
+                  <strong>
+                    {structureAlgorithm === "scc"
+                      ? "Find mutually reachable regions"
+                      : "Find a directed cycle"}
+                  </strong>
                 </div>
-                <button className="run-button" disabled={busy || !network} onClick={runCycle}>
-                  {busy ? "Scanning…" : "Scan network"}
+                <button
+                  className="run-button"
+                  disabled={busy || !network}
+                  onClick={runStructure}
+                >
+                  {simulation.running ? "Replaying…" : "Analyze graph"}
                 </button>
-              </div>
+              </>
             )}
           </div>
 
@@ -296,6 +613,7 @@ export default function App() {
               <span>Trie search</span>
               <input
                 value={search}
+                disabled={simulation.running}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="meth…"
                 aria-label="Search compounds using Trie"
@@ -324,9 +642,15 @@ export default function App() {
 
         <div className="graph-frame">
           <div className="graph-caption">
-            <span>LIVE NETWORK</span>
-            <p>drag nodes · scroll to zoom · arrows show direction</p>
+            <span>LIVE NETWORK · {stats?.directedEdges ?? "—"} EDGES</span>
+            <p>drag · scroll to zoom · replay follows the active compound</p>
           </div>
+
+          <SimulationHud
+            simulation={simulation}
+            currentCompound={currentCompound}
+            onSkip={cancelReplay}
+          />
 
           {network ? (
             <NetworkGraph
@@ -334,6 +658,9 @@ export default function App() {
               highlightedNodeIds={highlight.nodes}
               highlightedEdgeIds={highlight.edges}
               selectedNodeId={selectedFromId}
+              visitedNodeIds={simulation.visited}
+              activeNodeId={simulation.active}
+              simulationRunning={simulation.running}
             />
           ) : (
             <div className="graph-loading">Waiting for C++ engine</div>
@@ -344,6 +671,7 @@ export default function App() {
             <span><i className="acid" /> Acid</span>
             <span><i className="ion" /> Ion</span>
             <span><i className="bio" /> Biochemical</span>
+            <span><i className="salt" /> Salt</span>
             <span><i className="inorganic" /> Inorganic</span>
           </div>
         </div>
@@ -352,26 +680,42 @@ export default function App() {
           <div className="result-label">
             <span>OUTPUT</span>
             <strong>
-              {mode === "path" && "Shortest pathway"}
-              {mode === "dfs" && "Reachable compounds"}
-              {mode === "cycle" && "Cycle analysis"}
+              {mode === "path" && "Reaction pathway"}
+              {mode === "dfs" && "Reachability"}
+              {mode === "structure" &&
+                (structureAlgorithm === "scc" ? "Strong components" : "Cycle analysis")}
             </strong>
           </div>
 
           {!result && (
             <div className="result-empty">
-              Run an algorithm to inspect the network.
+              Select an algorithm and run it. The C++ visit order will replay for 10 seconds.
             </div>
           )}
 
           {result?.error && <div className="result-error">{result.error}</div>}
 
-          {mode === "path" && result && !result.error && (
+          {simulation.running && (
+            <div className="result-live">
+              <span>SIMULATION IN PROGRESS</span>
+              <strong>
+                {simulation.algorithm} · step {simulation.step}/{simulation.total}
+              </strong>
+              <p>
+                The computation already finished in C++; this deliberately slowed replay
+                visualizes each node expansion.
+              </p>
+            </div>
+          )}
+
+          {mode === "path" && result && !result.error && !simulation.running && (
             <>
               <div className="run-meta">
-                <span><b>{result.steps ?? 0}</b> steps</span>
+                <span><b>{result.algorithm}</b> algorithm</span>
+                <span><b>{result.steps ?? 0}</b> reaction steps</span>
+                <span><b>{result.totalCost ?? 0}</b> total cost</span>
                 <span><b>{result.visitedCount ?? 0}</b> visited</span>
-                <span><b>{result.elapsedMs ?? "—"}</b> ms</span>
+                <span><b>{result.elapsedMs ?? "—"}</b> ms C++ runtime</span>
               </div>
 
               {result.found ? (
@@ -382,14 +726,15 @@ export default function App() {
             </>
           )}
 
-          {mode === "dfs" && result?.reachable && (
+          {mode === "dfs" && result?.reachable && !simulation.running && (
             <>
               <div className="run-meta">
-                <span><b>{result.count ?? 0}</b> reachable</span>
-                <span><b>{result.elapsedMs ?? "—"}</b> ms</span>
+                <span><b>{result.count ?? 0}</b> reachable compounds</span>
+                <span><b>{result.elapsedMs ?? "—"}</b> ms C++ runtime</span>
               </div>
+
               <div className="compound-strip">
-                {result.reachable.map((compound, index) => (
+                {result.reachable.slice(0, 80).map((compound, index) => (
                   <div key={compound.id}>
                     <span>{String(index + 1).padStart(2, "0")}</span>
                     <strong>{compound.formula}</strong>
@@ -400,55 +745,84 @@ export default function App() {
             </>
           )}
 
-          {mode === "cycle" && result?.cycle && (
-            <>
-              <div className="run-meta">
-                <span><b>{result.hasCycle ? "YES" : "NO"}</b> cycle</span>
-              </div>
-              <div className="cycle-path">
-                {result.cycle.length > 0
-                  ? result.cycle.map((compound, index) => (
-                      <span key={`${compound.id}-${index}`}>
-                        <b>{compound.formula}</b>
-                        {index < result.cycle.length - 1 && " → "}
-                      </span>
-                    ))
-                  : "No directed cycle found."}
-              </div>
-            </>
-          )}
+          {mode === "structure" &&
+            structureAlgorithm === "cycle" &&
+            result?.cycle &&
+            !simulation.running && (
+              <>
+                <div className="run-meta">
+                  <span><b>{result.hasCycle ? "YES" : "NO"}</b> directed cycle</span>
+                </div>
+
+                <div className="cycle-path">
+                  {result.cycle.length > 0
+                    ? result.cycle.map((compound, index) => (
+                        <span key={`${compound.id}-${index}`}>
+                          <b>{compound.formula}</b>
+                          <small>{compound.name}</small>
+                          {index < result.cycle.length - 1 && <em>→</em>}
+                        </span>
+                      ))
+                    : "No directed cycle found."}
+                </div>
+              </>
+            )}
+
+          {mode === "structure" &&
+            structureAlgorithm === "scc" &&
+            result?.components &&
+            !simulation.running && (
+              <>
+                <div className="run-meta">
+                  <span><b>{result.componentCount}</b> strongly connected components</span>
+                  <span><b>{result.largestComponentSize}</b> nodes in largest SCC</span>
+                  <span><b>{result.elapsedMs ?? "—"}</b> ms C++ runtime</span>
+                </div>
+
+                <div className="scc-preview">
+                  {(result.components[0] ?? []).slice(0, 50).map((compound) => (
+                    <div key={compound.id}>
+                      <strong>{compound.formula}</strong>
+                      <span>{compound.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
         </section>
       </section>
 
       <div className="rule" id="engine">
         <span>02</span>
-        <p>What the C++ engine is doing</p>
+        <p>Algorithm stack</p>
       </div>
 
       <section className="engine-map">
         <div className="engine-copy">
-          <p className="eyebrow">DATA STRUCTURES</p>
-          <h2>Frontend shows it. C++ decides it.</h2>
+          <p className="eyebrow">C++17 DATA STRUCTURES ENGINE</p>
+          <h2>Seven algorithms. One reaction graph.</h2>
           <p>
-            The browser renders the graph. Traversal, lookup, path reconstruction and
-            cycle detection stay inside the C++17 engine.
+            The browser only renders the result and replay. Queue, stack, priority
+            queue, parent reconstruction, hashing, Trie search, cycle state and
+            low-link logic all execute in C++.
           </p>
         </div>
 
         <div className="structure-table">
-          <div><span>01</span><strong>Adjacency list</strong><small>reaction graph</small></div>
-          <div><span>02</span><strong>Queue</strong><small>BFS frontier</small></div>
-          <div><span>03</span><strong>Stack</strong><small>iterative DFS</small></div>
-          <div><span>04</span><strong>Hash table</strong><small>compound → id</small></div>
-          <div><span>05</span><strong>Trie</strong><small>prefix search</small></div>
-          <div><span>06</span><strong>Parent map</strong><small>path rebuild</small></div>
+          <div><span>01</span><strong>BFS</strong><small>queue · shortest edge count</small></div>
+          <div><span>02</span><strong>Dijkstra</strong><small>priority queue · weighted path</small></div>
+          <div><span>03</span><strong>Bidirectional BFS</strong><small>two search frontiers</small></div>
+          <div><span>04</span><strong>DFS</strong><small>stack · reachability</small></div>
+          <div><span>05</span><strong>Tarjan SCC</strong><small>low-link + stack</small></div>
+          <div><span>06</span><strong>Cycle detection</strong><small>DFS state tracking</small></div>
+          <div><span>07</span><strong>Trie search</strong><small>prefix lookup</small></div>
         </div>
       </section>
 
       <footer>
-        <span>ChemPath / mid-sem build</span>
+        <span>ChemPath / dense simulation build</span>
         <span>C++17 · React · Cytoscape.js</span>
-        <span>Educational reaction-network model</span>
+        <span>Educational reaction-network model · not a synthesis planner</span>
       </footer>
     </main>
   );

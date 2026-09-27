@@ -48,89 +48,107 @@ export default function NetworkGraph({
       container: containerRef.current,
       elements,
       wheelSensitivity: 0.22,
-      minZoom: 0.35,
-      maxZoom: 2.6,
+      minZoom: 0.34,
+      maxZoom: 2.5,
       layout: {
         name: "cose",
         animate: false,
-        nodeRepulsion: 110000,
-        idealEdgeLength: 96,
-        edgeElasticity: 85,
-        gravity: 0.55,
-        numIter: 900
+        nodeRepulsion: 120000,
+        idealEdgeLength: 104,
+        edgeElasticity: 82,
+        gravity: 0.5,
+        numIter: 1000
       },
       style: [
         {
           selector: "node",
           style: {
-            "background-color": "#15263d",
-            "border-color": "#355272",
-            "border-width": 1.5,
+            "background-color": "#171717",
+            "border-color": "#55524c",
+            "border-width": 1.2,
             label: "data(label)",
-            color: "#dbeafe",
-            "font-size": 11,
+            color: "#c9c1b4",
+            "font-size": 10,
             "font-weight": 700,
-            width: 46,
-            height: 46,
+            "font-family": "JetBrains Mono, monospace",
+            width: 44,
+            height: 44,
             "text-valign": "center",
             "text-halign": "center",
-            "text-outline-color": "#07111f",
+            "text-outline-color": "#0a0a0a",
             "text-outline-width": 2
           }
         },
         {
           selector: "node.category-organic",
-          style: { "background-color": "#153e43", "border-color": "#22d3a7" }
+          style: {
+            "background-color": "#14211f",
+            "border-color": "#69caba"
+          }
         },
         {
           selector: "node.category-acid",
-          style: { "background-color": "#43213a", "border-color": "#f472b6" }
+          style: {
+            "background-color": "#211715",
+            "border-color": "#c38478"
+          }
         },
         {
           selector: "node.category-ion",
-          style: { "background-color": "#342b55", "border-color": "#a78bfa" }
+          style: {
+            "background-color": "#201e16",
+            "border-color": "#a59a79"
+          }
         },
         {
           selector: "node.category-biochemical",
-          style: { "background-color": "#3d3617", "border-color": "#facc15" }
+          style: {
+            "background-color": "#172019",
+            "border-color": "#8cb897"
+          }
         },
         {
           selector: "edge",
           style: {
-            width: 1.4,
-            "line-color": "#2f4660",
-            "target-arrow-color": "#55718f",
+            width: 1,
+            "line-color": "#3a3834",
+            "target-arrow-color": "#5a5650",
             "target-arrow-shape": "triangle",
+            "arrow-scale": 0.75,
             "curve-style": "bezier",
-            opacity: 0.7
+            opacity: 0.72
           }
         },
-        { selector: ".dimmed", style: { opacity: 0.16 } },
+        {
+          selector: ".dimmed",
+          style: { opacity: 0.1 }
+        },
         {
           selector: ".highlighted",
           style: {
             opacity: 1,
-            "background-color": "#0f766e",
+            "background-color": "#163632",
             "border-color": "#5eead4",
-            "border-width": 3,
-            "z-index": 999
+            "border-width": 2.4,
+            color: "#f5efe6",
+            "z-index": 20
           }
         },
         {
           selector: "edge.highlighted",
           style: {
             opacity: 1,
-            width: 4,
-            "line-color": "#2dd4bf",
-            "target-arrow-color": "#2dd4bf",
-            "z-index": 999
+            width: 2.8,
+            "line-color": "#5eead4",
+            "target-arrow-color": "#5eead4",
+            "z-index": 20
           }
         },
         {
           selector: ".selected",
           style: {
-            "border-width": 4,
-            "border-color": "#e2e8f0"
+            "border-width": 3,
+            "border-color": "#f5efe6"
           }
         }
       ]
@@ -152,8 +170,12 @@ export default function NetworkGraph({
     const hasHighlight = nodeSet.size > 0 || edgeSet.size > 0;
     if (hasHighlight) {
       cy.elements().addClass("dimmed");
-      nodeSet.forEach((id) => cy.getElementById(id).removeClass("dimmed").addClass("highlighted"));
-      edgeSet.forEach((id) => cy.getElementById(id).removeClass("dimmed").addClass("highlighted"));
+      nodeSet.forEach((id) =>
+        cy.getElementById(id).removeClass("dimmed").addClass("highlighted")
+      );
+      edgeSet.forEach((id) =>
+        cy.getElementById(id).removeClass("dimmed").addClass("highlighted")
+      );
     }
 
     if (selectedNodeId !== null && selectedNodeId !== undefined) {

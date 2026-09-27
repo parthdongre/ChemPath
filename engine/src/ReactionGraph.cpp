@@ -97,15 +97,16 @@ bool ReactionGraph::loadReactions(const std::string& path) {
         }
 
         const auto cols = split(line, '|');
-        if (cols.size() < 5) continue;
+        if (cols.size() < 9) continue;
 
         Reaction reaction;
         reaction.id = std::stoi(cols[0]);
         reaction.name = cols[1];
-        reaction.note = cols[4];
-        if (cols.size() >= 6 && !cols[5].empty()) {
-            reaction.cost = std::max(1, std::stoi(cols[5]));
-        }
+        reaction.equation = cols[4];
+        reaction.conditions = cols[5];
+        reaction.note = cols[6];
+        reaction.sourceKey = cols[7];
+        reaction.cost = std::max(1, std::stoi(cols[8]));
 
         bool valid = true;
         for (const auto& reactantName : split(cols[2], ';')) {

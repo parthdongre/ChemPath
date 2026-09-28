@@ -3,7 +3,7 @@ name: Full Pipeline + Screenshots v2
 on:
   push:
     branches:
-      - pipeline-screenshot-test
+      - pipeline-screenshot-test-v2
   workflow_dispatch:
 
 jobs:

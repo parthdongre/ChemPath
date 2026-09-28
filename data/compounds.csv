@@ -150,85 +150,87 @@ id|name|formula|category
 148|Benzene|C6H6|Organic
 149|Phenol|C6H5OH|Organic
 150|Aniline|C6H5NH2|Base
-151|Cyclohexane|C6H12|Organic
-152|Cyclohexene|C6H10|Organic
-153|Cyclohexanol|C6H12O|Organic
-154|Glycine|C2H5NO2|Biochemical
-155|Alanine|C3H7NO2|Biochemical
-156|Valine|C5H11NO2|Biochemical
-157|Serine|C3H7NO3|Biochemical
-158|Aspartic Acid|C4H7NO4|Biochemical
-159|Lysine|C6H14N2O2|Biochemical
-160|Fructose|C6H12O6|Biochemical
-161|Galactose|C6H12O6|Biochemical
-162|Sucrose|C12H22O11|Biochemical
-163|Maltose|C12H22O11|Biochemical
-164|Lactose|C12H22O11|Biochemical
-165|Hydronium|H3O+|Ion
-166|Hydrogen Sulfate|HSO4-|Ion
-167|Hydrogen Chloride|HCl|Inorganic
-168|Ammonium Chloride|NH4Cl|Salt
-169|Thionyl Chloride|SOCl2|Inorganic
-170|Anilinium|C6H8N+|Ion
-171|Phenoxide|C6H5O-|Ion
-172|Barium Sulfate|BaSO4|Salt
-173|Calcium Carbonate|CaCO3|Salt
-174|Methylammonium|CH6N+|Ion
-175|Methylammonium Chloride|CH6NCl|Salt
-176|Methanoate|CH1O2-|Ion
-177|Sodium Methanoate|CH1NaO2|Salt
-178|Ethylammonium|C2H8N+|Ion
-179|Ethylammonium Chloride|C2H8NCl|Salt
-180|Sodium Acetate|C2H3NaO2|Salt
-181|Propylammonium|C3H10N+|Ion
-182|Propylammonium Chloride|C3H10NCl|Salt
-183|Propanoate|C3H5O2-|Ion
-184|Sodium Propanoate|C3H5NaO2|Salt
-185|Butylammonium|C4H12N+|Ion
-186|Butylammonium Chloride|C4H12NCl|Salt
-187|Butanoate|C4H7O2-|Ion
-188|Sodium Butanoate|C4H7NaO2|Salt
-189|Pentylammonium|C5H14N+|Ion
-190|Pentylammonium Chloride|C5H14NCl|Salt
-191|Pentanoate|C5H9O2-|Ion
-192|Sodium Pentanoate|C5H9NaO2|Salt
-193|Hexylammonium|C6H16N+|Ion
-194|Hexylammonium Chloride|C6H16NCl|Salt
-195|Hexanoate|C6H11O2-|Ion
-196|Sodium Hexanoate|C6H11NaO2|Salt
-197|Glycine–Glycine Dipeptide|C4H8N2O3|Biochemical
-198|Glycine–Alanine Dipeptide|C5H10N2O3|Biochemical
-199|Glycine–Valine Dipeptide|C7H14N2O3|Biochemical
-200|Glycine–Serine Dipeptide|C5H10N2O4|Biochemical
-201|Glycine–Aspartic Acid Dipeptide|C6H10N2O5|Biochemical
-202|Glycine–Lysine Dipeptide|C8H17N3O3|Biochemical
-203|Alanine–Glycine Dipeptide|C5H10N2O3|Biochemical
-204|Alanine–Alanine Dipeptide|C6H12N2O3|Biochemical
-205|Alanine–Valine Dipeptide|C8H16N2O3|Biochemical
-206|Alanine–Serine Dipeptide|C6H12N2O4|Biochemical
-207|Alanine–Aspartic Acid Dipeptide|C7H12N2O5|Biochemical
-208|Alanine–Lysine Dipeptide|C9H19N3O3|Biochemical
-209|Valine–Glycine Dipeptide|C7H14N2O3|Biochemical
-210|Valine–Alanine Dipeptide|C8H16N2O3|Biochemical
-211|Valine–Valine Dipeptide|C10H20N2O3|Biochemical
-212|Valine–Serine Dipeptide|C8H16N2O4|Biochemical
-213|Valine–Aspartic Acid Dipeptide|C9H16N2O5|Biochemical
-214|Valine–Lysine Dipeptide|C11H23N3O3|Biochemical
-215|Serine–Glycine Dipeptide|C5H10N2O4|Biochemical
-216|Serine–Alanine Dipeptide|C6H12N2O4|Biochemical
-217|Serine–Valine Dipeptide|C8H16N2O4|Biochemical
-218|Serine–Serine Dipeptide|C6H12N2O5|Biochemical
-219|Serine–Aspartic Acid Dipeptide|C7H12N2O6|Biochemical
-220|Serine–Lysine Dipeptide|C9H19N3O4|Biochemical
-221|Aspartic Acid–Glycine Dipeptide|C6H10N2O5|Biochemical
-222|Aspartic Acid–Alanine Dipeptide|C7H12N2O5|Biochemical
-223|Aspartic Acid–Valine Dipeptide|C9H16N2O5|Biochemical
-224|Aspartic Acid–Serine Dipeptide|C7H12N2O6|Biochemical
-225|Aspartic Acid–Aspartic Acid Dipeptide|C8H12N2O7|Biochemical
-226|Aspartic Acid–Lysine Dipeptide|C10H19N3O5|Biochemical
-227|Lysine–Glycine Dipeptide|C8H17N3O3|Biochemical
-228|Lysine–Alanine Dipeptide|C9H19N3O3|Biochemical
-229|Lysine–Valine Dipeptide|C11H23N3O3|Biochemical
-230|Lysine–Serine Dipeptide|C9H19N3O4|Biochemical
-231|Lysine–Aspartic Acid Dipeptide|C10H19N3O5|Biochemical
-232|Lysine–Lysine Dipeptide|C12H26N4O3|Biochemical
+151|Benzaldehyde|C7H6O|Organic
+152|Cyclohexane|C6H12|Organic
+153|Cyclohexene|C6H10|Organic
+154|Cyclohexanol|C6H12O|Organic
+155|Glycine|C2H5NO2|Biochemical
+156|Alanine|C3H7NO2|Biochemical
+157|Valine|C5H11NO2|Biochemical
+158|Serine|C3H7NO3|Biochemical
+159|Aspartic Acid|C4H7NO4|Biochemical
+160|Lysine|C6H14N2O2|Biochemical
+161|Fructose|C6H12O6|Biochemical
+162|Galactose|C6H12O6|Biochemical
+163|Sucrose|C12H22O11|Biochemical
+164|Maltose|C12H22O11|Biochemical
+165|Lactose|C12H22O11|Biochemical
+166|Hydronium|H3O+|Ion
+167|Hydrogen Sulfate|HSO4-|Ion
+168|Hydrogen Chloride|HCl|Inorganic
+169|Ammonium Chloride|NH4Cl|Salt
+170|Thionyl Chloride|SOCl2|Inorganic
+171|Benzyl Alcohol|C7H8O|Organic
+172|Anilinium|C6H8N+|Ion
+173|Phenoxide|C6H5O-|Ion
+174|Barium Sulfate|BaSO4|Salt
+175|Calcium Carbonate|CaCO3|Salt
+176|Methylammonium|CH6N+|Ion
+177|Methylammonium Chloride|CH6NCl|Salt
+178|Methanoate|CH1O2-|Ion
+179|Sodium Methanoate|CH1NaO2|Salt
+180|Ethylammonium|C2H8N+|Ion
+181|Ethylammonium Chloride|C2H8NCl|Salt
+182|Sodium Acetate|C2H3NaO2|Salt
+183|Propylammonium|C3H10N+|Ion
+184|Propylammonium Chloride|C3H10NCl|Salt
+185|Propanoate|C3H5O2-|Ion
+186|Sodium Propanoate|C3H5NaO2|Salt
+187|Butylammonium|C4H12N+|Ion
+188|Butylammonium Chloride|C4H12NCl|Salt
+189|Butanoate|C4H7O2-|Ion
+190|Sodium Butanoate|C4H7NaO2|Salt
+191|Pentylammonium|C5H14N+|Ion
+192|Pentylammonium Chloride|C5H14NCl|Salt
+193|Pentanoate|C5H9O2-|Ion
+194|Sodium Pentanoate|C5H9NaO2|Salt
+195|Hexylammonium|C6H16N+|Ion
+196|Hexylammonium Chloride|C6H16NCl|Salt
+197|Hexanoate|C6H11O2-|Ion
+198|Sodium Hexanoate|C6H11NaO2|Salt
+199|Glycine–Glycine Dipeptide|C4H8N2O3|Biochemical
+200|Glycine–Alanine Dipeptide|C5H10N2O3|Biochemical
+201|Glycine–Valine Dipeptide|C7H14N2O3|Biochemical
+202|Glycine–Serine Dipeptide|C5H10N2O4|Biochemical
+203|Glycine–Aspartic Acid Dipeptide|C6H10N2O5|Biochemical
+204|Glycine–Lysine Dipeptide|C8H17N3O3|Biochemical
+205|Alanine–Glycine Dipeptide|C5H10N2O3|Biochemical
+206|Alanine–Alanine Dipeptide|C6H12N2O3|Biochemical
+207|Alanine–Valine Dipeptide|C8H16N2O3|Biochemical
+208|Alanine–Serine Dipeptide|C6H12N2O4|Biochemical
+209|Alanine–Aspartic Acid Dipeptide|C7H12N2O5|Biochemical
+210|Alanine–Lysine Dipeptide|C9H19N3O3|Biochemical
+211|Valine–Glycine Dipeptide|C7H14N2O3|Biochemical
+212|Valine–Alanine Dipeptide|C8H16N2O3|Biochemical
+213|Valine–Valine Dipeptide|C10H20N2O3|Biochemical
+214|Valine–Serine Dipeptide|C8H16N2O4|Biochemical
+215|Valine–Aspartic Acid Dipeptide|C9H16N2O5|Biochemical
+216|Valine–Lysine Dipeptide|C11H23N3O3|Biochemical
+217|Serine–Glycine Dipeptide|C5H10N2O4|Biochemical
+218|Serine–Alanine Dipeptide|C6H12N2O4|Biochemical
+219|Serine–Valine Dipeptide|C8H16N2O4|Biochemical
+220|Serine–Serine Dipeptide|C6H12N2O5|Biochemical
+221|Serine–Aspartic Acid Dipeptide|C7H12N2O6|Biochemical
+222|Serine–Lysine Dipeptide|C9H19N3O4|Biochemical
+223|Aspartic Acid–Glycine Dipeptide|C6H10N2O5|Biochemical
+224|Aspartic Acid–Alanine Dipeptide|C7H12N2O5|Biochemical
+225|Aspartic Acid–Valine Dipeptide|C9H16N2O5|Biochemical
+226|Aspartic Acid–Serine Dipeptide|C7H12N2O6|Biochemical
+227|Aspartic Acid–Aspartic Acid Dipeptide|C8H12N2O7|Biochemical
+228|Aspartic Acid–Lysine Dipeptide|C10H19N3O5|Biochemical
+229|Lysine–Glycine Dipeptide|C8H17N3O3|Biochemical
+230|Lysine–Alanine Dipeptide|C9H19N3O3|Biochemical
+231|Lysine–Valine Dipeptide|C11H23N3O3|Biochemical
+232|Lysine–Serine Dipeptide|C9H19N3O4|Biochemical
+233|Lysine–Aspartic Acid Dipeptide|C10H19N3O5|Biochemical
+234|Lysine–Lysine Dipeptide|C12H26N4O3|Biochemical

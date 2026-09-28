@@ -12,6 +12,28 @@ const GRAPH_VISITED_FOCUS_LIMIT = 420;
 const PICKER_RENDER_LIMIT = 220;
 const DIRECTORY_PAGE_SIZE = 240;
 
+const ELEMENT_SEARCH_NAMES = {
+  C: "carbon",
+  N: "nitrogen",
+  S: "sulfur sulphur",
+  P: "phosphorus",
+  O: "oxygen",
+  H: "hydrogen",
+  F: "fluorine fluoride halogen",
+  Cl: "chlorine chloride halogen",
+  Br: "bromine bromide halogen",
+  I: "iodine iodide halogen",
+  Na: "sodium metal",
+  K: "potassium metal",
+  Li: "lithium metal",
+  Mg: "magnesium metal",
+  Ca: "calcium metal",
+  Fe: "iron metal",
+  Cu: "copper metal",
+  Zn: "zinc metal",
+  Ag: "silver metal"
+};
+
 const COMPOUND_ALIASES = {
   "Acetic Acid": ["Ethanoic Acid"],
   "Methanoic Acid": ["Formic Acid"],
@@ -70,8 +92,14 @@ function compoundSearchScore(compound, query) {
   const name = normalizeSearch(compound.name);
   const formula = normalizeSearch(compound.formula);
   const category = normalizeSearch(compound.category);
+  const center = normalizeSearch(chemistryCenter(compound));
+  const elements = formulaElements(compound.formula);
+  const elementTerms = elements.flatMap((symbol) => [
+    normalizeSearch(symbol),
+    normalizeSearch(ELEMENT_SEARCH_NAMES[symbol] ?? symbol)
+  ]);
   const aliases = compoundAliases(compound).map(normalizeSearch);
-  const values = [name, formula, category, ...aliases];
+  const values = [name, formula, category, center, ...elementTerms, ...aliases];
 
   let best = -1;
 

@@ -171,7 +171,7 @@ function SimulationHud({ simulation, currentCompound, onSkip }) {
           ELAPSED <b>{simulation.elapsed.toFixed(1)}s</b>
         </span>
         <span>
-          TARGET <b>{(simulation.duration / 1000).toFixed(1)}s</b>
+          TARGET <b>{((simulation.duration ?? MIN_SIMULATION_MS) / 1000).toFixed(1)}s</b>
         </span>
       </div>
 
@@ -347,7 +347,8 @@ export default function App() {
         total: ids.length,
         visited: ids.slice(0, index + 1),
         active: ids[index],
-        elapsed
+        elapsed,
+        duration: totalDuration
       });
     }
 
@@ -487,7 +488,8 @@ export default function App() {
       total: 0,
       visited: [],
       active: null,
-      elapsed: 0
+      elapsed: 0,
+      duration: MIN_SIMULATION_MS
     });
   }
 
@@ -562,7 +564,11 @@ export default function App() {
 
           <div className="algorithm-readout">
             <span>{algorithmDescription}</span>
-            <em>fixed 10.0s replay</em>
+            <em>
+              {simulation.running
+                ? `target ${((simulation.duration ?? MIN_SIMULATION_MS) / 1000).toFixed(1)}s`
+                : "adaptive ≥10s replay"}
+            </em>
           </div>
 
           <button className="reset-button" onClick={reset}>

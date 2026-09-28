@@ -200,6 +200,8 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [search, setSearch] = useState("");
   const [matches, setMatches] = useState([]);
+  const [reachableTargets, setReachableTargets] = useState([]);
+  const [targetsLoading, setTargetsLoading] = useState(false);
   const [simulation, setSimulation] = useState({
     running: false,
     algorithm: "",
@@ -247,6 +249,48 @@ export default function App() {
   }, [search]);
 
   const compounds = network?.nodes ?? [];
+
+  useEffect(() => {
+    if (!network || !from) {
+      setReachableTargets([]);
+      return undefined;
+    }
+
+    let cancelled = false;
+    setTargetsLoading(true);
+
+    api.reachable(from)
+      .then((data) => {
+        if (cancelled) return;
+
+        const targets = (data.reachable ?? []).filter(
+          (compound) => compound.name !== from
+        );
+
+        setReachableTargets(targets);
+        setTo((current) => {
+          if (targets.some((compound) => compound.name === current)) {
+            return current;
+          }
+
+          return (
+            targets.find((compound) => compound.name === "Bicarbonate")?.name ??
+            targets[0]?.name ??
+            ""
+          );
+        });
+      })
+      .catch(() => {
+        if (!cancelled) setReachableTargets([]);
+      })
+      .finally(() => {
+        if (!cancelled) setTargetsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [from, network]);
 
   const selectedFromId = useMemo(
     () => compounds.find((compound) => compound.name === from)?.id ?? null,
@@ -519,7 +563,7 @@ export default function App() {
           <p className="eyebrow">GRAPH-BASED CHEMICAL PATHWAYS</p>
           <h1>Trace the reaction.</h1>
           <p className="lede">
-            Watch C++ graph algorithms move through a dense, chemistry-audited
+            Watch C++ graph algorithms move through a curated, chemistry-audited
             reaction network, one visited compound at a time.
           </p>
         </div>
@@ -594,15 +638,21 @@ export default function App() {
                 />
                 <span className="command-arrow">→</span>
                 <CompoundSelect
-                  label="Target"
+                  label={targetsLoading ? "Reachable target · checking" : `Reachable target · ${reachableTargets.length}`}
                   value={to}
                   onChange={setTo}
-                  compounds={compounds}
-                  disabled={busy}
+                  compounds={reachableTargets}
+                  disabled={busy || targetsLoading || reachableTargets.length === 0}
                 />
                 <button
                   className="run-button"
-                  disabled={busy || !network}
+                  disabled={
+                    busy ||
+                    !network ||
+                    targetsLoading ||
+                    reachableTargets.length === 0 ||
+                    !to
+                  }
                   onClick={runPath}
                 >
                   {simulation.running ? "Replaying…" : "Run algorithm"}

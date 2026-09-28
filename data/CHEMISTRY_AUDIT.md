@@ -181,7 +181,7 @@ Used for the ordered 20×20 set of standard-amino-acid dipeptides. ChemPath stor
 
 The earlier stress-test build expanded homologous organic families through C40 and included all 400 ordered standard-amino-acid dipeptides. That scale was unnecessary for the interactive Data Structures demonstration and caused browser layout lag.
 
-The current teaching build keeps representative C1-C6 homologous chemistry, the core inorganic/acid-base network, common biochemical compounds, important aromatic examples, audited salt/precipitation chemistry, and a representative 6×6 dipeptide subset. This preserves the reaction families needed for graph-algorithm demonstrations while reducing the live visualization to 235 compounds and 249 reactions.
+The current teaching build keeps representative chemistry through roughly C20, the core inorganic/acid-base network, common biochemical compounds, important aromatic examples, audited salt/precipitation chemistry, and a 16×16 ordered dipeptide subset. This preserves a large graph for algorithm comparison while reducing the live visualization to 688 compounds and 816 reactions.
 
 
 ## Compound-graph projection rule

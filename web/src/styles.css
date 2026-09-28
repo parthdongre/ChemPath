@@ -2521,3 +2521,29 @@ body::after {
     font-size: 82px;
   }
 }
+
+
+/* Final signal-strip refinement after browser composition check */
+.hero-signal {
+  left: 44%;
+  right: 8%;
+  top: 53%;
+  height: 20px;
+  padding-right: 18px;
+  transform: rotate(3.4deg);
+  opacity: .96;
+}
+
+.hero-signal span {
+  font-size: 6px;
+  letter-spacing: .18em;
+}
+
+@media (max-width: 820px) {
+  .hero-signal {
+    left: 24%;
+    right: -4%;
+    height: 20px;
+    transform: rotate(3deg);
+  }
+}

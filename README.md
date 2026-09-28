@@ -2,7 +2,7 @@
 
 **ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The browser renders a dense directed network, while the graph algorithms and data-structure logic execute in a **C++17 engine**.
 
-> **Current audited build:** 1,337 compounds, 1,682 curated reaction records and 6,348 directed graph edges, with adaptive traversal replay that lasts at least 10 seconds and automatically grows for larger searches.nds, 562 curated reaction records and about 2,068 directed graph edges, with a deliberately slowed 10-second visualization of each algorithm's C++ visit order.
+> **Current audited build:** 1,337 compounds, 1,682 curated reaction records and 3,119 directed compound-projection edges, with adaptive traversal replay that lasts at least 10 seconds and automatically grows for larger searches.nds, 562 curated reaction records and about 2,068 directed graph edges, with a deliberately slowed 10-second visualization of each algorithm's C++ visit order.
 
 ## Core idea
 
@@ -171,3 +171,10 @@ Ran Duan, Jiayi Mao, Xiao Mao, Xinkai Shu, Longhui Yin,
 https://arxiv.org/abs/2504.17033
 
 The paper proves a deterministic `O(m log^(2/3) n)` algorithm for directed non-negative SSSP in the comparison-addition model. ChemPath does **not** claim to reproduce that full BMSSP construction. Its research mode demonstrates the paper's high-level combination of unsorted Bellman-Ford-like frontier relaxation with a later ordered cleanup, while preserving exact shortest-path output for the demo.
+
+
+## Reaction-to-graph projection
+
+Reaction records may contain several reactants and products, but ChemPath must not interpret every co-reactant as an independent substrate. The compound graph therefore uses the **first listed reactant as the primary substrate**. It creates forward edges from that substrate to the recorded products.
+
+For reversible records, the **first listed product is the designated primary product** and is the only product used to create the reverse edge. Other reactants/products remain visible as chemistry metadata but do not create false entry points. This prevents shortcuts such as treating water in `H2CO3 + H2O ⇌ H3O+ + HCO3-` as though water alone could transform into bicarbonate.

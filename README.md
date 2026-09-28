@@ -2,7 +2,7 @@
 
 **ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The C++17 engine stores and searches the full reaction graph, while the browser renders a focused working set so the catalog can grow without forcing Cytoscape to lay out every compound at once.
 
-> **Current audited build:** 2,859 compounds, 3,309 curated reaction records and about 7,915 directed compound-projection edges. The live Cytoscape view is capped at roughly 620 focused compounds while search, reachability and every C++ algorithm continue to use the full network.
+> **Current audited build:** 2,898 compounds, 3,349 curated reaction records and about 8,035 directed compound-projection edges. The live Cytoscape view is capped at roughly 620 focused compounds while search, reachability and every C++ algorithm continue to use the full network.
 
 ## Core idea
 
@@ -182,11 +182,11 @@ For reversible records, the **first listed product is the designated primary pro
 
 ## Scalable catalog + focused rendering
 
-The engine now keeps the **full 2,859-compound catalog**, but the browser does not render all of those nodes simultaneously. The React layer chooses a focused working set of roughly 620 nodes using selected compounds, path/traversal context and high-degree graph hubs. This keeps Cytoscape responsive while preserving the complete graph for C++ algorithms.
+The engine now keeps the **full 2,898-compound catalog**, but the browser does not render all of those nodes simultaneously. The React layer chooses a focused working set of roughly 620 nodes using selected compounds, path/traversal context and high-degree graph hubs. This keeps Cytoscape responsive while preserving the complete graph for C++ algorithms.
 
 The catalog was expanded by restoring the audited C1-C40 families and full ordered dipeptide set, then adding a 40×40 Fischer-ester library. The ester library contributes a large number of legitimate compounds through one well-defined reaction family instead of padding the graph with arbitrary synthetic nodes.
 
-Search is also decoupled from rendering: the picker and directory search all 2,859 compounds, even when a compound is not part of the currently visible Cytoscape subset.
+Search is also decoupled from rendering: the picker and directory search all 2,898 compounds, even when a compound is not part of the currently visible Cytoscape subset.
 
 
 ## Target selection and cross-network paths

@@ -2,13 +2,13 @@
 
 **ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The C++17 engine stores and searches the full reaction graph, while the browser renders a focused working set so the catalog can grow without forcing Cytoscape to lay out every compound at once.
 
-> **Current audited build:** 2,898 compounds, 3,350 curated reaction records and about 14,129 directed compound-participation edges. The live Cytoscape view is capped at roughly 620 focused compounds while search, reachability and every C++ algorithm continue to use the full network.
+> **Mid-semester stable build:** 690 compounds, 884 curated reaction records and about 3,044 directed compound-participation edges. The browser renders at most roughly 520 focused compounds for a smoother classroom demo.
 
 ## Core idea
 
 Chemical compounds are represented as graph vertices and documented educational transformations as directed edges. ChemPath lets the user inspect that graph with multiple algorithms while seeing the traversal happen step by step.
 
-The React frontend does **not** implement the algorithms. It requests a result from the C++ engine and then replays the returned visit order over 10 seconds for presentation and learning.
+The React frontend does **not** implement the algorithms. It requests a result from the C++ engine and replays the returned visit order for presentation and learning. Replay duration scales with the traversal size and has no forced minimum.
 
 ## Algorithms and data structures
 
@@ -54,19 +54,11 @@ A graph edge means that a documented transformation connects those compounds und
 
 The Dijkstra weight is also **not** an activation energy, free-energy change, yield, reaction time, price, or hazard score. It is an illustrative graph weight for demonstrating weighted shortest-path algorithms.
 
-## 10-second algorithm replay
+## Adaptive algorithm replay
 
-The actual C++ computation usually completes in milliseconds. ChemPath intentionally visualizes the returned traversal for **at least 10 seconds**. Larger visit orders receive proportionally longer replays so individual steps stay visible:
+The actual C++ computation usually completes in milliseconds. ChemPath visually replays the returned traversal at roughly 200 ms per visited compound, capped at 2 minutes. Short searches finish quickly; larger searches remain visible long enough to explain during the review.
 
-1. the current compound expands,
-2. visited compounds remain marked,
-3. the camera follows the active vertex,
-4. the HUD shows step / visited count / elapsed time,
-5. the final solution is fitted into view,
-6. final reaction edges display their reaction names,
-7. the result panel shows reaction schemes, conditions, reversibility, and source keys.
-
-This means the animation represents the C++ traversal order while still making a fast algorithm understandable during a classroom presentation.
+The replay shows the active compound, visited order, elapsed time, and final highlighted reaction path.
 
 ## Architecture
 
@@ -180,14 +172,11 @@ Reaction records may contain several reactants and products, but ChemPath must n
 For reversible records, the **first listed product is the designated primary product** and is the only product used to create the reverse edge. Other reactants/products remain visible as chemistry metadata but do not create false entry points. This prevents shortcuts such as treating water in `H2CO3 + H2O ⇌ H3O+ + HCO3-` as though water alone could transform into bicarbonate.
 
 
-## Scalable catalog + focused rendering
+## Mid-semester curated dataset
 
-The engine now keeps the **full 2,898-compound catalog**, but the browser does not render all of those nodes simultaneously. The React layer chooses a focused working set of roughly 620 nodes using selected compounds, path/traversal context and high-degree graph hubs. This keeps Cytoscape responsive while preserving the complete graph for C++ algorithms.
+For the mid-semester review, ChemPath intentionally uses a **690-compound curated network** instead of the earlier ~2,900-compound stress-test catalog. This keeps the frontend responsive and the chemistry easier to explain while still giving the C++ algorithms hundreds of vertices and thousands of directed edges.
 
-The catalog was expanded by restoring the audited C1-C40 families and full ordered dipeptide set, then adding a 40×40 Fischer-ester library. The ester library contributes a large number of legitimate compounds through one well-defined reaction family instead of padding the graph with arbitrary synthetic nodes.
-
-Search is also decoupled from rendering: the picker and directory search all 2,898 compounds, even when a compound is not part of the currently visible Cytoscape subset.
-
+The live graph renders at most about 520 focused compounds, while search and algorithms use all 690 compounds.
 
 ## Target selection and cross-network paths
 
@@ -215,20 +204,9 @@ The graph now includes a deliberately small set of real hub transformations that
 These are not zero-context shortcuts: every edge stores conditions and notes. The long-route effect is intentional. For example, Carbonic Acid can now reach Nitrogen Dioxide in 5 graph steps and Eicosan-1-ol in 39 graph steps.
 
 
-## Large-catalog search
+## Compound search
 
-Compound selection is optimized for thousands of entries:
-
-- fuzzy matching across compound name, formula and category,
-- common aliases such as Ethanoic Acid → Acetic Acid and Methanal → Formaldehyde,
-- normalized formula search,
-- reachable-target hop counts,
-- keyboard navigation with ↑ / ↓ / Enter,
-- only the best 220 picker results are mounted at once,
-- the full directory loads in pages of 240 cards.
-
-This keeps the search experience fast even as the C++ catalog grows beyond the number of nodes rendered in the graph.
-
+Compound selection still supports fuzzy name/formula/category matching, common aliases, atom-family filters, reachable-target hop counts, and keyboard navigation. With the smaller catalog, these controls are now faster and simpler for the review.
 
 ## Reaction participation semantics
 
@@ -236,8 +214,6 @@ ChemPath now projects every listed reactant to every recorded product for a reac
 
 Example:
 
-Ammonium Chloride -> Ammonium -> Ammonia -> Ammonium Docosanoate
-
-The first step is aqueous NH4Cl dissociation; the final step uses the existing Docosanoic Acid + Ammonia ammonium-salt formation record.
+Ammonium Chloride -> Ammonium -> Ammonia -> Nitric Oxide -> Nitrogen Dioxide
 
 This is intentionally a **reaction-participation graph**, not a one-bottle synthesis planner. The UI and viva explanation should state that required co-reactants/conditions are supplied by the reaction record.

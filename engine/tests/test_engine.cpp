@@ -40,10 +40,13 @@ int main(int argc, char** argv) {
     chempath::ReactionGraph graph;
     assert(graph.loadFromFiles(argv[1], argv[2]));
 
-    // Dense enough to remain an impressive DSA graph after chemistry cleanup.
-    assert(graph.compounds().size() >= 1300);
-    assert(graph.reactions().size() >= 1600);
-    assert(graph.edgeCount() >= 3000);
+    // Large enough to be impressive, capped so the live Cytoscape view stays responsive.
+    assert(graph.compounds().size() >= 650);
+    assert(graph.compounds().size() <= 725);
+    assert(graph.reactions().size() >= 780);
+    assert(graph.reactions().size() <= 860);
+    assert(graph.edgeCount() >= 1450);
+    assert(graph.edgeCount() <= 1650);
 
     // Every audited reaction must carry chemistry metadata.
     for (const auto& reaction : graph.reactions()) {

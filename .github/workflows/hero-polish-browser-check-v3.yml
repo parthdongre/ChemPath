@@ -1,0 +1,97 @@
+name: Hero Polish Browser Check
+
+on:
+  push:
+    branches:
+      - hero-polish-browser-test-v3
+
+jobs:
+  browser-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build engine
+        run: npm run build:engine
+
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start app
+        run: |
+          npm run dev > /tmp/chempath-dev.log 2>&1 &
+          for i in {1..120}; do
+            if curl -fsS http://localhost:8787/api/health >/dev/null \
+              && curl -fsS http://localhost:5173 >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/chempath-dev.log
+          exit 1
+
+      - name: Check hero composition
+        run: |
+          mkdir -p artifacts
+          cat > check.mjs <<'EOF'
+          import { chromium } from "playwright";
+
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage({ viewport: { width: 1728, height: 1050 } });
+          const errors = [];
+          page.on("pageerror", (e) => errors.push(e.message));
+          page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
+
+          await page.goto("http://localhost:5173", { waitUntil: "networkidle", timeout: 120000 });
+          await page.getByText("C++ engine online").waitFor({ timeout: 60000 });
+          await page.getByText("REACTIONS", { exact: true }).waitFor();
+          await page.getByText("HAVE A", { exact: true }).waitFor();
+          await page.getByText("PATH.", { exact: true }).waitFor();
+
+          const hero = await page.locator(".hero-editorial").boundingBox();
+          const title = await page.locator(".hero-display").boundingBox();
+          const signal = await page.locator(".hero-signal").boundingBox();
+          const stats = await page.locator(".hero-stats").boundingBox();
+          const visual = await page.locator(".hero-visual").boundingBox();
+
+          if (!hero || !title || !signal || !stats || !visual) throw new Error("Hero element missing");
+          if (title.width > hero.width * 0.58) throw new Error("Headline still dominates too much");
+          if (signal.height > 36) throw new Error("Signal bar is too thick");
+          if (signal.y + signal.height > stats.y) throw new Error("Signal bar collides with stats");
+          if (title.y + title.height > hero.y + hero.height * 0.72) throw new Error("Headline extends too low");
+          if (stats.y + stats.height > hero.y + hero.height + 2) throw new Error("Stats overflow hero");
+
+          await page.screenshot({ path: "artifacts/hero-polished.png", fullPage: false });
+
+          if (errors.length) throw new Error(errors.join("\n"));
+
+          console.log(JSON.stringify({
+            ok: true,
+            hero,
+            title,
+            signal,
+            stats,
+            visual
+          }, null, 2));
+
+          await browser.close();
+          EOF
+          node check.mjs
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hero-polish-screenshot
+          path: artifacts/
+          retention-days: 5

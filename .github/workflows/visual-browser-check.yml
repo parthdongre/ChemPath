@@ -66,9 +66,9 @@ jobs:
           });
           await page.getByText("C++ engine online").waitFor({ timeout: 60000 });
 
-          await page.getByText("CHEMISTRY").waitFor();
-          await page.getByText("HAS A").waitFor();
-          await page.getByText("PATH.").waitFor();
+          await page.getByText("CHEMISTRY", { exact: true }).waitFor();
+          await page.getByText("HAS A", { exact: true }).waitFor();
+          await page.getByText("PATH.", { exact: true }).waitFor();
           await page.getByText("PATH / DETECTED").waitFor();
 
           const hero = page.locator(".hero-editorial");

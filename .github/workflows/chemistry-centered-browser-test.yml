@@ -1,0 +1,155 @@
+name: Chemistry Centered Browser Test
+
+on:
+  push:
+    branches:
+      - chemistry-centered-browser-test
+
+jobs:
+  browser-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Audit chemistry
+        run: npm run audit:chemistry
+
+      - name: Build engine
+        run: npm run build:engine
+
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start app
+        run: |
+          npm run dev > /tmp/chempath-dev.log 2>&1 &
+          for i in {1..120}; do
+            if curl -fsS http://localhost:8787/api/health >/tmp/health.json \
+              && curl -fsS http://localhost:5173 >/dev/null; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/chempath-dev.log
+          exit 1
+
+      - name: Test chemistry-centered search and stable target
+        run: |
+          cat > chemistry-browser-check.mjs <<'EOF'
+          import { chromium } from "playwright";
+
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
+
+          const errors = [];
+          page.on("pageerror", (error) => errors.push(error.message));
+          page.on("console", (msg) => {
+            if (msg.type() === "error") errors.push(msg.text());
+          });
+
+          await page.goto("http://localhost:5173", {
+            waitUntil: "networkidle",
+            timeout: 120000
+          });
+          await page.getByText("C++ engine online").waitFor({ timeout: 60000 });
+
+          const caption = await page.locator(".graph-caption").innerText();
+          if (!caption.includes("620 / 2898")) {
+            throw new Error("Focused graph cap missing: " + caption);
+          }
+
+          // Search by element name. Cysteine should match because it contains sulfur.
+          const startPicker = page.locator(".compound-picker").nth(0);
+          await startPicker.locator(".compound-picker-trigger").click();
+          const startInput = startPicker.locator("input");
+          await startInput.fill("sulfur");
+          await page.waitForTimeout(250);
+          const sulfurSearch = (await startPicker.locator(".compound-picker-popover").innerText()).toLowerCase();
+          if (!sulfurSearch.includes("cysteine")) {
+            throw new Error("Element-name search did not surface Cysteine for sulfur");
+          }
+          await startInput.fill("");
+          await startPicker.getByRole("button", { name: "Sulfur" }).click();
+          await page.waitForTimeout(100);
+          const sulfurFilterText = await startPicker.locator(".compound-picker-list").innerText();
+          if (!sulfurFilterText.includes("Cysteine")) {
+            throw new Error("Sulfur atom-family filter did not include Cysteine");
+          }
+          // close picker without changing start
+          await page.keyboard.press("Escape");
+
+          // Select target Nitrogen Dioxide.
+          const targetPicker = page.locator(".compound-picker").nth(1);
+          await targetPicker.locator(".compound-picker-trigger").click();
+          const targetInput = targetPicker.locator("input");
+          await targetInput.fill("Nitrogen Dioxide");
+          await page.waitForTimeout(150);
+          await targetPicker.locator(".compound-picker-list button").filter({ hasText: "Nitrogen Dioxide" }).first().click();
+
+          // Change start to Carbonic Acid.
+          await startPicker.locator(".compound-picker-trigger").click();
+          const startInput2 = startPicker.locator("input");
+          await startInput2.fill("Carbonic Acid");
+          await page.waitForTimeout(150);
+          await startPicker.locator(".compound-picker-list button").filter({ hasText: "Carbonic Acid" }).first().click();
+
+          await page.waitForTimeout(900);
+          const targetTriggerText = await targetPicker.locator(".compound-picker-trigger").innerText();
+          if (!targetTriggerText.includes("Nitrogen Dioxide")) {
+            throw new Error("Changing start silently replaced the selected target: " + targetTriggerText);
+          }
+
+          // Directory should be centered around Carbonic Acid and expose relationship filters.
+          const directory = page.locator(".compound-directory");
+          const directoryText = await directory.innerText();
+          if (!directoryText.includes("centered around Carbonic Acid")) {
+            throw new Error("Directory is not centered around selected start");
+          }
+
+          await directory.locator('select').nth(0).selectOption("Near10");
+          await page.waitForTimeout(200);
+          const relationText = await directory.innerText();
+          if (!relationText.includes("STEPS") && !relationText.includes("CENTER")) {
+            throw new Error("Relationship-centered catalog did not render hop labels");
+          }
+
+          // Inclusive sulfur filter in directory.
+          await directory.getByRole("button", { name: "Sulfur" }).click();
+          await page.waitForTimeout(150);
+          const directoryCards = await directory.locator(".compound-directory-grid button").count();
+          if (directoryCards < 1) {
+            throw new Error("Sulfur directory filter returned no compounds");
+          }
+
+          if (errors.length) {
+            throw new Error("Browser errors:\n" + errors.join("\n"));
+          }
+
+          console.log(JSON.stringify({
+            ok: true,
+            focusedNodes: 620,
+            catalog: 2898,
+            checks: [
+              "element-name search",
+              "inclusive atom filter",
+              "stable target selection",
+              "center-compound relationship catalog"
+            ]
+          }, null, 2));
+
+          await browser.close();
+          EOF
+
+          node chemistry-browser-check.mjs

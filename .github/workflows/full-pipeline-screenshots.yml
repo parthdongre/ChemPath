@@ -1,0 +1,193 @@
+name: Full Pipeline + Screenshots v2
+
+on:
+  push:
+    branches:
+      - pipeline-screenshot-test
+  workflow_dispatch:
+
+jobs:
+  full-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install JavaScript dependencies
+        run: npm install
+
+      - name: Audit chemistry dataset
+        run: npm run audit:chemistry
+
+      - name: Build C++ engine
+        run: npm run build:engine
+
+      - name: Test C++ engine
+        run: npm run test:engine
+
+      - name: Build frontend
+        run: npm run build:web
+
+      - name: Verify all shortest-path algorithms
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          {
+            echo "ChemPath full pipeline verification"
+            echo "Commit: $GITHUB_SHA"
+            echo
+            ./engine/build/chempath stats
+            echo
+          } | tee artifacts/pipeline-report.txt
+
+          for cmd in path dijkstra astar dial bellmanford bidirectional bidijkstra duan2025; do
+            echo "=== $cmd: Methane -> Bicarbonate ===" | tee -a artifacts/pipeline-report.txt
+            ./engine/build/chempath "$cmd" Methane Bicarbonate               | tee /tmp/result.json               | tee -a artifacts/pipeline-report.txt
+            jq -e '.ok == true and .found == true and (.path | length) >= 2' /tmp/result.json >/dev/null
+            echo | tee -a artifacts/pipeline-report.txt
+          done
+
+      - name: Install Playwright browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start ChemPath API and frontend
+        shell: bash
+        run: |
+          npm run dev > artifacts/dev-server.log 2>&1 &
+          echo $! > /tmp/chempath-dev.pid
+
+          for i in {1..90}; do
+            if curl -fsS http://localhost:8787/api/health >/tmp/health.json               && curl -fsS http://localhost:5173 >/dev/null; then
+              cat /tmp/health.json | tee -a artifacts/pipeline-report.txt
+              exit 0
+            fi
+            sleep 1
+          done
+
+          echo "Servers did not become healthy." >&2
+          cat artifacts/dev-server.log >&2
+          exit 1
+
+      - name: Verify API algorithm endpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          for alg in bfs dijkstra astar dial bellmanford bidirectional bidijkstra duan2025; do
+            echo "=== API $alg ===" | tee -a artifacts/pipeline-report.txt
+            curl -fsS --get http://localhost:8787/api/path               --data-urlencode "from=Methane"               --data-urlencode "to=Bicarbonate"               --data-urlencode "algorithm=$alg"               | tee /tmp/api-result.json               | tee -a artifacts/pipeline-report.txt
+            jq -e '.ok == true and .found == true and (.visitedOrder | length) > 0' /tmp/api-result.json >/dev/null
+            echo | tee -a artifacts/pipeline-report.txt
+          done
+
+      - name: Capture real UI screenshots
+        shell: bash
+        run: |
+          cat > capture-ui.mjs <<'EOF'
+          import { chromium } from "playwright";
+          import fs from "node:fs";
+
+          fs.mkdirSync("artifacts", { recursive: true });
+
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage({
+            viewport: { width: 1600, height: 1000 },
+            deviceScaleFactor: 1
+          });
+
+          const browserErrors = [];
+          page.on("pageerror", (error) => browserErrors.push("PAGEERROR: " + error.message));
+          page.on("console", (msg) => {
+            if (msg.type() === "error") browserErrors.push("CONSOLE: " + msg.text());
+          });
+
+          await page.goto("http://localhost:5173", {
+            waitUntil: "networkidle",
+            timeout: 120000
+          });
+
+          await page.getByText("C++ engine online").waitFor({ timeout: 60000 });
+
+          const body = await page.locator("body").innerText();
+          for (const expected of ["1337", "1682", "3119"]) {
+            if (!body.includes(expected)) {
+              throw new Error("Expected network statistic not visible: " + expected);
+            }
+          }
+
+          await page.screenshot({
+            path: "artifacts/01-chempath-overview.png",
+            fullPage: true
+          });
+
+          const selects = page.locator("select");
+          await selects.nth(0).selectOption("astar");
+          await page.getByRole("button", { name: "Run algorithm" }).click();
+
+          await page.getByText("SIMULATION IN PROGRESS").waitFor({ timeout: 30000 });
+          await page.waitForTimeout(2200);
+
+          await page.screenshot({
+            path: "artifacts/02-astar-traversal.png",
+            fullPage: false
+          });
+
+          await page.getByText("SIMULATION IN PROGRESS").waitFor({
+            state: "hidden",
+            timeout: 240000
+          });
+
+          await page.screenshot({
+            path: "artifacts/03-astar-completed-path.png",
+            fullPage: true
+          });
+
+          await selects.nth(0).selectOption("duan2025");
+          await page.getByRole("button", { name: "Run algorithm" }).click();
+          await page.getByText("SIMULATION IN PROGRESS").waitFor({ timeout: 30000 });
+          await page.waitForTimeout(2200);
+
+          await page.screenshot({
+            path: "artifacts/04-2025-pivot-frontier-replay.png",
+            fullPage: false
+          });
+
+          const skip = page.getByRole("button", { name: "Skip replay" });
+          if (await skip.isVisible()) await skip.click();
+
+          await page.getByRole("button", { name: "Structure" }).click();
+          await page.getByRole("button", { name: "Analyze graph" }).click();
+          await page.waitForTimeout(1800);
+
+          await page.screenshot({
+            path: "artifacts/05-tarjan-scc-replay.png",
+            fullPage: false
+          });
+
+          if (browserErrors.length) {
+            fs.writeFileSync("artifacts/browser-errors.txt", browserErrors.join("\n") + "\n");
+            throw new Error("Browser emitted errors:\n" + browserErrors.join("\n"));
+          }
+
+          await browser.close();
+          EOF
+
+          node capture-ui.mjs
+
+      - name: Upload screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chempath-full-pipeline
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 7

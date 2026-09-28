@@ -950,6 +950,31 @@ std::vector<int> ReactionGraph::reachableDfs(const std::string& from) const {
     return order;
 }
 
+std::vector<int> ReactionGraph::hopDistances(const std::string& from) const {
+    std::vector<int> distance(compounds_.size(), -1);
+
+    const auto start = compoundId(from);
+    if (!start) return distance;
+
+    std::queue<int> queue;
+    distance[*start] = 0;
+    queue.push(*start);
+
+    while (!queue.empty()) {
+        const int current = queue.front();
+        queue.pop();
+
+        for (const auto& edge : adjacency_[current]) {
+            if (distance[edge.to] != -1) continue;
+            distance[edge.to] = distance[current] + 1;
+            queue.push(edge.to);
+        }
+    }
+
+    return distance;
+}
+
+
 bool ReactionGraph::dfsCycle(
     int node,
     std::vector<int>& state,

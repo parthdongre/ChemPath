@@ -88,6 +88,34 @@ int main(int argc, char** argv) {
     assert(dijkstra.totalCost > 0);
     assert(!dijkstra.visitedOrder.empty());
 
+    const auto astar = graph.shortestPathAStar("Methane", "Bicarbonate");
+    assert(astar.found);
+    assert(astar.totalCost == dijkstra.totalCost);
+    assert(astar.reactionIds.size() + 1 == astar.compoundIds.size());
+
+    const auto dial = graph.shortestPathDial("Methane", "Bicarbonate");
+    assert(dial.found);
+    assert(dial.totalCost == dijkstra.totalCost);
+    assert(dial.reactionIds.size() + 1 == dial.compoundIds.size());
+
+    const auto bellmanFord = graph.shortestPathBellmanFord("Methane", "Bicarbonate");
+    assert(bellmanFord.found);
+    assert(bellmanFord.totalCost == dijkstra.totalCost);
+    assert(bellmanFord.reactionIds.size() + 1 == bellmanFord.compoundIds.size());
+
+    const auto bidirectionalDijkstra =
+        graph.shortestPathBidirectionalDijkstra("Methane", "Bicarbonate");
+    assert(bidirectionalDijkstra.found);
+    assert(bidirectionalDijkstra.totalCost == dijkstra.totalCost);
+    assert(bidirectionalDijkstra.reactionIds.size() + 1 ==
+           bidirectionalDijkstra.compoundIds.size());
+
+    const auto pivotFrontier =
+        graph.shortestPathPivotFrontier("Methane", "Bicarbonate");
+    assert(pivotFrontier.found);
+    assert(pivotFrontier.totalCost == dijkstra.totalCost);
+    assert(pivotFrontier.reactionIds.size() + 1 == pivotFrontier.compoundIds.size());
+
     const auto bidirectional = graph.shortestPathBidirectional("Methane", "Bicarbonate");
     assert(bidirectional.found);
     assert(bidirectional.reactionIds.size() + 1 == bidirectional.compoundIds.size());

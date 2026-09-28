@@ -196,3 +196,10 @@ To avoid chemically misleading shortcuts:
 - for reversible records, the first listed product is the **primary product** used for the reverse edge.
 
 This projection is intentionally conservative. A future chemistry-focused version could replace the compound graph with a reaction hypergraph/state-space search that requires all reactants before a reaction fires.
+
+
+## Product/byproduct reachability
+
+ChemPath's default compound graph permits traversal to any listed product of a reaction, including documented byproducts. This maximizes connectivity and is useful for graph-algorithm demonstrations, but it is not the same as a synthesis planner that follows only the desired major organic product.
+
+Example: Oct-1-ene can reach SO2 through Octan-1-ol because the SOCl2 conversion of an alcohol to an alkyl chloride generates sulfur dioxide as a byproduct. This is chemically meaningful connectivity, even though SO2 is not the desired organic product of that step.

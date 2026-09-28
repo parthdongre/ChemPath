@@ -31,6 +31,7 @@ public:
     PathResult shortestPathBidirectionalDijkstra(const std::string& from, const std::string& to) const;
     PathResult shortestPathPivotFrontier(const std::string& from, const std::string& to) const;
     std::vector<int> reachableDfs(const std::string& from) const;
+    std::vector<int> hopDistances(const std::string& from) const;
     std::vector<int> firstDirectedCycle() const;
     SccResult stronglyConnectedComponents() const;
     std::vector<int> searchCompounds(const std::string& prefix, std::size_t limit = 8) const;

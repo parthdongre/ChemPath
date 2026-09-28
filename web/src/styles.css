@@ -380,6 +380,209 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
 }
 .run-button:active:not(:disabled) { transform: scale(.985); }
 
+
+.compound-picker {
+  position: relative;
+}
+
+.compound-picker-trigger {
+  width: 100%;
+  height: 42px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink-2);
+  background: var(--bg-2);
+  text-align: left;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.compound-picker-trigger:hover:not(:disabled) {
+  border-color: var(--line-strong);
+  background: var(--bg-3);
+}
+
+.compound-picker-value {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.compound-picker-value strong {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.compound-picker-value small {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compound-picker-count {
+  min-width: 28px;
+  padding: 3px 6px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink-4);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8px;
+  text-align: center;
+}
+
+.compound-picker-chevron {
+  color: var(--ink-4);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+  transform: translateY(-1px);
+}
+
+.compound-picker-popover {
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 0;
+  z-index: 40;
+  width: min(520px, 92vw);
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background: rgba(12, 12, 12, .98);
+  box-shadow: 0 26px 80px rgba(0,0,0,.55);
+  backdrop-filter: blur(18px);
+}
+
+.compound-picker-search {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.compound-picker-search input {
+  width: 100%;
+  height: 38px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  outline: none;
+  color: var(--ink-1);
+  background: var(--bg-2);
+  font-size: 11px;
+}
+
+.compound-picker-search input:focus {
+  border-color: var(--accent-line);
+}
+
+.compound-picker-search > span {
+  color: var(--ink-4);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.compound-picker-list {
+  max-height: 520px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.compound-picker-list > button {
+  width: 100%;
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: minmax(86px, 120px) minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 9px 11px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+  background: transparent;
+  text-align: left;
+  content-visibility: auto;
+  contain-intrinsic-size: 520px 54px;
+}
+
+.compound-picker-list > button:hover {
+  background: var(--bg-2);
+}
+
+.compound-picker-list > button.selected {
+  background: var(--accent-soft);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.compound-picker-list > button > strong {
+  overflow-wrap: anywhere;
+  color: var(--accent);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.compound-picker-list > button > span {
+  min-width: 0;
+}
+
+.compound-picker-list > button b {
+  display: block;
+  overflow: hidden;
+  color: var(--ink-1);
+  font-size: 10px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compound-picker-list > button small {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink-4);
+  font-size: 8px;
+}
+
+.compound-picker-list > button em {
+  padding: 4px 6px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 7px;
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.compound-picker-list > button em.reachable {
+  border-color: var(--accent-line);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.compound-picker-list > button em.unreachable {
+  color: var(--ink-4);
+  background: rgba(255,255,255,.025);
+}
+
+.compound-picker-empty {
+  padding: 20px 12px;
+  color: var(--ink-4);
+  font-size: 10px;
+}
+
 .algorithm-summary {
   min-width: 240px;
   align-self: stretch;

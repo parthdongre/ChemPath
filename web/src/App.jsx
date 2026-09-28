@@ -182,7 +182,31 @@ function chemistryCenter(compound) {
 
 function matchesChemistryCenter(compound, center) {
   if (!center || center === "All") return true;
-  return chemistryCenter(compound) === center;
+
+  const elements = formulaElements(compound.formula);
+  const has = (symbol) => elements.includes(symbol);
+
+  if (center === "Carbon") return has("C");
+  if (center === "Nitrogen") return has("N");
+  if (center === "Sulfur") return has("S");
+  if (center === "Phosphorus") return has("P");
+  if (center === "Halogen") {
+    return elements.some((symbol) => HALOGEN_ELEMENTS.has(symbol));
+  }
+  if (center === "Metal") {
+    return elements.some((symbol) => METAL_ELEMENTS.has(symbol));
+  }
+  if (center === "Oxygen") return has("O");
+
+  return !(
+    has("C") ||
+    has("N") ||
+    has("S") ||
+    has("P") ||
+    has("O") ||
+    elements.some((symbol) => HALOGEN_ELEMENTS.has(symbol)) ||
+    elements.some((symbol) => METAL_ELEMENTS.has(symbol))
+  );
 }
 
 function relationshipLabel(compound, from, distanceByName) {
@@ -357,7 +381,8 @@ function CompoundSelect({
             </span>
           </div>
 
-          <div className="compound-picker-centers" aria-label="Filter by chemistry center">
+          <div className="compound-picker-centers" aria-label="Filter by atom family">
+            <span>CONTAINS ATOM</span>
             {CHEMISTRY_CENTERS.map((center) => (
               <button
                 type="button"
@@ -464,6 +489,7 @@ function CompoundDirectory({
       </div>
 
       <div className="compound-directory-centers">
+        <span>CONTAINS ATOM</span>
         {CHEMISTRY_CENTERS.map((item) => (
           <button
             type="button"

@@ -92,7 +92,7 @@ jobs:
       - name: Capture real UI screenshots
         shell: bash
         run: |
-          cat > /tmp/capture.mjs <<'EOF'
+          cat > capture-ui.mjs <<'EOF'
           import { chromium } from "playwright";
           import fs from "node:fs";
 
@@ -181,7 +181,7 @@ jobs:
           await browser.close();
           EOF
 
-          node /tmp/capture.mjs
+          node capture-ui.mjs
 
       - name: Upload screenshots and report
         if: always()

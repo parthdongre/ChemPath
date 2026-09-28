@@ -1,0 +1,123 @@
+name: Scalable Catalog Browser Test
+
+on:
+  push:
+    branches:
+      - scalable-catalog-browser-test
+
+jobs:
+  browser-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Audit chemistry
+        run: npm run audit:chemistry
+
+      - name: Build engine
+        run: npm run build:engine
+
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start app
+        run: |
+          npm run dev > /tmp/chempath-dev.log 2>&1 &
+          for i in {1..120}; do
+            if curl -fsS http://localhost:8787/api/health >/tmp/health.json               && curl -fsS http://localhost:5173 >/dev/null; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/chempath-dev.log
+          exit 1
+
+      - name: Browser performance and search check
+        run: |
+          cat > browser-check.mjs <<'EOF'
+          import { chromium } from "playwright";
+
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage({
+            viewport: { width: 1600, height: 1000 }
+          });
+
+          const errors = [];
+          page.on("pageerror", (error) => errors.push(error.message));
+          page.on("console", (msg) => {
+            if (msg.type() === "error") errors.push(msg.text());
+          });
+
+          const started = Date.now();
+          await page.goto("http://localhost:5173", {
+            waitUntil: "networkidle",
+            timeout: 120000
+          });
+          const loadMs = Date.now() - started;
+
+          await page.getByText("C++ engine online").waitFor({ timeout: 60000 });
+
+          const body = await page.locator("body").innerText();
+          if (!body.includes("2898")) {
+            throw new Error("Full catalog count 2898 is not visible");
+          }
+
+          const caption = page.locator(".graph-caption");
+          const captionText = await caption.innerText();
+          if (!captionText.includes("620 / 2898")) {
+            throw new Error("Focused graph view is not capped at 620 nodes: " + captionText);
+          }
+
+          const startPicker = page.locator(".compound-picker").nth(0);
+          await startPicker.locator(".compound-picker-trigger").click();
+          const input = startPicker.locator("input");
+          await input.fill("ethanoic acid");
+          await page.waitForTimeout(250);
+
+          const pickerText = await startPicker.locator(".compound-picker-popover").innerText();
+          if (!pickerText.toLowerCase().includes("acetic acid")) {
+            throw new Error("Alias search 'ethanoic acid' did not find Acetic Acid");
+          }
+
+          await input.fill("C40H80O2");
+          await page.waitForTimeout(250);
+          const formulaText = await startPicker.locator(".compound-picker-popover").innerText();
+          if (!formulaText.includes("C40H80O2")) {
+            throw new Error("Formula search did not return C40H80O2 matches");
+          }
+
+          await input.fill("eicosyl eicosanoate");
+          await page.waitForTimeout(250);
+          const esterText = await startPicker.locator(".compound-picker-popover").innerText();
+          if (!esterText.toLowerCase().includes("eicosyl eicosanoate")) {
+            throw new Error("Expanded ester library is not searchable");
+          }
+
+          if (errors.length) {
+            throw new Error("Browser errors:\n" + errors.join("\n"));
+          }
+
+          console.log(JSON.stringify({
+            ok: true,
+            loadMs,
+            catalog: 2898,
+            renderedNodes: 620,
+            searchChecks: ["alias", "formula", "expanded ester"]
+          }, null, 2));
+
+          await browser.close();
+          EOF
+
+          node browser-check.mjs

@@ -495,6 +495,43 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
   white-space: nowrap;
 }
 
+.compound-picker-centers {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  scrollbar-width: thin;
+}
+
+.compound-picker-centers button,
+.compound-directory-centers button {
+  flex: 0 0 auto;
+  min-height: 28px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink-4);
+  background: transparent;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 7px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.compound-picker-centers button:hover,
+.compound-directory-centers button:hover {
+  color: var(--ink-2);
+  border-color: var(--line-strong);
+}
+
+.compound-picker-centers button.active,
+.compound-directory-centers button.active {
+  color: var(--accent);
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+
 .compound-picker-hint {
   padding: 7px 10px;
   border-bottom: 1px solid var(--line);
@@ -1138,9 +1175,18 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
   font-size: 9px;
 }
 
+.compound-directory-centers {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding: 12px 22px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-0);
+}
+
 .compound-directory-controls {
   display: grid;
-  grid-template-columns: minmax(260px, 1fr) 220px;
+  grid-template-columns: minmax(300px, 1.4fr) minmax(180px, .7fr) minmax(160px, .55fr);
   gap: 12px;
   padding: 14px 22px;
   border-bottom: 1px solid var(--line);
@@ -1191,7 +1237,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
 }
 
 .compound-directory-grid button {
-  min-height: 118px;
+  min-height: 152px;
   display: grid;
   align-content: start;
   gap: 5px;
@@ -1201,7 +1247,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
   background: var(--bg-1);
   color: var(--ink-2);
   content-visibility: auto;
-  contain-intrinsic-size: 155px 118px;
+  contain-intrinsic-size: 155px 152px;
   transition: background 150ms ease, box-shadow 150ms ease;
 }
 
@@ -1235,6 +1281,40 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
   font-size: 9px;
   line-height: 1.35;
   overflow-wrap: anywhere;
+}
+
+.compound-element-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 3px;
+}
+
+.compound-element-tags i {
+  min-width: 22px;
+  padding: 3px 5px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink-3);
+  background: rgba(255,255,255,.02);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 7px;
+  font-style: normal;
+  text-align: center;
+}
+
+.compound-relation {
+  display: block;
+  margin-top: 6px;
+  color: var(--ink-4);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: .04em;
+}
+
+.compound-directory-grid button.selected .compound-relation {
+  color: var(--accent);
 }
 
 .compound-directory-grid button > em {
@@ -1364,6 +1444,7 @@ footer {
   .result-label { border-right: 0; border-bottom: 1px solid var(--line); }
   .run-meta, .path-line, .reaction-audit-list, .compound-strip, .cycle-path, .scc-preview { grid-column: 1; }
   .compound-directory-controls { grid-template-columns: 1fr; }
+  .compound-directory-centers { padding-inline: 12px; }
   .compound-directory-grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); max-height: 480px; }
   .engine-map { padding-bottom: 48px; }
   .structure-table > div { grid-template-columns: 34px 1fr; }

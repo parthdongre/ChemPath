@@ -136,18 +136,23 @@ bool ReactionGraph::loadReactions(const std::string& path) {
         reactionIndexById_[reaction.id] = reactions_.size();
         reactions_.push_back(reaction);
 
-        for (int from : reaction.reactants) {
-            for (int to : reaction.products) {
-                adjacency_[from].push_back({to, reaction.id, reaction.cost});
-            }
+        // Compound-level projection of a multi-reactant reaction:
+        // the first listed reactant is the primary substrate. Additional
+        // reactants are co-reactants/reagents and must not independently
+        // initiate the reaction in the graph.
+        const int primaryReactant = reaction.reactants.front();
+        for (int to : reaction.products) {
+            adjacency_[primaryReactant].push_back({to, reaction.id, reaction.cost});
         }
 
-        if (reaction.reversible) {
-            for (int from : reaction.products) {
-                for (int to : reaction.reactants) {
-                    adjacency_[from].push_back({to, reaction.id, reaction.cost});
-                }
-            }
+        // For an explicitly reversible reaction, the first listed product is
+        // the designated primary product. This avoids treating side products
+        // such as water, hydronium, or hydroxide as independent reverse
+        // substrates while still preserving reversible connectivity.
+        if (reaction.reversible && !reaction.products.empty()) {
+            const int primaryProduct = reaction.products.front();
+            adjacency_[primaryProduct].push_back(
+                {primaryReactant, reaction.id, reaction.cost});
         }
     }
 

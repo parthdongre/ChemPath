@@ -180,3 +180,17 @@ Used for the ordered 20×20 set of standard-amino-acid dipeptides. ChemPath stor
 ## Large-network extension
 
 The expanded build also extends the audited homologous organic families through C40 and adds sodium, potassium, lithium, ammonium, calcium, and magnesium carboxylate connectivity. These rows reuse the same audited reaction families above; they are generated from formula-preserving templates and remain subject to the automated atom/charge audit.
+
+
+## Compound-graph projection rule
+
+ChemPath stores full multi-reactant reaction metadata, but the Data Structures visualization is a compound-level directed graph rather than a true reaction hypergraph.
+
+To avoid chemically misleading shortcuts:
+
+- the first listed reactant is the **primary substrate** used as the graph source,
+- additional reactants are co-reactants/reagents and do not independently initiate graph edges,
+- forward edges may point from the primary substrate to the listed products,
+- for reversible records, the first listed product is the **primary product** used for the reverse edge.
+
+This projection is intentionally conservative. A future chemistry-focused version could replace the compound graph with a reaction hypergraph/state-space search that requires all reactants before a reaction fires.

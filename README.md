@@ -2,7 +2,7 @@
 
 **ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The browser renders a dense directed network, while the graph algorithms and data-structure logic execute in a **C++17 engine**.
 
-> **Current audited build:** 235 compounds, 249 curated reaction records and 464 directed compound-projection edges. The network is deliberately capped for smooth interactive layout while preserving representative inorganic, organic, biochemical, salt, acid-base, peptide and precipitation chemistry.
+> **Current audited build:** 688 compounds, 816 curated reaction records and 1,526 directed compound-projection edges. This is intentionally large enough to showcase graph algorithms while capped below the earlier 1,337-node stress-test build for smoother interaction.
 
 ## Core idea
 
@@ -184,6 +184,6 @@ For reversible records, the **first listed product is the designated primary pro
 
 The earlier 1,337-compound build was useful for stress testing but was too large for a classroom visualization: Cytoscape layout became expensive and a large fraction of the nodes were repetitive long-chain homologues or peptide combinations.
 
-The interactive build is now intentionally curated to **235 compounds / 249 reactions / 464 directed edges**. It keeps representative C1-C6 organic families, core inorganic and acid-base chemistry, common biochemical compounds, important aromatic examples, solubility/precipitation chemistry, and a 6×6 representative dipeptide subset.
+The interactive build is now intentionally curated to **688 compounds / 816 reactions / 1,526 directed edges**. It keeps representative chemistry through roughly C20, core inorganic/acid-base networks, biochemical compounds, aromatic examples, solubility/precipitation chemistry, and a substantial 16×16 ordered dipeptide subset.
 
 For pathfinding mode, ChemPath asks the C++ DFS reachability endpoint whenever the start compound changes. The target selector then shows only compounds that are actually reachable from that source, avoiding misleading "no path" selections while keeping the graph algorithms in C++.

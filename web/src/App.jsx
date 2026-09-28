@@ -35,6 +35,75 @@ function CompoundSelect({ label, value, onChange, compounds, disabled }) {
   );
 }
 
+function CompoundDirectory({
+  compounds,
+  total,
+  query,
+  onQueryChange,
+  category,
+  categories,
+  onCategoryChange,
+  selectedName,
+  onSelect
+}) {
+  return (
+    <section className="compound-directory" aria-label="Compound directory">
+      <div className="compound-directory-head">
+        <div>
+          <span>COMPOUND DIRECTORY</span>
+          <strong>{total} compounds in network</strong>
+        </div>
+        <p>{compounds.length} shown</p>
+      </div>
+
+      <div className="compound-directory-controls">
+        <label>
+          <span>Filter directory</span>
+          <input
+            value={query}
+            onChange={(event) => onQueryChange(event.target.value)}
+            placeholder="name, formula, category…"
+            aria-label="Filter compound directory"
+          />
+        </label>
+
+        <label>
+          <span>Category</span>
+          <select
+            value={category}
+            onChange={(event) => onCategoryChange(event.target.value)}
+            aria-label="Filter compound directory by category"
+          >
+            {categories.map((item) => (
+              <option key={item} value={item}>{item}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <div className="compound-directory-grid">
+        {compounds.map((compound, index) => (
+          <button
+            type="button"
+            key={compound.id}
+            className={compound.name === selectedName ? "selected" : ""}
+            onClick={() => onSelect(compound)}
+          >
+            <span>{String(index + 1).padStart(3, "0")}</span>
+            <strong>{compound.formula}</strong>
+            <small>{compound.name}</small>
+            <em>{compound.category}</em>
+          </button>
+        ))}
+      </div>
+
+      {compounds.length === 0 && (
+        <div className="compound-directory-empty">No compounds match this filter.</div>
+      )}
+    </section>
+  );
+}
+
 function PathResult({ result }) {
   if (!result?.found) return null;
 
@@ -202,6 +271,8 @@ export default function App() {
   const [matches, setMatches] = useState([]);
   const [reachableTargets, setReachableTargets] = useState([]);
   const [targetsLoading, setTargetsLoading] = useState(false);
+  const [directorySearch, setDirectorySearch] = useState("");
+  const [directoryCategory, setDirectoryCategory] = useState("All");
   const [simulation, setSimulation] = useState({
     running: false,
     algorithm: "",
@@ -249,6 +320,34 @@ export default function App() {
   }, [search]);
 
   const compounds = network?.nodes ?? [];
+
+  const directoryCategories = useMemo(() => {
+    const values = Array.from(
+      new Set(compounds.map((compound) => compound.category).filter(Boolean))
+    ).sort((left, right) => left.localeCompare(right));
+
+    return ["All", ...values];
+  }, [compounds]);
+
+  const directoryCompounds = useMemo(() => {
+    const query = directorySearch.trim().toLowerCase();
+
+    return compounds
+      .filter((compound) => {
+        if (directoryCategory !== "All" && compound.category !== directoryCategory) {
+          return false;
+        }
+
+        if (!query) return true;
+
+        return [
+          compound.name,
+          compound.formula,
+          compound.category
+        ].some((value) => String(value ?? "").toLowerCase().includes(query));
+      })
+      .sort((left, right) => left.name.localeCompare(right.name));
+  }, [compounds, directorySearch, directoryCategory]);
 
   useEffect(() => {
     if (!network || !from) {
@@ -890,6 +989,22 @@ export default function App() {
                 </div>
               </>
             )}
+
+          <CompoundDirectory
+            compounds={directoryCompounds}
+            total={compounds.length}
+            query={directorySearch}
+            onQueryChange={setDirectorySearch}
+            category={directoryCategory}
+            categories={directoryCategories}
+            onCategoryChange={setDirectoryCategory}
+            selectedName={from}
+            onSelect={(compound) => {
+              setFrom(compound.name);
+              setSearch(compound.name);
+              setMatches([]);
+            }}
+          />
         </section>
       </section>
 

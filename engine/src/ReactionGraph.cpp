@@ -136,21 +136,23 @@ bool ReactionGraph::loadReactions(const std::string& path) {
         reactionIndexById_[reaction.id] = reactions_.size();
         reactions_.push_back(reaction);
 
-        // Compound-level projection of a multi-reactant reaction:
-        // the first listed reactant is the primary substrate. Additional
-        // reactants are co-reactants/reagents and must not independently
-        // initiate the reaction in the graph.
-        const int primaryReactant = reaction.reactants.front();
-        for (int to : reaction.products) {
-            adjacency_[primaryReactant].push_back({to, reaction.id, reaction.cost});
+        // Compound-level participation projection:
+        // any listed reactant can serve as the current graph vertex when the
+        // other listed co-reactants/reagents are assumed available.
+        // Therefore every reactant connects to every recorded product.
+        for (int from : reaction.reactants) {
+            for (int to : reaction.products) {
+                adjacency_[from].push_back({to, reaction.id, reaction.cost});
+            }
         }
 
-        // For an explicitly reversible reaction, the first listed product is
-        // the designated primary product. This avoids treating side products
-        // such as water, hydronium, or hydroxide as independent reverse
-        // substrates while still preserving reversible connectivity.
+        // For an explicitly reversible reaction, keep reverse traversal
+        // anchored to the designated primary product -> primary reactant.
+        // This avoids turning every side product into an independent reverse
+        // entry point while still preserving the intended equilibrium edge.
         if (reaction.reversible && !reaction.products.empty()) {
             const int primaryProduct = reaction.products.front();
+            const int primaryReactant = reaction.reactants.front();
             adjacency_[primaryProduct].push_back(
                 {primaryReactant, reaction.id, reaction.cost});
         }

@@ -2,7 +2,7 @@
 
 **ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The C++17 engine stores and searches the full reaction graph, while the browser renders a focused working set so the catalog can grow without forcing Cytoscape to lay out every compound at once.
 
-> **Current audited build:** 2,898 compounds, 3,349 curated reaction records and about 8,035 directed compound-projection edges. The live Cytoscape view is capped at roughly 620 focused compounds while search, reachability and every C++ algorithm continue to use the full network.
+> **Current audited build:** 2,898 compounds, 3,350 curated reaction records and about 14,129 directed compound-participation edges. The live Cytoscape view is capped at roughly 620 focused compounds while search, reachability and every C++ algorithm continue to use the full network.
 
 ## Core idea
 
@@ -228,3 +228,16 @@ Compound selection is optimized for thousands of entries:
 - the full directory loads in pages of 240 cards.
 
 This keeps the search experience fast even as the C++ catalog grows beyond the number of nodes rendered in the graph.
+
+
+## Reaction participation semantics
+
+ChemPath now projects every listed reactant to every recorded product for a reaction. This means the currently selected compound may participate as a substrate **or as a listed co-reactant/reagent**, while the remaining required reactants are assumed available.
+
+Example:
+
+Ammonium Chloride -> Ammonium -> Ammonia -> Ammonium Docosanoate
+
+The first step is aqueous NH4Cl dissociation; the final step uses the existing Docosanoic Acid + Ammonia ammonium-salt formation record.
+
+This is intentionally a **reaction-participation graph**, not a one-bottle synthesis planner. The UI and viva explanation should state that required co-reactants/conditions are supplied by the reaction record.

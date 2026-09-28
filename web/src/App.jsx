@@ -3,7 +3,6 @@ import { api } from "./api";
 import NetworkGraph from "./components/NetworkGraph.jsx";
 
 const EMPTY_HIGHLIGHT = { nodes: [], edges: [] };
-const MIN_SIMULATION_MS = 15_000;
 const MAX_SIMULATION_MS = 120_000;
 const STEP_REPLAY_MS = 200;
 const FINAL_HOLD_MS = 1_500;
@@ -722,7 +721,7 @@ function SimulationHud({ simulation, currentCompound, onSkip }) {
           ELAPSED <b>{simulation.elapsed.toFixed(1)}s</b>
         </span>
         <span>
-          TARGET <b>{((simulation.duration ?? MIN_SIMULATION_MS) / 1000).toFixed(1)}s</b>
+          TARGET <b>{((simulation.duration ?? FINAL_HOLD_MS) / 1000).toFixed(1)}s</b>
         </span>
       </div>
 
@@ -767,7 +766,7 @@ export default function App() {
     visited: [],
     active: null,
     elapsed: 0,
-    duration: MIN_SIMULATION_MS
+    duration: FINAL_HOLD_MS
   });
 
   const runTokenRef = useRef(0);
@@ -1050,10 +1049,7 @@ export default function App() {
 
     const traversalDuration = Math.min(
       MAX_SIMULATION_MS - FINAL_HOLD_MS,
-      Math.max(
-        MIN_SIMULATION_MS - FINAL_HOLD_MS,
-        ids.length * STEP_REPLAY_MS
-      )
+      ids.length * STEP_REPLAY_MS
     );
     const totalDuration = traversalDuration + FINAL_HOLD_MS;
 
@@ -1242,7 +1238,7 @@ export default function App() {
       visited: [],
       active: null,
       elapsed: 0,
-      duration: MIN_SIMULATION_MS
+      duration: FINAL_HOLD_MS
     });
   }
 
@@ -1319,8 +1315,8 @@ export default function App() {
             <span>{algorithmDescription}</span>
             <em>
               {simulation.running
-                ? `target ${((simulation.duration ?? MIN_SIMULATION_MS) / 1000).toFixed(1)}s`
-                : "adaptive 15–120s replay"}
+                ? `target ${((simulation.duration ?? FINAL_HOLD_MS) / 1000).toFixed(1)}s`
+                : "adaptive replay · up to 2 min"}
             </em>
           </div>
 
@@ -1508,7 +1504,7 @@ export default function App() {
 
           {!result && (
             <div className="result-empty">
-              Select an algorithm and run it. Replay scales with traversal size from about 15 seconds up to 2 minutes.
+              Select an algorithm and run it. Replay duration follows the actual traversal size with no forced minimum, capped at 2 minutes.
             </div>
           )}
 

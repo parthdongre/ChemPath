@@ -168,3 +168,15 @@ Examples include:
 The audited dataset is meant to be **chemically defensible for educational graph analysis**, not a reaction-planning database. It does not encode yields, equilibrium constants, rate constants, detailed mechanisms, stereochemical mixtures, laboratory quantities, or safety procedures.
 
 If ChemPath is extended beyond a Data Structures project, the next chemistry upgrade should use a curated reaction database with structured stoichiometry, catalysts, temperature/pressure ranges, and persistent reaction provenance.
+
+
+### S13_PEPTIDE_COUPLING
+
+OpenStax, *Organic Chemistry*, 26.7 Peptide Synthesis  
+https://openstax.org/books/organic-chemistry/pages/26-7-peptide-synthesis
+
+Used for the ordered 20×20 set of standard-amino-acid dipeptides. ChemPath stores the atom-balanced overall condensation equation (amino acid A + amino acid B → dipeptide + H2O), while the conditions field makes clear that practical synthesis requires protected/activated amino-acid coupling rather than spontaneous mixing.
+
+## Large-network extension
+
+The expanded build also extends the audited homologous organic families through C40 and adds sodium, potassium, lithium, ammonium, calcium, and magnesium carboxylate connectivity. These rows reuse the same audited reaction families above; they are generated from formula-preserving templates and remain subject to the automated atom/charge audit.

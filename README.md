@@ -2,7 +2,7 @@
 
 **ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The browser renders a dense directed network, while the graph algorithms and data-structure logic execute in a **C++17 engine**.
 
-> **Current audited build:** 514 compounds, 562 curated reaction records and about 2,068 directed graph edges, with a deliberately slowed 10-second visualization of each algorithm's C++ visit order.
+> **Current audited build:** 1,337 compounds, 1,682 curated reaction records and 6,348 directed graph edges, with adaptive traversal replay that lasts at least 10 seconds and automatically grows for larger searches.nds, 562 curated reaction records and about 2,068 directed graph edges, with a deliberately slowed 10-second visualization of each algorithm's C++ visit order.
 
 ## Core idea
 
@@ -18,7 +18,11 @@ The React frontend does **not** implement the algorithms. It requests a result f
 | Hash table | Compound name → integer vertex ID |
 | Queue + BFS | Minimum number of reaction edges |
 | Priority queue + Dijkstra | Minimum algorithmic graph weight |
-| Two BFS frontiers | Bidirectional path search |
+| A* | Guided weighted search with an admissible reverse-hop heuristic |
+| Dial buckets | Weighted shortest path optimized for small positive integer weights |
+| Bellman-Ford | Repeated-relaxation shortest path baseline |
+| Two BFS frontiers | Bidirectional unweighted path search |
+| Two priority queues | Bidirectional Dijkstra |
 | Explicit stack + DFS | Reachability exploration |
 | Three-state DFS | Directed cycle detection |
 | Low-link stack + Tarjan | Strongly connected components |
@@ -52,7 +56,7 @@ The Dijkstra weight is also **not** an activation energy, free-energy change, yi
 
 ## 10-second algorithm replay
 
-The actual C++ computation usually completes in milliseconds. ChemPath intentionally visualizes the returned traversal over **10 seconds**:
+The actual C++ computation usually completes in milliseconds. ChemPath intentionally visualizes the returned traversal for **at least 10 seconds**. Larger visit orders receive proportionally longer replays so individual steps stay visible:
 
 1. the current compound expands,
 2. visited compounds remain marked,
@@ -128,7 +132,12 @@ npm run dev
 
 ./engine/build/chempath path Methane Bicarbonate
 ./engine/build/chempath dijkstra Methane Bicarbonate
+./engine/build/chempath astar Methane Bicarbonate
+./engine/build/chempath dial Methane Bicarbonate
+./engine/build/chempath bellmanford Methane Bicarbonate
 ./engine/build/chempath bidirectional Methane Bicarbonate
+./engine/build/chempath bidijkstra Methane Bicarbonate
+./engine/build/chempath duan2025 Methane Bicarbonate
 
 ./engine/build/chempath reachable Methane
 ./engine/build/chempath cycles
@@ -151,3 +160,14 @@ npm run dev
 ---
 
 **ChemPath — watch graph algorithms move through chemistry.**
+
+
+## 2025 shortest-path research mode
+
+ChemPath includes an educational **Pivot-Frontier Hybrid** inspired by the ideas in:
+
+Ran Duan, Jiayi Mao, Xiao Mao, Xinkai Shu, Longhui Yin,  
+*Breaking the Sorting Barrier for Directed Single-Source Shortest Paths*, STOC 2025.  
+https://arxiv.org/abs/2504.17033
+
+The paper proves a deterministic `O(m log^(2/3) n)` algorithm for directed non-negative SSSP in the comparison-addition model. ChemPath does **not** claim to reproduce that full BMSSP construction. Its research mode demonstrates the paper's high-level combination of unsorted Bellman-Ford-like frontier relaxation with a later ordered cleanup, while preserving exact shortest-path output for the demo.

@@ -35,7 +35,7 @@ async function runEngine(args = []) {
       {
         cwd: repoRoot,
         timeout: 10000,
-        maxBuffer: 4 * 1024 * 1024
+        maxBuffer: 16 * 1024 * 1024
       }
     );
 
@@ -110,11 +110,18 @@ app.get("/api/path", route(async (req) => {
   const command = {
     bfs: "path",
     dijkstra: "dijkstra",
-    bidirectional: "bidirectional"
+    astar: "astar",
+    dial: "dial",
+    bellmanford: "bellmanford",
+    bidirectional: "bidirectional",
+    bidijkstra: "bidijkstra",
+    duan2025: "duan2025"
   }[algorithm];
 
   if (!command) {
-    const error = new Error("algorithm must be bfs, dijkstra, or bidirectional.");
+    const error = new Error(
+      "algorithm must be bfs, dijkstra, astar, dial, bellmanford, bidirectional, bidijkstra, or duan2025."
+    );
     error.status = 400;
     throw error;
   }

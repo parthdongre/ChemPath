@@ -137,7 +137,7 @@ int main(int argc, char** argv) {
     const auto args = positionalArgs(argc, argv);
     if (args.empty()) {
         printError(
-            "Usage: chempath <network|path|dijkstra|bidirectional|reachable|cycles|scc|search|stats> [args]");
+            "Usage: chempath <network|path|dijkstra|astar|dial|bellmanford|bidirectional|bidijkstra|duan2025|reachable|cycles|scc|search|stats> [args]");
         return 1;
     }
 
@@ -157,7 +157,7 @@ int main(int argc, char** argv) {
             << ",\"reactions\":" << graph.reactions().size()
             << ",\"directedEdges\":" << graph.edgeCount()
             << ",\"structures\":[\"Graph\",\"Adjacency List\",\"Queue\",\"Stack\",\"Hash Table\",\"Trie\",\"Priority Queue\",\"Low-link Stack\"]"
-            << ",\"algorithms\":[\"BFS\",\"Dijkstra\",\"Bidirectional BFS\",\"DFS\",\"Directed Cycle Detection\",\"Tarjan SCC\",\"Prefix Search\"]"
+            << ",\"algorithms\":[\"BFS\",\"Dijkstra\",\"A*\",\"Dial\",\"Bellman-Ford\",\"Bidirectional BFS\",\"Bidirectional Dijkstra\",\"Duan et al. 2025-inspired Pivot Frontier\",\"DFS\",\"Directed Cycle Detection\",\"Tarjan SCC\",\"Prefix Search\"]"
             << ",\"chemistryAudit\":\"curated-v1\""
             << "}\n";
         return 0;
@@ -202,7 +202,16 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    if (command == "path" || command == "dijkstra" || command == "bidirectional") {
+    if (
+        command == "path" ||
+        command == "dijkstra" ||
+        command == "astar" ||
+        command == "dial" ||
+        command == "bellmanford" ||
+        command == "bidirectional" ||
+        command == "bidijkstra" ||
+        command == "duan2025") {
+
         if (args.size() < 3) {
             printError(command + " requires <from> <to>");
             return 1;
@@ -215,9 +224,24 @@ int main(int argc, char** argv) {
         if (command == "dijkstra") {
             result = graph.shortestPathDijkstra(args[1], args[2]);
             algorithm = "Dijkstra";
+        } else if (command == "astar") {
+            result = graph.shortestPathAStar(args[1], args[2]);
+            algorithm = "A*";
+        } else if (command == "dial") {
+            result = graph.shortestPathDial(args[1], args[2]);
+            algorithm = "Dial";
+        } else if (command == "bellmanford") {
+            result = graph.shortestPathBellmanFord(args[1], args[2]);
+            algorithm = "Bellman-Ford";
         } else if (command == "bidirectional") {
             result = graph.shortestPathBidirectional(args[1], args[2]);
             algorithm = "Bidirectional BFS";
+        } else if (command == "bidijkstra") {
+            result = graph.shortestPathBidirectionalDijkstra(args[1], args[2]);
+            algorithm = "Bidirectional Dijkstra";
+        } else if (command == "duan2025") {
+            result = graph.shortestPathPivotFrontier(args[1], args[2]);
+            algorithm = "Pivot-Frontier Hybrid (Duan et al. 2025-inspired)";
         } else {
             result = graph.shortestPathBfs(args[1], args[2]);
             algorithm = "BFS";

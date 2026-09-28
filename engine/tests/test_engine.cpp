@@ -41,9 +41,9 @@ int main(int argc, char** argv) {
     assert(graph.loadFromFiles(argv[1], argv[2]));
 
     // Dense enough to remain an impressive DSA graph after chemistry cleanup.
-    assert(graph.compounds().size() >= 500);
-    assert(graph.reactions().size() >= 500);
-    assert(graph.edgeCount() >= 1800);
+    assert(graph.compounds().size() >= 1300);
+    assert(graph.reactions().size() >= 1600);
+    assert(graph.edgeCount() >= 6000);
 
     // Every audited reaction must carry chemistry metadata.
     for (const auto& reaction : graph.reactions()) {
@@ -87,6 +87,34 @@ int main(int argc, char** argv) {
     assert(dijkstra.reactionIds.size() + 1 == dijkstra.compoundIds.size());
     assert(dijkstra.totalCost > 0);
     assert(!dijkstra.visitedOrder.empty());
+
+    const auto astar = graph.shortestPathAStar("Methane", "Bicarbonate");
+    assert(astar.found);
+    assert(astar.totalCost == dijkstra.totalCost);
+    assert(astar.reactionIds.size() + 1 == astar.compoundIds.size());
+
+    const auto dial = graph.shortestPathDial("Methane", "Bicarbonate");
+    assert(dial.found);
+    assert(dial.totalCost == dijkstra.totalCost);
+    assert(dial.reactionIds.size() + 1 == dial.compoundIds.size());
+
+    const auto bellmanFord = graph.shortestPathBellmanFord("Methane", "Bicarbonate");
+    assert(bellmanFord.found);
+    assert(bellmanFord.totalCost == dijkstra.totalCost);
+    assert(bellmanFord.reactionIds.size() + 1 == bellmanFord.compoundIds.size());
+
+    const auto bidirectionalDijkstra =
+        graph.shortestPathBidirectionalDijkstra("Methane", "Bicarbonate");
+    assert(bidirectionalDijkstra.found);
+    assert(bidirectionalDijkstra.totalCost == dijkstra.totalCost);
+    assert(bidirectionalDijkstra.reactionIds.size() + 1 ==
+           bidirectionalDijkstra.compoundIds.size());
+
+    const auto pivotFrontier =
+        graph.shortestPathPivotFrontier("Methane", "Bicarbonate");
+    assert(pivotFrontier.found);
+    assert(pivotFrontier.totalCost == dijkstra.totalCost);
+    assert(pivotFrontier.reactionIds.size() + 1 == pivotFrontier.compoundIds.size());
 
     const auto bidirectional = graph.shortestPathBidirectional("Methane", "Bicarbonate");
     assert(bidirectional.found);

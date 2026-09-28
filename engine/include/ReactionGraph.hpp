@@ -24,7 +24,12 @@ public:
 
     PathResult shortestPathBfs(const std::string& from, const std::string& to) const;
     PathResult shortestPathDijkstra(const std::string& from, const std::string& to) const;
+    PathResult shortestPathAStar(const std::string& from, const std::string& to) const;
+    PathResult shortestPathDial(const std::string& from, const std::string& to) const;
+    PathResult shortestPathBellmanFord(const std::string& from, const std::string& to) const;
     PathResult shortestPathBidirectional(const std::string& from, const std::string& to) const;
+    PathResult shortestPathBidirectionalDijkstra(const std::string& from, const std::string& to) const;
+    PathResult shortestPathPivotFrontier(const std::string& from, const std::string& to) const;
     std::vector<int> reachableDfs(const std::string& from) const;
     std::vector<int> firstDirectedCycle() const;
     SccResult stronglyConnectedComponents() const;

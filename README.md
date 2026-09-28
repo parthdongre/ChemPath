@@ -1,8 +1,8 @@
 # ChemPath
 
-**ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The browser renders a dense directed network, while the graph algorithms and data-structure logic execute in a **C++17 engine**.
+**ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The C++17 engine stores and searches the full reaction graph, while the browser renders a focused working set so the catalog can grow without forcing Cytoscape to lay out every compound at once.
 
-> **Current audited build:** 690 compounds, 883 curated reaction records and 1,642 directed compound-projection edges. The graph now includes cross-domain chemistry bridges so major carbon, organic, nitrogen, sulfur, biochemical and acid-base regions are no longer isolated islands.
+> **Current audited build:** 2,898 compounds, 3,349 curated reaction records and about 8,035 directed compound-projection edges. The live Cytoscape view is capped at roughly 620 focused compounds while search, reachability and every C++ algorithm continue to use the full network.
 
 ## Core idea
 
@@ -180,13 +180,13 @@ Reaction records may contain several reactants and products, but ChemPath must n
 For reversible records, the **first listed product is the designated primary product** and is the only product used to create the reverse edge. Other reactants/products remain visible as chemistry metadata but do not create false entry points. This prevents shortcuts such as treating water in `H2CO3 + H2O ⇌ H3O+ + HCO3-` as though water alone could transform into bicarbonate.
 
 
-## Performance-focused dataset
+## Scalable catalog + focused rendering
 
-The earlier 1,337-compound build was useful for stress testing but was too large for a classroom visualization: Cytoscape layout became expensive and a large fraction of the nodes were repetitive long-chain homologues or peptide combinations.
+The engine now keeps the **full 2,898-compound catalog**, but the browser does not render all of those nodes simultaneously. The React layer chooses a focused working set of roughly 620 nodes using selected compounds, path/traversal context and high-degree graph hubs. This keeps Cytoscape responsive while preserving the complete graph for C++ algorithms.
 
-The interactive build is now intentionally curated to **688 compounds / 816 reactions / 1,526 directed edges**. It keeps representative chemistry through roughly C20, core inorganic/acid-base networks, biochemical compounds, aromatic examples, solubility/precipitation chemistry, and a substantial 16×16 ordered dipeptide subset.
+The catalog was expanded by restoring the audited C1-C40 families and full ordered dipeptide set, then adding a 40×40 Fischer-ester library. The ester library contributes a large number of legitimate compounds through one well-defined reaction family instead of padding the graph with arbitrary synthetic nodes.
 
-For pathfinding mode, ChemPath asks the C++ DFS reachability endpoint whenever the start compound changes. The target selector then shows only compounds that are actually reachable from that source, avoiding misleading "no path" selections while keeping the graph algorithms in C++.
+Search is also decoupled from rendering: the picker and directory search all 2,898 compounds, even when a compound is not part of the currently visible Cytoscape subset.
 
 
 ## Target selection and cross-network paths
@@ -213,3 +213,18 @@ The graph now includes a deliberately small set of real hub transformations that
 - one-carbon Grignard/formaldehyde homologation along the C1-C20 primary-alcohol series
 
 These are not zero-context shortcuts: every edge stores conditions and notes. The long-route effect is intentional. For example, Carbonic Acid can now reach Nitrogen Dioxide in 5 graph steps and Eicosan-1-ol in 39 graph steps.
+
+
+## Large-catalog search
+
+Compound selection is optimized for thousands of entries:
+
+- fuzzy matching across compound name, formula and category,
+- common aliases such as Ethanoic Acid → Acetic Acid and Methanal → Formaldehyde,
+- normalized formula search,
+- reachable-target hop counts,
+- keyboard navigation with ↑ / ↓ / Enter,
+- only the best 220 picker results are mounted at once,
+- the full directory loads in pages of 240 cards.
+
+This keeps the search experience fast even as the C++ catalog grows beyond the number of nodes rendered in the graph.

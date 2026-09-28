@@ -32,7 +32,8 @@ const allowedSources = new Set([
   "S11_GENERAL_INORGANIC",
   "S12_CARBOHYDRATE_HYDROLYSIS",
   "S13_PEPTIDE_COUPLING",
-  "S14_NETWORK_BRIDGES"
+  "S14_NETWORK_BRIDGES",
+  "S15_ESTER_LIBRARY"
 ]);
 
 const banned = [

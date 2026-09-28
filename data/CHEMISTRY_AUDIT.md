@@ -177,11 +177,9 @@ https://openstax.org/books/organic-chemistry/pages/26-7-peptide-synthesis
 
 Used for the ordered 20×20 set of standard-amino-acid dipeptides. ChemPath stores the atom-balanced overall condensation equation (amino acid A + amino acid B → dipeptide + H2O), while the conditions field makes clear that practical synthesis requires protected/activated amino-acid coupling rather than spontaneous mixing.
 
-## Curated interactive network
+## Large catalog with focused visualization
 
-The earlier stress-test build expanded homologous organic families through C40 and included all 400 ordered standard-amino-acid dipeptides. That scale was unnecessary for the interactive Data Structures demonstration and caused browser layout lag.
-
-The current teaching build keeps representative chemistry through roughly C20, the core inorganic/acid-base network, common biochemical compounds, important aromatic examples, audited salt/precipitation chemistry, and a 16×16 ordered dipeptide subset. This preserves a large graph for algorithm comparison while reducing the live visualization to 688 compounds and 816 reactions.
+The full C1-C40 homologous families and ordered standard-amino-acid dipeptides are retained in the C++ catalog. Browser performance is handled at the visualization layer instead of by deleting chemistry: Cytoscape receives only a focused working set, while the engine and search operate on the complete dataset.
 
 
 ## Compound-graph projection rule
@@ -219,3 +217,16 @@ References used include:
 - LibreTexts Grignard addition to formaldehyde, which gives a primary alcohol one carbon longer
 
 Where a transformation can give product mixtures (for example dehydration of larger primary alcohols), ChemPath records the terminal alkene as a **possible** graph product and says so explicitly in the reaction note rather than implying exclusive selectivity.
+
+
+### S15_ESTER_LIBRARY
+
+ChemPath expands the catalog with a systematic 40×40 Fischer esterification library built from the audited straight-chain C1-C40 carboxylic acids and primary alcohols.
+
+Each generated record follows the same reversible family:
+
+carboxylic acid + primary alcohol ⇌ ester + water
+
+Conditions are stored as strong-acid catalysis with heat and equilibrium shifting by water removal or excess alcohol. The family reuses the Fischer esterification chemistry documented under S6 and is atom-balanced automatically by the chemistry audit.
+
+The purpose of S15 is catalog breadth without arbitrary graph padding: the added compounds are systematic members of a real, well-defined reaction family.

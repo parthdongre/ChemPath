@@ -22,15 +22,15 @@ function CompoundSelect({
   onChange,
   compounds,
   disabled,
-  reachableNames = null
+  distanceByName = null
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const rootRef = useRef(null);
 
-  const reachableSet = useMemo(
-    () => new Set(reachableNames ?? []),
-    [reachableNames]
+  const distanceMap = useMemo(
+    () => distanceByName ?? {},
+    [distanceByName]
   );
 
   const selected = useMemo(
@@ -52,17 +52,24 @@ function CompoundSelect({
         ].some((item) => String(item ?? "").toLowerCase().includes(needle));
       })
       .sort((left, right) => {
-        if (reachableNames) {
-          const leftReachable = reachableSet.has(left.name) ? 1 : 0;
-          const rightReachable = reachableSet.has(right.name) ? 1 : 0;
+        if (distanceByName) {
+          const leftDistance = distanceMap[left.name];
+          const rightDistance = distanceMap[right.name];
+          const leftReachable = Number.isFinite(leftDistance);
+          const rightReachable = Number.isFinite(rightDistance);
+
           if (leftReachable !== rightReachable) {
-            return rightReachable - leftReachable;
+            return leftReachable ? -1 : 1;
+          }
+
+          if (leftReachable && rightReachable && leftDistance !== rightDistance) {
+            return leftDistance - rightDistance;
           }
         }
 
         return left.name.localeCompare(right.name);
       });
-  }, [compounds, query, reachableNames, reachableSet]);
+  }, [compounds, query, distanceByName, distanceMap]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -125,15 +132,18 @@ function CompoundSelect({
             />
             <span>
               {filtered.length} / {compounds.length}
-              {reachableNames ? ` · ${reachableSet.size} reachable` : ""}
+              {distanceByName
+                ? ` · ${Object.keys(distanceMap).length} reachable`
+                : ""}
             </span>
           </div>
 
           <div className="compound-picker-list" role="listbox">
             {filtered.map((compound) => {
-              const isReachable = reachableNames
-                ? reachableSet.has(compound.name)
+              const hops = distanceByName
+                ? distanceMap[compound.name]
                 : null;
+              const isReachable = Number.isFinite(hops);
 
               return (
                 <button
@@ -154,9 +164,11 @@ function CompoundSelect({
                     <small>{compound.category}</small>
                   </span>
 
-                  {reachableNames && (
+                  {distanceByName && (
                     <em className={isReachable ? "reachable" : "unreachable"}>
-                      {isReachable ? "REACHABLE" : "NO CURRENT PATH"}
+                      {isReachable
+                        ? `${hops} ${hops === 1 ? "STEP" : "STEPS"}`
+                        : "NO CURRENT PATH"}
                     </em>
                   )}
                 </button>
@@ -410,6 +422,7 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [matches, setMatches] = useState([]);
   const [reachableTargets, setReachableTargets] = useState([]);
+  const [targetDistances, setTargetDistances] = useState({});
   const [targetsLoading, setTargetsLoading] = useState(false);
   const [directorySearch, setDirectorySearch] = useState("");
   const [directoryCategory, setDirectoryCategory] = useState("All");
@@ -492,6 +505,7 @@ export default function App() {
   useEffect(() => {
     if (!network || !from) {
       setReachableTargets([]);
+      setTargetDistances({});
       return undefined;
     }
 
@@ -507,6 +521,14 @@ export default function App() {
         );
 
         setReachableTargets(targets);
+
+        const distances = Object.fromEntries(
+          (data.distances ?? [])
+            .filter((compound) => compound.name !== from)
+            .map((compound) => [compound.name, compound.hops])
+        );
+        setTargetDistances(distances);
+
         setTo((current) => {
           if (targets.some((compound) => compound.name === current)) {
             return current;
@@ -520,7 +542,10 @@ export default function App() {
         });
       })
       .catch(() => {
-        if (!cancelled) setReachableTargets([]);
+        if (!cancelled) {
+          setReachableTargets([]);
+          setTargetDistances({});
+        }
       })
       .finally(() => {
         if (!cancelled) setTargetsLoading(false);
@@ -885,7 +910,7 @@ export default function App() {
                   value={to}
                   onChange={setTo}
                   compounds={compounds}
-                  reachableNames={reachableTargets.map((compound) => compound.name)}
+                  distanceByName={targetDistances}
                   disabled={busy || targetsLoading}
                 />
                 <button

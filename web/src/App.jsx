@@ -16,22 +16,162 @@ function Stat({ value, label }) {
   );
 }
 
-function CompoundSelect({ label, value, onChange, compounds, disabled }) {
+function CompoundSelect({
+  label,
+  value,
+  onChange,
+  compounds,
+  disabled,
+  reachableNames = null
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const rootRef = useRef(null);
+
+  const reachableSet = useMemo(
+    () => new Set(reachableNames ?? []),
+    [reachableNames]
+  );
+
+  const selected = useMemo(
+    () => compounds.find((compound) => compound.name === value) ?? null,
+    [compounds, value]
+  );
+
+  const filtered = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+
+    return compounds
+      .filter((compound) => {
+        if (!needle) return true;
+
+        return [
+          compound.name,
+          compound.formula,
+          compound.category
+        ].some((item) => String(item ?? "").toLowerCase().includes(needle));
+      })
+      .sort((left, right) => {
+        if (reachableNames) {
+          const leftReachable = reachableSet.has(left.name) ? 1 : 0;
+          const rightReachable = reachableSet.has(right.name) ? 1 : 0;
+          if (leftReachable !== rightReachable) {
+            return rightReachable - leftReachable;
+          }
+        }
+
+        return left.name.localeCompare(right.name);
+      });
+  }, [compounds, query, reachableNames, reachableSet]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const closeOnOutsideClick = (event) => {
+      if (!rootRef.current?.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (disabled) setOpen(false);
+  }, [disabled]);
+
   return (
-    <label className="field">
+    <div className="field compound-picker" ref={rootRef}>
       <span>{label}</span>
-      <select
-        value={value}
+
+      <button
+        type="button"
+        className="compound-picker-trigger"
         disabled={disabled}
-        onChange={(event) => onChange(event.target.value)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => {
+          setOpen((current) => !current);
+          if (!open) setQuery("");
+        }}
       >
-        {compounds.map((compound) => (
-          <option key={compound.id} value={compound.name}>
-            {compound.formula} · {compound.name}
-          </option>
-        ))}
-      </select>
-    </label>
+        <span className="compound-picker-value">
+          <strong>{selected?.formula ?? "—"}</strong>
+          <small>{selected?.name ?? "Choose compound"}</small>
+        </span>
+        <span className="compound-picker-count">{compounds.length}</span>
+        <span className="compound-picker-chevron">⌄</span>
+      </button>
+
+      {open && (
+        <div className="compound-picker-popover">
+          <div className="compound-picker-search">
+            <input
+              autoFocus
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search all compounds…"
+              aria-label="Search compound directory"
+            />
+            <span>
+              {filtered.length} / {compounds.length}
+              {reachableNames ? ` · ${reachableSet.size} reachable` : ""}
+            </span>
+          </div>
+
+          <div className="compound-picker-list" role="listbox">
+            {filtered.map((compound) => {
+              const isReachable = reachableNames
+                ? reachableSet.has(compound.name)
+                : null;
+
+              return (
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={compound.name === value}
+                  key={compound.id}
+                  className={compound.name === value ? "selected" : ""}
+                  onClick={() => {
+                    onChange(compound.name);
+                    setOpen(false);
+                    setQuery("");
+                  }}
+                >
+                  <strong>{compound.formula}</strong>
+                  <span>
+                    <b>{compound.name}</b>
+                    <small>{compound.category}</small>
+                  </span>
+
+                  {reachableNames && (
+                    <em className={isReachable ? "reachable" : "unreachable"}>
+                      {isReachable ? "REACHABLE" : "NO CURRENT PATH"}
+                    </em>
+                  )}
+                </button>
+              );
+            })}
+
+            {filtered.length === 0 && (
+              <div className="compound-picker-empty">
+                No compounds match “{query}”.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -737,11 +877,16 @@ export default function App() {
                 />
                 <span className="command-arrow">→</span>
                 <CompoundSelect
-                  label={targetsLoading ? "Reachable target · checking" : `Reachable target · ${reachableTargets.length}`}
+                  label={
+                    targetsLoading
+                      ? "Target · checking reachability"
+                      : `Target · ${compounds.length} total / ${reachableTargets.length} reachable`
+                  }
                   value={to}
                   onChange={setTo}
-                  compounds={reachableTargets}
-                  disabled={busy || targetsLoading || reachableTargets.length === 0}
+                  compounds={compounds}
+                  reachableNames={reachableTargets.map((compound) => compound.name)}
+                  disabled={busy || targetsLoading}
                 />
                 <button
                   className="run-button"
@@ -749,7 +894,6 @@ export default function App() {
                     busy ||
                     !network ||
                     targetsLoading ||
-                    reachableTargets.length === 0 ||
                     !to
                   }
                   onClick={runPath}

@@ -40,13 +40,13 @@ int main(int argc, char** argv) {
     chempath::ReactionGraph graph;
     assert(graph.loadFromFiles(argv[1], argv[2]));
 
-    // Large enough to be impressive, capped so the live Cytoscape view stays responsive.
-    assert(graph.compounds().size() >= 650);
-    assert(graph.compounds().size() <= 725);
-    assert(graph.reactions().size() >= 780);
-    assert(graph.reactions().size() <= 920);
-    assert(graph.edgeCount() >= 1450);
-    assert(graph.edgeCount() <= 1700);
+    // The engine holds a large catalog; the browser renders a focused working set.
+    assert(graph.compounds().size() >= 2800);
+    assert(graph.compounds().size() <= 2950);
+    assert(graph.reactions().size() >= 3250);
+    assert(graph.reactions().size() <= 3400);
+    assert(graph.edgeCount() >= 7600);
+    assert(graph.edgeCount() <= 8200);
 
     // Every audited reaction must carry chemistry metadata.
     for (const auto& reaction : graph.reactions()) {
@@ -75,6 +75,16 @@ int main(int argc, char** argv) {
     assert(nitrile != nullptr);
     assert(reactionHasProduct(graph, *nitrile, "Acetic Acid"));
     assert(reactionHasProduct(graph, *nitrile, "Ammonium Chloride"));
+
+    const auto ethylOctanoate = graph.compoundId("Ethyl Octanoate");
+    const auto eicosylEicosanoate = graph.compoundId("Eicosyl Eicosanoate");
+    assert(ethylOctanoate.has_value());
+    assert(eicosylEicosanoate.has_value());
+
+    const auto esterLibraryPath =
+        graph.shortestPathBfs("Octanoic Acid", "Ethyl Octanoate");
+    assert(esterLibraryPath.found);
+    assert(esterLibraryPath.reactionIds.size() == 1);
 
     // Core DSA behavior still works on the audited network.
     const auto bfs = graph.shortestPathBfs("Methane", "Bicarbonate");

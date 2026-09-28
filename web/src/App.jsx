@@ -721,7 +721,7 @@ function SimulationHud({ simulation, currentCompound, onSkip }) {
           ELAPSED <b>{simulation.elapsed.toFixed(1)}s</b>
         </span>
         <span>
-          TARGET <b>{((simulation.duration ?? MIN_SIMULATION_MS) / 1000).toFixed(1)}s</b>
+          TARGET <b>{((simulation.duration ?? FINAL_HOLD_MS) / 1000).toFixed(1)}s</b>
         </span>
       </div>
 
@@ -1238,7 +1238,7 @@ export default function App() {
       visited: [],
       active: null,
       elapsed: 0,
-      duration: MIN_SIMULATION_MS
+      duration: FINAL_HOLD_MS
     });
   }
 
@@ -1315,7 +1315,7 @@ export default function App() {
             <span>{algorithmDescription}</span>
             <em>
               {simulation.running
-                ? `target ${((simulation.duration ?? MIN_SIMULATION_MS) / 1000).toFixed(1)}s`
+                ? `target ${((simulation.duration ?? FINAL_HOLD_MS) / 1000).toFixed(1)}s`
                 : "adaptive replay · up to 2 min"}
             </em>
           </div>

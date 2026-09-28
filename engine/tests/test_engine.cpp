@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
     // Dense enough to remain an impressive DSA graph after chemistry cleanup.
     assert(graph.compounds().size() >= 1300);
     assert(graph.reactions().size() >= 1600);
-    assert(graph.edgeCount() >= 6000);
+    assert(graph.edgeCount() >= 3000);
 
     // Every audited reaction must carry chemistry metadata.
     for (const auto& reaction : graph.reactions()) {
@@ -81,6 +81,23 @@ int main(int argc, char** argv) {
     assert(graph.compound(bfs.compoundIds.front())->name == "Methane");
     assert(graph.compound(bfs.compoundIds.back())->name == "Bicarbonate");
     assert(!bfs.visitedOrder.empty());
+
+    // Co-reactants must not become independent reaction-entry vertices.
+    // In H2CO3 + H2O ⇌ H3O+ + HCO3-, water is a co-reactant, so there
+    // must be no compound-graph shortcut Water -> Bicarbonate.
+    const auto waterId = graph.compoundId("Water");
+    const auto bicarbonateId = graph.compoundId("Bicarbonate");
+    assert(waterId.has_value());
+    assert(bicarbonateId.has_value());
+
+    bool hasFalseWaterShortcut = false;
+    for (const auto& edge : graph.adjacency()[*waterId]) {
+        if (edge.to == *bicarbonateId) {
+            hasFalseWaterShortcut = true;
+            break;
+        }
+    }
+    assert(!hasFalseWaterShortcut);
 
     const auto dijkstra = graph.shortestPathDijkstra("Methane", "Bicarbonate");
     assert(dijkstra.found);

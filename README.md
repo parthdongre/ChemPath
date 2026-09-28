@@ -2,7 +2,7 @@
 
 **ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The browser renders a dense directed network, while the graph algorithms and data-structure logic execute in a **C++17 engine**.
 
-> **Current audited build:** 1,337 compounds, 1,682 curated reaction records and 3,119 directed compound-projection edges, with adaptive traversal replay that lasts at least 10 seconds and automatically grows for larger searches.nds, 562 curated reaction records and about 2,068 directed graph edges, with a deliberately slowed 10-second visualization of each algorithm's C++ visit order.
+> **Current audited build:** 235 compounds, 249 curated reaction records and 464 directed compound-projection edges. The network is deliberately capped for smooth interactive layout while preserving representative inorganic, organic, biochemical, salt, acid-base, peptide and precipitation chemistry.
 
 ## Core idea
 
@@ -14,7 +14,7 @@ The React frontend does **not** implement the algorithms. It requests a result f
 
 | Structure / algorithm | ChemPath usage |
 | --- | --- |
-| Adjacency-list graph | Stores the dense reaction network |
+| Adjacency-list graph | Stores the curated reaction network |
 | Hash table | Compound name → integer vertex ID |
 | Queue + BFS | Minimum number of reaction edges |
 | Priority queue + Dijkstra | Minimum algorithmic graph weight |
@@ -178,3 +178,12 @@ The paper proves a deterministic `O(m log^(2/3) n)` algorithm for directed non-n
 Reaction records may contain several reactants and products, but ChemPath must not interpret every co-reactant as an independent substrate. The compound graph therefore uses the **first listed reactant as the primary substrate**. It creates forward edges from that substrate to the recorded products.
 
 For reversible records, the **first listed product is the designated primary product** and is the only product used to create the reverse edge. Other reactants/products remain visible as chemistry metadata but do not create false entry points. This prevents shortcuts such as treating water in `H2CO3 + H2O ⇌ H3O+ + HCO3-` as though water alone could transform into bicarbonate.
+
+
+## Performance-focused dataset
+
+The earlier 1,337-compound build was useful for stress testing but was too large for a classroom visualization: Cytoscape layout became expensive and a large fraction of the nodes were repetitive long-chain homologues or peptide combinations.
+
+The interactive build is now intentionally curated to **235 compounds / 249 reactions / 464 directed edges**. It keeps representative C1-C6 organic families, core inorganic and acid-base chemistry, common biochemical compounds, important aromatic examples, solubility/precipitation chemistry, and a 6×6 representative dipeptide subset.
+
+For pathfinding mode, ChemPath asks the C++ DFS reachability endpoint whenever the start compound changes. The target selector then shows only compounds that are actually reachable from that source, avoiding misleading "no path" selections while keeping the graph algorithms in C++.

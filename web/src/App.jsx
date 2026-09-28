@@ -3,9 +3,105 @@ import { api } from "./api";
 import NetworkGraph from "./components/NetworkGraph.jsx";
 
 const EMPTY_HIGHLIGHT = { nodes: [], edges: [] };
-const MIN_SIMULATION_MS = 10_000;
-const STEP_REPLAY_MS = 120;
-const FINAL_HOLD_MS = 1_000;
+const MIN_SIMULATION_MS = 15_000;
+const MAX_SIMULATION_MS = 120_000;
+const STEP_REPLAY_MS = 200;
+const FINAL_HOLD_MS = 1_500;
+const GRAPH_RENDER_LIMIT = 620;
+const GRAPH_VISITED_FOCUS_LIMIT = 420;
+const PICKER_RENDER_LIMIT = 220;
+const DIRECTORY_PAGE_SIZE = 240;
+
+const COMPOUND_ALIASES = {
+  "Acetic Acid": ["Ethanoic Acid"],
+  "Methanoic Acid": ["Formic Acid"],
+  "Formaldehyde": ["Methanal"],
+  "Acetaldehyde": ["Ethanal"],
+  "Acetone": ["Propanone"],
+  "Bicarbonate": ["Hydrogen Carbonate"],
+  "Hydrogen Carbonate": ["Bicarbonate"],
+  "Carbon Dioxide": ["CO2"],
+  "Carbon Monoxide": ["CO"],
+  "Sulfur Dioxide": ["SO2"],
+  "Sulfur Trioxide": ["SO3"],
+  "Nitric Oxide": ["NO"],
+  "Nitrogen Dioxide": ["NO2"],
+  "Water": ["H2O"],
+  "Ammonia": ["NH3"],
+  "Ammonium": ["NH4+"]
+};
+
+function normalizeSearch(value) {
+  return String(value ?? "")
+    .toLowerCase()
+    .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, (digit) => "⁰¹²³⁴⁵⁶⁷⁸⁹".indexOf(digit))
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+function compoundAliases(compound) {
+  const aliases = [...(COMPOUND_ALIASES[compound.name] ?? [])];
+
+  if (compound.name.includes("Acetate")) {
+    aliases.push(compound.name.replace("Acetate", "Ethanoate"));
+  }
+
+  return aliases;
+}
+
+function subsequenceScore(text, query) {
+  if (!query) return 0;
+
+  let cursor = 0;
+  let gaps = 0;
+  for (const char of query) {
+    const next = text.indexOf(char, cursor);
+    if (next < 0) return -1;
+    gaps += next - cursor;
+    cursor = next + 1;
+  }
+
+  return Math.max(1, 180 - gaps);
+}
+
+function compoundSearchScore(compound, query) {
+  const needle = normalizeSearch(query);
+  if (!needle) return 0;
+
+  const name = normalizeSearch(compound.name);
+  const formula = normalizeSearch(compound.formula);
+  const category = normalizeSearch(compound.category);
+  const aliases = compoundAliases(compound).map(normalizeSearch);
+  const values = [name, formula, category, ...aliases];
+
+  let best = -1;
+
+  for (const value of values) {
+    if (!value) continue;
+    if (value === needle) best = Math.max(best, 1200);
+    else if (value.startsWith(needle)) best = Math.max(best, 950 - Math.min(100, value.length - needle.length));
+    else if (value.includes(needle)) best = Math.max(best, 700 - Math.min(150, value.indexOf(needle)));
+
+    const fuzzy = subsequenceScore(value, needle);
+    if (fuzzy >= 0) best = Math.max(best, fuzzy);
+  }
+
+  return best;
+}
+
+function rankedCompounds(compounds, query) {
+  if (!query.trim()) {
+    return [...compounds].sort((left, right) => left.name.localeCompare(right.name));
+  }
+
+  return compounds
+    .map((compound) => ({ compound, score: compoundSearchScore(compound, query) }))
+    .filter((entry) => entry.score >= 0)
+    .sort((left, right) =>
+      right.score - left.score ||
+      left.compound.name.localeCompare(right.compound.name)
+    )
+    .map((entry) => entry.compound);
+}
 
 function Stat({ value, label }) {
   return (
@@ -26,7 +122,9 @@ function CompoundSelect({
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
   const rootRef = useRef(null);
+  const listRef = useRef(null);
 
   const distanceMap = useMemo(
     () => distanceByName ?? {},
@@ -39,37 +137,61 @@ function CompoundSelect({
   );
 
   const filtered = useMemo(() => {
-    const needle = query.trim().toLowerCase();
+    const ranked = rankedCompounds(compounds, query);
 
-    return compounds
-      .filter((compound) => {
-        if (!needle) return true;
+    return ranked.sort((left, right) => {
+      if (distanceByName) {
+        const leftDistance = distanceMap[left.name];
+        const rightDistance = distanceMap[right.name];
+        const leftReachable = Number.isFinite(leftDistance);
+        const rightReachable = Number.isFinite(rightDistance);
 
-        return [
-          compound.name,
-          compound.formula,
-          compound.category
-        ].some((item) => String(item ?? "").toLowerCase().includes(needle));
-      })
-      .sort((left, right) => {
-        if (distanceByName) {
-          const leftDistance = distanceMap[left.name];
-          const rightDistance = distanceMap[right.name];
-          const leftReachable = Number.isFinite(leftDistance);
-          const rightReachable = Number.isFinite(rightDistance);
-
-          if (leftReachable !== rightReachable) {
-            return leftReachable ? -1 : 1;
-          }
-
-          if (leftReachable && rightReachable && leftDistance !== rightDistance) {
-            return leftDistance - rightDistance;
-          }
+        if (leftReachable !== rightReachable) {
+          return leftReachable ? -1 : 1;
         }
 
-        return left.name.localeCompare(right.name);
-      });
+        if (leftReachable && rightReachable && leftDistance !== rightDistance) {
+          return leftDistance - rightDistance;
+        }
+      }
+
+      if (query.trim()) {
+        return compoundSearchScore(right, query) - compoundSearchScore(left, query);
+      }
+
+      return left.name.localeCompare(right.name);
+    });
   }, [compounds, query, distanceByName, distanceMap]);
+
+  const visible = filtered.slice(0, PICKER_RENDER_LIMIT);
+
+  function choose(compound) {
+    if (!compound) return;
+    onChange(compound.name);
+    setOpen(false);
+    setQuery("");
+    setActiveIndex(0);
+  }
+
+  function handleSearchKeyDown(event) {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveIndex((index) => Math.min(visible.length - 1, index + 1));
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveIndex((index) => Math.max(0, index - 1));
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      choose(visible[activeIndex]);
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      setOpen(false);
+    }
+  }
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [query]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -80,22 +202,20 @@ function CompoundSelect({
       }
     };
 
-    const closeOnEscape = (event) => {
-      if (event.key === "Escape") setOpen(false);
-    };
-
     document.addEventListener("pointerdown", closeOnOutsideClick);
-    document.addEventListener("keydown", closeOnEscape);
-
-    return () => {
-      document.removeEventListener("pointerdown", closeOnOutsideClick);
-      document.removeEventListener("keydown", closeOnEscape);
-    };
+    return () => document.removeEventListener("pointerdown", closeOnOutsideClick);
   }, [open]);
 
   useEffect(() => {
     if (disabled) setOpen(false);
   }, [disabled]);
+
+  useEffect(() => {
+    if (!open) return;
+    listRef.current
+      ?.querySelector(`[data-picker-index="${activeIndex}"]`)
+      ?.scrollIntoView({ block: "nearest" });
+  }, [activeIndex, open]);
 
   return (
     <div className="field compound-picker" ref={rootRef}>
@@ -109,7 +229,10 @@ function CompoundSelect({
         aria-expanded={open}
         onClick={() => {
           setOpen((current) => !current);
-          if (!open) setQuery("");
+          if (!open) {
+            setQuery("");
+            setActiveIndex(0);
+          }
         }}
       >
         <span className="compound-picker-value">
@@ -127,19 +250,27 @@ function CompoundSelect({
               autoFocus
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search all compounds…"
-              aria-label="Search compound directory"
+              onKeyDown={handleSearchKeyDown}
+              placeholder="Search name, formula, alias…"
+              aria-label="Search compound catalog"
             />
             <span>
-              {filtered.length} / {compounds.length}
+              {Math.min(filtered.length, PICKER_RENDER_LIMIT)} / {filtered.length}
+              {filtered.length !== compounds.length ? ` of ${compounds.length}` : ""}
               {distanceByName
                 ? ` · ${Object.keys(distanceMap).length} reachable`
                 : ""}
             </span>
           </div>
 
-          <div className="compound-picker-list" role="listbox">
-            {filtered.map((compound) => {
+          {filtered.length > PICKER_RENDER_LIMIT && (
+            <div className="compound-picker-hint">
+              Showing the best {PICKER_RENDER_LIMIT} matches · keep typing to narrow · ↑↓ Enter supported
+            </div>
+          )}
+
+          <div className="compound-picker-list" role="listbox" ref={listRef}>
+            {visible.map((compound, index) => {
               const hops = distanceByName
                 ? distanceMap[compound.name]
                 : null;
@@ -150,18 +281,24 @@ function CompoundSelect({
                   type="button"
                   role="option"
                   aria-selected={compound.name === value}
+                  data-picker-index={index}
                   key={compound.id}
-                  className={compound.name === value ? "selected" : ""}
-                  onClick={() => {
-                    onChange(compound.name);
-                    setOpen(false);
-                    setQuery("");
-                  }}
+                  className={[
+                    compound.name === value ? "selected" : "",
+                    index === activeIndex ? "keyboard-active" : ""
+                  ].filter(Boolean).join(" ")}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  onClick={() => choose(compound)}
                 >
                   <strong>{compound.formula}</strong>
                   <span>
                     <b>{compound.name}</b>
-                    <small>{compound.category}</small>
+                    <small>
+                      {compound.category}
+                      {compoundAliases(compound).length
+                        ? ` · ${compoundAliases(compound)[0]}`
+                        : ""}
+                    </small>
                   </span>
 
                   {distanceByName && (
@@ -190,31 +327,34 @@ function CompoundSelect({
 function CompoundDirectory({
   compounds,
   total,
+  filteredTotal,
   query,
   onQueryChange,
   category,
   categories,
   onCategoryChange,
   selectedName,
-  onSelect
+  onSelect,
+  hasMore,
+  onLoadMore
 }) {
   return (
     <section className="compound-directory" aria-label="Compound directory">
       <div className="compound-directory-head">
         <div>
           <span>COMPOUND DIRECTORY</span>
-          <strong>{total} compounds in network</strong>
+          <strong>{total} compounds in full C++ catalog</strong>
         </div>
-        <p>{compounds.length} shown</p>
+        <p>{compounds.length} shown · {filteredTotal} matched</p>
       </div>
 
       <div className="compound-directory-controls">
         <label>
-          <span>Filter directory</span>
+          <span>Search entire catalog</span>
           <input
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
-            placeholder="name, formula, category…"
+            placeholder="Try CO2, ethanoic acid, acetate, C8H18O…"
             aria-label="Filter compound directory"
           />
         </label>
@@ -241,7 +381,7 @@ function CompoundDirectory({
             className={compound.name === selectedName ? "selected" : ""}
             onClick={() => onSelect(compound)}
           >
-            <span>{String(index + 1).padStart(3, "0")}</span>
+            <span>{String(index + 1).padStart(4, "0")}</span>
             <strong>{compound.formula}</strong>
             <small>{compound.name}</small>
             <em>{compound.category}</em>
@@ -249,8 +389,15 @@ function CompoundDirectory({
         ))}
       </div>
 
-      {compounds.length === 0 && (
-        <div className="compound-directory-empty">No compounds match this filter.</div>
+      {hasMore && (
+        <button type="button" className="compound-directory-more" onClick={onLoadMore}>
+          Load {Math.min(DIRECTORY_PAGE_SIZE, filteredTotal - compounds.length)} more
+          <span>{filteredTotal - compounds.length} remaining</span>
+        </button>
+      )}
+
+      {filteredTotal === 0 && (
+        <div className="compound-directory-empty">No compounds match this search.</div>
       )}
     </section>
   );

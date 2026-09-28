@@ -349,6 +349,7 @@ function CompoundSelect({
           setOpen((current) => !current);
           if (!open) {
             setQuery("");
+            setCenterFilter("All");
             setActiveIndex(0);
           }
         }}
@@ -367,7 +368,11 @@ function CompoundSelect({
             <input
               autoFocus
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => {
+                const next = event.target.value;
+                setQuery(next);
+                if (next.trim()) setCenterFilter("All");
+              }}
               onKeyDown={handleSearchKeyDown}
               placeholder="Search name, formula, alias…"
               aria-label="Search compound catalog"

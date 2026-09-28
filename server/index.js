@@ -35,7 +35,7 @@ async function runEngine(args = []) {
       {
         cwd: repoRoot,
         timeout: 10000,
-        maxBuffer: 4 * 1024 * 1024
+        maxBuffer: 16 * 1024 * 1024
       }
     );
 

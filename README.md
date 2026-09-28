@@ -2,7 +2,7 @@
 
 **ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The browser renders a dense directed network, while the graph algorithms and data-structure logic execute in a **C++17 engine**.
 
-> **Current audited build:** 688 compounds, 816 curated reaction records and 1,526 directed compound-projection edges. This is intentionally large enough to showcase graph algorithms while capped below the earlier 1,337-node stress-test build for smoother interaction.
+> **Current audited build:** 690 compounds, 883 curated reaction records and 1,642 directed compound-projection edges. The graph now includes cross-domain chemistry bridges so major carbon, organic, nitrogen, sulfur, biochemical and acid-base regions are no longer isolated islands.
 
 ## Core idea
 
@@ -196,3 +196,20 @@ The target picker shows the full compound catalog rather than hiding disconnecte
 The default graph is a **full reaction-product network**: any recorded reaction product, including a chemically valid byproduct, may become the next graph vertex. This intentionally enables cross-network routes. For example, Oct-1-ene can reach sulfur dioxide because hydroboration-oxidation gives octan-1-ol, and conversion of that alcohol with thionyl chloride produces SO2 as a byproduct.
 
 A stricter future "primary product only" mode could be used for more synthesis-like route planning, while the default mode remains useful for Data Structures exploration of the complete reaction network.
+
+
+## Cross-domain connectivity
+
+The graph now includes a deliberately small set of real hub transformations that connect previously isolated chemistry regions:
+
+- CO2 -> glucose by overall photosynthesis
+- glucose -> ethanol + CO2 by alcoholic fermentation
+- CO2 + NH3 -> urea and urea -> NH3 + CO2
+- NH3 -> NO -> NO2 through the Ostwald chemistry already represented in the network
+- N2 + H2 -> NH3 by Haber-Bosch synthesis
+- cysteine -> pyruvic acid + NH3 + H2S by cysteine desulfhydrase
+- primary alcohol -> alkene dehydration as a possible product family
+- alkyl chloride -> primary amine using excess ammonia
+- one-carbon Grignard/formaldehyde homologation along the C1-C20 primary-alcohol series
+
+These are not zero-context shortcuts: every edge stores conditions and notes. The long-route effect is intentional. For example, Carbonic Acid can now reach Nitrogen Dioxide in 5 graph steps and Eicosan-1-ol in 39 graph steps.

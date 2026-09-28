@@ -103,6 +103,68 @@ function rankedCompounds(compounds, query) {
     .map((entry) => entry.compound);
 }
 
+const CHEMISTRY_CENTERS = [
+  "All",
+  "Carbon",
+  "Nitrogen",
+  "Sulfur",
+  "Phosphorus",
+  "Halogen",
+  "Metal",
+  "Oxygen",
+  "Other"
+];
+
+const METAL_ELEMENTS = new Set([
+  "Li","Na","K","Rb","Cs","Be","Mg","Ca","Sr","Ba",
+  "Al","Fe","Cu","Zn","Ag","Mn","Co","Ni","Cr","Sn","Pb"
+]);
+
+const HALOGEN_ELEMENTS = new Set(["F","Cl","Br","I"]);
+
+function formulaElements(formula) {
+  const elements = [];
+  const seen = new Set();
+
+  for (const match of String(formula ?? "").matchAll(/[A-Z][a-z]?/g)) {
+    const symbol = match[0];
+    if (!seen.has(symbol)) {
+      seen.add(symbol);
+      elements.push(symbol);
+    }
+  }
+
+  return elements;
+}
+
+function chemistryCenter(compound) {
+  const elements = formulaElements(compound.formula);
+  const has = (symbol) => elements.includes(symbol);
+
+  // This is a browsing classification, not a claim about molecular geometry.
+  if (has("C")) return "Carbon";
+  if (has("N")) return "Nitrogen";
+  if (has("S")) return "Sulfur";
+  if (has("P")) return "Phosphorus";
+  if (elements.some((symbol) => HALOGEN_ELEMENTS.has(symbol))) return "Halogen";
+  if (elements.some((symbol) => METAL_ELEMENTS.has(symbol))) return "Metal";
+  if (has("O")) return "Oxygen";
+  return "Other";
+}
+
+function matchesChemistryCenter(compound, center) {
+  if (!center || center === "All") return true;
+  return chemistryCenter(compound) === center;
+}
+
+function relationshipLabel(compound, from, distanceByName) {
+  if (!from) return "";
+  if (compound.name === from) return "CENTER";
+  const hops = distanceByName?.[compound.name];
+  if (!Number.isFinite(hops)) return "NO CURRENT PATH";
+  return `${hops} ${hops === 1 ? "STEP" : "STEPS"}`;
+}
+
 function Stat({ value, label }) {
   return (
     <div className="stat">
@@ -122,6 +184,7 @@ function CompoundSelect({
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [centerFilter, setCenterFilter] = useState("All");
   const [activeIndex, setActiveIndex] = useState(0);
   const rootRef = useRef(null);
   const listRef = useRef(null);
@@ -137,7 +200,10 @@ function CompoundSelect({
   );
 
   const filtered = useMemo(() => {
-    const ranked = rankedCompounds(compounds, query);
+    const centered = compounds.filter((compound) =>
+      matchesChemistryCenter(compound, centerFilter)
+    );
+    const ranked = rankedCompounds(centered, query);
 
     return ranked.sort((left, right) => {
       if (distanceByName) {
@@ -161,7 +227,7 @@ function CompoundSelect({
 
       return left.name.localeCompare(right.name);
     });
-  }, [compounds, query, distanceByName, distanceMap]);
+  }, [compounds, query, centerFilter, distanceByName, distanceMap]);
 
   const visible = filtered.slice(0, PICKER_RENDER_LIMIT);
 
@@ -191,7 +257,7 @@ function CompoundSelect({
 
   useEffect(() => {
     setActiveIndex(0);
-  }, [query]);
+  }, [query, centerFilter]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -263,6 +329,19 @@ function CompoundSelect({
             </span>
           </div>
 
+          <div className="compound-picker-centers" aria-label="Filter by chemistry center">
+            {CHEMISTRY_CENTERS.map((center) => (
+              <button
+                type="button"
+                key={center}
+                className={centerFilter === center ? "active" : ""}
+                onClick={() => setCenterFilter(center)}
+              >
+                {center}
+              </button>
+            ))}
+          </div>
+
           {filtered.length > PICKER_RENDER_LIMIT && (
             <div className="compound-picker-hint">
               Showing the best {PICKER_RENDER_LIMIT} matches · keep typing to narrow · ↑↓ Enter supported
@@ -294,7 +373,9 @@ function CompoundSelect({
                   <span>
                     <b>{compound.name}</b>
                     <small>
-                      {compound.category}
+                      {chemistryCenter(compound)} · {compound.category}
+                      {" · "}
+                      {formulaElements(compound.formula).join(" ")}
                       {compoundAliases(compound).length
                         ? ` · ${compoundAliases(compound)[0]}`
                         : ""}
@@ -333,6 +414,12 @@ function CompoundDirectory({
   category,
   categories,
   onCategoryChange,
+  center,
+  onCenterChange,
+  relation,
+  onRelationChange,
+  from,
+  distanceByName,
   selectedName,
   onSelect,
   hasMore,
@@ -342,25 +429,52 @@ function CompoundDirectory({
     <section className="compound-directory" aria-label="Compound directory">
       <div className="compound-directory-head">
         <div>
-          <span>COMPOUND DIRECTORY</span>
-          <strong>{total} compounds in full C++ catalog</strong>
+          <span>CHEMISTRY-CENTERED CATALOG</span>
+          <strong>{total} compounds · centered around {from || "the full network"}</strong>
         </div>
         <p>{compounds.length} shown · {filteredTotal} matched</p>
       </div>
 
+      <div className="compound-directory-centers">
+        {CHEMISTRY_CENTERS.map((item) => (
+          <button
+            type="button"
+            key={item}
+            className={center === item ? "active" : ""}
+            onClick={() => onCenterChange(item)}
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+
       <div className="compound-directory-controls">
-        <label>
-          <span>Search entire catalog</span>
+        <label className="compound-directory-search">
+          <span>Search name / formula / alias / element</span>
           <input
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
-            placeholder="Try CO2, ethanoic acid, acetate, C8H18O…"
+            placeholder="CO2 · ethanoic acid · C8H18O · sulfur · chloride…"
             aria-label="Filter compound directory"
           />
         </label>
 
         <label>
-          <span>Category</span>
+          <span>Relationship to {from || "start"}</span>
+          <select
+            value={relation}
+            onChange={(event) => onRelationChange(event.target.value)}
+          >
+            <option value="All">All compounds</option>
+            <option value="Reachable">Reachable from start</option>
+            <option value="Near3">Within 3 steps</option>
+            <option value="Near10">Within 10 steps</option>
+            <option value="Unreachable">No current path</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Compound class</span>
           <select
             value={category}
             onChange={(event) => onCategoryChange(event.target.value)}
@@ -384,7 +498,15 @@ function CompoundDirectory({
             <span>{String(index + 1).padStart(4, "0")}</span>
             <strong>{compound.formula}</strong>
             <small>{compound.name}</small>
-            <em>{compound.category}</em>
+            <div className="compound-element-tags">
+              {formulaElements(compound.formula).slice(0, 6).map((element) => (
+                <i key={element}>{element}</i>
+              ))}
+            </div>
+            <em>{chemistryCenter(compound)} · {compound.category}</em>
+            <b className="compound-relation">
+              {relationshipLabel(compound, from, distanceByName)}
+            </b>
           </button>
         ))}
       </div>
@@ -397,7 +519,9 @@ function CompoundDirectory({
       )}
 
       {filteredTotal === 0 && (
-        <div className="compound-directory-empty">No compounds match this search.</div>
+        <div className="compound-directory-empty">
+          No compounds match these chemistry filters.
+        </div>
       )}
     </section>
   );
@@ -573,6 +697,8 @@ export default function App() {
   const [targetsLoading, setTargetsLoading] = useState(false);
   const [directorySearch, setDirectorySearch] = useState("");
   const [directoryCategory, setDirectoryCategory] = useState("All");
+  const [directoryCenter, setDirectoryCenter] = useState("All");
+  const [directoryRelation, setDirectoryRelation] = useState("All");
   const [directoryLimit, setDirectoryLimit] = useState(DIRECTORY_PAGE_SIZE);
   const [simulation, setSimulation] = useState({
     running: false,
@@ -630,13 +756,57 @@ export default function App() {
     return ["All", ...values];
   }, [compounds]);
 
-  const directoryFiltered = useMemo(() => {
-    const categoryFiltered = compounds.filter((compound) =>
-      directoryCategory === "All" || compound.category === directoryCategory
-    );
+  const directoryDistanceMap = useMemo(
+    () => ({ [from]: 0, ...targetDistances }),
+    [from, targetDistances]
+  );
 
-    return rankedCompounds(categoryFiltered, directorySearch);
-  }, [compounds, directorySearch, directoryCategory]);
+  const directoryFiltered = useMemo(() => {
+    const filtered = compounds.filter((compound) => {
+      if (directoryCategory !== "All" && compound.category !== directoryCategory) {
+        return false;
+      }
+
+      if (!matchesChemistryCenter(compound, directoryCenter)) {
+        return false;
+      }
+
+      const hops = compound.name === from ? 0 : directoryDistanceMap[compound.name];
+      if (directoryRelation === "Reachable" && !Number.isFinite(hops)) return false;
+      if (directoryRelation === "Near3" && !(Number.isFinite(hops) && hops <= 3)) return false;
+      if (directoryRelation === "Near10" && !(Number.isFinite(hops) && hops <= 10)) return false;
+      if (directoryRelation === "Unreachable" && Number.isFinite(hops)) return false;
+
+      return true;
+    });
+
+    const ranked = rankedCompounds(filtered, directorySearch);
+
+    if (!directorySearch.trim() && directoryRelation !== "All") {
+      ranked.sort((left, right) => {
+        const leftHops = left.name === from ? 0 : directoryDistanceMap[left.name];
+        const rightHops = right.name === from ? 0 : directoryDistanceMap[right.name];
+
+        if (Number.isFinite(leftHops) && Number.isFinite(rightHops)) {
+          return leftHops - rightHops || left.name.localeCompare(right.name);
+        }
+
+        if (Number.isFinite(leftHops)) return -1;
+        if (Number.isFinite(rightHops)) return 1;
+        return left.name.localeCompare(right.name);
+      });
+    }
+
+    return ranked;
+  }, [
+    compounds,
+    directorySearch,
+    directoryCategory,
+    directoryCenter,
+    directoryRelation,
+    directoryDistanceMap,
+    from
+  ]);
 
   const directoryCompounds = useMemo(
     () => directoryFiltered.slice(0, directoryLimit),
@@ -645,7 +815,7 @@ export default function App() {
 
   useEffect(() => {
     setDirectoryLimit(DIRECTORY_PAGE_SIZE);
-  }, [directorySearch, directoryCategory]);
+  }, [directorySearch, directoryCategory, directoryCenter, directoryRelation]);
 
   useEffect(() => {
     if (!network || !from) {
@@ -674,17 +844,8 @@ export default function App() {
         );
         setTargetDistances(distances);
 
-        setTo((current) => {
-          if (targets.some((compound) => compound.name === current)) {
-            return current;
-          }
-
-          return (
-            targets.find((compound) => compound.name === "Bicarbonate")?.name ??
-            targets[0]?.name ??
-            ""
-          );
-        });
+        // Keep the user's chosen target even when it is currently unreachable.
+        // Reachability is information, not a reason to mutate the selection.
       })
       .catch(() => {
         if (!cancelled) {
@@ -715,25 +876,42 @@ export default function App() {
     if (!network) return null;
     if (network.nodes.length <= GRAPH_RENDER_LIMIT) return network;
 
-    const mandatory = new Set(
-      [selectedFromId, selectedToId, ...(highlight.nodes ?? [])]
-        .filter((id) => Number.isInteger(id))
-    );
+    const priority = [];
+    const prioritySeen = new Set();
+    const addPriority = (id) => {
+      if (!Number.isInteger(id) || prioritySeen.has(id)) return;
+      prioritySeen.add(id);
+      priority.push(id);
+    };
+
+    // Never allow traversal noise to push source, target, or the final path out.
+    addPriority(selectedFromId);
+    addPriority(selectedToId);
+    result?.path?.forEach((compound) => addPriority(compound.id));
+    (highlight.nodes ?? []).forEach(addPriority);
+    result?.cycle?.forEach((compound) => addPriority(compound.id));
+    result?.components?.[0]?.slice(0, 80).forEach((compound) => addPriority(compound.id));
 
     const traversalIds = result?.visitedOrder?.map((compound) => compound.id) ?? [];
-    if (traversalIds.length <= GRAPH_VISITED_FOCUS_LIMIT) {
-      traversalIds.forEach((id) => mandatory.add(id));
-    } else {
-      const stride = Math.ceil(traversalIds.length / GRAPH_VISITED_FOCUS_LIMIT);
-      for (let index = 0; index < traversalIds.length; index += stride) {
-        mandatory.add(traversalIds[index]);
-      }
-      traversalIds.slice(-20).forEach((id) => mandatory.add(id));
-    }
+    const traversalBudget = Math.max(
+      0,
+      Math.min(
+        GRAPH_VISITED_FOCUS_LIMIT,
+        GRAPH_RENDER_LIMIT - priority.length - 120
+      )
+    );
 
-    result?.path?.forEach((compound) => mandatory.add(compound.id));
-    result?.cycle?.forEach((compound) => mandatory.add(compound.id));
-    result?.components?.[0]?.slice(0, 120).forEach((compound) => mandatory.add(compound.id));
+    if (traversalBudget > 0 && traversalIds.length > 0) {
+      const stride = Math.max(1, Math.ceil(traversalIds.length / traversalBudget));
+      for (
+        let index = 0;
+        index < traversalIds.length && priority.length < GRAPH_RENDER_LIMIT - 120;
+        index += stride
+      ) {
+        addPriority(traversalIds[index]);
+      }
+      traversalIds.slice(-16).forEach(addPriority);
+    }
 
     const degree = new Map(network.nodes.map((node) => [node.id, 0]));
     for (const edge of network.edges) {
@@ -746,7 +924,7 @@ export default function App() {
       left.name.localeCompare(right.name)
     );
 
-    const visible = new Set([...mandatory].slice(0, GRAPH_RENDER_LIMIT));
+    const visible = new Set(priority.slice(0, GRAPH_RENDER_LIMIT));
     for (const node of ranked) {
       if (visible.size >= GRAPH_RENDER_LIMIT) break;
       visible.add(node.id);
@@ -1381,6 +1559,12 @@ export default function App() {
             category={directoryCategory}
             categories={directoryCategories}
             onCategoryChange={setDirectoryCategory}
+            center={directoryCenter}
+            onCenterChange={setDirectoryCenter}
+            relation={directoryRelation}
+            onRelationChange={setDirectoryRelation}
+            from={from}
+            distanceByName={directoryDistanceMap}
             selectedName={from}
             onSelect={(compound) => {
               setFrom(compound.name);

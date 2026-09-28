@@ -187,3 +187,12 @@ The earlier 1,337-compound build was useful for stress testing but was too large
 The interactive build is now intentionally curated to **688 compounds / 816 reactions / 1,526 directed edges**. It keeps representative chemistry through roughly C20, core inorganic/acid-base networks, biochemical compounds, aromatic examples, solubility/precipitation chemistry, and a substantial 16×16 ordered dipeptide subset.
 
 For pathfinding mode, ChemPath asks the C++ DFS reachability endpoint whenever the start compound changes. The target selector then shows only compounds that are actually reachable from that source, avoiding misleading "no path" selections while keeping the graph algorithms in C++.
+
+
+## Target selection and cross-network paths
+
+The target picker shows the full compound catalog rather than hiding disconnected compounds. ChemPath computes a C++ BFS hop-distance index from the selected source and labels every target with its current shortest hop count, while compounds not connected in the current dataset remain visible as **NO CURRENT PATH**.
+
+The default graph is a **full reaction-product network**: any recorded reaction product, including a chemically valid byproduct, may become the next graph vertex. This intentionally enables cross-network routes. For example, Oct-1-ene can reach sulfur dioxide because hydroboration-oxidation gives octan-1-ol, and conversion of that alcohol with thionyl chloride produces SO2 as a byproduct.
+
+A stricter future "primary product only" mode could be used for more synthesis-like route planning, while the default mode remains useful for Data Structures exploration of the complete reaction network.

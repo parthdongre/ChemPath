@@ -203,3 +203,19 @@ This projection is intentionally conservative. A future chemistry-focused versio
 ChemPath's default compound graph permits traversal to any listed product of a reaction, including documented byproducts. This maximizes connectivity and is useful for graph-algorithm demonstrations, but it is not the same as a synthesis planner that follows only the desired major organic product.
 
 Example: Oct-1-ene can reach SO2 through Octan-1-ol because the SOCl2 conversion of an alcohol to an alkyl chloride generates sulfur dioxide as a byproduct. This is chemically meaningful connectivity, even though SO2 is not the desired organic product of that step.
+
+
+### S14_NETWORK_BRIDGES
+
+This source family connects major chemistry regions using established transformations rather than synthetic graph-only edges.
+
+References used include:
+- OpenStax / LibreTexts overall photosynthesis and fermentation chemistry
+- LibreTexts industrial urea synthesis from CO2 and NH3
+- OpenStax Ostwald and Haber-Bosch chemistry
+- peer-reviewed cysteine desulfhydrase chemistry producing pyruvate, ammonia and sulfide
+- LibreTexts primary-alcohol dehydration
+- LibreTexts alkyl-halide amination with excess ammonia
+- LibreTexts Grignard addition to formaldehyde, which gives a primary alcohol one carbon longer
+
+Where a transformation can give product mixtures (for example dehydration of larger primary alcohols), ChemPath records the terminal alkene as a **possible** graph product and says so explicitly in the reaction note rather than implying exclusive selectivity.

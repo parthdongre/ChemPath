@@ -436,7 +436,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
 
 .graph-frame {
   position: relative;
-  min-height: 820px;
+  min-height: 1040px;
   overflow: hidden;
   background:
     radial-gradient(circle at 50% 45%, rgba(94,234,212,.03), transparent 35%),
@@ -458,7 +458,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
   position: relative;
   z-index: 1;
   width: 100%;
-  height: 820px;
+  height: 1040px;
 }
 
 .graph-loading {
@@ -880,6 +880,161 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
 }
 .scc-preview span { display: block; margin-top: 4px; color: var(--ink-3); font-size: 9px; }
 
+
+.compound-directory {
+  grid-column: 1 / -1;
+  min-width: 0;
+  border-top: 1px solid var(--line);
+  background: var(--bg-0);
+}
+
+.compound-directory-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 22px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.compound-directory-head > div > span {
+  display: block;
+  color: var(--accent);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .18em;
+}
+
+.compound-directory-head strong {
+  display: block;
+  margin-top: 7px;
+  color: var(--ink-1);
+  font-size: 15px;
+}
+
+.compound-directory-head p {
+  margin: 0;
+  color: var(--ink-4);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+}
+
+.compound-directory-controls {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 220px;
+  gap: 12px;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-1);
+}
+
+.compound-directory-controls label {
+  display: grid;
+  gap: 7px;
+}
+
+.compound-directory-controls label > span {
+  color: var(--ink-4);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.compound-directory-controls input,
+.compound-directory-controls select {
+  width: 100%;
+  height: 38px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  outline: none;
+  color: var(--ink-2);
+  background: var(--bg-2);
+  font-size: 11px;
+}
+
+.compound-directory-controls input:focus,
+.compound-directory-controls select:focus {
+  border-color: var(--accent-line);
+}
+
+.compound-directory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+  gap: 1px;
+  max-height: 560px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1px;
+  background: var(--line);
+}
+
+.compound-directory-grid button {
+  min-height: 118px;
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  padding: 12px;
+  text-align: left;
+  border: 0;
+  background: var(--bg-1);
+  color: var(--ink-2);
+  content-visibility: auto;
+  contain-intrinsic-size: 155px 118px;
+  transition: background 150ms ease, box-shadow 150ms ease;
+}
+
+.compound-directory-grid button:hover {
+  background: var(--bg-2);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+.compound-directory-grid button.selected {
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px var(--accent-line);
+}
+
+.compound-directory-grid button > span {
+  color: var(--ink-4);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 7px;
+}
+
+.compound-directory-grid button > strong {
+  margin-top: 5px;
+  color: var(--accent);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 15px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.compound-directory-grid button > small {
+  color: var(--ink-2);
+  font-size: 9px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.compound-directory-grid button > em {
+  margin-top: auto;
+  color: var(--ink-4);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 7px;
+  font-style: normal;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.compound-directory-empty {
+  padding: 24px 22px;
+  color: var(--ink-4);
+  font-size: 11px;
+}
+
 .engine-map {
   display: grid;
   grid-template-columns: minmax(0,.8fr) minmax(620px,1.2fr);
@@ -958,13 +1113,15 @@ footer {
   .run-button { width: 100%; }
   .algorithm-summary { min-width: 0; padding: 12px 0; border-left: 0; border-top: 1px solid var(--line); }
   .graph-caption p { display: none; }
-  .graph-frame, .network-canvas, .graph-loading { min-height: 620px; height: 620px; }
+  .graph-frame, .network-canvas, .graph-loading { min-height: 700px; height: 700px; }
   .graph-legend { left: 14px; right: 14px; }
   .simulation-hud { top: 50px; left: 14px; width: calc(100% - 28px); }
   .simulation-meta { grid-template-columns: repeat(2,1fr); }
   .result-dock { grid-template-columns: 1fr; }
   .result-label { border-right: 0; border-bottom: 1px solid var(--line); }
   .run-meta, .path-line, .reaction-audit-list, .compound-strip, .cycle-path, .scc-preview { grid-column: 1; }
+  .compound-directory-controls { grid-template-columns: 1fr; }
+  .compound-directory-grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); max-height: 480px; }
   .engine-map { padding-bottom: 48px; }
   .structure-table > div { grid-template-columns: 34px 1fr; }
   .structure-table small { grid-column: 2; padding-bottom: 10px; }

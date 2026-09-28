@@ -2,11 +2,14 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cmath>
+#include <deque>
 #include <fstream>
 #include <functional>
 #include <limits>
 #include <queue>
 #include <stack>
+#include <tuple>
 #include <utility>
 
 namespace chempath {
@@ -293,6 +296,498 @@ PathResult ReactionGraph::shortestPathDijkstra(const std::string& from, const st
     std::reverse(reversedReactions.begin(), reversedReactions.end());
     result.compoundIds = std::move(reversedCompounds);
     result.reactionIds = std::move(reversedReactions);
+    return result;
+}
+
+
+PathResult ReactionGraph::shortestPathAStar(const std::string& from, const std::string& to) const {
+    PathResult result;
+
+    const auto start = compoundId(from);
+    const auto target = compoundId(to);
+    if (!start || !target) return result;
+
+    const int count = static_cast<int>(compounds_.size());
+    const int infinity = std::numeric_limits<int>::max() / 4;
+
+    // A chemistry-independent admissible heuristic:
+    // reverse BFS gives the minimum number of remaining edges, and every
+    // reaction edge costs at least minEdgeCost. Therefore
+    // h(v) = remainingHops(v) * minEdgeCost never overestimates.
+    std::vector<std::vector<int>> reverseAdjacency(count);
+    int minEdgeCost = infinity;
+    for (int u = 0; u < count; ++u) {
+        for (const auto& edge : adjacency_[u]) {
+            reverseAdjacency[edge.to].push_back(u);
+            minEdgeCost = std::min(minEdgeCost, edge.cost);
+        }
+    }
+    if (minEdgeCost == infinity) return result;
+
+    std::vector<int> hops(count, infinity);
+    std::queue<int> hopQueue;
+    hops[*target] = 0;
+    hopQueue.push(*target);
+
+    while (!hopQueue.empty()) {
+        const int current = hopQueue.front();
+        hopQueue.pop();
+
+        for (int predecessor : reverseAdjacency[current]) {
+            if (hops[predecessor] != infinity) continue;
+            hops[predecessor] = hops[current] + 1;
+            hopQueue.push(predecessor);
+        }
+    }
+
+    if (hops[*start] == infinity) return result;
+
+    std::vector<int> distance(count, infinity);
+    std::vector<int> parent(count, -1);
+    std::vector<int> parentReaction(count, -1);
+    std::vector<bool> closed(count, false);
+
+    using State = std::tuple<int, int, int>; // f, g, vertex
+    std::priority_queue<State, std::vector<State>, std::greater<State>> open;
+
+    distance[*start] = 0;
+    open.push({hops[*start] * minEdgeCost, 0, *start});
+
+    while (!open.empty()) {
+        const auto [estimatedTotal, currentDistance, current] = open.top();
+        (void)estimatedTotal;
+        open.pop();
+
+        if (closed[current] || currentDistance != distance[current]) continue;
+        closed[current] = true;
+        result.visitedOrder.push_back(current);
+
+        if (current == *target) break;
+
+        for (const auto& edge : adjacency_[current]) {
+            const int candidate = currentDistance + edge.cost;
+            if (candidate >= distance[edge.to]) continue;
+
+            distance[edge.to] = candidate;
+            parent[edge.to] = current;
+            parentReaction[edge.to] = edge.reactionId;
+
+            const int heuristic =
+                hops[edge.to] == infinity ? 0 : hops[edge.to] * minEdgeCost;
+            open.push({candidate + heuristic, candidate, edge.to});
+        }
+    }
+
+    if (distance[*target] == infinity) return result;
+
+    result.found = true;
+    result.totalCost = distance[*target];
+
+    for (int cursor = *target; cursor != -1; cursor = parent[cursor]) {
+        result.compoundIds.push_back(cursor);
+        if (parentReaction[cursor] != -1) {
+            result.reactionIds.push_back(parentReaction[cursor]);
+        }
+    }
+
+    std::reverse(result.compoundIds.begin(), result.compoundIds.end());
+    std::reverse(result.reactionIds.begin(), result.reactionIds.end());
+    return result;
+}
+
+PathResult ReactionGraph::shortestPathDial(const std::string& from, const std::string& to) const {
+    PathResult result;
+
+    const auto start = compoundId(from);
+    const auto target = compoundId(to);
+    if (!start || !target) return result;
+
+    const int count = static_cast<int>(compounds_.size());
+    const int infinity = std::numeric_limits<int>::max() / 4;
+
+    int maxEdgeCost = 0;
+    for (const auto& edges : adjacency_) {
+        for (const auto& edge : edges) {
+            maxEdgeCost = std::max(maxEdgeCost, edge.cost);
+        }
+    }
+    if (maxEdgeCost <= 0) return result;
+
+    // Any shortest path can be taken simple, so at most V-1 positive edges.
+    const int maxDistance = maxEdgeCost * std::max(1, count - 1);
+    std::vector<std::deque<int>> buckets(static_cast<std::size_t>(maxDistance) + 1);
+
+    std::vector<int> distance(count, infinity);
+    std::vector<int> parent(count, -1);
+    std::vector<int> parentReaction(count, -1);
+    std::vector<bool> settled(count, false);
+
+    distance[*start] = 0;
+    buckets[0].push_back(*start);
+
+    int currentBucket = 0;
+    while (currentBucket <= maxDistance) {
+        while (currentBucket <= maxDistance && buckets[currentBucket].empty()) {
+            ++currentBucket;
+        }
+        if (currentBucket > maxDistance) break;
+
+        const int current = buckets[currentBucket].front();
+        buckets[currentBucket].pop_front();
+
+        if (settled[current] || distance[current] != currentBucket) continue;
+        settled[current] = true;
+        result.visitedOrder.push_back(current);
+
+        if (current == *target) break;
+
+        for (const auto& edge : adjacency_[current]) {
+            const int candidate = currentBucket + edge.cost;
+            if (candidate >= distance[edge.to] || candidate > maxDistance) continue;
+
+            distance[edge.to] = candidate;
+            parent[edge.to] = current;
+            parentReaction[edge.to] = edge.reactionId;
+            buckets[candidate].push_back(edge.to);
+        }
+    }
+
+    if (distance[*target] == infinity) return result;
+
+    result.found = true;
+    result.totalCost = distance[*target];
+
+    for (int cursor = *target; cursor != -1; cursor = parent[cursor]) {
+        result.compoundIds.push_back(cursor);
+        if (parentReaction[cursor] != -1) {
+            result.reactionIds.push_back(parentReaction[cursor]);
+        }
+    }
+
+    std::reverse(result.compoundIds.begin(), result.compoundIds.end());
+    std::reverse(result.reactionIds.begin(), result.reactionIds.end());
+    return result;
+}
+
+PathResult ReactionGraph::shortestPathBellmanFord(const std::string& from, const std::string& to) const {
+    PathResult result;
+
+    const auto start = compoundId(from);
+    const auto target = compoundId(to);
+    if (!start || !target) return result;
+
+    const int count = static_cast<int>(compounds_.size());
+    const int infinity = std::numeric_limits<int>::max() / 4;
+
+    std::vector<int> distance(count, infinity);
+    std::vector<int> parent(count, -1);
+    std::vector<int> parentReaction(count, -1);
+    std::vector<bool> traced(count, false);
+
+    distance[*start] = 0;
+    traced[*start] = true;
+    result.visitedOrder.push_back(*start);
+
+    for (int pass = 0; pass < count - 1; ++pass) {
+        bool changed = false;
+
+        for (int current = 0; current < count; ++current) {
+            if (distance[current] == infinity) continue;
+
+            for (const auto& edge : adjacency_[current]) {
+                const int candidate = distance[current] + edge.cost;
+                if (candidate >= distance[edge.to]) continue;
+
+                distance[edge.to] = candidate;
+                parent[edge.to] = current;
+                parentReaction[edge.to] = edge.reactionId;
+                changed = true;
+
+                if (!traced[edge.to]) {
+                    traced[edge.to] = true;
+                    result.visitedOrder.push_back(edge.to);
+                }
+            }
+        }
+
+        if (!changed) break;
+    }
+
+    if (distance[*target] == infinity) return result;
+
+    result.found = true;
+    result.totalCost = distance[*target];
+
+    for (int cursor = *target; cursor != -1; cursor = parent[cursor]) {
+        result.compoundIds.push_back(cursor);
+        if (parentReaction[cursor] != -1) {
+            result.reactionIds.push_back(parentReaction[cursor]);
+        }
+    }
+
+    std::reverse(result.compoundIds.begin(), result.compoundIds.end());
+    std::reverse(result.reactionIds.begin(), result.reactionIds.end());
+    return result;
+}
+
+PathResult ReactionGraph::shortestPathBidirectionalDijkstra(
+    const std::string& from,
+    const std::string& to) const {
+
+    PathResult result;
+
+    const auto start = compoundId(from);
+    const auto target = compoundId(to);
+    if (!start || !target) return result;
+
+    if (*start == *target) {
+        result.found = true;
+        result.compoundIds = {*start};
+        result.visitedOrder = {*start};
+        return result;
+    }
+
+    const int count = static_cast<int>(compounds_.size());
+    const int infinity = std::numeric_limits<int>::max() / 4;
+
+    std::vector<std::vector<Edge>> reverseAdjacency(count);
+    for (int u = 0; u < count; ++u) {
+        for (const auto& edge : adjacency_[u]) {
+            reverseAdjacency[edge.to].push_back({u, edge.reactionId, edge.cost});
+        }
+    }
+
+    std::vector<int> forwardDistance(count, infinity);
+    std::vector<int> backwardDistance(count, infinity);
+    std::vector<int> forwardParent(count, -1);
+    std::vector<int> forwardReaction(count, -1);
+    std::vector<int> backwardNext(count, -1);
+    std::vector<int> backwardReaction(count, -1);
+    std::vector<bool> forwardSettled(count, false);
+    std::vector<bool> backwardSettled(count, false);
+    std::vector<bool> traced(count, false);
+
+    using State = std::pair<int, int>;
+    std::priority_queue<State, std::vector<State>, std::greater<State>> forwardQueue;
+    std::priority_queue<State, std::vector<State>, std::greater<State>> backwardQueue;
+
+    forwardDistance[*start] = 0;
+    backwardDistance[*target] = 0;
+    forwardQueue.push({0, *start});
+    backwardQueue.push({0, *target});
+
+    int bestDistance = infinity;
+    int meeting = -1;
+
+    auto trace = [&](int node) {
+        if (!traced[node]) {
+            traced[node] = true;
+            result.visitedOrder.push_back(node);
+        }
+    };
+
+    while (!forwardQueue.empty() && !backwardQueue.empty()) {
+        const int minForward = forwardQueue.top().first;
+        const int minBackward = backwardQueue.top().first;
+        if (bestDistance != infinity && minForward + minBackward >= bestDistance) break;
+
+        if (minForward <= minBackward) {
+            const auto [distance, current] = forwardQueue.top();
+            forwardQueue.pop();
+            if (forwardSettled[current] || distance != forwardDistance[current]) continue;
+
+            forwardSettled[current] = true;
+            trace(current);
+
+            if (backwardDistance[current] != infinity &&
+                distance + backwardDistance[current] < bestDistance) {
+                bestDistance = distance + backwardDistance[current];
+                meeting = current;
+            }
+
+            for (const auto& edge : adjacency_[current]) {
+                const int candidate = distance + edge.cost;
+                if (candidate < forwardDistance[edge.to]) {
+                    forwardDistance[edge.to] = candidate;
+                    forwardParent[edge.to] = current;
+                    forwardReaction[edge.to] = edge.reactionId;
+                    forwardQueue.push({candidate, edge.to});
+                }
+
+                if (backwardDistance[edge.to] != infinity &&
+                    candidate + backwardDistance[edge.to] < bestDistance) {
+                    bestDistance = candidate + backwardDistance[edge.to];
+                    meeting = edge.to;
+                }
+            }
+        } else {
+            const auto [distance, current] = backwardQueue.top();
+            backwardQueue.pop();
+            if (backwardSettled[current] || distance != backwardDistance[current]) continue;
+
+            backwardSettled[current] = true;
+            trace(current);
+
+            if (forwardDistance[current] != infinity &&
+                distance + forwardDistance[current] < bestDistance) {
+                bestDistance = distance + forwardDistance[current];
+                meeting = current;
+            }
+
+            for (const auto& reverseEdge : reverseAdjacency[current]) {
+                const int predecessor = reverseEdge.to;
+                const int candidate = distance + reverseEdge.cost;
+
+                if (candidate < backwardDistance[predecessor]) {
+                    backwardDistance[predecessor] = candidate;
+                    backwardNext[predecessor] = current;
+                    backwardReaction[predecessor] = reverseEdge.reactionId;
+                    backwardQueue.push({candidate, predecessor});
+                }
+
+                if (forwardDistance[predecessor] != infinity &&
+                    candidate + forwardDistance[predecessor] < bestDistance) {
+                    bestDistance = candidate + forwardDistance[predecessor];
+                    meeting = predecessor;
+                }
+            }
+        }
+    }
+
+    if (meeting == -1 || bestDistance == infinity) return result;
+
+    result.found = true;
+    result.totalCost = bestDistance;
+
+    std::vector<int> leftNodes;
+    std::vector<int> leftReactions;
+    for (int cursor = meeting; cursor != -1; cursor = forwardParent[cursor]) {
+        leftNodes.push_back(cursor);
+        if (forwardReaction[cursor] != -1) leftReactions.push_back(forwardReaction[cursor]);
+    }
+    std::reverse(leftNodes.begin(), leftNodes.end());
+    std::reverse(leftReactions.begin(), leftReactions.end());
+
+    result.compoundIds = std::move(leftNodes);
+    result.reactionIds = std::move(leftReactions);
+
+    int cursor = meeting;
+    while (backwardNext[cursor] != -1) {
+        result.reactionIds.push_back(backwardReaction[cursor]);
+        cursor = backwardNext[cursor];
+        result.compoundIds.push_back(cursor);
+    }
+
+    return result;
+}
+
+PathResult ReactionGraph::shortestPathPivotFrontier(
+    const std::string& from,
+    const std::string& to) const {
+
+    // Educational exact hybrid inspired by the frontier-reduction idea in
+    // Duan, Mao, Mao, Shu & Yin (STOC 2025). This is intentionally NOT a
+    // claim to implement their full O(m log^(2/3) n) BMSSP construction.
+    // We first perform k unsorted Bellman-Ford-like frontier rounds, then
+    // finish exactly with a warm-started Dijkstra cleanup.
+    PathResult result;
+
+    const auto start = compoundId(from);
+    const auto target = compoundId(to);
+    if (!start || !target) return result;
+
+    const int count = static_cast<int>(compounds_.size());
+    const int infinity = std::numeric_limits<int>::max() / 4;
+    const double logN = std::log2(static_cast<double>(std::max(2, count)));
+    const int k = std::max(1, static_cast<int>(std::ceil(std::cbrt(logN))));
+
+    std::vector<int> distance(count, infinity);
+    std::vector<int> parent(count, -1);
+    std::vector<int> parentReaction(count, -1);
+    std::vector<bool> traced(count, false);
+
+    distance[*start] = 0;
+    traced[*start] = true;
+    result.visitedOrder.push_back(*start);
+
+    std::vector<int> frontier{*start};
+
+    for (int round = 0; round < k && !frontier.empty(); ++round) {
+        std::vector<int> nextFrontier;
+        std::vector<bool> queued(count, false);
+
+        for (int current : frontier) {
+            for (const auto& edge : adjacency_[current]) {
+                const int candidate = distance[current] + edge.cost;
+                if (candidate >= distance[edge.to]) continue;
+
+                distance[edge.to] = candidate;
+                parent[edge.to] = current;
+                parentReaction[edge.to] = edge.reactionId;
+
+                if (!queued[edge.to]) {
+                    queued[edge.to] = true;
+                    nextFrontier.push_back(edge.to);
+                }
+                if (!traced[edge.to]) {
+                    traced[edge.to] = true;
+                    result.visitedOrder.push_back(edge.to);
+                }
+            }
+        }
+
+        frontier = std::move(nextFrontier);
+    }
+
+    using State = std::pair<int, int>;
+    std::priority_queue<State, std::vector<State>, std::greater<State>> queue;
+    for (int node = 0; node < count; ++node) {
+        if (distance[node] != infinity) {
+            queue.push({distance[node], node});
+        }
+    }
+
+    std::vector<bool> settled(count, false);
+
+    while (!queue.empty()) {
+        const auto [currentDistance, current] = queue.top();
+        queue.pop();
+
+        if (settled[current] || currentDistance != distance[current]) continue;
+        settled[current] = true;
+
+        if (!traced[current]) {
+            traced[current] = true;
+            result.visitedOrder.push_back(current);
+        }
+
+        if (current == *target) break;
+
+        for (const auto& edge : adjacency_[current]) {
+            const int candidate = currentDistance + edge.cost;
+            if (candidate >= distance[edge.to]) continue;
+
+            distance[edge.to] = candidate;
+            parent[edge.to] = current;
+            parentReaction[edge.to] = edge.reactionId;
+            queue.push({candidate, edge.to});
+        }
+    }
+
+    if (distance[*target] == infinity) return result;
+
+    result.found = true;
+    result.totalCost = distance[*target];
+
+    for (int cursor = *target; cursor != -1; cursor = parent[cursor]) {
+        result.compoundIds.push_back(cursor);
+        if (parentReaction[cursor] != -1) {
+            result.reactionIds.push_back(parentReaction[cursor]);
+        }
+    }
+
+    std::reverse(result.compoundIds.begin(), result.compoundIds.end());
+    std::reverse(result.reactionIds.begin(), result.reactionIds.end());
     return result;
 }
 

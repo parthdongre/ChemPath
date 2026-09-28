@@ -573,6 +573,7 @@ export default function App() {
   const [targetsLoading, setTargetsLoading] = useState(false);
   const [directorySearch, setDirectorySearch] = useState("");
   const [directoryCategory, setDirectoryCategory] = useState("All");
+  const [directoryLimit, setDirectoryLimit] = useState(DIRECTORY_PAGE_SIZE);
   const [simulation, setSimulation] = useState({
     running: false,
     algorithm: "",
@@ -629,25 +630,22 @@ export default function App() {
     return ["All", ...values];
   }, [compounds]);
 
-  const directoryCompounds = useMemo(() => {
-    const query = directorySearch.trim().toLowerCase();
+  const directoryFiltered = useMemo(() => {
+    const categoryFiltered = compounds.filter((compound) =>
+      directoryCategory === "All" || compound.category === directoryCategory
+    );
 
-    return compounds
-      .filter((compound) => {
-        if (directoryCategory !== "All" && compound.category !== directoryCategory) {
-          return false;
-        }
-
-        if (!query) return true;
-
-        return [
-          compound.name,
-          compound.formula,
-          compound.category
-        ].some((value) => String(value ?? "").toLowerCase().includes(query));
-      })
-      .sort((left, right) => left.name.localeCompare(right.name));
+    return rankedCompounds(categoryFiltered, directorySearch);
   }, [compounds, directorySearch, directoryCategory]);
+
+  const directoryCompounds = useMemo(
+    () => directoryFiltered.slice(0, directoryLimit),
+    [directoryFiltered, directoryLimit]
+  );
+
+  useEffect(() => {
+    setDirectoryLimit(DIRECTORY_PAGE_SIZE);
+  }, [directorySearch, directoryCategory]);
 
   useEffect(() => {
     if (!network || !from) {
@@ -708,6 +706,66 @@ export default function App() {
     [compounds, from]
   );
 
+  const selectedToId = useMemo(
+    () => compounds.find((compound) => compound.name === to)?.id ?? null,
+    [compounds, to]
+  );
+
+  const graphNetwork = useMemo(() => {
+    if (!network) return null;
+    if (network.nodes.length <= GRAPH_RENDER_LIMIT) return network;
+
+    const mandatory = new Set(
+      [selectedFromId, selectedToId, ...(highlight.nodes ?? [])]
+        .filter((id) => Number.isInteger(id))
+    );
+
+    const traversalIds = result?.visitedOrder?.map((compound) => compound.id) ?? [];
+    if (traversalIds.length <= GRAPH_VISITED_FOCUS_LIMIT) {
+      traversalIds.forEach((id) => mandatory.add(id));
+    } else {
+      const stride = Math.ceil(traversalIds.length / GRAPH_VISITED_FOCUS_LIMIT);
+      for (let index = 0; index < traversalIds.length; index += stride) {
+        mandatory.add(traversalIds[index]);
+      }
+      traversalIds.slice(-20).forEach((id) => mandatory.add(id));
+    }
+
+    result?.path?.forEach((compound) => mandatory.add(compound.id));
+    result?.cycle?.forEach((compound) => mandatory.add(compound.id));
+    result?.components?.[0]?.slice(0, 120).forEach((compound) => mandatory.add(compound.id));
+
+    const degree = new Map(network.nodes.map((node) => [node.id, 0]));
+    for (const edge of network.edges) {
+      degree.set(edge.source, (degree.get(edge.source) ?? 0) + 1);
+      degree.set(edge.target, (degree.get(edge.target) ?? 0) + 1);
+    }
+
+    const ranked = [...network.nodes].sort((left, right) =>
+      (degree.get(right.id) ?? 0) - (degree.get(left.id) ?? 0) ||
+      left.name.localeCompare(right.name)
+    );
+
+    const visible = new Set([...mandatory].slice(0, GRAPH_RENDER_LIMIT));
+    for (const node of ranked) {
+      if (visible.size >= GRAPH_RENDER_LIMIT) break;
+      visible.add(node.id);
+    }
+
+    const nodes = network.nodes.filter((node) => visible.has(node.id));
+    const edges = network.edges.filter(
+      (edge) => visible.has(edge.source) && visible.has(edge.target)
+    );
+
+    return {
+      ...network,
+      nodes,
+      edges,
+      fullNodeCount: network.nodes.length,
+      fullEdgeCount: network.edges.length
+    };
+  }, [network, selectedFromId, selectedToId, highlight.nodes, result]);
+
   const currentCompound = useMemo(
     () => compounds.find((compound) => compound.id === simulation.active) ?? null,
     [compounds, simulation.active]
@@ -753,9 +811,12 @@ export default function App() {
     const ids = (order ?? []).map((item) => item.id);
     const token = ++runTokenRef.current;
 
-    const traversalDuration = Math.max(
-      MIN_SIMULATION_MS - FINAL_HOLD_MS,
-      ids.length * STEP_REPLAY_MS
+    const traversalDuration = Math.min(
+      MAX_SIMULATION_MS - FINAL_HOLD_MS,
+      Math.max(
+        MIN_SIMULATION_MS - FINAL_HOLD_MS,
+        ids.length * STEP_REPLAY_MS
+      )
     );
     const totalDuration = traversalDuration + FINAL_HOLD_MS;
 
@@ -974,8 +1035,8 @@ export default function App() {
           <p className="eyebrow">GRAPH-BASED CHEMICAL PATHWAYS</p>
           <h1>Trace the reaction.</h1>
           <p className="lede">
-            Watch C++ graph algorithms move through a curated, chemistry-audited
-            reaction network, one visited compound at a time.
+            Search a large chemistry catalog while C++ graph algorithms traverse the
+            full audited reaction network, one visited compound at a time.
           </p>
         </div>
 
@@ -1022,7 +1083,7 @@ export default function App() {
             <em>
               {simulation.running
                 ? `target ${((simulation.duration ?? MIN_SIMULATION_MS) / 1000).toFixed(1)}s`
-                : "adaptive ≥10s replay"}
+                : "adaptive 15–120s replay"}
             </em>
           </div>
 
@@ -1158,8 +1219,13 @@ export default function App() {
 
         <div className="graph-frame">
           <div className="graph-caption">
-            <span>LIVE NETWORK · {stats?.directedEdges ?? "—"} EDGES</span>
-            <p>drag · scroll to zoom · replay follows the active compound</p>
+            <span>
+              LIVE VIEW · {graphNetwork?.nodes?.length ?? "—"} / {stats?.compounds ?? "—"} COMPOUNDS
+              · {graphNetwork?.edges?.length ?? "—"} VISIBLE EDGES
+            </span>
+            <p>
+              full C++ graph: {stats?.directedEdges ?? "—"} edges · focused rendering keeps the browser smooth
+            </p>
           </div>
 
           <SimulationHud
@@ -1168,9 +1234,9 @@ export default function App() {
             onSkip={cancelReplay}
           />
 
-          {network ? (
+          {graphNetwork ? (
             <NetworkGraph
-              network={network}
+              network={graphNetwork}
               highlightedNodeIds={highlight.nodes}
               highlightedEdgeIds={highlight.edges}
               selectedNodeId={selectedFromId}
@@ -1205,7 +1271,7 @@ export default function App() {
 
           {!result && (
             <div className="result-empty">
-              Select an algorithm and run it. Replay lasts at least 10 seconds and expands automatically for larger traversals.
+              Select an algorithm and run it. Replay scales with traversal size from about 15 seconds up to 2 minutes.
             </div>
           )}
 
@@ -1309,6 +1375,7 @@ export default function App() {
           <CompoundDirectory
             compounds={directoryCompounds}
             total={compounds.length}
+            filteredTotal={directoryFiltered.length}
             query={directorySearch}
             onQueryChange={setDirectorySearch}
             category={directoryCategory}
@@ -1320,6 +1387,12 @@ export default function App() {
               setSearch(compound.name);
               setMatches([]);
             }}
+            hasMore={directoryCompounds.length < directoryFiltered.length}
+            onLoadMore={() =>
+              setDirectoryLimit((current) =>
+                Math.min(directoryFiltered.length, current + DIRECTORY_PAGE_SIZE)
+              )
+            }
           />
         </section>
       </section>

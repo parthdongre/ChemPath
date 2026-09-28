@@ -141,6 +141,18 @@ int main(int argc, char** argv) {
     assert(bidirectional.reactionIds.size() + 1 == bidirectional.compoundIds.size());
     assert(!bidirectional.visitedOrder.empty());
 
+    // Cross-network path: an apparently unrelated inorganic target can still be
+    // reachable through legitimate reaction products/byproducts.
+    const auto octeneToSo2 = graph.shortestPathBfs("Oct-1-ene", "Sulfur Dioxide");
+    assert(octeneToSo2.found);
+    assert(graph.compound(octeneToSo2.compoundIds.front())->name == "Oct-1-ene");
+    assert(graph.compound(octeneToSo2.compoundIds.back())->name == "Sulfur Dioxide");
+
+    const auto octeneDistances = graph.hopDistances("Oct-1-ene");
+    const auto sulfurDioxideId = graph.compoundId("Sulfur Dioxide");
+    assert(sulfurDioxideId.has_value());
+    assert(octeneDistances[*sulfurDioxideId] >= 0);
+
     const auto missingPath = graph.shortestPathBfs("Not A Compound", "Water");
     assert(!missingPath.found);
 

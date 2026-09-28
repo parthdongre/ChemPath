@@ -184,6 +184,11 @@ int main(int argc, char** argv) {
     assert(graph.compound(ammoniumChlorideToDocosanoate.compoundIds.back())->name ==
            "Ammonium Docosanoate");
 
+    const auto ammoniumAStar =
+        graph.shortestPathAStar("Ammonium Chloride", "Ammonium Docosanoate");
+    assert(ammoniumAStar.found);
+    assert(ammoniumAStar.reactionIds.size() == 3);
+
     const auto ammoniumChlorideReachable = graph.hopDistances("Ammonium Chloride");
     const auto ammoniumDocosanoateId = graph.compoundId("Ammonium Docosanoate");
     assert(ammoniumDocosanoateId.has_value());

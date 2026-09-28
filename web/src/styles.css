@@ -504,6 +504,17 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
   scrollbar-width: thin;
 }
 
+.compound-picker-centers > span,
+.compound-directory-centers > span {
+  flex: 0 0 auto;
+  align-self: center;
+  margin-right: 2px;
+  color: var(--ink-4);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 7px;
+  letter-spacing: .12em;
+}
+
 .compound-picker-centers button,
 .compound-directory-centers button {
   flex: 0 0 auto;

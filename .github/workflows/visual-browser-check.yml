@@ -1,0 +1,136 @@
+name: Visual Browser Check
+
+on:
+  push:
+    branches:
+      - framevitals-visual-browser-test
+
+jobs:
+  visual-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build engine
+        run: npm run build:engine
+
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start ChemPath
+        run: |
+          npm run dev > /tmp/chempath-dev.log 2>&1 &
+          for i in {1..120}; do
+            if curl -fsS http://localhost:8787/api/health >/tmp/health.json \
+              && curl -fsS http://localhost:5173 >/dev/null; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/chempath-dev.log
+          exit 1
+
+      - name: Render and verify
+        run: |
+          mkdir -p artifacts
+          cat > visual-check.mjs <<'EOF'
+          import { chromium } from "playwright";
+
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage({
+            viewport: { width: 1728, height: 1050 },
+            deviceScaleFactor: 1
+          });
+
+          const errors = [];
+          page.on("pageerror", (error) => errors.push(error.message));
+          page.on("console", (msg) => {
+            if (msg.type() === "error") errors.push(msg.text());
+          });
+
+          await page.goto("http://localhost:5173", {
+            waitUntil: "networkidle",
+            timeout: 120000
+          });
+          await page.getByText("C++ engine online").waitFor({ timeout: 60000 });
+
+          await page.getByText("CHEMISTRY").waitFor();
+          await page.getByText("HAS A").waitFor();
+          await page.getByText("PATH.").waitFor();
+          await page.getByText("PATH / DETECTED").waitFor();
+
+          const hero = page.locator(".hero-editorial");
+          const heroBox = await hero.boundingBox();
+          if (!heroBox || heroBox.height < 620) {
+            throw new Error("Hero is too short or missing");
+          }
+
+          const signal = page.locator(".hero-signal");
+          const signalBox = await signal.boundingBox();
+          if (!signalBox || signalBox.width < 600) {
+            throw new Error("Signal slash is not spanning the hero");
+          }
+
+          const graph = page.locator(".graph-frame");
+          await graph.scrollIntoViewIfNeeded();
+          const graphBox = await graph.boundingBox();
+          if (!graphBox || graphBox.height < 850) {
+            throw new Error("Graph frame collapsed");
+          }
+
+          const statsText = await page.locator(".hero-stats").innerText();
+          if (!statsText.includes("690") || !statsText.includes("884")) {
+            throw new Error("Stable mid-sem stats missing: " + statsText);
+          }
+
+          await page.screenshot({
+            path: "artifacts/01-editorial-hero.png",
+            fullPage: false
+          });
+
+          await graph.screenshot({
+            path: "artifacts/02-editorial-graph.png"
+          });
+
+          if (errors.length) {
+            throw new Error("Browser errors:\n" + errors.join("\n"));
+          }
+
+          const bodyBg = await page.evaluate(() => getComputedStyle(document.body).backgroundImage);
+          const heroFont = await page.locator(".hero-display").evaluate(
+            (element) => getComputedStyle(element).fontFamily
+          );
+
+          console.log(JSON.stringify({
+            ok: true,
+            heroHeight: heroBox.height,
+            signalWidth: signalBox.width,
+            graphHeight: graphBox.height,
+            bodyBg,
+            heroFont
+          }, null, 2));
+
+          await browser.close();
+          EOF
+
+          node visual-check.mjs
+
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chempath-editorial-visuals
+          path: artifacts/
+          retention-days: 7

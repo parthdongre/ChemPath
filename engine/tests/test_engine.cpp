@@ -44,9 +44,9 @@ int main(int argc, char** argv) {
     assert(graph.compounds().size() >= 650);
     assert(graph.compounds().size() <= 725);
     assert(graph.reactions().size() >= 780);
-    assert(graph.reactions().size() <= 860);
+    assert(graph.reactions().size() <= 920);
     assert(graph.edgeCount() >= 1450);
-    assert(graph.edgeCount() <= 1650);
+    assert(graph.edgeCount() <= 1700);
 
     // Every audited reaction must carry chemistry metadata.
     for (const auto& reaction : graph.reactions()) {
@@ -152,6 +152,19 @@ int main(int argc, char** argv) {
     const auto sulfurDioxideId = graph.compoundId("Sulfur Dioxide");
     assert(sulfurDioxideId.has_value());
     assert(octeneDistances[*sulfurDioxideId] >= 0);
+
+    const auto carbonicToNo2 =
+        graph.shortestPathBfs("Carbonic Acid", "Nitrogen Dioxide");
+    assert(carbonicToNo2.found);
+    assert(carbonicToNo2.reactionIds.size() >= 4);
+
+    const auto carbonicDistances = graph.hopDistances("Carbonic Acid");
+    const auto nitrogenDioxideId = graph.compoundId("Nitrogen Dioxide");
+    const auto eicosanolId = graph.compoundId("Eicosan-1-ol");
+    assert(nitrogenDioxideId.has_value());
+    assert(eicosanolId.has_value());
+    assert(carbonicDistances[*nitrogenDioxideId] == 5);
+    assert(carbonicDistances[*eicosanolId] > 20);
 
     const auto missingPath = graph.shortestPathBfs("Not A Compound", "Water");
     assert(!missingPath.found);

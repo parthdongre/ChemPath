@@ -177,9 +177,11 @@ https://openstax.org/books/organic-chemistry/pages/26-7-peptide-synthesis
 
 Used for the ordered 20×20 set of standard-amino-acid dipeptides. ChemPath stores the atom-balanced overall condensation equation (amino acid A + amino acid B → dipeptide + H2O), while the conditions field makes clear that practical synthesis requires protected/activated amino-acid coupling rather than spontaneous mixing.
 
-## Large-network extension
+## Curated interactive network
 
-The expanded build also extends the audited homologous organic families through C40 and adds sodium, potassium, lithium, ammonium, calcium, and magnesium carboxylate connectivity. These rows reuse the same audited reaction families above; they are generated from formula-preserving templates and remain subject to the automated atom/charge audit.
+The earlier stress-test build expanded homologous organic families through C40 and included all 400 ordered standard-amino-acid dipeptides. That scale was unnecessary for the interactive Data Structures demonstration and caused browser layout lag.
+
+The current teaching build keeps representative C1-C6 homologous chemistry, the core inorganic/acid-base network, common biochemical compounds, important aromatic examples, audited salt/precipitation chemistry, and a representative 6×6 dipeptide subset. This preserves the reaction families needed for graph-algorithm demonstrations while reducing the live visualization to 235 compounds and 249 reactions.
 
 
 ## Compound-graph projection rule

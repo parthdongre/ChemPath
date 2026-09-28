@@ -67,7 +67,7 @@ jobs:
           echo $! > /tmp/chempath-dev.pid
 
           for i in {1..90}; do
-            if curl -fsS http://127.0.0.1:8787/api/health >/tmp/health.json               && curl -fsS http://127.0.0.1:5173 >/dev/null; then
+            if curl -fsS http://localhost:8787/api/health >/tmp/health.json               && curl -fsS http://localhost:5173 >/dev/null; then
               cat /tmp/health.json | tee -a artifacts/pipeline-report.txt
               exit 0
             fi
@@ -84,7 +84,7 @@ jobs:
           set -euo pipefail
           for alg in bfs dijkstra astar dial bellmanford bidirectional bidijkstra duan2025; do
             echo "=== API $alg ===" | tee -a artifacts/pipeline-report.txt
-            curl -fsS --get http://127.0.0.1:8787/api/path               --data-urlencode "from=Methane"               --data-urlencode "to=Bicarbonate"               --data-urlencode "algorithm=$alg"               | tee /tmp/api-result.json               | tee -a artifacts/pipeline-report.txt
+            curl -fsS --get http://localhost:8787/api/path               --data-urlencode "from=Methane"               --data-urlencode "to=Bicarbonate"               --data-urlencode "algorithm=$alg"               | tee /tmp/api-result.json               | tee -a artifacts/pipeline-report.txt
             jq -e '.ok == true and .found == true and (.visitedOrder | length) > 0' /tmp/api-result.json >/dev/null
             echo | tee -a artifacts/pipeline-report.txt
           done
@@ -110,7 +110,7 @@ jobs:
             if (msg.type() === "error") browserErrors.push("CONSOLE: " + msg.text());
           });
 
-          await page.goto("http://127.0.0.1:5173", {
+          await page.goto("http://localhost:5173", {
             waitUntil: "networkidle",
             timeout: 120000
           });

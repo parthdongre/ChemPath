@@ -1263,14 +1263,45 @@ export default function App() {
         <Status status={status} />
       </header>
 
-      <section className="hero" id="top">
+      <section className="hero hero-editorial" id="top">
         <div className="hero-copy">
-          <p className="eyebrow">GRAPH-BASED CHEMICAL PATHWAYS</p>
-          <h1>Trace the reaction.</h1>
+          <p className="eyebrow">REACTION-AWARE GRAPH ENGINE</p>
+          <h1 className="hero-display">
+            <span>CHEMISTRY</span>
+            <span>HAS A</span>
+            <span>PATH.</span>
+          </h1>
+
           <p className="lede">
-            Search a large chemistry catalog while C++ graph algorithms traverse the
-            full audited reaction network, one visited compound at a time.
+            Explore a curated reaction network while C++ graph algorithms reveal
+            how compounds connect, branch, cycle, and converge.
           </p>
+
+          <div className="hero-actions">
+            <a className="hero-cta primary" href="#explorer">START EXPLORING</a>
+            <a className="hero-cta ghost" href="#engine">C++ ENGINE ↗</a>
+          </div>
+
+          <p className="hero-whisper">follow the transformation</p>
+        </div>
+
+        <div className="hero-visual" aria-hidden="true">
+          <div className="reaction-halo halo-a" />
+          <div className="reaction-halo halo-b" />
+          <div className="reaction-halo halo-c" />
+          <div className="formula-node formula-a">CO₂</div>
+          <div className="formula-node formula-b">NH₃</div>
+          <div className="formula-node formula-c">H₂O</div>
+          <div className="formula-node formula-d">CH₄</div>
+          <div className="formula-node formula-e">SO₂</div>
+          <div className="formula-core">
+            <span>G=(V,E)</span>
+            <strong>CHEM</strong>
+          </div>
+        </div>
+
+        <div className="hero-signal" aria-hidden="true">
+          <span>PATH / DETECTED</span>
         </div>
 
         <div className="hero-stats" aria-label="Dataset statistics">
@@ -1278,6 +1309,8 @@ export default function App() {
           <Stat value={stats?.reactions} label="reactions" />
           <Stat value={stats?.directedEdges} label="directed edges" />
         </div>
+
+        <div className="hero-ghost" aria-hidden="true">REACTION</div>
       </section>
 
       <div className="rule">

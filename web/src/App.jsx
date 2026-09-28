@@ -3,8 +3,9 @@ import { api } from "./api";
 import NetworkGraph from "./components/NetworkGraph.jsx";
 
 const EMPTY_HIGHLIGHT = { nodes: [], edges: [] };
-const SIMULATION_MS = 10_000;
-const TRAVERSAL_MS = 9_000;
+const MIN_SIMULATION_MS = 10_000;
+const STEP_REPLAY_MS = 120;
+const FINAL_HOLD_MS = 1_000;
 
 function Stat({ value, label }) {
   return (
@@ -106,8 +107,13 @@ function AlgorithmSelect({ value, onChange, disabled }) {
         onChange={(event) => onChange(event.target.value)}
       >
         <option value="bfs">BFS · minimum reaction steps</option>
-        <option value="dijkstra">Dijkstra · minimum weighted cost</option>
+        <option value="dijkstra">Dijkstra · binary heap weighted path</option>
+        <option value="astar">A* · admissible reverse-hop heuristic</option>
+        <option value="dial">Dial · integer-weight bucket queue</option>
+        <option value="bellmanford">Bellman-Ford · repeated relaxation</option>
         <option value="bidirectional">Bidirectional BFS · two-front search</option>
+        <option value="bidijkstra">Bidirectional Dijkstra · weighted two-front search</option>
+        <option value="duan2025">2025 Pivot Frontier · research-inspired hybrid</option>
       </select>
     </label>
   );
@@ -140,7 +146,7 @@ function SimulationHud({ simulation, currentCompound, onSkip }) {
     <div className="simulation-hud">
       <div className="simulation-hud-top">
         <div>
-          <span className="simulation-kicker">10 SECOND ALGORITHM REPLAY</span>
+          <span className="simulation-kicker">ADAPTIVE ALGORITHM REPLAY</span>
           <strong>{simulation.algorithm}</strong>
         </div>
         <button onClick={onSkip}>Skip replay</button>
@@ -163,6 +169,9 @@ function SimulationHud({ simulation, currentCompound, onSkip }) {
         </span>
         <span>
           ELAPSED <b>{simulation.elapsed.toFixed(1)}s</b>
+        </span>
+        <span>
+          TARGET <b>{(simulation.duration / 1000).toFixed(1)}s</b>
         </span>
       </div>
 
@@ -198,7 +207,8 @@ export default function App() {
     total: 0,
     visited: [],
     active: null,
-    elapsed: 0
+    elapsed: 0,
+    duration: MIN_SIMULATION_MS
   });
 
   const runTokenRef = useRef(0);
@@ -259,15 +269,18 @@ export default function App() {
         : "Directed cycle detection · DFS recursion state";
     }
 
-    if (pathAlgorithm === "dijkstra") {
-      return "Dijkstra · priority queue · lowest total reaction cost";
-    }
+    const descriptions = {
+      bfs: "BFS · queue · minimum number of reaction edges",
+      dijkstra: "Dijkstra · binary heap · minimum total graph weight",
+      astar: "A* · priority queue + admissible reverse-hop heuristic",
+      dial: "Dial · bucket queue · optimized for small integer weights",
+      bellmanford: "Bellman-Ford · repeated edge relaxation · O(VE) baseline",
+      bidirectional: "Bidirectional BFS · unweighted search from both ends",
+      bidijkstra: "Bidirectional Dijkstra · weighted search from both ends",
+      duan2025: "Research mode · pivot/frontier hybrid inspired by Duan et al. STOC 2025"
+    };
 
-    if (pathAlgorithm === "bidirectional") {
-      return "Bidirectional BFS · search from both ends";
-    }
-
-    return "BFS · queue · minimum number of reaction edges";
+    return descriptions[pathAlgorithm] ?? descriptions.bfs;
   }, [mode, pathAlgorithm, structureAlgorithm]);
 
   function cancelReplay() {
@@ -276,7 +289,7 @@ export default function App() {
       ...previous,
       running: false,
       active: null,
-      elapsed: previous.running ? Math.min(previous.elapsed, 10) : previous.elapsed
+      elapsed: previous.elapsed
     }));
     setBusy(false);
   }
@@ -284,6 +297,12 @@ export default function App() {
   async function replay(order, algorithm, finalHighlight) {
     const ids = (order ?? []).map((item) => item.id);
     const token = ++runTokenRef.current;
+
+    const traversalDuration = Math.max(
+      MIN_SIMULATION_MS - FINAL_HOLD_MS,
+      ids.length * STEP_REPLAY_MS
+    );
+    const totalDuration = traversalDuration + FINAL_HOLD_MS;
 
     setHighlight(EMPTY_HIGHLIGHT);
     setSimulation({
@@ -293,23 +312,24 @@ export default function App() {
       total: ids.length,
       visited: [],
       active: null,
-      elapsed: 0
+      elapsed: 0,
+      duration: totalDuration
     });
 
     if (ids.length === 0) {
-      await new Promise((resolve) => window.setTimeout(resolve, SIMULATION_MS));
+      await new Promise((resolve) => window.setTimeout(resolve, totalDuration));
       if (token !== runTokenRef.current) return false;
       setHighlight(finalHighlight);
       setSimulation((previous) => ({
         ...previous,
         running: false,
-        elapsed: 10
+        elapsed: totalDuration / 1000
       }));
       return true;
     }
 
     const startedAt = performance.now();
-    const stepDuration = TRAVERSAL_MS / ids.length;
+    const stepDuration = traversalDuration / ids.length;
 
     for (let index = 0; index < ids.length; index += 1) {
       const targetTime = startedAt + (index + 1) * stepDuration;
@@ -319,7 +339,7 @@ export default function App() {
 
       if (token !== runTokenRef.current) return false;
 
-      const elapsed = Math.min(9, (performance.now() - startedAt) / 1000);
+      const elapsed = (performance.now() - startedAt) / 1000;
       setSimulation({
         running: true,
         algorithm,
@@ -333,7 +353,7 @@ export default function App() {
 
     const finalDelay = Math.max(
       0,
-      SIMULATION_MS - (performance.now() - startedAt)
+      totalDuration - (performance.now() - startedAt)
     );
 
     await new Promise((resolve) => window.setTimeout(resolve, finalDelay));
@@ -348,7 +368,8 @@ export default function App() {
       total: ids.length,
       visited: ids,
       active: null,
-      elapsed: 10
+      elapsed: totalDuration / 1000,
+      duration: totalDuration
     });
 
     return true;
@@ -713,7 +734,7 @@ export default function App() {
 
           {!result && (
             <div className="result-empty">
-              Select an algorithm and run it. The C++ visit order will replay for 10 seconds.
+              Select an algorithm and run it. Replay lasts at least 10 seconds and expands automatically for larger traversals.
             </div>
           )}
 
@@ -824,22 +845,29 @@ export default function App() {
       <section className="engine-map">
         <div className="engine-copy">
           <p className="eyebrow">C++17 DATA STRUCTURES ENGINE</p>
-          <h2>Seven algorithms. One reaction graph.</h2>
+          <h2>Twelve algorithms. One reaction graph.</h2>
           <p>
             The browser only renders the result and replay. Queue, stack, priority
-            queue, parent reconstruction, hashing, Trie search, cycle state and
-            low-link logic all execute in C++.
+            queue, buckets, heaps, parent reconstruction, hashing, Trie search,
+            cycle state and low-link logic all execute in C++. The 2025 research
+            mode is explicitly an educational pivot-frontier hybrid, not a claim
+            to reproduce the full STOC asymptotic construction.
           </p>
         </div>
 
         <div className="structure-table">
           <div><span>01</span><strong>BFS</strong><small>queue · shortest edge count</small></div>
-          <div><span>02</span><strong>Dijkstra</strong><small>priority queue · weighted path</small></div>
-          <div><span>03</span><strong>Bidirectional BFS</strong><small>two search frontiers</small></div>
-          <div><span>04</span><strong>DFS</strong><small>stack · reachability</small></div>
-          <div><span>05</span><strong>Tarjan SCC</strong><small>low-link + stack</small></div>
-          <div><span>06</span><strong>Cycle detection</strong><small>DFS state tracking</small></div>
-          <div><span>07</span><strong>Trie search</strong><small>prefix lookup</small></div>
+          <div><span>02</span><strong>Dijkstra</strong><small>binary heap · weighted SSSP</small></div>
+          <div><span>03</span><strong>A*</strong><small>admissible heuristic · guided search</small></div>
+          <div><span>04</span><strong>Dial</strong><small>bucket queue · small integer weights</small></div>
+          <div><span>05</span><strong>Bellman-Ford</strong><small>repeated relaxation · baseline SSSP</small></div>
+          <div><span>06</span><strong>Bidirectional BFS</strong><small>two unweighted frontiers</small></div>
+          <div><span>07</span><strong>Bidirectional Dijkstra</strong><small>two weighted frontiers</small></div>
+          <div><span>08</span><strong>2025 Pivot Frontier</strong><small>research-inspired Bellman-Ford + frontier hybrid</small></div>
+          <div><span>09</span><strong>DFS</strong><small>stack · reachability</small></div>
+          <div><span>10</span><strong>Tarjan SCC</strong><small>low-link + stack</small></div>
+          <div><span>11</span><strong>Cycle detection</strong><small>DFS state tracking</small></div>
+          <div><span>12</span><strong>Trie search</strong><small>prefix lookup</small></div>
         </div>
       </section>
 

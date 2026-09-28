@@ -262,15 +262,37 @@ int main(int argc, char** argv) {
 
         const auto started = std::chrono::steady_clock::now();
         const auto order = graph.reachableDfs(args[1]);
+        const auto distances = graph.hopDistances(args[1]);
         const auto elapsed = std::chrono::duration<double, std::milli>(
             std::chrono::steady_clock::now() - started).count();
 
-        std::cout << "{\"ok\":true,\"algorithm\":\"DFS\",\"from\":\""
+        std::cout << "{\"ok\":true,\"algorithm\":\"DFS + BFS hop index\",\"from\":\""
                   << jsonEscape(args[1]) << "\",\"reachable\":";
         printCompoundArray(graph, order);
         std::cout << ",\"visitedOrder\":";
         printCompoundArray(graph, order);
-        std::cout << ",\"count\":" << order.size()
+        std::cout << ",\"distances\":[";
+
+        bool firstDistance = true;
+        for (std::size_t id = 0; id < distances.size(); ++id) {
+            if (distances[id] < 0) continue;
+
+            const auto* compound = graph.compound(static_cast<int>(id));
+            if (!compound) continue;
+
+            if (!firstDistance) std::cout << ",";
+            firstDistance = false;
+
+            std::cout << "{\"id\":" << compound->id
+                      << ",\"name\":\"" << jsonEscape(compound->name)
+                      << "\",\"formula\":\"" << jsonEscape(compound->formula)
+                      << "\",\"category\":\"" << jsonEscape(compound->category)
+                      << "\",\"hops\":" << distances[id]
+                      << "}";
+        }
+
+        std::cout << "]"
+                  << ",\"count\":" << order.size()
                   << ",\"elapsedMs\":" << std::fixed << std::setprecision(4) << elapsed
                   << "}\n";
         return 0;

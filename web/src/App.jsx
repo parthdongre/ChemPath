@@ -1265,16 +1265,16 @@ export default function App() {
 
       <section className="hero hero-editorial" id="top">
         <div className="hero-copy">
-          <p className="eyebrow">REACTION-AWARE GRAPH ENGINE</p>
+          <p className="eyebrow">INTERACTIVE REACTION NETWORK · C++ GRAPH ENGINE</p>
           <h1 className="hero-display">
-            <span>CHEMISTRY</span>
-            <span>HAS A</span>
+            <span>REACTIONS</span>
+            <span>HAVE A</span>
             <span>PATH.</span>
           </h1>
 
           <p className="lede">
-            Explore a curated reaction network while C++ graph algorithms reveal
-            how compounds connect, branch, cycle, and converge.
+            Compounds are vertices. Reactions are directed edges. C++ graph
+            algorithms reveal the routes between them.
           </p>
 
           <div className="hero-actions">
@@ -1282,7 +1282,7 @@ export default function App() {
             <a className="hero-cta ghost" href="#engine">C++ ENGINE ↗</a>
           </div>
 
-          <p className="hero-whisper">follow the transformation</p>
+          <p className="hero-whisper">from compound to compound</p>
         </div>
 
         <div className="hero-visual" aria-hidden="true">
@@ -1301,7 +1301,7 @@ export default function App() {
         </div>
 
         <div className="hero-signal" aria-hidden="true">
-          <span>PATH / DETECTED</span>
+          <span>GRAPH PATH / FOUND</span>
         </div>
 
         <div className="hero-stats" aria-label="Dataset statistics">
@@ -1310,7 +1310,7 @@ export default function App() {
           <Stat value={stats?.directedEdges} label="directed edges" />
         </div>
 
-        <div className="hero-ghost" aria-hidden="true">REACTION</div>
+        <div className="hero-ghost" aria-hidden="true">NETWORK</div>
       </section>
 
       <div className="rule">

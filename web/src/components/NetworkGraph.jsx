@@ -75,11 +75,11 @@ export default function NetworkGraph({
         {
           selector: "node",
           style: {
-            "background-color": "#171717",
-            "border-color": "#55524c",
+            "background-color": "#092f4d",
+            "border-color": "#6e8fa3",
             "border-width": 1.4,
             label: "data(label)",
-            color: "#d8d0c4",
+            color: "#f5efe4",
             "font-size": 11,
             "font-weight": 700,
             "font-family": "JetBrains Mono, monospace",
@@ -87,41 +87,41 @@ export default function NetworkGraph({
             height: 58,
             "text-valign": "center",
             "text-halign": "center",
-            "text-outline-color": "#0a0a0a",
+            "text-outline-color": "#062a45",
             "text-outline-width": 2,
             "min-zoomed-font-size": 8
           }
         },
         {
           selector: "node.category-organic",
-          style: { "background-color": "#14211f", "border-color": "#69caba" }
+          style: { "background-color": "#0d435b", "border-color": "#7fd9d4" }
         },
         {
           selector: "node.category-acid",
-          style: { "background-color": "#211715", "border-color": "#c38478" }
+          style: { "background-color": "#452735", "border-color": "#e08a93" }
         },
         {
           selector: "node.category-ion",
-          style: { "background-color": "#201e16", "border-color": "#a59a79" }
+          style: { "background-color": "#403824", "border-color": "#d6b577" }
         },
         {
           selector: "node.category-biochemical",
-          style: { "background-color": "#172019", "border-color": "#8cb897" }
+          style: { "background-color": "#123d35", "border-color": "#91c8a7" }
         },
         {
           selector: "node.category-salt",
-          style: { "background-color": "#181b20", "border-color": "#8490a0" }
+          style: { "background-color": "#27374b", "border-color": "#96afc6" }
         },
         {
           selector: "node.category-base",
-          style: { "background-color": "#181c21", "border-color": "#7da1b3" }
+          style: { "background-color": "#173a4c", "border-color": "#7fb9d2" }
         },
         {
           selector: "edge",
           style: {
             width: 1.25,
-            "line-color": "#363430",
-            "target-arrow-color": "#57534c",
+            "line-color": "#31556b",
+            "target-arrow-color": "#6b899b",
             "target-arrow-shape": "triangle",
             "arrow-scale": 0.85,
             "curve-style": "bezier",
@@ -136,10 +136,10 @@ export default function NetworkGraph({
           selector: "node.visited",
           style: {
             opacity: 0.94,
-            "background-color": "#112824",
-            "border-color": "#348b80",
+            "background-color": "#0e4b59",
+            "border-color": "#8be5e0",
             "border-width": 2,
-            color: "#d8fff9"
+            color: "#f1fffd"
           }
         },
         {
@@ -152,10 +152,10 @@ export default function NetworkGraph({
             "font-size": 11,
             "text-wrap": "wrap",
             "text-max-width": 84,
-            "background-color": "#173f39",
-            "border-color": "#5eead4",
+            "background-color": "#124f64",
+            "border-color": "#f5efe4",
             "border-width": 4,
-            color: "#f5efe6",
+            color: "#f5efe4",
             "z-index": 30
           }
         },
@@ -173,10 +173,10 @@ export default function NetworkGraph({
             "font-size": 10,
             "text-wrap": "wrap",
             "text-max-width": 66,
-            "background-color": "#163632",
-            "border-color": "#5eead4",
+            "background-color": "#173e58",
+            "border-color": "#f5efe4",
             "border-width": 3.2,
-            color: "#f5efe6",
+            color: "#f5efe4",
             "z-index": 25
           }
         },
@@ -185,18 +185,18 @@ export default function NetworkGraph({
           style: {
             opacity: 1,
             width: 4.2,
-            "line-color": "#5eead4",
-            "target-arrow-color": "#5eead4",
+            "line-color": "#c21f33",
+            "target-arrow-color": "#c21f33",
             "arrow-scale": 1.35,
             label: "data(reaction)",
-            color: "#f5efe6",
+            color: "#f5efe4",
             "font-family": "JetBrains Mono, monospace",
             "font-size": 11,
             "font-weight": 600,
-            "text-background-color": "#0a0a0a",
+            "text-background-color": "#062a45",
             "text-background-opacity": 0.92,
             "text-background-padding": 5,
-            "text-border-color": "#2e766e",
+            "text-border-color": "#8f1324",
             "text-border-width": 1,
             "text-border-opacity": 0.7,
             "text-rotation": "autorotate",
@@ -207,7 +207,7 @@ export default function NetworkGraph({
           selector: ".selected",
           style: {
             "border-width": 3,
-            "border-color": "#f5efe6"
+            "border-color": "#f5efe4"
           }
         }
       ]

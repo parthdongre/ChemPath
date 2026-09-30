@@ -217,3 +217,12 @@ Example:
 Ammonium Chloride -> Ammonium -> Ammonia -> Nitric Oxide -> Nitrogen Dioxide
 
 This is intentionally a **reaction-participation graph**, not a one-bottle synthesis planner. The UI and viva explanation should state that required co-reactants/conditions are supplied by the reaction record.
+
+
+## License
+
+ChemPath is distributed under the **ChemPath Custom Academic & Non-Commercial License v1.0**.
+
+You may study, run, fork, modify, and redistribute the project for personal, educational, academic, and non-commercial research purposes with attribution. Commercial use requires separate permission, and substantially unchanged copies may not be presented as another person's original coursework, hackathon submission, or competition project.
+
+See [LICENSE](LICENSE) for the complete terms.

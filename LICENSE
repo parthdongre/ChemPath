@@ -1,0 +1,131 @@
+ChemPath Custom Academic & Non-Commercial License
+Version 1.0 — September 2026
+
+Copyright (c) 2026 Parth Dongre
+All rights reserved except as expressly granted below.
+
+1. PURPOSE
+
+ChemPath is an educational software project for exploring data structures,
+graph algorithms, and chemical reaction networks. This license permits
+personal, educational, academic, and non-commercial research use while
+protecting the original project from unattributed redistribution,
+commercial exploitation, and misrepresentation as another person's work.
+
+2. PERMITTED USE
+
+Subject to the conditions in this license, you may:
+
+a. view, download, run, and study the Software;
+b. fork and modify the Software for personal learning, classroom use,
+   academic study, or non-commercial research;
+c. use portions of the Software in demonstrations, teaching materials,
+   reports, or research, provided proper attribution is given; and
+d. redistribute modified or unmodified copies for non-commercial purposes,
+   provided this license, copyright notice, and attribution are retained.
+
+"Software" means the ChemPath source code, documentation, datasets,
+interfaces, assets, and other materials distributed with this repository,
+except where a file or third-party component states a different license.
+
+3. ATTRIBUTION
+
+Any public copy, fork, derivative work, presentation, publication, report,
+or redistribution based substantially on ChemPath must clearly acknowledge:
+
+    ChemPath by Parth Dongre
+    https://github.com/parthdongre/ChemPath
+
+The attribution must be reasonably visible and must not imply that the
+original author endorses the derivative work.
+
+4. ACADEMIC INTEGRITY
+
+You may learn from, modify, extend, and cite ChemPath.
+
+You may not submit ChemPath, or a substantially unchanged or lightly
+modified copy of ChemPath, as your own original coursework, capstone,
+academic project, hackathon submission, competition entry, or equivalent
+work without explicit written permission from the copyright holder.
+
+Substantial independent work that builds on ChemPath is permitted for
+academic purposes when the original project is clearly cited and the rules
+of the relevant institution, course, event, or competition allow such use.
+
+5. NON-COMMERCIAL USE
+
+This license does not grant permission to use the Software primarily for
+commercial advantage or monetary compensation.
+
+Commercial use includes, but is not limited to:
+
+a. selling or licensing the Software or a derivative product;
+b. offering the Software as part of a paid service;
+c. incorporating substantial portions into a proprietary commercial
+   product; or
+d. using the Software in a revenue-generating product or service.
+
+Commercial licenses or permissions may be granted separately by the
+copyright holder.
+
+6. MODIFICATIONS AND REDISTRIBUTION
+
+Redistributed copies or derivative works must:
+
+a. retain this license and the original copyright notice;
+b. identify significant modifications made to the original project;
+c. preserve the attribution required by Section 3; and
+d. not use the name "ChemPath" or the author's name to falsely imply that a
+   modified version is an official release.
+
+You may use a different name for a derivative project.
+
+7. THIRD-PARTY MATERIAL
+
+ChemPath may depend on third-party libraries, frameworks, datasets,
+publications, chemical references, or other resources. Those materials
+remain subject to their own licenses, terms, and citation requirements.
+This license grants no rights beyond those held by the ChemPath copyright
+holder.
+
+8. CHEMISTRY AND SAFETY DISCLAIMER
+
+ChemPath is an educational reaction-network and graph-algorithm project.
+It is not a laboratory synthesis planner, medical tool, safety system, or
+professional chemical engineering service.
+
+Reaction paths, graph weights, conditions, and related outputs must not be
+treated as instructions for performing chemical reactions. Users are
+responsible for consulting qualified professionals, authoritative sources,
+and applicable laboratory safety procedures before conducting any chemical
+work.
+
+9. NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, ACCURACY, NON-INFRINGEMENT, OR FITNESS
+FOR LABORATORY OR COMMERCIAL USE.
+
+IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR
+OTHER LIABILITY ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+10. TERMINATION
+
+Your rights under this license terminate automatically if you materially
+violate its terms. Rights may be restored if the violation is cured and
+the copyright holder confirms restoration in writing.
+
+11. ADDITIONAL PERMISSION
+
+For commercial use, relicensing, incorporation into a proprietary product,
+or another use not permitted above, obtain explicit written permission from
+the copyright holder.
+
+12. ACCEPTANCE
+
+By exercising permissions granted under this license, you agree to comply
+with its terms.
+
+SPDX-License-Identifier: LicenseRef-ChemPath-Academic-NonCommercial-1.0

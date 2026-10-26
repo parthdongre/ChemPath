@@ -136,7 +136,7 @@ void printPathResult(
               << "}\n";
 }
 
-void printRoute(const ReactionGraph& graph, const PathResult& result) {
+void printRoute(const ReactionGraph& graph, const PathResult& result, int simulatedCost = 0) {
     std::cout << "{\"found\":" << (result.found?"true":"false")
               << ",\"totalCost\":" << result.totalCost
               << ",\"steps\":" << result.reactionIds.size()
@@ -147,12 +147,12 @@ void printRoute(const ReactionGraph& graph, const PathResult& result) {
         if(i)std::cout << ",";
         const auto* r=graph.reaction(result.reactionIds[i]);
         std::cout << "{\"reactionId\":" << result.reactionIds[i]
-                  << ",\"reaction\":\"" << jsonEscape(r?r->name:"")
-                  << "\",\"equation\":\"" << jsonEscape(r?r->equation:"")
-                  << "\",\"conditions\":\"" << jsonEscape(r?r->conditions:"")
+                  << ",\"reaction\":\"" << jsonEscape(r?r->name:(result.reactionIds[i]==-2?"Hypothetical graph edge":""))
+                  << "\",\"equation\":\"" << jsonEscape(r?r->equation:(result.reactionIds[i]==-2?"Sandbox only; not a chemical reaction":""))
+                  << "\",\"conditions\":\"" << jsonEscape(r?r->conditions:(result.reactionIds[i]==-2?"Hypothetical directed edge; dataset unchanged":""))
                   << "\",\"reversible\":" << (r&&r->reversible?"true":"false")
-                  << ",\"cost\":" << (r?r->cost:0)
-                  << ",\"sourceKey\":\"" << jsonEscape(r?r->sourceKey:"")
+                  << ",\"cost\":" << (r?r->cost:simulatedCost)
+                  << ",\"sourceKey\":\"" << jsonEscape(r?r->sourceKey:(result.reactionIds[i]==-2?"SANDBOX":""))
                   << "\"}";
     }
     std::cout << "]}";
@@ -254,6 +254,21 @@ int runCommand(const ReactionGraph& graph,const std::vector<std::string>& args) 
             printRoute(graph,paths[i]);
         }
         std::cout << "]}\n";return 0;
+    }
+
+    if(command=="labedit"){
+        if(args.size()<8){printError("labedit requires from to mode edgeFrom edgeTo reactionId weight");return 1;}
+        const auto mode=args[3];
+        if(mode!="add" && mode!="replace"){printError("labedit mode must be add or replace");return 1;}
+        try{
+            const int a=std::stoi(args[4]),b=std::stoi(args[5]);
+            const int reaction=std::stoi(args[6]),weight=std::stoi(args[7]);
+            const auto result=lab::withEdge(graph,args[1],args[2],a,b,reaction,weight,mode=="replace");
+            std::cout << "{\"ok\":true,\"mode\":\"" << mode << "\",\"route\":";
+            printRoute(graph,result,weight);
+            std::cout << "}\n";
+        }catch(...){printError("Invalid hypothetical edge parameters");return 1;}
+        return 0;
     }
 
     if(command=="labplayground"){

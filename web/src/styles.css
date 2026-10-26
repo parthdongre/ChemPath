@@ -2573,3 +2573,16 @@ body::after {
 .graph-node-inspector strong{font-size:18px}
 .graph-node-inspector span{font-size:11px;color:#b1d0d3}
 @media(max-width:780px){.network-graph-buttons{top:95px;right:10px}.graph-node-inspector{left:10px;bottom:64px}}
+
+/* Hosted GPU network renderer sits inside the fixed-size graph-stage canvas. */
+.graph-frame > .sigma-shell { height: 920px; min-height: 920px; }
+.renderer-switch { position:absolute;z-index:7;top:23px;left:22px;display:flex;gap:6px;
+  padding:5px;border:1px solid #72afba61;border-radius:11px;background:#082b42ef; }
+.renderer-switch button { color:#b9d5db;border:0;background:transparent;border-radius:7px;
+  padding:8px 11px;font-size:11px;cursor:pointer; }
+.renderer-switch button.active { background:#1d7774;color:white; }
+.graph-neighborhood-error {position:absolute;z-index:9;left:25px;top:70px;
+  background:#491e2c;color:#ffe2e8;border:1px solid #e88393;padding:9px 12px;border-radius:9px;font-size:12px;}
+@media(max-width:900px){.graph-frame>.sigma-shell{height:700px;min-height:700px}}
+@media(max-width:600px){.graph-frame>.sigma-shell{height:570px;min-height:570px}
+  .renderer-switch{left:10px;top:28px}.renderer-switch button{padding:6px 8px;font-size:10px}}

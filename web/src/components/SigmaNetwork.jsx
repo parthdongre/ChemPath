@@ -105,6 +105,8 @@ export default function SigmaNetwork({
   const [edgeInfo, setEdgeInfo] = useState(null);
   const [hovered, setHovered] = useState(null);
   const hoveredRef = useRef(null);
+  const onSelectRef = useRef(onSelectCompound);
+  onSelectRef.current = onSelectCompound;
 
   filters.current = {
     highlightedNodes: new Set(highlightedNodeIds.map(String)),
@@ -121,10 +123,10 @@ export default function SigmaNetwork({
       renderEdgeLabels: false,
       labelDensity: 0.05,
       labelGridCellSize: 85,
-      labelRenderedSizeThreshold: 8,
+      labelRenderedSizeThreshold: 4,
       defaultNodeColor: "#79c5d3",
       defaultEdgeColor: "#406478",
-      enableEdgeClickEvents: true,
+      enableEdgeEvents: true,
       minCameraRatio: 0.035, maxCameraRatio: 16,
       zIndex: true,
       nodeReducer: (key, data) => {
@@ -163,7 +165,7 @@ export default function SigmaNetwork({
       const attrs = graph.getNodeAttributes(node);
       setInspected({ id: node, ...attrs });
       setEdgeInfo(null);
-      onSelectCompound?.(attrs.name, Number(node));
+      onSelectRef.current?.(attrs.name, Number(node));
     });
     renderer.on("clickEdge", ({ edge }) => {
       setEdgeInfo({ ...graph.getEdgeAttributes(edge), id: edge });

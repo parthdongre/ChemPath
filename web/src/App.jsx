@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "./api";
 import NetworkGraph from "./components/NetworkGraph.jsx";
+import SigmaNetwork from "./components/SigmaNetwork.jsx";
 import LabPanel from "./components/LabPanel.jsx";
 
 const EMPTY_HIGHLIGHT = { nodes: [], edges: [] };
@@ -739,6 +740,7 @@ function SimulationHud({ simulation, currentCompound, onSkip }) {
 
 export default function App() {
   const [network, setNetwork] = useState(null);
+  const [rendererMode, setRendererMode] = useState('sigma');
   const [stats, setStats] = useState(null);
   const [from, setFrom] = useState("Methane");
   const [to, setTo] = useState("Bicarbonate");
@@ -1502,15 +1504,39 @@ export default function App() {
           />
 
           {graphNetwork ? (
-            <NetworkGraph
-              network={graphNetwork}
-              highlightedNodeIds={highlight.nodes}
-              highlightedEdgeIds={highlight.edges}
-              selectedNodeId={selectedFromId}
-              visitedNodeIds={simulation.visited}
-              activeNodeId={simulation.active}
-              simulationRunning={simulation.running}
-            />
+            <>
+              <div className="renderer-switch" role="group" aria-label="Graph renderer">
+                <button type="button" className={rendererMode === "sigma" ? "active" : ""}
+                  onClick={() => setRendererMode("sigma")}>GPU Network</button>
+                <button type="button" className={rendererMode === "cytoscape" ? "active" : ""}
+                  onClick={() => setRendererMode("cytoscape")}>Path Layout</button>
+              </div>
+              {rendererMode === "sigma" ? (
+                <SigmaNetwork
+                  network={graphNetwork}
+                  highlightedNodeIds={highlight.nodes}
+                  highlightedEdgeIds={highlight.edges}
+                  selectedNodeId={selectedFromId}
+                  visitedNodeIds={simulation.visited}
+                  activeNodeId={simulation.active}
+                  simulationRunning={simulation.running}
+                  onSelectCompound={(name) => {
+                    setFrom(name);
+                    setResult(null);
+                  }}
+                />
+              ) : (
+                <NetworkGraph
+                  network={graphNetwork}
+                  highlightedNodeIds={highlight.nodes}
+                  highlightedEdgeIds={highlight.edges}
+                  selectedNodeId={selectedFromId}
+                  visitedNodeIds={simulation.visited}
+                  activeNodeId={simulation.active}
+                  simulationRunning={simulation.running}
+                />
+              )}
+            </>
           ) : (
             <div className="graph-loading">Waiting for C++ engine</div>
           )}

@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import { ordStatus, ordSearch, ordReaction, ordNeighborhood } from "./ord-db.js";
 import { spawn } from "node:child_process";
 import readline from "node:readline";
 import path from "node:path";
@@ -155,6 +156,12 @@ app.get("/api/health", route(async () => {
     ...stats
   };
 }));
+
+app.get("/api/ord/status", route(async () => ordStatus()));
+app.get("/api/ord/search", route(async (req) => ordSearch(req.query.q, req.query.limit)));
+app.get("/api/ord/reaction/:id", route(async (req) => ordReaction(req.params.id)));
+app.get("/api/ord/neighborhood", route(async (req) =>
+  ordNeighborhood(req.query.smiles, req.query.limit)));
 
 app.get("/api/stats", route(async () => runEngine(["stats"])));
 app.get("/api/network", route(async () => runEngine(["network"])));

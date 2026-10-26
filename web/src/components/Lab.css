@@ -60,3 +60,9 @@
 .lab-generator{margin-top:20px}.lab-generator .lab-toolbar label{min-width:90px}
 .lab-footer{padding:13px 28px;background:#061a2b;color:#94b3be;font-size:10px;line-height:1.6;border-top:1px solid #7796a655}
 @media(max-width:720px){.lab-header{padding:20px;flex-wrap:wrap}.lab-section{padding:18px}.lab-trace-layout{grid-template-columns:1fr}.lab-tabs{padding:6px 10px}.lab-tabs button{padding:10px}.lab-compare-row{grid-template-columns:1.3fr 1fr 1fr 1fr;gap:7px;font-size:10px;padding:10px 7px}.lab-player{flex-wrap:wrap}}
+
+.lab-focus-graph{height:360px;position:relative;margin:0 0 18px;border:1px solid #507b8b;border-radius:13px;overflow:hidden;background:#07263b}
+.lab-focus-graph .network-canvas{height:100%;min-height:0;width:100%}
+.lab-focus-graph .network-graph-buttons{top:10px;right:10px}
+.lab-focus-graph .graph-node-inspector{bottom:12px;left:10px}
+@media(max-width:720px){.lab-focus-graph{height:300px}}

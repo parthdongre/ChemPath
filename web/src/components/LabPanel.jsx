@@ -1,6 +1,7 @@
 import {useEffect,useMemo,useState} from "react";
 import {Play,Pause,StepForward,StepBack,RotateCcw,Network,Route,BarChart3,Gauge,Info} from "lucide-react";
 import {api} from "../api";
+import NetworkGraph from "./NetworkGraph.jsx";
 import "./Lab.css";
 
 const tabs=[["trace","Execution"],["compare","Comparison"],["paths","Routes"],
@@ -53,6 +54,23 @@ export default function LabPanel({network,from,to}){
     .filter(e=>e.node>=0).map(e=>e.node)),[trace,step]);
   const ranked=useMemo(()=>(components?.components||[])
     .map((ids,i)=>({ids,i})).sort((a,b)=>b.ids.length-a.ids.length).slice(0,12),[components]);
+  const focusedNetwork=useMemo(()=>{
+    if(!network || !trace?.events?.length)return null;
+    const preferred=new Set();
+    if(sourceId!==undefined)preferred.add(sourceId);
+    const targetId=network.nodes.find(n=>n.name===to)?.id;
+    if(targetId!==undefined)preferred.add(targetId);
+    (trace.route?.path||[]).forEach(n=>preferred.add(n.id));
+    // Snapshot up to 140 vertices. The complete trace is still available
+    // in the timeline, without forcing Cytoscape to relayout thousands.
+    for(const event of trace.events){
+      if(preferred.size>=140)break;
+      if(event.node>=0)preferred.add(event.node);
+    }
+    const nodes=network.nodes.filter(n=>preferred.has(n.id));
+    const edges=network.edges.filter(e=>preferred.has(e.source)&&preferred.has(e.target));
+    return {nodes,edges};
+  },[network,trace,sourceId,to]);
   const maxVisited=Math.max(1,...(comparison?.algorithms||[]).map(x=>x.visited));
   return <section className="lab-panel" id="algorithm-lab">
     <header className="lab-header"><div><small>ALGORITHM LAB / C++17 ENGINE</small>
@@ -76,7 +94,11 @@ export default function LabPanel({network,from,to}){
         <small>{trace?.events?.length??0} events {trace?.truncated?"(capped)":""}</small>
       </div>
       {trace?.events?.length?<><div className="lab-trace-layout">
-        <div className="lab-visited"><h3>Traversal timeline</h3>
+        <div className="lab-visited"><h3>Live focused graph and traversal</h3>
+          {focusedNetwork&&<div className="lab-focus-graph"><NetworkGraph network={focusedNetwork}
+            visitedNodeIds={[...seen]} activeNodeId={current?.node}
+            selectedNodeId={sourceId} simulationRunning={true}/></div>}
+          <h3>Processed nodes</h3>
           <div className="lab-visited-grid">{[...seen].slice(-75).map(id=>
             <span key={id} className={current?.node===id?"active":""}>
               {byId.get(id)?.formula||byId.get(id)?.name||id}</span>)}</div>

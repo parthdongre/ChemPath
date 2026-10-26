@@ -31,6 +31,13 @@ jobs:
       - name: Test C++ engine
         run: npm run test:engine
 
+      - name: Test and benchmark optimized C++ build
+        run: |
+          cmake -S engine -B engine/build-release -DCMAKE_BUILD_TYPE=Release
+          cmake --build engine/build-release --config Release
+          ctest --test-dir engine/build-release --output-on-failure -C Release
+          ./engine/build-release/chempath_bench data/compounds.csv data/reactions.csv 96
+
       - name: Build frontend
         run: npm run build:web
 

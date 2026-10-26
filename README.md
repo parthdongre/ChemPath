@@ -219,6 +219,26 @@ algorithm notes, route semantics and test coverage.
 
 ## Large-scale ORD reaction database (millions of records)
 
+### Bundled real ORD graph — runs immediately
+
+This repository includes an independently licensed **10,000-reaction
+ORD teaching sample with 17,700 compound structures** in
+\`data/ord-demo/\`. It is a real, deduplicated reaction dataset exported
+from the official ORD Parquet files, not a synthetic graph. To launch
+the full DSA engine against this sample:
+
+~~~bash
+cd ~/Desktop/ChemPath-latest
+git pull origin main
+npm install
+npm run build:engine
+CHEMPATH_DATA_DIR=data/ord-demo npm run dev
+~~~
+
+This gives you a larger playable dataset *without installing Python*.
+To switch back to the curated classroom dataset, run \`npm run dev\`
+without setting \`CHEMPATH_DATA_DIR\`.
+
 ChemPath now supports an **on-demand local SQLite index** of the official
 [Open Reaction Database](https://huggingface.co/datasets/open-reaction-database/ord-data).
 The full upstream source contains millions of records and roughly gigabyte-scale

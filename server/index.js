@@ -24,9 +24,38 @@ const dataDir = process.env.CHEMPATH_DATA_DIR
   ? path.resolve(process.env.CHEMPATH_DATA_DIR)
   : path.join(repoRoot, "data");
 const app = express();
-
+app.disable("x-powered-by");
+app.set("trust proxy", process.env.NODE_ENV === "production" ? 1 : false);
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "32kb" }));
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  next();
+});
+
+// Bounded, in-memory per-instance rate limiter for a small public demo.
+// Reverse-proxy/CDN protection is recommended for a higher-traffic deployment.
+const ipRequests = new Map();
+const RATE_WINDOW_MS = 60_000;
+const RATE_LIMIT = Math.max(20, Math.min(1000, Number(process.env.API_RATE_LIMIT) || 120));
+app.use("/api", (req, res, next) => {
+  if (req.path === "/health") return next();
+  const now = Date.now();
+  if (ipRequests.size > 20_000) ipRequests.clear();
+  const key = req.ip || "unknown";
+  const previous = ipRequests.get(key);
+  const item = !previous || now >= previous.until
+    ? { count: 0, until: now + RATE_WINDOW_MS } : previous;
+  item.count += 1;
+  ipRequests.set(key, item);
+  res.setHeader("X-RateLimit-Limit", RATE_LIMIT);
+  if (item.count > RATE_LIMIT) {
+    res.setHeader("Retry-After", Math.ceil((item.until - now) / 1000));
+    return res.status(429).json({ ok: false, error: "Rate limit exceeded" });
+  }
+  next();
+});
 
 // Persistent C++ worker: one graph load, then JSON-line replies per command.
 let worker = null;
@@ -81,6 +110,11 @@ function runEngine(args = []) {
     return Promise.reject(error);
   }
   try {
+    if (pending.length >= 16) {
+      const error = new Error("Engine is busy. Please retry.");
+      error.status = 429;
+      return Promise.reject(error);
+    }
     const child = startWorker();
     return new Promise((resolve, reject) => {
       const job = { resolve, reject, timer: null };
@@ -124,6 +158,66 @@ app.get("/api/health", route(async () => {
 
 app.get("/api/stats", route(async () => runEngine(["stats"])));
 app.get("/api/network", route(async () => runEngine(["network"])));
+
+// Query-driven subgraph for the WebGL explorer: do not transfer every edge
+// again for a neighborhood expansion. Cached snapshot is shared across users.
+let graphCachePromise = null;
+function readCachedGraph() {
+  if (!graphCachePromise) {
+    graphCachePromise = runEngine(["network"]).catch(error => {
+      graphCachePromise = null;
+      throw error;
+    });
+  }
+  return graphCachePromise;
+}
+app.get("/api/graph/neighborhood", route(async (req) => {
+  const center = String(req.query.center || "").trim().slice(0, 180);
+  const depth = Number(req.query.depth ?? 1);
+  const limit = Number(req.query.limit ?? 320);
+  if (!center || !Number.isInteger(depth) || depth < 1 || depth > 3 ||
+      !Number.isInteger(limit) || limit < 2 || limit > 1200) {
+    const error = new Error("Provide center, depth 1-3, limit 2-1200");
+    error.status = 400;
+    throw error;
+  }
+  const graph = await readCachedGraph();
+  const selected = graph.nodes.find(n => n.name.toLowerCase() === center.toLowerCase() ||
+    String(n.id) === center);
+  if (!selected) {
+    const error = new Error("Compound not found"); error.status = 404; throw error;
+  }
+  const neighbors = new Map();
+  for (const edge of graph.edges) {
+    if (!neighbors.has(edge.source)) neighbors.set(edge.source, new Set());
+    if (!neighbors.has(edge.target)) neighbors.set(edge.target, new Set());
+    neighbors.get(edge.source).add(edge.target);
+    neighbors.get(edge.target).add(edge.source);
+  }
+  const visible = new Set([selected.id]);
+  let frontier = [selected.id];
+  for (let i = 0; i < depth && visible.size < limit; i++) {
+    const next = [];
+    for (const u of frontier) {
+      for (const v of neighbors.get(u) || []) {
+        if (visible.size >= limit) break;
+        if (visible.has(v)) continue;
+        visible.add(v);
+        next.push(v);
+      }
+      if (visible.size >= limit) break;
+    }
+    frontier = next;
+    if (!frontier.length) break;
+  }
+  return {
+    ok: true, center: selected.name, depth, limit,
+    fullNodeCount: graph.nodes.length,
+    fullEdgeCount: graph.edges.length,
+    nodes: graph.nodes.filter(node => visible.has(node.id)),
+    edges: graph.edges.filter(edge => visible.has(edge.source) && visible.has(edge.target))
+  };
+}));
 
 app.get("/api/path", route(async (req) => {
   const { from, to } = req.query;
@@ -229,8 +323,25 @@ app.get("/api/lab/synthetic", route(async (req) =>
     String(Math.max(1, Math.min(250000, Number(req.query.edges)||3000))),
     String(Math.trunc(Number(req.query.seed)||42))])));
 
+// Railway / Docker: serve the Vite production build and API on ONE origin.
+const webDist = path.join(repoRoot, "web", "dist");
+if (process.env.NODE_ENV === "production" && fs.existsSync(path.join(webDist, "index.html"))) {
+  app.use(express.static(webDist, { maxAge: "1h", index: true }));
+  app.use((req, res, next) => {
+    if (req.method !== "GET" || req.path.startsWith("/api/")) return next();
+    res.sendFile(path.join(webDist, "index.html"));
+  });
+}
+app.use((error, req, res, next) => {
+  console.error("[ChemPath API]", error);
+  if (res.headersSent) return next(error);
+  res.status(error.status || 500).json({
+    ok: false, error: error.status ? error.message : "Internal server error"
+  });
+});
+
 const port = Number(process.env.PORT || 8787);
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`ChemPath API listening on http://localhost:${port}`);
   console.log(`C++ engine: ${enginePath}`);
 });

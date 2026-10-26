@@ -44,6 +44,9 @@ jobs:
       - name: Smoke-test persistent API and laboratory routes
         run: node scripts/smoke-api.mjs
 
+      - name: Verify optional ORD SQLite index and API
+        run: node scripts/test-ord-api.mjs
+
       - name: Smoke-test optional expanded Rhea graph
         run: |
           if [ -f data/expanded/compounds.csv ]; then

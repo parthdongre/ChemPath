@@ -6,6 +6,7 @@
 #include <functional>
 #include <limits>
 #include <numeric>
+#include <optional>
 #include <queue>
 #include <random>
 #include <set>
@@ -20,7 +21,8 @@ using BlockedEdge = std::tuple<int, int, int>;
 
 PathResult filteredPath(const ReactionGraph& graph, int start, int target,
                         const std::set<int>& blockedNodes,
-                        const std::set<BlockedEdge>& blockedEdges) {
+                        const std::set<BlockedEdge>& blockedEdges,
+                        const std::optional<std::tuple<int,int,int,int>>& injected = std::nullopt) {
     PathResult result;
     const auto& adj = graph.adjacency();
     if (start < 0 || target < 0 || start >= static_cast<int>(adj.size()) ||
@@ -37,17 +39,22 @@ PathResult filteredPath(const ReactionGraph& graph, int start, int target,
         if (cost != dist[node]) continue;
         result.visitedOrder.push_back(node);
         if (node == target) break;
-        for (const auto& e : adj[node]) {
-            if (blockedNodes.count(e.to) ||
-                blockedEdges.count({node,e.to,e.reactionId}) ||
-                cost > INF-e.cost) continue;
-            const int candidate = cost + e.cost;
-            if (candidate < dist[e.to]) {
-                dist[e.to] = candidate;
-                parent[e.to] = node;
-                reaction[e.to] = e.reactionId;
-                heap.push({candidate,e.to});
+        const auto relax = [&](int destination,int reactionId,int weight) {
+            if (blockedNodes.count(destination) || cost > INF-weight) return;
+            const int candidate = cost + weight;
+            if (candidate < dist[destination]) {
+                dist[destination] = candidate;
+                parent[destination] = node;
+                reaction[destination] = reactionId;
+                heap.push({candidate,destination});
             }
+        };
+        for (const auto& e : adj[node]) {
+            if (blockedEdges.count({node,e.to,e.reactionId})) continue;
+            relax(e.to,e.reactionId,e.cost);
+        }
+        if (injected && std::get<0>(*injected)==node) {
+            relax(std::get<1>(*injected),std::get<2>(*injected),std::get<3>(*injected));
         }
     }
     if (dist[target] == INF) return result;
@@ -326,6 +333,21 @@ PathResult withoutEdge(const ReactionGraph& graph,const std::string& from,
     auto a=graph.compoundId(from),b=graph.compoundId(to);
     if(!a||!b)return {};
     return filteredPath(graph,*a,*b,{},{{source,target,reactionId}});
+}
+
+PathResult withEdge(const ReactionGraph& graph,const std::string& from,
+                    const std::string& to,int source,int target,
+                    int reactionId,int weight,bool replaceExisting) {
+    const auto start=graph.compoundId(from),end=graph.compoundId(to);
+    if(!start||!end || source<0 || target<0 ||
+       source>=static_cast<int>(graph.compounds().size()) ||
+       target>=static_cast<int>(graph.compounds().size()) ||
+       weight<=0 || weight>1000)return {};
+    std::set<BlockedEdge> removed;
+    if(replaceExisting)removed.insert({source,target,reactionId});
+    // Reaction id -2 marks a hypothetical nonchemical edge in the returned path.
+    return filteredPath(graph,*start,*end,{},removed,
+                        std::make_tuple(source,target,-2,weight));
 }
 
 RepresentationStats compareRepresentations(const ReactionGraph& graph,int iterations) {

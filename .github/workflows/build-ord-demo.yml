@@ -1,0 +1,64 @@
+name: Build Bundled ORD Teaching Graph
+on:
+  push:
+    branches: [feat/ord-large-dataset]
+    paths:
+      - .github/workflows/build-ord-demo.yml
+      - scripts/import-ord.py
+      - scripts/export-ord-graph.py
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  make-real-ord-subset:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install official ORD dependencies
+        run: python -m pip install -r scripts/requirements-ord.txt
+      - name: Import genuine ORD source records into temporary SQLite
+        run: |
+          python scripts/import-ord.py --limit 75000 --max-files 30 \
+            --db /tmp/ord-teaching.sqlite --cache-dir /tmp/ord-hf-cache
+      - name: Export bounded deduplicated DSA teaching network
+        run: |
+          python scripts/export-ord-graph.py --limit 10000 \
+            --db /tmp/ord-teaching.sqlite --output data/ord-demo
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+          root=Path('data/ord-demo')
+          with (root/'reactions.csv').open() as f:
+              reactions=list(csv.DictReader(f,delimiter='|'))
+          with (root/'compounds.csv').open() as f:
+              compounds=list(csv.DictReader(f,delimiter='|'))
+          print(f'ORD bundled real graph: {len(compounds)} compounds, {len(reactions)} reactions')
+          assert len(reactions)>=2000, 'Not enough distinct ORD transformations'
+          assert len(compounds)>=500, 'Not enough unique molecules'
+          PY
+      - name: Verify bundled graph with real C++ engine
+        run: |
+          cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build engine/build --config Release -j 2
+          ./engine/build/chempath stats --data data/ord-demo
+      - name: Commit generated licensed sample to branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f data/ord-demo/compounds.csv data/ord-demo/reactions.csv data/ord-demo/SOURCES.md
+          if ! git diff --cached --quiet; then
+            git commit -m "data: bundle verified ORD CC-BY-SA reaction graph sample"
+            # The feature branch may have received documentation changes while
+            # the sample was being downloaded. Rebase before publishing.
+            git fetch origin feat/ord-large-dataset
+            git rebase origin/feat/ord-large-dataset
+            git push origin HEAD:feat/ord-large-dataset
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chempath-ord-teaching-graph
+          path: data/ord-demo/

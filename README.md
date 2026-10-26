@@ -217,6 +217,87 @@ node scripts/smoke-api.mjs
 See [docs/DSA_LAB.md](docs/DSA_LAB.md) for the precise data structures,
 algorithm notes, route semantics and test coverage.
 
+## Large-scale ORD reaction database (millions of records)
+
+### Bundled real ORD graph — runs immediately
+
+This repository includes an independently licensed **10,000-reaction
+ORD teaching sample with 17,700 compound structures** in
+\`data/ord-demo/\`. It is a real, deduplicated reaction dataset exported
+from the official ORD Parquet files, not a synthetic graph. To launch
+the full DSA engine against this sample:
+
+~~~bash
+cd ~/Desktop/ChemPath-latest
+git pull origin main
+npm install
+npm run build:engine
+CHEMPATH_DATA_DIR=data/ord-demo npm run dev
+~~~
+
+This gives you a larger playable dataset *without installing Python*.
+To switch back to the curated classroom dataset, run \`npm run dev\`
+without setting \`CHEMPATH_DATA_DIR\`.
+
+ChemPath now supports an **on-demand local SQLite index** of the official
+[Open Reaction Database](https://huggingface.co/datasets/open-reaction-database/ord-data).
+The full upstream source contains millions of records and roughly gigabyte-scale
+Parquet files. The dataset files and SQLite database are downloaded on your
+machine, not committed to Git and not loaded into the React graph or C++ engine.
+
+### Mac / Linux: install and sample the ORD dataset
+
+~~~bash
+cd ~/Desktop/ChemPath-latest
+git pull origin main
+npm install
+
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r scripts/requirements-ord.txt
+
+# Download and index 20,000 real source rows (good for initial exploration).
+python scripts/import-ord.py --limit 20000
+
+# Start the existing DSA engine and the separate indexed ORD browser.
+npm run dev
+~~~
+
+Open **http://localhost:5173/#ord-database**. Search by **reaction ID**
+(\`ord-\` prefix) or **molecular SMILES prefix** (e.g., \`CCO\`).
+Inspect reactions and load a bounded Sigma.js graph that explicitly includes
+reaction nodes; multi-reactant reactions are NOT misrepresented as feasible
+single-compound chemical transformations.
+
+For the **complete official source collection**, after checking your free
+disk space and installing the importer dependencies, run:
+
+~~~bash
+python scripts/import-ord.py --all
+~~~
+
+The importer processes Parquet in batches and resumes completed source files.
+A full import requires substantial download space, SQLite storage and processing
+time; the existing curated and Rhea datasets remain usable while no ORD index
+is installed.
+
+### Use ORD with C++ BFS/Dijkstra/Tarjan
+
+The full ORD index is **not** an in-memory C++ graph. Export a smaller
+participation graph to the existing DSA CSV format:
+
+~~~bash
+python scripts/export-ord-graph.py --limit 10000
+CHEMPATH_DATA_DIR=data/ord-demo npm run dev
+~~~
+
+This switches the C++ engine to the exported subset while retaining the
+separate optional ORD SQLite explorer. For normal coursework, restart without
+\`CHEMPATH_DATA_DIR\` to use the reviewed 690-compound dataset.
+
+See [docs/ORD_DATA.md](docs/ORD_DATA.md) for importer options, attribution,
+limitations, API contract, macOS commands, and hosting considerations.
+
 ## Optional larger Rhea reaction graph
 
 The **validated classroom default remains 690 compounds and 884 curated

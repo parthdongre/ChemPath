@@ -36,5 +36,10 @@ export const api = {
   labEdit: (from,to,mode,edgeFrom,edgeTo,reactionId,weight) =>
     request(`/lab/edit?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&mode=${mode}&edgeFrom=${edgeFrom}&edgeTo=${edgeTo}&reactionId=${reactionId}&weight=${weight}`),
   labCsr: () => request("/lab/csr"),
-  labSynthetic: (nodes,edges,seed) => request(`/lab/synthetic?nodes=${nodes}&edges=${edges}&seed=${seed}`)
+  labSynthetic: (nodes,edges,seed) => request(`/lab/synthetic?nodes=${nodes}&edges=${edges}&seed=${seed}`),
+  ordStatus: () => request("/ord/status"),
+  ordSearch: (q, limit=24) => request(`/ord/search?q=${encodeURIComponent(q)}&limit=${limit}`),
+  ordReaction: (id) => request(`/ord/reaction/${encodeURIComponent(id)}`),
+  ordNeighborhood: (smiles,limit=26) =>
+    request(`/ord/neighborhood?smiles=${encodeURIComponent(smiles)}&limit=${limit}`)
 };

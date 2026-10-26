@@ -44,12 +44,22 @@ jobs:
       - name: Smoke-test persistent API and laboratory routes
         run: node scripts/smoke-api.mjs
 
+      - name: Verify optional ORD SQLite index and API
+        run: node scripts/test-ord-api.mjs
+
       - name: Smoke-test optional expanded Rhea graph
         run: |
           if [ -f data/expanded/compounds.csv ]; then
             ./engine/build/chempath stats --data data/expanded
             ./engine/build/chempath labcomponents --data data/expanded > /dev/null
             ./engine/build/chempath labcsr 20 --data data/expanded
+          fi
+
+      - name: Verify bundled ORD teaching graph
+        run: |
+          if [ -f data/ord-demo/compounds.csv ]; then
+            ./engine/build/chempath stats --data data/ord-demo > /tmp/ord-demo-stats.json
+            node -e 'const x=require("/tmp/ord-demo-stats.json"); if(x.compounds<10000||x.reactions<5000||x.directedEdges<10000) process.exit(1);console.log("ORD graph verified",x.compounds,x.reactions,x.directedEdges)'
           fi
 
       - name: Build frontend

@@ -1,0 +1,48 @@
+name: Validate Real Open Reaction Database Import
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/import-ord.py
+      - scripts/export-ord-graph.py
+      - scripts/requirements-ord.txt
+      - .github/workflows/ord-import.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-ord-sample:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install official ORD schema and Parquet dependencies
+        run: python -m pip install -r scripts/requirements-ord.txt
+      - name: Import real Parquet rows from official Hugging Face ORD mirror
+        run: |
+          python scripts/import-ord.py --limit 400 --max-files 3 \
+            --db /tmp/chempath-ord.sqlite --cache-dir /tmp/ord-hf-cache
+      - name: Export a C++-compatible real ORD graph
+        run: |
+          python scripts/export-ord-graph.py --limit 100 \
+            --db /tmp/chempath-ord.sqlite --output /tmp/chempath-ord-graph
+          python - <<'PY'
+          import sqlite3
+          db = sqlite3.connect('/tmp/chempath-ord.sqlite')
+          n = db.execute('SELECT count(*) FROM ord_reactions').fetchone()[0]
+          indexed = db.execute('SELECT count(*) FROM ord_participants').fetchone()[0]
+          assert n > 0 and indexed > 0, (n,indexed)
+          print('Source ORD records:',n,'indexed molecular participants:',indexed)
+          PY
+      - name: Build C++ graph engine and test imported reactions
+        run: |
+          cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build engine/build --config Release -j 2
+          ./engine/build/chempath stats --data /tmp/chempath-ord-graph
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ord-official-graph-sample
+          path: /tmp/chempath-ord-graph/

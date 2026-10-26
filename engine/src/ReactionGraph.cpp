@@ -89,6 +89,18 @@ bool ReactionGraph::loadReactions(const std::string& path) {
 
     reactions_.clear();
     reactionIndexById_.clear();
+    // Cached indexes save O(E) reconstruction for each reverse traversal.
+    reverseAdjacency_.assign(compounds_.size(), {});
+    minEdgeCost_ = 0;
+    maxEdgeCost_ = 0;
+    edgeCount_ = 0;
+    auto addEdge = [&](int from, int to, int reactionId, int cost) {
+        adjacency_[from].push_back({to, reactionId, cost});
+        reverseAdjacency_[to].push_back({from, reactionId, cost});
+        minEdgeCost_ = minEdgeCost_ == 0 ? cost : std::min(minEdgeCost_, cost);
+        maxEdgeCost_ = std::max(maxEdgeCost_, cost);
+        ++edgeCount_;
+    };
 
     std::string line;
     bool firstLine = true;
@@ -142,7 +154,7 @@ bool ReactionGraph::loadReactions(const std::string& path) {
         // Therefore every reactant connects to every recorded product.
         for (int from : reaction.reactants) {
             for (int to : reaction.products) {
-                adjacency_[from].push_back({to, reaction.id, reaction.cost});
+                addEdge(from, to, reaction.id, reaction.cost);
             }
         }
 
@@ -153,8 +165,7 @@ bool ReactionGraph::loadReactions(const std::string& path) {
         if (reaction.reversible && !reaction.products.empty()) {
             const int primaryProduct = reaction.products.front();
             const int primaryReactant = reaction.reactants.front();
-            adjacency_[primaryProduct].push_back(
-                {primaryReactant, reaction.id, reaction.cost});
+            addEdge(primaryProduct, primaryReactant, reaction.id, reaction.cost);
         }
     }
 
@@ -321,15 +332,7 @@ PathResult ReactionGraph::shortestPathAStar(const std::string& from, const std::
     // reverse BFS gives the minimum number of remaining edges, and every
     // reaction edge costs at least minEdgeCost. Therefore
     // h(v) = remainingHops(v) * minEdgeCost never overestimates.
-    std::vector<std::vector<int>> reverseAdjacency(count);
-    int minEdgeCost = infinity;
-    for (int u = 0; u < count; ++u) {
-        for (const auto& edge : adjacency_[u]) {
-            reverseAdjacency[edge.to].push_back(u);
-            minEdgeCost = std::min(minEdgeCost, edge.cost);
-        }
-    }
-    if (minEdgeCost == infinity) return result;
+    if (minEdgeCost_ <= 0) return result;
 
     std::vector<int> hops(count, infinity);
     std::queue<int> hopQueue;
@@ -340,7 +343,8 @@ PathResult ReactionGraph::shortestPathAStar(const std::string& from, const std::
         const int current = hopQueue.front();
         hopQueue.pop();
 
-        for (int predecessor : reverseAdjacency[current]) {
+        for (const auto& incoming : reverseAdjacency_[current]) {
+            const int predecessor = incoming.to;
             if (hops[predecessor] != infinity) continue;
             hops[predecessor] = hops[current] + 1;
             hopQueue.push(predecessor);
@@ -358,7 +362,7 @@ PathResult ReactionGraph::shortestPathAStar(const std::string& from, const std::
     std::priority_queue<State, std::vector<State>, std::greater<State>> open;
 
     distance[*start] = 0;
-    open.push({hops[*start] * minEdgeCost, 0, *start});
+    open.push({hops[*start] * minEdgeCost_, 0, *start});
 
     while (!open.empty()) {
         const auto [estimatedTotal, currentDistance, current] = open.top();
@@ -380,7 +384,7 @@ PathResult ReactionGraph::shortestPathAStar(const std::string& from, const std::
             parentReaction[edge.to] = edge.reactionId;
 
             const int heuristic =
-                hops[edge.to] == infinity ? 0 : hops[edge.to] * minEdgeCost;
+                hops[edge.to] == infinity ? 0 : hops[edge.to] * minEdgeCost_;
             open.push({candidate + heuristic, candidate, edge.to});
         }
     }
@@ -407,55 +411,58 @@ PathResult ReactionGraph::shortestPathDial(const std::string& from, const std::s
 
     const auto start = compoundId(from);
     const auto target = compoundId(to);
-    if (!start || !target) return result;
+    if (!start || !target || maxEdgeCost_ <= 0) return result;
 
     const int count = static_cast<int>(compounds_.size());
     const int infinity = std::numeric_limits<int>::max() / 4;
 
-    int maxEdgeCost = 0;
-    for (const auto& edges : adjacency_) {
-        for (const auto& edge : edges) {
-            maxEdgeCost = std::max(maxEdgeCost, edge.cost);
-        }
-    }
-    if (maxEdgeCost <= 0) return result;
-
-    // Any shortest path can be taken simple, so at most V-1 positive edges.
-    const int maxDistance = maxEdgeCost * std::max(1, count - 1);
-    std::vector<std::deque<int>> buckets(static_cast<std::size_t>(maxDistance) + 1);
-
+    // Dial's circular buckets: with integer weights in [1, C], relaxing a
+    // vertex at distance d only inserts distances in [d+1, d+C].
+    // Reuse C+1 buckets instead of allocating O(C*V) deques per query.
+    const std::size_t bucketCount = static_cast<std::size_t>(maxEdgeCost_) + 1;
+    std::vector<std::deque<std::pair<int, int>>> buckets(bucketCount);
     std::vector<int> distance(count, infinity);
     std::vector<int> parent(count, -1);
     std::vector<int> parentReaction(count, -1);
     std::vector<bool> settled(count, false);
 
     distance[*start] = 0;
-    buckets[0].push_back(*start);
+    buckets[0].push_back({0, *start});
+    std::size_t queuedEntries = 1;
+    int currentDistance = 0;
 
-    int currentBucket = 0;
-    while (currentBucket <= maxDistance) {
-        while (currentBucket <= maxDistance && buckets[currentBucket].empty()) {
-            ++currentBucket;
+    while (queuedEntries > 0) {
+        auto& bucket = buckets[static_cast<std::size_t>(currentDistance) % bucketCount];
+        if (bucket.empty() || bucket.front().first > currentDistance) {
+            ++currentDistance;
+            continue;
         }
-        if (currentBucket > maxDistance) break;
 
-        const int current = buckets[currentBucket].front();
-        buckets[currentBucket].pop_front();
+        const auto [queuedDistance, current] = bucket.front();
+        bucket.pop_front();
+        --queuedEntries;
 
-        if (settled[current] || distance[current] != currentBucket) continue;
+        if (queuedDistance != currentDistance ||
+            settled[current] ||
+            distance[current] != queuedDistance) {
+            continue;
+        }
+
         settled[current] = true;
         result.visitedOrder.push_back(current);
-
         if (current == *target) break;
 
         for (const auto& edge : adjacency_[current]) {
-            const int candidate = currentBucket + edge.cost;
-            if (candidate >= distance[edge.to] || candidate > maxDistance) continue;
+            if (currentDistance > infinity - edge.cost) continue;
+            const int candidate = currentDistance + edge.cost;
+            if (candidate >= distance[edge.to]) continue;
 
             distance[edge.to] = candidate;
             parent[edge.to] = current;
             parentReaction[edge.to] = edge.reactionId;
-            buckets[candidate].push_back(edge.to);
+            buckets[static_cast<std::size_t>(candidate) % bucketCount]
+                .push_back({candidate, edge.to});
+            ++queuedEntries;
         }
     }
 
@@ -463,7 +470,6 @@ PathResult ReactionGraph::shortestPathDial(const std::string& from, const std::s
 
     result.found = true;
     result.totalCost = distance[*target];
-
     for (int cursor = *target; cursor != -1; cursor = parent[cursor]) {
         result.compoundIds.push_back(cursor);
         if (parentReaction[cursor] != -1) {
@@ -557,13 +563,6 @@ PathResult ReactionGraph::shortestPathBidirectionalDijkstra(
     const int count = static_cast<int>(compounds_.size());
     const int infinity = std::numeric_limits<int>::max() / 4;
 
-    std::vector<std::vector<Edge>> reverseAdjacency(count);
-    for (int u = 0; u < count; ++u) {
-        for (const auto& edge : adjacency_[u]) {
-            reverseAdjacency[edge.to].push_back({u, edge.reactionId, edge.cost});
-        }
-    }
-
     std::vector<int> forwardDistance(count, infinity);
     std::vector<int> backwardDistance(count, infinity);
     std::vector<int> forwardParent(count, -1);
@@ -641,7 +640,7 @@ PathResult ReactionGraph::shortestPathBidirectionalDijkstra(
                 meeting = current;
             }
 
-            for (const auto& reverseEdge : reverseAdjacency[current]) {
+            for (const auto& reverseEdge : reverseAdjacency_[current]) {
                 const int predecessor = reverseEdge.to;
                 const int candidate = distance + reverseEdge.cost;
 
@@ -812,14 +811,6 @@ PathResult ReactionGraph::shortestPathBidirectional(const std::string& from, con
         return result;
     }
 
-    std::vector<std::vector<Edge>> reverseAdjacency(compounds_.size());
-    for (std::size_t fromId = 0; fromId < adjacency_.size(); ++fromId) {
-        for (const auto& edge : adjacency_[fromId]) {
-            reverseAdjacency[edge.to].push_back(
-                {static_cast<int>(fromId), edge.reactionId, edge.cost});
-        }
-    }
-
     std::vector<bool> visitedForward(compounds_.size(), false);
     std::vector<bool> visitedBackward(compounds_.size(), false);
     std::vector<int> parentForward(compounds_.size(), -1);
@@ -829,6 +820,8 @@ PathResult ReactionGraph::shortestPathBidirectional(const std::string& from, con
 
     std::queue<int> forwardQueue;
     std::queue<int> backwardQueue;
+    // O(1) visited-order dedup replaces a linear scan per backward step.
+    std::vector<bool> traced(compounds_.size(), false);
 
     visitedForward[*start] = true;
     visitedBackward[*target] = true;
@@ -841,7 +834,10 @@ PathResult ReactionGraph::shortestPathBidirectional(const std::string& from, con
         if (forwardQueue.empty()) return;
         const int current = forwardQueue.front();
         forwardQueue.pop();
-        result.visitedOrder.push_back(current);
+        if (!traced[current]) {
+            traced[current] = true;
+            result.visitedOrder.push_back(current);
+        }
 
         if (visitedBackward[current]) {
             meeting = current;
@@ -866,8 +862,8 @@ PathResult ReactionGraph::shortestPathBidirectional(const std::string& from, con
         if (backwardQueue.empty()) return;
         const int current = backwardQueue.front();
         backwardQueue.pop();
-        if (std::find(result.visitedOrder.begin(), result.visitedOrder.end(), current)
-            == result.visitedOrder.end()) {
+        if (!traced[current]) {
+            traced[current] = true;
             result.visitedOrder.push_back(current);
         }
 
@@ -876,7 +872,7 @@ PathResult ReactionGraph::shortestPathBidirectional(const std::string& from, con
             return;
         }
 
-        for (const auto& reverseEdge : reverseAdjacency[current]) {
+        for (const auto& reverseEdge : reverseAdjacency_[current]) {
             const int predecessor = reverseEdge.to;
             if (!visitedBackward[predecessor]) {
                 visitedBackward[predecessor] = true;
@@ -1079,9 +1075,7 @@ std::vector<int> ReactionGraph::searchCompounds(const std::string& prefix, std::
 }
 
 std::size_t ReactionGraph::edgeCount() const {
-    std::size_t count = 0;
-    for (const auto& edges : adjacency_) count += edges.size();
-    return count;
+    return edgeCount_;
 }
 
 } // namespace chempath

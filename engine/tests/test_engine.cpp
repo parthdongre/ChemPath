@@ -1,6 +1,10 @@
 #include "ReactionGraph.hpp"
 
 #include <algorithm>
+// Keep assertions active for Release builds: they are the test harness.
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
 #include <cassert>
 #include <iostream>
 #include <string>
@@ -27,6 +31,40 @@ bool reactionHasProduct(
         if (compound && compound->name == productName) return true;
     }
     return false;
+}
+
+// Validate the exact directed edges returned by every shortest-path method.
+// Costs must agree with their reaction records, not merely with another solver.
+void assertValidRoute(
+    const chempath::ReactionGraph& graph,
+    const chempath::PathResult& path,
+    bool weighted) {
+
+    if (!path.found) {
+        assert(path.compoundIds.empty());
+        assert(path.reactionIds.empty());
+        return;
+    }
+    assert(!path.compoundIds.empty());
+    assert(path.reactionIds.size() + 1 == path.compoundIds.size());
+
+    int actualCost = 0;
+    for (std::size_t i = 0; i < path.reactionIds.size(); ++i) {
+        const int from = path.compoundIds[i];
+        const int to = path.compoundIds[i + 1];
+        const int reactionId = path.reactionIds[i];
+        bool foundEdge = false;
+
+        for (const auto& edge : graph.adjacency()[from]) {
+            if (edge.to == to && edge.reactionId == reactionId) {
+                actualCost += edge.cost;
+                foundEdge = true;
+                break;
+            }
+        }
+        assert(foundEdge);
+    }
+    assert(path.totalCost == (weighted ? actualCost : static_cast<int>(path.reactionIds.size())));
 }
 
 } // namespace
@@ -203,6 +241,62 @@ int main(int argc, char** argv) {
     const auto scc = graph.stronglyConnectedComponents();
     assert(!scc.components.empty());
     assert(!scc.visitedOrder.empty());
+
+    // Deterministic cross-algorithm regression on reachable and no-path pairs,
+    // not just the single mid-semester demonstration route. This also detects
+    // stale reverse-index data and path reconstruction errors.
+    constexpr int sampleCount = 384;
+    for (int sample = 0; sample < sampleCount; ++sample) {
+        const auto& source = graph.compounds()[
+            (static_cast<std::size_t>(sample) * 37 + 11) % graph.compounds().size()];
+        std::size_t targetId =
+            (static_cast<std::size_t>(sample) * 83 + 5) % graph.compounds().size();
+        if (sample % 2 == 0) {
+            const auto hops = graph.hopDistances(source.name);
+            int bestHops = -1;
+            for (std::size_t j = 0; j < hops.size(); ++j) {
+                if (hops[j] > bestHops) {
+                    bestHops = hops[j];
+                    targetId = j;
+                }
+            }
+        }
+        const auto& target = graph.compounds()[targetId];
+
+        const auto ordinary = graph.shortestPathBfs(source.name, target.name);
+        const auto twoFront = graph.shortestPathBidirectional(source.name, target.name);
+        assertValidRoute(graph, ordinary, false);
+        assertValidRoute(graph, twoFront, false);
+        assert(ordinary.found == twoFront.found);
+        if (ordinary.found) {
+            assert(ordinary.reactionIds.size() == twoFront.reactionIds.size());
+        }
+
+        const auto reference = graph.shortestPathDijkstra(source.name, target.name);
+        assertValidRoute(graph, reference, true);
+
+        const auto alternatives = {
+            graph.shortestPathAStar(source.name, target.name),
+            graph.shortestPathDial(source.name, target.name),
+            graph.shortestPathBellmanFord(source.name, target.name),
+            graph.shortestPathBidirectionalDijkstra(source.name, target.name),
+            graph.shortestPathPivotFrontier(source.name, target.name)
+        };
+        for (const auto& candidate : alternatives) {
+            assertValidRoute(graph, candidate, true);
+            assert(candidate.found == reference.found);
+            if (candidate.found) assert(candidate.totalCost == reference.totalCost);
+        }
+    }
+
+    // A freshly constructed index must produce the same answers.
+    chempath::ReactionGraph reloaded;
+    assert(reloaded.loadFromFiles(argv[1], argv[2]));
+    assert(reloaded.edgeCount() == graph.edgeCount());
+    assert(reloaded.shortestPathAStar("Methane", "Bicarbonate").totalCost ==
+           dijkstra.totalCost);
+    assert(reloaded.shortestPathDial("Methane", "Bicarbonate").totalCost ==
+           dijkstra.totalCost);
 
     std::cout
         << "All ChemPath engine + chemistry-audit tests passed: "

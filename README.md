@@ -54,6 +54,54 @@ A graph edge means that a documented transformation connects those compounds und
 
 The Dijkstra weight is also **not** an activation energy, free-energy change, yield, reaction time, price, or hazard score. It is an illustrative graph weight for demonstrating weighted shortest-path algorithms.
 
+## C++ engine performance and validation
+
+The engine keeps the educational adjacency list and builds an **incoming-edge
+index once while loading reactions**, alongside minimum/maximum positive edge
+weights and a cached directed-edge count. A*, bidirectional BFS, and
+bidirectional Dijkstra reuse the index instead of rebuilding it per query.
+
+Dial's shortest-path implementation uses **circular integer-weight buckets**
+(`maxEdgeWeight + 1` buckets) rather than preallocating a deque for every
+potential path distance. The bucket array uses O(C) storage for maximum edge
+weight C, plus queued entries, instead of O(CV) bucket allocation for V
+vertices. Bidirectional BFS uses an O(1) visited marker for replay deduplication.
+
+The C++ regression tests check 384 deterministic source-target pairs (including long reachable routes), confirm
+every returned path follows existing directed reaction edges, and compare
+weighted algorithms against Dijkstra. These are regression checks, not a
+mathematical proof of algorithm correctness.
+
+### Reproducible benchmarks
+
+Build optimized C++ binaries on Linux or macOS:
+
+~~~bash
+cmake -S engine -B engine/build-release -DCMAKE_BUILD_TYPE=Release
+cmake --build engine/build-release --config Release
+ctest --test-dir engine/build-release --output-on-failure -C Release
+./engine/build-release/chempath_bench data/compounds.csv data/reactions.csv 128
+~~~
+
+Optional base-versus-optimized comparison (requires a local Git remote named
+`origin` and the Release benchmark binary above):
+
+~~~bash
+bash scripts/compare-engine-baseline.sh
+~~~
+
+This compiles the original C++ engine from `main` against the same benchmark
+harness, then reports both runs on identical query pairs. Differences vary by
+compiler, hardware and workload; treat the timing results as measurements, not
+promised speedups.
+
+The benchmark runs seven pathfinding algorithms on the same deterministic
+compound pairs and reports **p50/p95/mean elapsed microseconds**, average visited
+nodes, found-path count, and cost checksums. It times only in-memory C++ searches:
+process startup, CSV parsing, JSON serialization, HTTP, and graph rendering are
+not part of these results. Compare performance on the same machine and build
+settings; CI timings are informational, not fixed speed guarantees.
+
 ## Adaptive algorithm replay
 
 The actual C++ computation usually completes in milliseconds. ChemPath visually replays the returned traversal at roughly 200 ms per visited compound, capped at 2 minutes. Short searches finish quickly; larger searches remain visible long enough to explain during the review.

@@ -352,6 +352,24 @@ int main(int argc, char** argv) {
                          blocked.reactionIds[i] == firstPath.reactionIds[0]));
         }
     }
+    const auto sandboxAdded = chempath::lab::withEdge(
+        graph, "Methane", "Bicarbonate", *methaneId, *bicarbonateId, -2, 1, false);
+    assert(sandboxAdded.found);
+    assert(sandboxAdded.totalCost == 1);
+    assert(sandboxAdded.reactionIds.size() == 1);
+    assert(sandboxAdded.reactionIds[0] == -2);
+    const auto invalidSandbox = chempath::lab::withEdge(
+        graph, "Methane", "Bicarbonate", -1, *bicarbonateId, -2, 1, false);
+    assert(!invalidSandbox.found);
+    if (!firstPath.reactionIds.empty()) {
+        const auto reweighted = chempath::lab::withEdge(
+            graph, "Methane", "Bicarbonate",
+            firstPath.compoundIds[0], firstPath.compoundIds[1],
+            firstPath.reactionIds[0], 99, true);
+        assert(reweighted.found);
+        assert(reweighted.totalCost >= dijkstra.totalCost);
+    }
+
     const auto csr = chempath::lab::compareRepresentations(graph, 5);
     assert(csr.nodes == graph.compounds().size());
     assert(csr.edges == graph.edgeCount());

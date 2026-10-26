@@ -23,6 +23,7 @@ export default function NetworkGraph({
   const viewportRef = useRef(null);
   const [layoutMode, setLayoutMode] = useState("fcose");
   const [inspected, setInspected] = useState(null);
+  const [inspectedEdge, setInspectedEdge] = useState(null);
 
   const elements = useMemo(() => {
     if (!network) return [];
@@ -46,6 +47,10 @@ export default function NetworkGraph({
         source: String(edge.source),
         target: String(edge.target),
         reaction: edge.reaction,
+        equation: edge.equation,
+        conditions: edge.conditions,
+        sourceKey: edge.sourceKey,
+        note: edge.note,
         cost: edge.cost
       }
     }));
@@ -221,14 +226,18 @@ export default function NetworkGraph({
     });
 
     cyRef.current = cy;
-    cy.on("tap", "node", (event) => setInspected(event.target.data()));
+    cy.on("tap", "node", (event) => { setInspected(event.target.data()); setInspectedEdge(null); });
+    cy.on("tap", "edge", (event) => { setInspectedEdge(event.target.data()); setInspected(null); });
+    const capturePositions = () => cy.nodes().forEach(node => positionsRef.current.set(node.id(), { ...node.position() }));
     cy.one("layoutstop", () => {
-      cy.nodes().forEach(node => positionsRef.current.set(node.id(), { ...node.position() }));
+      capturePositions();
       if (viewportRef.current && layoutMode !== "dagre") {
         cy.zoom(viewportRef.current.zoom);
         cy.pan(viewportRef.current.pan);
       }
     });
+    // Initial nonanimated layouts can finish before layoutstop is attached.
+    capturePositions();
     return () => {
       viewportRef.current = { zoom: cy.zoom(), pan: { ...cy.pan() } };
       cy.destroy();
@@ -324,6 +333,13 @@ export default function NetworkGraph({
         onClick={() => { positionsRef.current.clear(); viewportRef.current=null; setLayoutMode("dagre"); }}>Directed</button>
     </div>
     <div className="network-canvas" ref={containerRef} />
+    {inspectedEdge && <div className="graph-node-inspector">
+      <button aria-label="Close reaction inspector" onClick={() => setInspectedEdge(null)}>×</button>
+      <small>REACTION EDGE · WEIGHT {inspectedEdge.cost}</small>
+      <strong>{inspectedEdge.reaction}</strong>
+      <span>{inspectedEdge.equation || "Directed graph relationship"}</span>
+      <span>{inspectedEdge.conditions || "See source metadata"}</span>
+    </div>}
     {inspected && <div className="graph-node-inspector">
       <button aria-label="Close inspector" onClick={() => setInspected(null)}>×</button>
       <small>COMPOUND INSPECTOR</small>

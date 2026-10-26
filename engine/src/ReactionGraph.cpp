@@ -640,7 +640,7 @@ PathResult ReactionGraph::shortestPathBidirectionalDijkstra(
                 meeting = current;
             }
 
-            for (const auto& reverseEdge : reverseAdjacency_[current] {
+            for (const auto& reverseEdge : reverseAdjacency_[current]) {
                 const int predecessor = reverseEdge.to;
                 const int candidate = distance + reverseEdge.cost;
 
@@ -872,7 +872,7 @@ PathResult ReactionGraph::shortestPathBidirectional(const std::string& from, con
             return;
         }
 
-        for (const auto& reverseEdge : reverseAdjacency_[current] {
+        for (const auto& reverseEdge : reverseAdjacency_[current]) {
             const int predecessor = reverseEdge.to;
             if (!visitedBackward[predecessor]) {
                 visitedBackward[predecessor] = true;

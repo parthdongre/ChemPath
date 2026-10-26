@@ -102,6 +102,109 @@ process startup, CSV parsing, JSON serialization, HTTP, and graph rendering are
 not part of these results. Compare performance on the same machine and build
 settings; CI timings are informational, not fixed speed guarantees.
 
+## DSA Algorithm Laboratory (end-sem upgrade)
+
+The C++17 engine now has a dedicated **algorithm laboratory**. The
+original traversal and shortest-path commands remain available.
+
+- **Step-by-step traces:** C++ events for BFS (queue), DFS (stack), Dijkstra
+  (heap/relaxations) and Tarjan (discovery and low-link). The React laboratory
+  displays a synchronized focused Cytoscape graph, frontier snapshots,
+  event timeline, pause/seek/single-step and playback speed.
+  Other algorithms are compared via statistics, not misleadingly represented
+  as Dijkstra's own internal events.
+- **Algorithm comparison:** compare BFS, bidirectional BFS, Dijkstra, A*, Dial,
+  Bellman-Ford, bidirectional Dijkstra and the research-inspired hybrid on
+  the same source/target. BFS minimizes hops, weighted methods minimize the
+  illustrative graph weights.
+- **K alternatives:** Yen-style weighted **loopless** route search returns
+  up to three (or ten in the CLI) routes, retaining real reaction-edge IDs.
+- **Graph analysis:** Tarjan SCCs, condensation DAG/topological ordering,
+  and DSU-based weak connectivity.
+- **Data structures:** compare adjacency-list and CSR BFS traversal times,
+  including approximate allocated graph-storage bytes. Generate seeded
+  directed synthetic graphs (2–25,000 nodes, up to 250,000 edges) for
+  controlled BFS/Dijkstra experiments.
+- **Graph Playground:** temporarily remove, add or reweight a directed edge
+  and recompute a weighted route. Synthetic edges are explicitly marked as
+  nonchemical; nothing in the curated dataset is modified.
+- **Trie inspector:** prefix traversal display backed by the existing C++
+  Trie search.
+
+The browser now supports fCoSE clustered layout, Dagre directed layout,
+cached positions, and compound node inspection. These are visualizations
+of **real graph operations**, not a chemistry synthesis planner.
+
+The Node adapter uses one **persistent C++ process**, with tab-separated
+line commands and one JSON response per request. The engine loads the
+selected graph and its cached indexes **once** instead of reloading CSV
+files on every HTTP request. Query execution is serialized. The CLI
+retains its one-shot mode.
+
+### Useful new CLI commands
+
+~~~bash
+./engine/build/chempath labtrace dijkstra Methane Bicarbonate
+./engine/build/chempath labtrace bfs Methane Bicarbonate
+./engine/build/chempath labtrace tarjan ignored
+./engine/build/chempath labcompare Methane Bicarbonate
+./engine/build/chempath labkpaths Methane Bicarbonate 3
+./engine/build/chempath labcomponents
+./engine/build/chempath labcsr 300
+./engine/build/chempath labsynthetic 1000 4000 42
+./engine/build/chempath labplayground Methane Bicarbonate 0 1 0
+./engine/build/chempath serve --data data
+~~~
+
+The full API smoke test can be run after building C++ and installing Node
+dependencies:
+
+~~~bash
+node scripts/smoke-api.mjs
+~~~
+
+See [docs/DSA_LAB.md](docs/DSA_LAB.md) for the precise data structures,
+algorithm notes, route semantics and test coverage.
+
+## Optional larger Rhea reaction graph
+
+The **validated classroom default remains 690 compounds and 884 curated
+reactions**. The repository also includes a separately generated, attributable
+**Rhea subset** in \`data/expanded/\`, containing a total of **1,860 compounds
+and 2,384 reaction records**, including **1,500 Rhea reactions** (at the
+imported snapshot). Compounds were normalized from Rhea reaction SMILES using
+RDKit; Rhea entities use prefixed SMILES identifiers to avoid pretending
+that a name-based and a structure-based record are interchangeable.
+
+To launch with the larger dataset:
+
+~~~bash
+npm run build:engine
+CHEMPATH_DATA_DIR=data/expanded npm run dev
+~~~
+
+On Windows PowerShell, set \`$env:CHEMPATH_DATA_DIR="data/expanded"\`
+before \`npm run dev\`. Do not run the chemistry audit on the expanded
+dataset: that audit is specifically for the curated manually reviewed dataset.
+
+Recreate or adjust the imported subset (requires \`pip install rdkit\` and
+internet access to Rhea):
+
+~~~bash
+python scripts/import-rhea.py --limit 1500 --output data/expanded
+~~~
+
+**Licensing and limitations:** The imported Rhea data is CC BY 4.0; see
+[data/expanded/SOURCES.md](data/expanded/SOURCES.md) for the upstream URL,
+attribution and SHA256 provenance. The ChemPath custom software license does
+not supersede that data license. Imported reaction participation edges are
+educational graph projections (co-reactants assumed available), **not**
+laboratory-verified synthesis plans. The 2M+ record Open Reaction Database
+is **not copied into Git**, because its Parquet/LFS dataset is much larger,
+has its own CC BY-SA 4.0 obligations, and needs a separate streaming,
+provenance-aware ingestion pipeline:
+https://github.com/open-reaction-database/ord-data
+
 ## Adaptive algorithm replay
 
 The actual C++ computation usually completes in milliseconds. ChemPath visually replays the returned traversal at roughly 200 ms per visited compound, capped at 2 minutes. Short searches finish quickly; larger searches remain visible long enough to explain during the review.

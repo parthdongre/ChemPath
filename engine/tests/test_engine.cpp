@@ -1,4 +1,5 @@
 #include "ReactionGraph.hpp"
+#include "Lab.hpp"
 
 #include <algorithm>
 // Keep assertions active for Release builds: they are the test harness.
@@ -297,6 +298,87 @@ int main(int argc, char** argv) {
            dijkstra.totalCost);
     assert(reloaded.shortestPathDial("Methane", "Bicarbonate").totalCost ==
            dijkstra.totalCost);
+
+    // Graph-laboratory algorithms and invariants.
+    const auto bfsTrace = chempath::lab::trace(graph, "bfs", "Methane", "Bicarbonate");
+    assert(!bfsTrace.events.empty());
+    assert(bfsTrace.path.found && bfsTrace.path.totalCost == bfs.totalCost);
+    assertValidRoute(graph, bfsTrace.path, false);
+
+    const auto dfsTrace = chempath::lab::trace(graph, "dfs", "Methane", "Bicarbonate");
+    assert(!dfsTrace.events.empty());
+    if (dfsTrace.path.found) assertValidRoute(graph, dfsTrace.path, false);
+
+    const auto dijkstraTrace = chempath::lab::trace(graph, "dijkstra", "Methane", "Bicarbonate");
+    assert(!dijkstraTrace.events.empty());
+    assert(dijkstraTrace.path.found);
+    assert(dijkstraTrace.path.totalCost == dijkstra.totalCost);
+    assertValidRoute(graph, dijkstraTrace.path, true);
+
+    const auto sccTrace = chempath::lab::traceTarjan(graph);
+    assert(!sccTrace.events.empty());
+    const auto componentGraph = chempath::lab::components(graph);
+    assert(componentGraph.components.size() == scc.components.size());
+    assert(componentGraph.topological.size() == componentGraph.components.size());
+    assert(componentGraph.weakCount > 0);
+    std::vector<int> orderIndex(componentGraph.components.size(), -1);
+    for (std::size_t i = 0; i < componentGraph.topological.size(); ++i)
+        orderIndex[componentGraph.topological[i]] = static_cast<int>(i);
+    for (const auto& e : componentGraph.dagEdges) {
+        assert(e.first != e.second);
+        assert(orderIndex[e.first] < orderIndex[e.second]);
+    }
+
+    const auto alternatives = chempath::lab::kShortest(graph, "Methane", "Bicarbonate", 3);
+    assert(!alternatives.empty());
+    assert(alternatives.front().totalCost == dijkstra.totalCost);
+    for (std::size_t i = 0; i < alternatives.size(); ++i) {
+        assertValidRoute(graph, alternatives[i], true);
+        if (i) assert(alternatives[i].totalCost >= alternatives[i-1].totalCost);
+    }
+    assert(chempath::lab::kShortest(graph, "Not A Compound", "Water", 3).empty());
+    assert(chempath::lab::kShortest(graph, "Methane", "Methane", 3).size() == 1);
+
+    const auto firstPath = alternatives.front();
+    if (!firstPath.reactionIds.empty()) {
+        const auto blocked = chempath::lab::withoutEdge(
+            graph, "Methane", "Bicarbonate",
+            firstPath.compoundIds[0], firstPath.compoundIds[1], firstPath.reactionIds[0]);
+        if (blocked.found) {
+            assertValidRoute(graph, blocked, true);
+            for (std::size_t i = 0; i < blocked.reactionIds.size(); ++i)
+                assert(!(blocked.compoundIds[i] == firstPath.compoundIds[0] &&
+                         blocked.compoundIds[i + 1] == firstPath.compoundIds[1] &&
+                         blocked.reactionIds[i] == firstPath.reactionIds[0]));
+        }
+    }
+    const auto sandboxAdded = chempath::lab::withEdge(
+        graph, "Methane", "Bicarbonate", *methaneId, *bicarbonateId, -2, 1, false);
+    assert(sandboxAdded.found);
+    assert(sandboxAdded.totalCost == 1);
+    assert(sandboxAdded.reactionIds.size() == 1);
+    assert(sandboxAdded.reactionIds[0] == -2);
+    const auto invalidSandbox = chempath::lab::withEdge(
+        graph, "Methane", "Bicarbonate", -1, *bicarbonateId, -2, 1, false);
+    assert(!invalidSandbox.found);
+    if (!firstPath.reactionIds.empty()) {
+        const auto reweighted = chempath::lab::withEdge(
+            graph, "Methane", "Bicarbonate",
+            firstPath.compoundIds[0], firstPath.compoundIds[1],
+            firstPath.reactionIds[0], 99, true);
+        assert(reweighted.found);
+        assert(reweighted.totalCost >= dijkstra.totalCost);
+    }
+
+    const auto csr = chempath::lab::compareRepresentations(graph, 5);
+    assert(csr.nodes == graph.compounds().size());
+    assert(csr.edges == graph.edgeCount());
+    assert(csr.adjacencyBytes > 0 && csr.csrBytes > 0);
+    assert(csr.reached > 0);
+    const auto generated = chempath::lab::synthetic(250, 1000, 42);
+    assert(generated.nodes == 250 && generated.edges == 1000);
+    assert(generated.reachable == 250);
+    assert(generated.weightedCost >= generated.shortestHops);
 
     std::cout
         << "All ChemPath engine + chemistry-audit tests passed: "

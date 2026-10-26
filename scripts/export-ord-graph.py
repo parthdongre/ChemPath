@@ -25,6 +25,7 @@ def export(db_path: Path, output: Path, limit: int):
     compounds = []
     reactions = []
     seen = {}
+    seen_transformations = set()
     def compound(smiles):
         if smiles not in seen:
             name = "SMILES:" + smiles
@@ -34,7 +35,7 @@ def export(db_path: Path, output: Path, limit: int):
 
     for row in db.execute(
         "SELECT ord_id, reaction_smiles FROM ord_reactions "
-        "WHERE reaction_smiles <> '' ORDER BY id LIMIT ?", (limit * 5,)
+        "WHERE reaction_smiles <> '' ORDER BY id LIMIT ?", (limit * 30,)
     ):
         fields = row["reaction_smiles"].split(">")
         if len(fields) != 3:
@@ -46,6 +47,12 @@ def export(db_path: Path, output: Path, limit: int):
                                       if x and len(x) <= 160 and not BAD.search(x)))
         if not reactants or not products or len(reactants) > 12 or len(products) > 12:
             continue
+        # Dataset deposits contain repeated experiments; retain different
+        # transformations while skipping identical reactant/product schemes.
+        signature = (tuple(sorted(reactants)), tuple(sorted(products)))
+        if signature in seen_transformations:
+            continue
+        seen_transformations.add(signature)
         rnames = [compound(v) for v in reactants]
         pnames = [compound(v) for v in products]
         reactions.append([

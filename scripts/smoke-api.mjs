@@ -51,6 +51,13 @@ try {
     first.path[0].id + "&edgeTo=" + first.path[1].id +
     "&reactionId=" + first.reactionPath[0].reactionId);
   assert.ok(edit.ok);
+  const add = await get("/api/lab/edit?from=Methane&to=Bicarbonate&mode=add&edgeFrom=" +
+    first.path[0].id + "&edgeTo=" + first.path[first.path.length - 1].id +
+    "&reactionId=-2&weight=1");
+  assert.equal(add.route.found, true);
+  assert.equal(add.route.totalCost, 1);
+  assert.equal(add.route.reactionPath[0].sourceKey, "SANDBOX");
+  await get("/api/lab/edit?from=Methane&to=Bicarbonate&mode=add&edgeFrom=0&edgeTo=1&reactionId=-2&weight=0", 400);
   const bfs = await get("/api/lab/trace?algorithm=bfs&from=Methane&to=Bicarbonate");
   assert.ok(bfs.events.some(e => e.type === "enqueue"));
   const tarjan = await get("/api/lab/trace?algorithm=tarjan");

@@ -23,6 +23,10 @@ target_link_libraries(chempath PRIVATE chempath_core)
 
 enable_testing()
 
+# Reproducible in-memory algorithm benchmark (no process or CSV startup time).
+add_executable(chempath_bench bench/benchmark_engine.cpp)
+target_link_libraries(chempath_bench PRIVATE chempath_core)
+
 add_executable(chempath_tests tests/test_engine.cpp)
 target_link_libraries(chempath_tests PRIVATE chempath_core)
 

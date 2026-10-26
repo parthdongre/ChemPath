@@ -207,6 +207,21 @@ app.get("/api/lab/playground", route(async (req) => {
   }
   return runEngine(["labplayground",String(from),String(to),String(edgeFrom),String(edgeTo),String(reactionId)]);
 }));
+app.get("/api/lab/edit", route(async (req) => {
+  const { from, to, mode, edgeFrom, edgeTo, reactionId, weight } = req.query;
+  if (![from,to,mode,edgeFrom,edgeTo,reactionId,weight].every(v=>v!==undefined)) {
+    const error = new Error("Edit requires mode, endpoints, reaction ID and weight");error.status = 400;throw error;
+  }
+  if (!["add", "replace"].includes(mode)) {
+    const error = new Error("Edit mode must be add or replace");error.status = 400;throw error;
+  }
+  const w = Number(weight);
+  if (!Number.isInteger(w) || w < 1 || w > 1000) {
+    const error = new Error("Weight must be a positive integer up to 1000");error.status = 400;throw error;
+  }
+  return runEngine(["labedit", String(from), String(to), String(mode),
+    String(edgeFrom), String(edgeTo), String(reactionId), String(w)]);
+}));
 app.get("/api/lab/csr", route(async (req) =>
   runEngine(["labcsr", String(Math.max(1, Math.min(2000, Number(req.query.iterations)||250)))])));
 app.get("/api/lab/synthetic", route(async (req) =>

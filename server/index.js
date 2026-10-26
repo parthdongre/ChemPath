@@ -326,7 +326,7 @@ app.get("/api/lab/synthetic", route(async (req) =>
 // Railway / Docker: serve the Vite production build and API on ONE origin.
 const webDist = path.join(repoRoot, "web", "dist");
 if (process.env.NODE_ENV === "production" && fs.existsSync(path.join(webDist, "index.html"))) {
-  app.use(express.static(webDist, { maxAge: "1h", index: true }));
+  app.use(express.static(webDist, { maxAge: "1h", index: "index.html" }));
   app.use((req, res, next) => {
     if (req.method !== "GET" || req.path.startsWith("/api/")) return next();
     res.sendFile(path.join(webDist, "index.html"));

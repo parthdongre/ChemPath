@@ -1,6 +1,9 @@
 #include "ReactionGraph.hpp"
+#include "Lab.hpp"
 
 #include <chrono>
+#include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
@@ -10,6 +13,7 @@
 
 using chempath::PathResult;
 using chempath::ReactionGraph;
+namespace lab = chempath::lab;
 
 namespace {
 
@@ -113,6 +117,7 @@ void printPathResult(
                 << "\",\"conditions\":\"" << jsonEscape(reaction ? reaction->conditions : "")
                 << "\",\"sourceKey\":\"" << jsonEscape(reaction ? reaction->sourceKey : "")
                 << "\",\"cost\":" << (reaction ? reaction->cost : 1)
+                << ",\"reversible\":" << (reaction&&reaction->reversible?"true":"false")
                 << ",\"from\":\"" << jsonEscape(source ? source->name : "")
                 << "\",\"to\":\"" << jsonEscape(target ? target->name : "")
                 << "\"}";
@@ -131,24 +136,193 @@ void printPathResult(
               << "}\n";
 }
 
+void printRoute(const ReactionGraph& graph, const PathResult& result) {
+    std::cout << "{\"found\":" << (result.found?"true":"false")
+              << ",\"totalCost\":" << result.totalCost
+              << ",\"steps\":" << result.reactionIds.size()
+              << ",\"path\":";
+    printCompoundArray(graph, result.compoundIds);
+    std::cout << ",\"reactionPath\":[";
+    for(std::size_t i=0;i<result.reactionIds.size();++i){
+        if(i)std::cout << ",";
+        const auto* r=graph.reaction(result.reactionIds[i]);
+        std::cout << "{\"reactionId\":" << result.reactionIds[i]
+                  << ",\"reaction\":\"" << jsonEscape(r?r->name:"")
+                  << "\",\"equation\":\"" << jsonEscape(r?r->equation:"")
+                  << "\",\"conditions\":\"" << jsonEscape(r?r->conditions:"")
+                  << "\",\"reversible\":" << (r&&r->reversible?"true":"false")
+                  << ",\"cost\":" << (r?r->cost:0)
+                  << ",\"sourceKey\":\"" << jsonEscape(r?r->sourceKey:"")
+                  << "\"}";
+    }
+    std::cout << "]}";
+}
+
+void printTrace(const ReactionGraph& graph,const lab::Trace& trace) {
+    std::cout << "{\"ok\":true,\"truncated\":" << (trace.truncated?"true":"false")
+              << ",\"events\":[";
+    for(std::size_t i=0;i<trace.events.size();++i){
+        const auto& e=trace.events[i];
+        if(i)std::cout << ",";
+        std::cout << "{\"type\":\"" << jsonEscape(e.type)
+                  << "\",\"node\":" << e.node
+                  << ",\"from\":" << e.from
+                  << ",\"to\":" << e.to
+                  << ",\"distance\":" << e.distance
+                  << ",\"lowLink\":" << e.lowLink
+                  << ",\"frontier\":[";
+        for(std::size_t j=0;j<e.frontier.size();++j){
+            if(j)std::cout << ",";
+            std::cout << "[" << e.frontier[j].first << "," << e.frontier[j].second << "]";
+        }
+        std::cout << "]}";
+    }
+    std::cout << "],\"route\":";
+    printRoute(graph,trace.path);
+    std::cout << "}\n";
+}
+
+std::vector<std::string> splitProtocol(const std::string& line){
+    std::vector<std::string> args;
+    std::string part;
+    std::istringstream stream(line);
+    while(std::getline(stream,part,'\t'))args.push_back(part);
+    return args;
+}
 } // namespace
 
-int main(int argc, char** argv) {
-    const auto args = positionalArgs(argc, argv);
-    if (args.empty()) {
-        printError(
-            "Usage: chempath <network|path|dijkstra|astar|dial|bellmanford|bidirectional|bidijkstra|duan2025|reachable|cycles|scc|search|stats> [args]");
-        return 1;
-    }
-
-    ReactionGraph graph;
-    const std::string dataDir = dataPathFromArgs(argc, argv);
-    if (!graph.loadFromFiles(dataDir + "/compounds.csv", dataDir + "/reactions.csv")) {
-        printError("Could not load ChemPath dataset from " + dataDir);
-        return 2;
-    }
-
+int runCommand(const ReactionGraph& graph,const std::vector<std::string>& args) {
+    if(args.empty()){printError("Command required");return 1;}
     const std::string command = args[0];
+
+    if(command=="labtrace"){
+        if(args.size()<3){printError("labtrace requires algorithm and source");return 1;}
+        const std::string algo=args[1];
+        const auto trace=algo=="tarjan"
+            ? lab::traceTarjan(graph)
+            : lab::trace(graph,algo,args[2],args.size()>3?args[3]:"");
+        if(algo!="tarjan" && algo!="bfs" && algo!="dfs" && algo!="dijkstra"){
+            printError("Trace supports bfs, dfs, dijkstra, tarjan");return 1;
+        }
+        printTrace(graph,trace);return 0;
+    }
+
+    if(command=="labcomponents"){
+        const auto summary=lab::components(graph);
+        std::cout << "{\"ok\":true,\"weakCount\":" << summary.weakCount
+                  << ",\"weakComponent\":[";
+        for(std::size_t i=0;i<summary.weakComponent.size();++i){
+            if(i)std::cout << ",";
+            std::cout << summary.weakComponent[i];
+        }
+        std::cout << "],\"components\":[";
+        for(std::size_t i=0;i<summary.components.size();++i){
+            if(i)std::cout << ",";
+            std::cout << "[";
+            for(std::size_t j=0;j<summary.components[i].size();++j){
+                if(j)std::cout << ",";
+                std::cout << summary.components[i][j];
+            }
+            std::cout << "]";
+        }
+        std::cout << "],\"dagEdges\":[";
+        for(std::size_t i=0;i<summary.dagEdges.size();++i){
+            if(i)std::cout << ",";
+            std::cout << "[" << summary.dagEdges[i].first << ","
+                      << summary.dagEdges[i].second << "]";
+        }
+        std::cout << "],\"topological\":[";
+        for(std::size_t i=0;i<summary.topological.size();++i){
+            if(i)std::cout << ",";
+            std::cout << summary.topological[i];
+        }
+        std::cout << "]}\n";return 0;
+    }
+
+    if(command=="labkpaths"){
+        if(args.size()<3){printError("labkpaths requires from,to");return 1;}
+        std::size_t k=3;
+        if(args.size()>3){
+            try{k=static_cast<std::size_t>(std::stoul(args[3]));}
+            catch(...){printError("Invalid k");return 1;}
+        }
+        if(k<1 || k>10){printError("k must be 1-10");return 1;}
+        const auto paths=lab::kShortest(graph,args[1],args[2],k);
+        std::cout << "{\"ok\":true,\"routes\":[";
+        for(std::size_t i=0;i<paths.size();++i){
+            if(i)std::cout << ",";
+            printRoute(graph,paths[i]);
+        }
+        std::cout << "]}\n";return 0;
+    }
+
+    if(command=="labplayground"){
+        if(args.size()<6){printError("labplayground requires source target edgeFrom edgeTo reactionId");return 1;}
+        try{
+            const auto result=lab::withoutEdge(graph,args[1],args[2],
+                               std::stoi(args[3]),std::stoi(args[4]),std::stoi(args[5]));
+            std::cout << "{\"ok\":true,\"route\":";
+            printRoute(graph,result);
+            std::cout << "}\n";
+        }catch(...){printError("Invalid edge identifiers");return 1;}
+        return 0;
+    }
+
+    if(command=="labcsr"){
+        int iterations=300;
+        if(args.size()>1)try{iterations=std::stoi(args[1]);}catch(...){printError("Invalid iterations");return 1;}
+        const auto r=lab::compareRepresentations(graph,iterations);
+        std::cout << "{\"ok\":true,\"nodes\":" << r.nodes << ",\"edges\":" << r.edges
+                  << ",\"adjacencyBytes\":" << r.adjacencyBytes
+                  << ",\"csrBytes\":" << r.csrBytes
+                  << ",\"adjacencyUs\":" << r.adjacencyUs
+                  << ",\"csrUs\":" << r.csrUs
+                  << ",\"reached\":" << r.reached << "}\n";return 0;
+    }
+
+    if(command=="labsynthetic"){
+        if(args.size()<4){printError("labsynthetic requires nodes edges seed");return 1;}
+        try{
+            const auto r=lab::synthetic(std::stoi(args[1]),std::stoi(args[2]),std::stoi(args[3]));
+            std::cout << "{\"ok\":true,\"nodes\":" << r.nodes
+                      << ",\"edges\":" << r.edges << ",\"seed\":" << r.seed
+                      << ",\"reachable\":" << r.reachable
+                      << ",\"shortestHops\":" << r.shortestHops
+                      << ",\"weightedCost\":" << r.weightedCost
+                      << ",\"bfsUs\":" << r.bfsUs
+                      << ",\"dijkstraUs\":" << r.dijkstraUs << "}\n";
+        }catch(...){printError("Invalid graph parameters");return 1;}
+        return 0;
+    }
+
+    if(command=="labcompare"){
+        if(args.size()<3){printError("labcompare requires source,target");return 1;}
+        std::cout << "{\"ok\":true,\"algorithms\":[";
+        const std::vector<std::pair<std::string,PathResult(ReactionGraph::*)(const std::string&,const std::string&) const>> methods={
+            {"BFS",&ReactionGraph::shortestPathBfs},
+            {"Bidirectional BFS",&ReactionGraph::shortestPathBidirectional},
+            {"Dijkstra",&ReactionGraph::shortestPathDijkstra},
+            {"A*",&ReactionGraph::shortestPathAStar},
+            {"Dial",&ReactionGraph::shortestPathDial},
+            {"Bellman-Ford",&ReactionGraph::shortestPathBellmanFord},
+            {"Bidirectional Dijkstra",&ReactionGraph::shortestPathBidirectionalDijkstra},
+            {"Pivot Frontier",&ReactionGraph::shortestPathPivotFrontier}
+        };
+        for(std::size_t i=0;i<methods.size();++i){
+            if(i)std::cout << ",";
+            const auto start=std::chrono::steady_clock::now();
+            const auto r=(graph.*methods[i].second)(args[1],args[2]);
+            const auto us=std::chrono::duration<double,std::micro>(
+                        std::chrono::steady_clock::now()-start).count();
+            std::cout << "{\"name\":\"" << jsonEscape(methods[i].first)
+                      << "\",\"found\":" << (r.found?"true":"false")
+                      << ",\"microseconds\":" << us
+                      << ",\"visited\":" << r.visitedOrder.size()
+                      << ",\"steps\":" << r.reactionIds.size()
+                      << ",\"cost\":" << r.totalCost << "}";
+        }
+        std::cout << "]}\n";return 0;
+    }
 
     if (command == "stats") {
         std::cout
@@ -350,4 +524,29 @@ int main(int argc, char** argv) {
 
     printError("Unknown command: " + command);
     return 1;
+}
+
+int main(int argc,char** argv){
+    const auto args=positionalArgs(argc,argv);
+    if(args.empty()){
+        printError("Usage: chempath <command> [args] [--data dir]");return 1;
+    }
+    ReactionGraph graph;
+    const std::string dir=dataPathFromArgs(argc,argv);
+    if(!graph.loadFromFiles(dir+"/compounds.csv",dir+"/reactions.csv")){
+        printError("Could not load ChemPath dataset from "+dir);return 2;
+    }
+    if(args[0]=="serve"){
+        std::string line;
+        while(std::getline(std::cin,line)){
+            try{
+                runCommand(graph,splitProtocol(line));
+            }catch(const std::exception& ex){
+                printError(std::string("Engine request failed: ")+ex.what());
+            }
+            std::cout.flush();
+        }
+        return 0;
+    }
+    return runCommand(graph,args);
 }

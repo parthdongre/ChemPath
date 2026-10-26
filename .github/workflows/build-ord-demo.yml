@@ -52,6 +52,10 @@ jobs:
           git add -f data/ord-demo/compounds.csv data/ord-demo/reactions.csv data/ord-demo/SOURCES.md
           if ! git diff --cached --quiet; then
             git commit -m "data: bundle verified ORD CC-BY-SA reaction graph sample"
+            # The feature branch may have received documentation changes while
+            # the sample was being downloaded. Rebase before publishing.
+            git fetch origin feat/ord-large-dataset
+            git rebase origin/feat/ord-large-dataset
             git push origin HEAD:feat/ord-large-dataset
           fi
       - uses: actions/upload-artifact@v4

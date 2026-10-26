@@ -741,6 +741,8 @@ function SimulationHud({ simulation, currentCompound, onSkip }) {
 export default function App() {
   const [network, setNetwork] = useState(null);
   const [rendererMode, setRendererMode] = useState('sigma');
+  const [neighborhood, setNeighborhood] = useState(null);
+  const [neighborhoodError, setNeighborhoodError] = useState("");
   const [stats, setStats] = useState(null);
   const [from, setFrom] = useState("Methane");
   const [to, setTo] = useState("Bicarbonate");
@@ -1510,10 +1512,14 @@ export default function App() {
                   onClick={() => setRendererMode("sigma")}>GPU Network</button>
                 <button type="button" className={rendererMode === "cytoscape" ? "active" : ""}
                   onClick={() => setRendererMode("cytoscape")}>Path Layout</button>
+                {neighborhood && <button type="button" onClick={() => setNeighborhood(null)}>
+                  Full graph
+                </button>}
               </div>
+              {neighborhoodError && <div className="graph-neighborhood-error" role="alert">{neighborhoodError}</div>}
               {rendererMode === "sigma" ? (
                 <SigmaNetwork
-                  network={graphNetwork}
+                  network={neighborhood || graphNetwork}
                   highlightedNodeIds={highlight.nodes}
                   highlightedEdgeIds={highlight.edges}
                   selectedNodeId={selectedFromId}
@@ -1523,6 +1529,12 @@ export default function App() {
                   onSelectCompound={(name) => {
                     setFrom(name);
                     setResult(null);
+                  }}
+                  onExpandNode={(id, name) => {
+                    setNeighborhoodError("");
+                    api.neighborhood(name, 2, 350)
+                      .then(setNeighborhood)
+                      .catch((error) => setNeighborhoodError(error.message));
                   }}
                 />
               ) : (

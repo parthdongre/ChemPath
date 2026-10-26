@@ -41,6 +41,17 @@ jobs:
       - name: Compare baseline and optimized engine
         run: bash scripts/compare-engine-baseline.sh
 
+      - name: Smoke-test persistent API and laboratory routes
+        run: node scripts/smoke-api.mjs
+
+      - name: Smoke-test optional expanded Rhea graph
+        run: |
+          if [ -f data/expanded/compounds.csv ]; then
+            ./engine/build/chempath stats --data data/expanded
+            ./engine/build/chempath labcomponents --data data/expanded > /dev/null
+            ./engine/build/chempath labcsr 20 --data data/expanded
+          fi
+
       - name: Build frontend
         run: npm run build:web
 

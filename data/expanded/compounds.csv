@@ -1,0 +1,1861 @@
+id|name|formula|category
+0|Hydrogen|H2|Inorganic
+1|Oxygen|O2|Inorganic
+2|Water|H2O|Inorganic
+3|Hydrogen Peroxide|H2O2|Inorganic
+4|Methane|CH4|Organic
+5|Carbon Monoxide|CO|Inorganic
+6|Carbon Dioxide|CO2|Inorganic
+7|Carbonic Acid|H2CO3|Acid
+8|Bicarbonate|HCO3-|Ion
+9|Carbonate|CO3^2-|Ion
+10|Methanol|CH3OH|Organic
+11|Formaldehyde|CH2O|Organic
+12|Methanoic Acid|HCOOH|Acid
+13|Ethanol|C2H5OH|Organic
+14|Acetaldehyde|CH3CHO|Organic
+15|Acetic Acid|CH3COOH|Acid
+16|Ethene|C2H4|Organic
+17|Ethane|C2H6|Organic
+18|Glucose|C6H12O6|Biochemical
+19|Ammonia|NH3|Base
+20|Ammonium|NH4+|Ion
+21|Nitrogen|N2|Inorganic
+22|Nitric Oxide|NO|Inorganic
+23|Nitrogen Dioxide|NO2|Inorganic
+24|Nitrous Acid|HNO2|Acid
+25|Nitric Acid|HNO3|Acid
+26|Sulfur Dioxide|SO2|Inorganic
+27|Sulfur Trioxide|SO3|Inorganic
+28|Sulfuric Acid|H2SO4|Acid
+29|Hydrogen Sulfide|H2S|Inorganic
+30|Sulfite|SO3^2-|Ion
+31|Sulfate|SO4^2-|Ion
+32|Propane|C3H8|Organic
+33|Butane|C4H10|Organic
+34|Pentane|C5H12|Organic
+35|Hexane|C6H14|Organic
+36|Heptane|C7H16|Organic
+37|Octane|C8H18|Organic
+38|Nonane|C9H20|Organic
+39|Decane|C10H22|Organic
+40|Undecane|C11H24|Organic
+41|Dodecane|C12H26|Organic
+42|Tridecane|C13H28|Organic
+43|Tetradecane|C14H30|Organic
+44|Pentadecane|C15H32|Organic
+45|Hexadecane|C16H34|Organic
+46|Heptadecane|C17H36|Organic
+47|Octadecane|C18H38|Organic
+48|Nonadecane|C19H40|Organic
+49|Eicosane|C20H42|Organic
+50|Propene|C3H6|Organic
+51|But-1-ene|C4H8|Organic
+52|Pent-1-ene|C5H10|Organic
+53|Hex-1-ene|C6H12|Organic
+54|Hept-1-ene|C7H14|Organic
+55|Oct-1-ene|C8H16|Organic
+56|Non-1-ene|C9H18|Organic
+57|Dec-1-ene|C10H20|Organic
+58|Undec-1-ene|C11H22|Organic
+59|Dodec-1-ene|C12H24|Organic
+60|Tridec-1-ene|C13H26|Organic
+61|Tetradec-1-ene|C14H28|Organic
+62|Pentadec-1-ene|C15H30|Organic
+63|Hexadec-1-ene|C16H32|Organic
+64|Heptadec-1-ene|C17H34|Organic
+65|Octadec-1-ene|C18H36|Organic
+66|Nonadec-1-ene|C19H38|Organic
+67|Eicos-1-ene|C20H40|Organic
+68|Ethyne|C2H2|Organic
+69|Propyne|C3H4|Organic
+70|But-1-yne|C4H6|Organic
+71|Pent-1-yne|C5H8|Organic
+72|Hex-1-yne|C6H10|Organic
+73|Hept-1-yne|C7H12|Organic
+74|Oct-1-yne|C8H14|Organic
+75|Non-1-yne|C9H16|Organic
+76|Dec-1-yne|C10H18|Organic
+77|Undec-1-yne|C11H20|Organic
+78|Dodec-1-yne|C12H22|Organic
+79|Tridec-1-yne|C13H24|Organic
+80|Tetradec-1-yne|C14H26|Organic
+81|Pentadec-1-yne|C15H28|Organic
+82|Hexadec-1-yne|C16H30|Organic
+83|Heptadec-1-yne|C17H32|Organic
+84|Octadec-1-yne|C18H34|Organic
+85|Nonadec-1-yne|C19H36|Organic
+86|Eicos-1-yne|C20H38|Organic
+87|Propan-1-ol|C3H8O|Organic
+88|Butan-1-ol|C4H10O|Organic
+89|Pentan-1-ol|C5H12O|Organic
+90|Hexan-1-ol|C6H14O|Organic
+91|Heptan-1-ol|C7H16O|Organic
+92|Octan-1-ol|C8H18O|Organic
+93|Nonan-1-ol|C9H20O|Organic
+94|Decan-1-ol|C10H22O|Organic
+95|Undecan-1-ol|C11H24O|Organic
+96|Dodecan-1-ol|C12H26O|Organic
+97|Tridecan-1-ol|C13H28O|Organic
+98|Tetradecan-1-ol|C14H30O|Organic
+99|Pentadecan-1-ol|C15H32O|Organic
+100|Hexadecan-1-ol|C16H34O|Organic
+101|Heptadecan-1-ol|C17H36O|Organic
+102|Octadecan-1-ol|C18H38O|Organic
+103|Nonadecan-1-ol|C19H40O|Organic
+104|Eicosan-1-ol|C20H42O|Organic
+105|Propanal|C3H6O|Organic
+106|Butanal|C4H8O|Organic
+107|Pentanal|C5H10O|Organic
+108|Hexanal|C6H12O|Organic
+109|Heptanal|C7H14O|Organic
+110|Octanal|C8H16O|Organic
+111|Nonanal|C9H18O|Organic
+112|Decanal|C10H20O|Organic
+113|Undecanal|C11H22O|Organic
+114|Dodecanal|C12H24O|Organic
+115|Tridecanal|C13H26O|Organic
+116|Tetradecanal|C14H28O|Organic
+117|Pentadecanal|C15H30O|Organic
+118|Propanoic Acid|C3H6O2|Acid
+119|Butanoic Acid|C4H8O2|Acid
+120|Pentanoic Acid|C5H10O2|Acid
+121|Hexanoic Acid|C6H12O2|Acid
+122|Heptanoic Acid|C7H14O2|Acid
+123|Octanoic Acid|C8H16O2|Acid
+124|Nonanoic Acid|C9H18O2|Acid
+125|Decanoic Acid|C10H20O2|Acid
+126|Undecanoic Acid|C11H22O2|Acid
+127|Dodecanoic Acid|C12H24O2|Acid
+128|Tridecanoic Acid|C13H26O2|Acid
+129|Tetradecanoic Acid|C14H28O2|Acid
+130|Pentadecanoic Acid|C15H30O2|Acid
+131|Hexadecanoic Acid|C16H32O2|Acid
+132|Heptadecanoic Acid|C17H34O2|Acid
+133|Octadecanoic Acid|C18H36O2|Acid
+134|Nonadecanoic Acid|C19H38O2|Acid
+135|Eicosanoic Acid|C20H40O2|Acid
+136|Methylamine|CH5N|Base
+137|Ethylamine|C2H7N|Base
+138|Propylamine|C3H9N|Base
+139|Butylamine|C4H11N|Base
+140|Pentylamine|C5H13N|Base
+141|Hexylamine|C6H15N|Base
+142|Heptylamine|C7H17N|Base
+143|Octylamine|C8H19N|Base
+144|Nonylamine|C9H21N|Base
+145|Decylamine|C10H23N|Base
+146|Undecylamine|C11H25N|Base
+147|Dodecylamine|C12H27N|Base
+148|Tridecylamine|C13H29N|Base
+149|Tetradecylamine|C14H31N|Base
+150|Pentadecylamine|C15H33N|Base
+151|Hexadecylamine|C16H35N|Base
+152|Heptadecylamine|C17H37N|Base
+153|Octadecylamine|C18H39N|Base
+154|Nonadecylamine|C19H41N|Base
+155|Eicosylamine|C20H43N|Base
+156|Chloromethane|CH3Cl|Organic
+157|Chloroethane|C2H5Cl|Organic
+158|1-Chloropropane|C3H7Cl|Organic
+159|1-Chlorobutane|C4H9Cl|Organic
+160|1-Chloropentane|C5H11Cl|Organic
+161|1-Chlorohexane|C6H13Cl|Organic
+162|1-Chloroheptane|C7H15Cl|Organic
+163|1-Chlorooctane|C8H17Cl|Organic
+164|1-Chlorononane|C9H19Cl|Organic
+165|1-Chlorodecane|C10H21Cl|Organic
+166|1-Chloroundecane|C11H23Cl|Organic
+167|1-Chlorododecane|C12H25Cl|Organic
+168|1-Chlorotridecane|C13H27Cl|Organic
+169|1-Chlorotetradecane|C14H29Cl|Organic
+170|1-Chloropentadecane|C15H31Cl|Organic
+171|1-Chlorohexadecane|C16H33Cl|Organic
+172|1-Chloroheptadecane|C17H35Cl|Organic
+173|1-Chlorooctadecane|C18H37Cl|Organic
+174|1-Chlorononadecane|C19H39Cl|Organic
+175|1-Chloroeicosane|C20H41Cl|Organic
+176|Acetonitrile|C2H3N|Organic
+177|Propanenitrile|C3H5N|Organic
+178|Butanenitrile|C4H7N|Organic
+179|Pentanenitrile|C5H9N|Organic
+180|Hexanenitrile|C6H11N|Organic
+181|Heptanenitrile|C7H13N|Organic
+182|Octanenitrile|C8H15N|Organic
+183|Nonanenitrile|C9H17N|Organic
+184|Decanenitrile|C10H19N|Organic
+185|Undecanenitrile|C11H21N|Organic
+186|Dodecanenitrile|C12H23N|Organic
+187|Tridecanenitrile|C13H25N|Organic
+188|Tetradecanenitrile|C14H27N|Organic
+189|Pentadecanenitrile|C15H29N|Organic
+190|Hexadecanenitrile|C16H31N|Organic
+191|Heptadecanenitrile|C17H33N|Organic
+192|Octadecanenitrile|C18H35N|Organic
+193|Nonadecanenitrile|C19H37N|Organic
+194|Eicosanenitrile|C20H39N|Organic
+195|Acetone|C3H6O|Organic
+196|Butan-2-one|C4H8O|Organic
+197|Pentan-2-one|C5H10O|Organic
+198|Hexan-2-one|C6H12O|Organic
+199|Heptan-2-one|C7H14O|Organic
+200|Octan-2-one|C8H16O|Organic
+201|Nonan-2-one|C9H18O|Organic
+202|Decan-2-one|C10H20O|Organic
+203|Undecan-2-one|C11H22O|Organic
+204|Dodecan-2-one|C12H24O|Organic
+205|Tridecan-2-one|C13H26O|Organic
+206|Tetradecan-2-one|C14H28O|Organic
+207|Pentadecan-2-one|C15H30O|Organic
+208|Hexadecan-2-one|C16H32O|Organic
+209|Heptadecan-2-one|C17H34O|Organic
+210|Octadecan-2-one|C18H36O|Organic
+211|Nonadecan-2-one|C19H38O|Organic
+212|Eicosan-2-one|C20H40O|Organic
+213|Propan-2-ol|C3H8O|Organic
+214|Butan-2-ol|C4H10O|Organic
+215|Pentan-2-ol|C5H12O|Organic
+216|Hexan-2-ol|C6H14O|Organic
+217|Heptan-2-ol|C7H16O|Organic
+218|Octan-2-ol|C8H18O|Organic
+219|Nonan-2-ol|C9H20O|Organic
+220|Decan-2-ol|C10H22O|Organic
+221|Undecan-2-ol|C11H24O|Organic
+222|Dodecan-2-ol|C12H26O|Organic
+223|Tridecan-2-ol|C13H28O|Organic
+224|Tetradecan-2-ol|C14H30O|Organic
+225|Pentadecan-2-ol|C15H32O|Organic
+226|Hexadecan-2-ol|C16H34O|Organic
+227|Heptadecan-2-ol|C17H36O|Organic
+228|Octadecan-2-ol|C18H38O|Organic
+229|Nonadecan-2-ol|C19H40O|Organic
+230|Eicosan-2-ol|C20H42O|Organic
+231|Methyl Methanoate|C2H4O2|Organic
+232|Methyl Acetate|C3H6O2|Organic
+233|Methyl Propanoate|C4H8O2|Organic
+234|Methyl Butanoate|C5H10O2|Organic
+235|Methyl Pentanoate|C6H12O2|Organic
+236|Methyl Hexanoate|C7H14O2|Organic
+237|Methyl Heptanoate|C8H16O2|Organic
+238|Methyl Octanoate|C9H18O2|Organic
+239|Methyl Nonanoate|C10H20O2|Organic
+240|Methyl Decanoate|C11H22O2|Organic
+241|Methyl Undecanoate|C12H24O2|Organic
+242|Methyl Dodecanoate|C13H26O2|Organic
+243|Methyl Tridecanoate|C14H28O2|Organic
+244|Methyl Tetradecanoate|C15H30O2|Organic
+245|Methyl Pentadecanoate|C16H32O2|Organic
+246|Methyl Hexadecanoate|C17H34O2|Organic
+247|Methyl Heptadecanoate|C18H36O2|Organic
+248|Methyl Octadecanoate|C19H38O2|Organic
+249|Methyl Nonadecanoate|C20H40O2|Organic
+250|Lithium Ion|Li+|Ion
+251|Sodium Ion|Na+|Ion
+252|Potassium Ion|K+|Ion
+253|Magnesium Ion|Mg^2+|Ion
+254|Calcium Ion|Ca^2+|Ion
+255|Barium Ion|Ba^2+|Ion
+256|Zinc Ion|Zn^2+|Ion
+257|Copper(II) Ion|Cu^2+|Ion
+258|Iron(II) Ion|Fe^2+|Ion
+259|Iron(III) Ion|Fe^3+|Ion
+260|Aluminium Ion|Al^3+|Ion
+261|Silver Ion|Ag+|Ion
+262|Chloride|Cl-|Ion
+263|Bromide|Br-|Ion
+264|Iodide|I-|Ion
+265|Hydroxide|OH-|Ion
+266|Nitrate|NO3-|Ion
+267|Nitrite|NO2-|Ion
+268|Phosphate|PO4^3-|Ion
+269|Hydrogen Phosphate|HPO4^2-|Ion
+270|Acetate|CH3COO-|Ion
+271|Lithium Chloride|LiCl|Salt
+272|Lithium Bromide|LiBr|Salt
+273|Lithium Iodide|LiI|Salt
+274|Lithium Hydroxide|LiOH|Salt
+275|Lithium Nitrate|LiNO3|Salt
+276|Lithium Nitrite|LiNO2|Salt
+277|Lithium Phosphate|Li3PO4|Salt
+278|Lithium Hydrogen Phosphate|Li2HPO4|Salt
+279|Sodium Chloride|NaCl|Salt
+280|Sodium Bromide|NaBr|Salt
+281|Sodium Iodide|NaI|Salt
+282|Sodium Hydroxide|NaOH|Salt
+283|Sodium Nitrate|NaNO3|Salt
+284|Sodium Nitrite|NaNO2|Salt
+285|Sodium Phosphate|Na3PO4|Salt
+286|Sodium Hydrogen Phosphate|Na2HPO4|Salt
+287|Potassium Chloride|KCl|Salt
+288|Potassium Bromide|KBr|Salt
+289|Potassium Iodide|KI|Salt
+290|Potassium Hydroxide|KOH|Salt
+291|Potassium Nitrate|KNO3|Salt
+292|Potassium Nitrite|KNO2|Salt
+293|Potassium Phosphate|K3PO4|Salt
+294|Potassium Hydrogen Phosphate|K2HPO4|Salt
+295|Magnesium Nitrate|Mg(NO3)2|Salt
+296|Calcium Nitrate|Ca(NO3)2|Salt
+297|Barium Nitrate|Ba(NO3)2|Salt
+298|Zinc Hydroxide|Zn(OH)2|Salt
+299|Zinc Nitrate|Zn(NO3)2|Salt
+300|Copper(II) Hydroxide|Cu(OH)2|Salt
+301|Copper(II) Nitrate|Cu(NO3)2|Salt
+302|Iron(II) Nitrate|Fe(NO3)2|Salt
+303|Iron(III) Hydroxide|Fe(OH)3|Salt
+304|Iron(III) Nitrate|Fe(NO3)3|Salt
+305|Aluminium Hydroxide|Al(OH)3|Salt
+306|Aluminium Nitrate|Al(NO3)3|Salt
+307|Silver Chloride|AgCl|Salt
+308|Silver Bromide|AgBr|Salt
+309|Silver Iodide|AgI|Salt
+310|Silver Nitrate|AgNO3|Salt
+311|Benzene|C6H6|Organic
+312|Toluene|C7H8|Organic
+313|Ethylbenzene|C8H10|Organic
+314|Styrene|C8H8|Organic
+315|Phenol|C6H5OH|Organic
+316|Aniline|C6H5NH2|Base
+317|Benzoic Acid|C7H6O2|Acid
+318|Benzaldehyde|C7H6O|Organic
+319|Cyclohexane|C6H12|Organic
+320|Cyclohexene|C6H10|Organic
+321|Cyclohexanol|C6H12O|Organic
+322|Glycine|C2H5NO2|Biochemical
+323|Alanine|C3H7NO2|Biochemical
+324|Valine|C5H11NO2|Biochemical
+325|Leucine|C6H13NO2|Biochemical
+326|Isoleucine|C6H13NO2|Biochemical
+327|Serine|C3H7NO3|Biochemical
+328|Threonine|C4H9NO3|Biochemical
+329|Cysteine|C3H7NO2S|Biochemical
+330|Methionine|C5H11NO2S|Biochemical
+331|Aspartic Acid|C4H7NO4|Biochemical
+332|Glutamic Acid|C5H9NO4|Biochemical
+333|Lysine|C6H14N2O2|Biochemical
+334|Arginine|C6H14N4O2|Biochemical
+335|Histidine|C6H9N3O2|Biochemical
+336|Phenylalanine|C9H11NO2|Biochemical
+337|Tyrosine|C9H11NO3|Biochemical
+338|Fructose|C6H12O6|Biochemical
+339|Galactose|C6H12O6|Biochemical
+340|Sucrose|C12H22O11|Biochemical
+341|Maltose|C12H22O11|Biochemical
+342|Lactose|C12H22O11|Biochemical
+343|Hydronium|H3O+|Ion
+344|Hydrogen Sulfate|HSO4-|Ion
+345|Hydrogen Chloride|HCl|Inorganic
+346|Ammonium Chloride|NH4Cl|Salt
+347|Thionyl Chloride|SOCl2|Inorganic
+348|Benzyl Alcohol|C7H8O|Organic
+349|Anilinium|C6H8N+|Ion
+350|Phenoxide|C6H5O-|Ion
+351|Barium Sulfate|BaSO4|Salt
+352|Calcium Carbonate|CaCO3|Salt
+353|Methylammonium|CH6N+|Ion
+354|Methylammonium Chloride|CH6NCl|Salt
+355|Methanoate|CH1O2-|Ion
+356|Sodium Methanoate|CH1NaO2|Salt
+357|Ethylammonium|C2H8N+|Ion
+358|Ethylammonium Chloride|C2H8NCl|Salt
+359|Sodium Acetate|C2H3NaO2|Salt
+360|Propylammonium|C3H10N+|Ion
+361|Propylammonium Chloride|C3H10NCl|Salt
+362|Propanoate|C3H5O2-|Ion
+363|Sodium Propanoate|C3H5NaO2|Salt
+364|Butylammonium|C4H12N+|Ion
+365|Butylammonium Chloride|C4H12NCl|Salt
+366|Butanoate|C4H7O2-|Ion
+367|Sodium Butanoate|C4H7NaO2|Salt
+368|Pentylammonium|C5H14N+|Ion
+369|Pentylammonium Chloride|C5H14NCl|Salt
+370|Pentanoate|C5H9O2-|Ion
+371|Sodium Pentanoate|C5H9NaO2|Salt
+372|Hexylammonium|C6H16N+|Ion
+373|Hexylammonium Chloride|C6H16NCl|Salt
+374|Hexanoate|C6H11O2-|Ion
+375|Sodium Hexanoate|C6H11NaO2|Salt
+376|Heptylammonium|C7H18N+|Ion
+377|Heptylammonium Chloride|C7H18NCl|Salt
+378|Heptanoate|C7H13O2-|Ion
+379|Sodium Heptanoate|C7H13NaO2|Salt
+380|Octylammonium|C8H20N+|Ion
+381|Octylammonium Chloride|C8H20NCl|Salt
+382|Octanoate|C8H15O2-|Ion
+383|Sodium Octanoate|C8H15NaO2|Salt
+384|Nonylammonium|C9H22N+|Ion
+385|Nonylammonium Chloride|C9H22NCl|Salt
+386|Nonanoate|C9H17O2-|Ion
+387|Sodium Nonanoate|C9H17NaO2|Salt
+388|Decylammonium|C10H24N+|Ion
+389|Decylammonium Chloride|C10H24NCl|Salt
+390|Decanoate|C10H19O2-|Ion
+391|Sodium Decanoate|C10H19NaO2|Salt
+392|Undecylammonium|C11H26N+|Ion
+393|Undecylammonium Chloride|C11H26NCl|Salt
+394|Undecanoate|C11H21O2-|Ion
+395|Sodium Undecanoate|C11H21NaO2|Salt
+396|Dodecylammonium|C12H28N+|Ion
+397|Dodecylammonium Chloride|C12H28NCl|Salt
+398|Dodecanoate|C12H23O2-|Ion
+399|Sodium Dodecanoate|C12H23NaO2|Salt
+400|Tridecylammonium|C13H30N+|Ion
+401|Tridecylammonium Chloride|C13H30NCl|Salt
+402|Tridecanoate|C13H25O2-|Ion
+403|Sodium Tridecanoate|C13H25NaO2|Salt
+404|Tetradecylammonium|C14H32N+|Ion
+405|Tetradecylammonium Chloride|C14H32NCl|Salt
+406|Tetradecanoate|C14H27O2-|Ion
+407|Sodium Tetradecanoate|C14H27NaO2|Salt
+408|Pentadecylammonium|C15H34N+|Ion
+409|Pentadecylammonium Chloride|C15H34NCl|Salt
+410|Pentadecanoate|C15H29O2-|Ion
+411|Sodium Pentadecanoate|C15H29NaO2|Salt
+412|Hexadecylammonium|C16H36N+|Ion
+413|Hexadecylammonium Chloride|C16H36NCl|Salt
+414|Hexadecanoate|C16H31O2-|Ion
+415|Sodium Hexadecanoate|C16H31NaO2|Salt
+416|Heptadecylammonium|C17H38N+|Ion
+417|Heptadecylammonium Chloride|C17H38NCl|Salt
+418|Heptadecanoate|C17H33O2-|Ion
+419|Sodium Heptadecanoate|C17H33NaO2|Salt
+420|Octadecylammonium|C18H40N+|Ion
+421|Octadecylammonium Chloride|C18H40NCl|Salt
+422|Octadecanoate|C18H35O2-|Ion
+423|Sodium Octadecanoate|C18H35NaO2|Salt
+424|Nonadecylammonium|C19H42N+|Ion
+425|Nonadecylammonium Chloride|C19H42NCl|Salt
+426|Nonadecanoate|C19H37O2-|Ion
+427|Sodium Nonadecanoate|C19H37NaO2|Salt
+428|Eicosylammonium|C20H44N+|Ion
+429|Eicosylammonium Chloride|C20H44NCl|Salt
+430|Eicosanoate|C20H39O2-|Ion
+431|Sodium Eicosanoate|C20H39NaO2|Salt
+432|Glycine–Glycine Dipeptide|C4H8N2O3|Biochemical
+433|Glycine–Alanine Dipeptide|C5H10N2O3|Biochemical
+434|Glycine–Valine Dipeptide|C7H14N2O3|Biochemical
+435|Glycine–Leucine Dipeptide|C8H16N2O3|Biochemical
+436|Glycine–Isoleucine Dipeptide|C8H16N2O3|Biochemical
+437|Glycine–Serine Dipeptide|C5H10N2O4|Biochemical
+438|Glycine–Threonine Dipeptide|C6H12N2O4|Biochemical
+439|Glycine–Cysteine Dipeptide|C5H10N2O3S|Biochemical
+440|Glycine–Methionine Dipeptide|C7H14N2O3S|Biochemical
+441|Glycine–Aspartic Acid Dipeptide|C6H10N2O5|Biochemical
+442|Glycine–Glutamic Acid Dipeptide|C7H12N2O5|Biochemical
+443|Glycine–Lysine Dipeptide|C8H17N3O3|Biochemical
+444|Glycine–Arginine Dipeptide|C8H17N5O3|Biochemical
+445|Glycine–Histidine Dipeptide|C8H12N4O3|Biochemical
+446|Glycine–Phenylalanine Dipeptide|C11H14N2O3|Biochemical
+447|Glycine–Tyrosine Dipeptide|C11H14N2O4|Biochemical
+448|Alanine–Glycine Dipeptide|C5H10N2O3|Biochemical
+449|Alanine–Alanine Dipeptide|C6H12N2O3|Biochemical
+450|Alanine–Valine Dipeptide|C8H16N2O3|Biochemical
+451|Alanine–Leucine Dipeptide|C9H18N2O3|Biochemical
+452|Alanine–Isoleucine Dipeptide|C9H18N2O3|Biochemical
+453|Alanine–Serine Dipeptide|C6H12N2O4|Biochemical
+454|Alanine–Threonine Dipeptide|C7H14N2O4|Biochemical
+455|Alanine–Cysteine Dipeptide|C6H12N2O3S|Biochemical
+456|Alanine–Methionine Dipeptide|C8H16N2O3S|Biochemical
+457|Alanine–Aspartic Acid Dipeptide|C7H12N2O5|Biochemical
+458|Alanine–Glutamic Acid Dipeptide|C8H14N2O5|Biochemical
+459|Alanine–Lysine Dipeptide|C9H19N3O3|Biochemical
+460|Alanine–Arginine Dipeptide|C9H19N5O3|Biochemical
+461|Alanine–Histidine Dipeptide|C9H14N4O3|Biochemical
+462|Alanine–Phenylalanine Dipeptide|C12H16N2O3|Biochemical
+463|Alanine–Tyrosine Dipeptide|C12H16N2O4|Biochemical
+464|Valine–Glycine Dipeptide|C7H14N2O3|Biochemical
+465|Valine–Alanine Dipeptide|C8H16N2O3|Biochemical
+466|Valine–Valine Dipeptide|C10H20N2O3|Biochemical
+467|Valine–Leucine Dipeptide|C11H22N2O3|Biochemical
+468|Valine–Isoleucine Dipeptide|C11H22N2O3|Biochemical
+469|Valine–Serine Dipeptide|C8H16N2O4|Biochemical
+470|Valine–Threonine Dipeptide|C9H18N2O4|Biochemical
+471|Valine–Cysteine Dipeptide|C8H16N2O3S|Biochemical
+472|Valine–Methionine Dipeptide|C10H20N2O3S|Biochemical
+473|Valine–Aspartic Acid Dipeptide|C9H16N2O5|Biochemical
+474|Valine–Glutamic Acid Dipeptide|C10H18N2O5|Biochemical
+475|Valine–Lysine Dipeptide|C11H23N3O3|Biochemical
+476|Valine–Arginine Dipeptide|C11H23N5O3|Biochemical
+477|Valine–Histidine Dipeptide|C11H18N4O3|Biochemical
+478|Valine–Phenylalanine Dipeptide|C14H20N2O3|Biochemical
+479|Valine–Tyrosine Dipeptide|C14H20N2O4|Biochemical
+480|Leucine–Glycine Dipeptide|C8H16N2O3|Biochemical
+481|Leucine–Alanine Dipeptide|C9H18N2O3|Biochemical
+482|Leucine–Valine Dipeptide|C11H22N2O3|Biochemical
+483|Leucine–Leucine Dipeptide|C12H24N2O3|Biochemical
+484|Leucine–Isoleucine Dipeptide|C12H24N2O3|Biochemical
+485|Leucine–Serine Dipeptide|C9H18N2O4|Biochemical
+486|Leucine–Threonine Dipeptide|C10H20N2O4|Biochemical
+487|Leucine–Cysteine Dipeptide|C9H18N2O3S|Biochemical
+488|Leucine–Methionine Dipeptide|C11H22N2O3S|Biochemical
+489|Leucine–Aspartic Acid Dipeptide|C10H18N2O5|Biochemical
+490|Leucine–Glutamic Acid Dipeptide|C11H20N2O5|Biochemical
+491|Leucine–Lysine Dipeptide|C12H25N3O3|Biochemical
+492|Leucine–Arginine Dipeptide|C12H25N5O3|Biochemical
+493|Leucine–Histidine Dipeptide|C12H20N4O3|Biochemical
+494|Leucine–Phenylalanine Dipeptide|C15H22N2O3|Biochemical
+495|Leucine–Tyrosine Dipeptide|C15H22N2O4|Biochemical
+496|Isoleucine–Glycine Dipeptide|C8H16N2O3|Biochemical
+497|Isoleucine–Alanine Dipeptide|C9H18N2O3|Biochemical
+498|Isoleucine–Valine Dipeptide|C11H22N2O3|Biochemical
+499|Isoleucine–Leucine Dipeptide|C12H24N2O3|Biochemical
+500|Isoleucine–Isoleucine Dipeptide|C12H24N2O3|Biochemical
+501|Isoleucine–Serine Dipeptide|C9H18N2O4|Biochemical
+502|Isoleucine–Threonine Dipeptide|C10H20N2O4|Biochemical
+503|Isoleucine–Cysteine Dipeptide|C9H18N2O3S|Biochemical
+504|Isoleucine–Methionine Dipeptide|C11H22N2O3S|Biochemical
+505|Isoleucine–Aspartic Acid Dipeptide|C10H18N2O5|Biochemical
+506|Isoleucine–Glutamic Acid Dipeptide|C11H20N2O5|Biochemical
+507|Isoleucine–Lysine Dipeptide|C12H25N3O3|Biochemical
+508|Isoleucine–Arginine Dipeptide|C12H25N5O3|Biochemical
+509|Isoleucine–Histidine Dipeptide|C12H20N4O3|Biochemical
+510|Isoleucine–Phenylalanine Dipeptide|C15H22N2O3|Biochemical
+511|Isoleucine–Tyrosine Dipeptide|C15H22N2O4|Biochemical
+512|Serine–Glycine Dipeptide|C5H10N2O4|Biochemical
+513|Serine–Alanine Dipeptide|C6H12N2O4|Biochemical
+514|Serine–Valine Dipeptide|C8H16N2O4|Biochemical
+515|Serine–Leucine Dipeptide|C9H18N2O4|Biochemical
+516|Serine–Isoleucine Dipeptide|C9H18N2O4|Biochemical
+517|Serine–Serine Dipeptide|C6H12N2O5|Biochemical
+518|Serine–Threonine Dipeptide|C7H14N2O5|Biochemical
+519|Serine–Cysteine Dipeptide|C6H12N2O4S|Biochemical
+520|Serine–Methionine Dipeptide|C8H16N2O4S|Biochemical
+521|Serine–Aspartic Acid Dipeptide|C7H12N2O6|Biochemical
+522|Serine–Glutamic Acid Dipeptide|C8H14N2O6|Biochemical
+523|Serine–Lysine Dipeptide|C9H19N3O4|Biochemical
+524|Serine–Arginine Dipeptide|C9H19N5O4|Biochemical
+525|Serine–Histidine Dipeptide|C9H14N4O4|Biochemical
+526|Serine–Phenylalanine Dipeptide|C12H16N2O4|Biochemical
+527|Serine–Tyrosine Dipeptide|C12H16N2O5|Biochemical
+528|Threonine–Glycine Dipeptide|C6H12N2O4|Biochemical
+529|Threonine–Alanine Dipeptide|C7H14N2O4|Biochemical
+530|Threonine–Valine Dipeptide|C9H18N2O4|Biochemical
+531|Threonine–Leucine Dipeptide|C10H20N2O4|Biochemical
+532|Threonine–Isoleucine Dipeptide|C10H20N2O4|Biochemical
+533|Threonine–Serine Dipeptide|C7H14N2O5|Biochemical
+534|Threonine–Threonine Dipeptide|C8H16N2O5|Biochemical
+535|Threonine–Cysteine Dipeptide|C7H14N2O4S|Biochemical
+536|Threonine–Methionine Dipeptide|C9H18N2O4S|Biochemical
+537|Threonine–Aspartic Acid Dipeptide|C8H14N2O6|Biochemical
+538|Threonine–Glutamic Acid Dipeptide|C9H16N2O6|Biochemical
+539|Threonine–Lysine Dipeptide|C10H21N3O4|Biochemical
+540|Threonine–Arginine Dipeptide|C10H21N5O4|Biochemical
+541|Threonine–Histidine Dipeptide|C10H16N4O4|Biochemical
+542|Threonine–Phenylalanine Dipeptide|C13H18N2O4|Biochemical
+543|Threonine–Tyrosine Dipeptide|C13H18N2O5|Biochemical
+544|Cysteine–Glycine Dipeptide|C5H10N2O3S|Biochemical
+545|Cysteine–Alanine Dipeptide|C6H12N2O3S|Biochemical
+546|Cysteine–Valine Dipeptide|C8H16N2O3S|Biochemical
+547|Cysteine–Leucine Dipeptide|C9H18N2O3S|Biochemical
+548|Cysteine–Isoleucine Dipeptide|C9H18N2O3S|Biochemical
+549|Cysteine–Serine Dipeptide|C6H12N2O4S|Biochemical
+550|Cysteine–Threonine Dipeptide|C7H14N2O4S|Biochemical
+551|Cysteine–Cysteine Dipeptide|C6H12N2O3S2|Biochemical
+552|Cysteine–Methionine Dipeptide|C8H16N2O3S2|Biochemical
+553|Cysteine–Aspartic Acid Dipeptide|C7H12N2O5S|Biochemical
+554|Cysteine–Glutamic Acid Dipeptide|C8H14N2O5S|Biochemical
+555|Cysteine–Lysine Dipeptide|C9H19N3O3S|Biochemical
+556|Cysteine–Arginine Dipeptide|C9H19N5O3S|Biochemical
+557|Cysteine–Histidine Dipeptide|C9H14N4O3S|Biochemical
+558|Cysteine–Phenylalanine Dipeptide|C12H16N2O3S|Biochemical
+559|Cysteine–Tyrosine Dipeptide|C12H16N2O4S|Biochemical
+560|Methionine–Glycine Dipeptide|C7H14N2O3S|Biochemical
+561|Methionine–Alanine Dipeptide|C8H16N2O3S|Biochemical
+562|Methionine–Valine Dipeptide|C10H20N2O3S|Biochemical
+563|Methionine–Leucine Dipeptide|C11H22N2O3S|Biochemical
+564|Methionine–Isoleucine Dipeptide|C11H22N2O3S|Biochemical
+565|Methionine–Serine Dipeptide|C8H16N2O4S|Biochemical
+566|Methionine–Threonine Dipeptide|C9H18N2O4S|Biochemical
+567|Methionine–Cysteine Dipeptide|C8H16N2O3S2|Biochemical
+568|Methionine–Methionine Dipeptide|C10H20N2O3S2|Biochemical
+569|Methionine–Aspartic Acid Dipeptide|C9H16N2O5S|Biochemical
+570|Methionine–Glutamic Acid Dipeptide|C10H18N2O5S|Biochemical
+571|Methionine–Lysine Dipeptide|C11H23N3O3S|Biochemical
+572|Methionine–Arginine Dipeptide|C11H23N5O3S|Biochemical
+573|Methionine–Histidine Dipeptide|C11H18N4O3S|Biochemical
+574|Methionine–Phenylalanine Dipeptide|C14H20N2O3S|Biochemical
+575|Methionine–Tyrosine Dipeptide|C14H20N2O4S|Biochemical
+576|Aspartic Acid–Glycine Dipeptide|C6H10N2O5|Biochemical
+577|Aspartic Acid–Alanine Dipeptide|C7H12N2O5|Biochemical
+578|Aspartic Acid–Valine Dipeptide|C9H16N2O5|Biochemical
+579|Aspartic Acid–Leucine Dipeptide|C10H18N2O5|Biochemical
+580|Aspartic Acid–Isoleucine Dipeptide|C10H18N2O5|Biochemical
+581|Aspartic Acid–Serine Dipeptide|C7H12N2O6|Biochemical
+582|Aspartic Acid–Threonine Dipeptide|C8H14N2O6|Biochemical
+583|Aspartic Acid–Cysteine Dipeptide|C7H12N2O5S|Biochemical
+584|Aspartic Acid–Methionine Dipeptide|C9H16N2O5S|Biochemical
+585|Aspartic Acid–Aspartic Acid Dipeptide|C8H12N2O7|Biochemical
+586|Aspartic Acid–Glutamic Acid Dipeptide|C9H14N2O7|Biochemical
+587|Aspartic Acid–Lysine Dipeptide|C10H19N3O5|Biochemical
+588|Aspartic Acid–Arginine Dipeptide|C10H19N5O5|Biochemical
+589|Aspartic Acid–Histidine Dipeptide|C10H14N4O5|Biochemical
+590|Aspartic Acid–Phenylalanine Dipeptide|C13H16N2O5|Biochemical
+591|Aspartic Acid–Tyrosine Dipeptide|C13H16N2O6|Biochemical
+592|Glutamic Acid–Glycine Dipeptide|C7H12N2O5|Biochemical
+593|Glutamic Acid–Alanine Dipeptide|C8H14N2O5|Biochemical
+594|Glutamic Acid–Valine Dipeptide|C10H18N2O5|Biochemical
+595|Glutamic Acid–Leucine Dipeptide|C11H20N2O5|Biochemical
+596|Glutamic Acid–Isoleucine Dipeptide|C11H20N2O5|Biochemical
+597|Glutamic Acid–Serine Dipeptide|C8H14N2O6|Biochemical
+598|Glutamic Acid–Threonine Dipeptide|C9H16N2O6|Biochemical
+599|Glutamic Acid–Cysteine Dipeptide|C8H14N2O5S|Biochemical
+600|Glutamic Acid–Methionine Dipeptide|C10H18N2O5S|Biochemical
+601|Glutamic Acid–Aspartic Acid Dipeptide|C9H14N2O7|Biochemical
+602|Glutamic Acid–Glutamic Acid Dipeptide|C10H16N2O7|Biochemical
+603|Glutamic Acid–Lysine Dipeptide|C11H21N3O5|Biochemical
+604|Glutamic Acid–Arginine Dipeptide|C11H21N5O5|Biochemical
+605|Glutamic Acid–Histidine Dipeptide|C11H16N4O5|Biochemical
+606|Glutamic Acid–Phenylalanine Dipeptide|C14H18N2O5|Biochemical
+607|Glutamic Acid–Tyrosine Dipeptide|C14H18N2O6|Biochemical
+608|Lysine–Glycine Dipeptide|C8H17N3O3|Biochemical
+609|Lysine–Alanine Dipeptide|C9H19N3O3|Biochemical
+610|Lysine–Valine Dipeptide|C11H23N3O3|Biochemical
+611|Lysine–Leucine Dipeptide|C12H25N3O3|Biochemical
+612|Lysine–Isoleucine Dipeptide|C12H25N3O3|Biochemical
+613|Lysine–Serine Dipeptide|C9H19N3O4|Biochemical
+614|Lysine–Threonine Dipeptide|C10H21N3O4|Biochemical
+615|Lysine–Cysteine Dipeptide|C9H19N3O3S|Biochemical
+616|Lysine–Methionine Dipeptide|C11H23N3O3S|Biochemical
+617|Lysine–Aspartic Acid Dipeptide|C10H19N3O5|Biochemical
+618|Lysine–Glutamic Acid Dipeptide|C11H21N3O5|Biochemical
+619|Lysine–Lysine Dipeptide|C12H26N4O3|Biochemical
+620|Lysine–Arginine Dipeptide|C12H26N6O3|Biochemical
+621|Lysine–Histidine Dipeptide|C12H21N5O3|Biochemical
+622|Lysine–Phenylalanine Dipeptide|C15H23N3O3|Biochemical
+623|Lysine–Tyrosine Dipeptide|C15H23N3O4|Biochemical
+624|Arginine–Glycine Dipeptide|C8H17N5O3|Biochemical
+625|Arginine–Alanine Dipeptide|C9H19N5O3|Biochemical
+626|Arginine–Valine Dipeptide|C11H23N5O3|Biochemical
+627|Arginine–Leucine Dipeptide|C12H25N5O3|Biochemical
+628|Arginine–Isoleucine Dipeptide|C12H25N5O3|Biochemical
+629|Arginine–Serine Dipeptide|C9H19N5O4|Biochemical
+630|Arginine–Threonine Dipeptide|C10H21N5O4|Biochemical
+631|Arginine–Cysteine Dipeptide|C9H19N5O3S|Biochemical
+632|Arginine–Methionine Dipeptide|C11H23N5O3S|Biochemical
+633|Arginine–Aspartic Acid Dipeptide|C10H19N5O5|Biochemical
+634|Arginine–Glutamic Acid Dipeptide|C11H21N5O5|Biochemical
+635|Arginine–Lysine Dipeptide|C12H26N6O3|Biochemical
+636|Arginine–Arginine Dipeptide|C12H26N8O3|Biochemical
+637|Arginine–Histidine Dipeptide|C12H21N7O3|Biochemical
+638|Arginine–Phenylalanine Dipeptide|C15H23N5O3|Biochemical
+639|Arginine–Tyrosine Dipeptide|C15H23N5O4|Biochemical
+640|Histidine–Glycine Dipeptide|C8H12N4O3|Biochemical
+641|Histidine–Alanine Dipeptide|C9H14N4O3|Biochemical
+642|Histidine–Valine Dipeptide|C11H18N4O3|Biochemical
+643|Histidine–Leucine Dipeptide|C12H20N4O3|Biochemical
+644|Histidine–Isoleucine Dipeptide|C12H20N4O3|Biochemical
+645|Histidine–Serine Dipeptide|C9H14N4O4|Biochemical
+646|Histidine–Threonine Dipeptide|C10H16N4O4|Biochemical
+647|Histidine–Cysteine Dipeptide|C9H14N4O3S|Biochemical
+648|Histidine–Methionine Dipeptide|C11H18N4O3S|Biochemical
+649|Histidine–Aspartic Acid Dipeptide|C10H14N4O5|Biochemical
+650|Histidine–Glutamic Acid Dipeptide|C11H16N4O5|Biochemical
+651|Histidine–Lysine Dipeptide|C12H21N5O3|Biochemical
+652|Histidine–Arginine Dipeptide|C12H21N7O3|Biochemical
+653|Histidine–Histidine Dipeptide|C12H16N6O3|Biochemical
+654|Histidine–Phenylalanine Dipeptide|C15H18N4O3|Biochemical
+655|Histidine–Tyrosine Dipeptide|C15H18N4O4|Biochemical
+656|Phenylalanine–Glycine Dipeptide|C11H14N2O3|Biochemical
+657|Phenylalanine–Alanine Dipeptide|C12H16N2O3|Biochemical
+658|Phenylalanine–Valine Dipeptide|C14H20N2O3|Biochemical
+659|Phenylalanine–Leucine Dipeptide|C15H22N2O3|Biochemical
+660|Phenylalanine–Isoleucine Dipeptide|C15H22N2O3|Biochemical
+661|Phenylalanine–Serine Dipeptide|C12H16N2O4|Biochemical
+662|Phenylalanine–Threonine Dipeptide|C13H18N2O4|Biochemical
+663|Phenylalanine–Cysteine Dipeptide|C12H16N2O3S|Biochemical
+664|Phenylalanine–Methionine Dipeptide|C14H20N2O3S|Biochemical
+665|Phenylalanine–Aspartic Acid Dipeptide|C13H16N2O5|Biochemical
+666|Phenylalanine–Glutamic Acid Dipeptide|C14H18N2O5|Biochemical
+667|Phenylalanine–Lysine Dipeptide|C15H23N3O3|Biochemical
+668|Phenylalanine–Arginine Dipeptide|C15H23N5O3|Biochemical
+669|Phenylalanine–Histidine Dipeptide|C15H18N4O3|Biochemical
+670|Phenylalanine–Phenylalanine Dipeptide|C18H20N2O3|Biochemical
+671|Phenylalanine–Tyrosine Dipeptide|C18H20N2O4|Biochemical
+672|Tyrosine–Glycine Dipeptide|C11H14N2O4|Biochemical
+673|Tyrosine–Alanine Dipeptide|C12H16N2O4|Biochemical
+674|Tyrosine–Valine Dipeptide|C14H20N2O4|Biochemical
+675|Tyrosine–Leucine Dipeptide|C15H22N2O4|Biochemical
+676|Tyrosine–Isoleucine Dipeptide|C15H22N2O4|Biochemical
+677|Tyrosine–Serine Dipeptide|C12H16N2O5|Biochemical
+678|Tyrosine–Threonine Dipeptide|C13H18N2O5|Biochemical
+679|Tyrosine–Cysteine Dipeptide|C12H16N2O4S|Biochemical
+680|Tyrosine–Methionine Dipeptide|C14H20N2O4S|Biochemical
+681|Tyrosine–Aspartic Acid Dipeptide|C13H16N2O6|Biochemical
+682|Tyrosine–Glutamic Acid Dipeptide|C14H18N2O6|Biochemical
+683|Tyrosine–Lysine Dipeptide|C15H23N3O4|Biochemical
+684|Tyrosine–Arginine Dipeptide|C15H23N5O4|Biochemical
+685|Tyrosine–Histidine Dipeptide|C15H18N4O4|Biochemical
+686|Tyrosine–Phenylalanine Dipeptide|C18H20N2O4|Biochemical
+687|Tyrosine–Tyrosine Dipeptide|C18H20N2O5|Biochemical
+688|Urea|CH4N2O|Biochemical
+689|Pyruvic Acid|C3H4O3|Biochemical
+690|RHEA:CCCCC(N)=O|C5H11NO|Biochemical
+691|RHEA:O|H2O|Biochemical
+692|RHEA:CCCCC(=O)[O-]|C5H9O2-|Biochemical
+693|RHEA:[NH4+]|H4N+|Biochemical
+694|RHEA:S=C=NCc1ccccc1|C8H7NS|Biochemical
+695|RHEA:N#CSCc1ccccc1|C8H7NS|Biochemical
+696|RHEA:*OO|H*O2|Biochemical
+697|RHEA:*N[C@@H](CS)C(*)=O|C3H5*2NOS|Biochemical
+698|RHEA:*N[C@@H](CSSC[C@H](N*)C(*)=O)C(*)=O|C6H8*4N2O2S2|Biochemical
+699|RHEA:*O|H*O|Biochemical
+700|RHEA:C[NH+]1CCC[C@@H]1c1ccc(O)nc1|C10H15N2O+|Biochemical
+701|RHEA:O=O|O2|Biochemical
+702|RHEA:C[NH2+]CCCC(=O)c1ccc(O)nc1|C10H15N2O2+|Biochemical
+703|RHEA:OO|H2O2|Biochemical
+704|RHEA:COc1cc(/C=C/C(=O)OCC[N+](C)(C)C)cc(OC)c1O|C16H24NO5+|Biochemical
+705|RHEA:COc1cc(/C=C/C(=O)[O-])cc(OC)c1O|C11H11O5-|Biochemical
+706|RHEA:C[N+](C)(C)CCO|C5H14NO+|Biochemical
+707|RHEA:[H+]|H+|Biochemical
+708|RHEA:[NH3+][C@@H](CCCC[NH2+][C@@H](CCC(=O)[O-])C(=O)[O-])C(=O)[O-]|C11H19N2O6-|Biochemical
+709|RHEA:NC(=O)c1ccc[n+]([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])OC[C@H]3O[C@@H](n4cnc5c(N)ncnc54)[C@H](OP(=O)([O-])[O-])[C@@H]3O)[C@@H](O)[C@H]2O)c1|C21H25N7O17P3-3|Biochemical
+710|RHEA:[NH3+][C@@H](CCCC=O)C(=O)[O-]|C6H11NO3|Biochemical
+711|RHEA:[NH3+][C@@H](CCC(=O)[O-])C(=O)[O-]|C5H8NO4-|Biochemical
+712|RHEA:NC(=O)C1=CN([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])OC[C@H]3O[C@@H](n4cnc5c(N)ncnc54)[C@H](OP(=O)([O-])[O-])[C@@H]3O)[C@@H](O)[C@H]2O)C=CC1|C21H26N7O17P3-4|Biochemical
+713|RHEA:*N[C@@H](CCCC[NH3+])C(*)=O|C6H13*2N2O+|Biochemical
+714|RHEA:C[S+](CC[C@H]([NH3+])C(=O)[O-])C[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1O|C15H23N6O5S+|Biochemical
+715|RHEA:*N[C@@H](CCCC[NH2+]C)C(*)=O|C7H15*2N2O+|Biochemical
+716|RHEA:Nc1ncnc2c1ncn2[C@@H]1O[C@H](CSCC[C@H]([NH3+])C(=O)[O-])[C@@H](O)[C@H]1O|C14H20N6O5S|Biochemical
+717|RHEA:[NH3+][C@H](CCC(=O)[O-])C(=O)[O-]|C5H8NO4-|Biochemical
+718|RHEA:O=C([O-])CCC(=O)C(=O)[O-]|C5H4O5-2|Biochemical
+719|RHEA:*N[C@@H](CCC(N)=O)C(=O)[O-]|C5H8*N2O3-|Biochemical
+720|RHEA:*N[C@@H](CCC(=O)[O-])C(=O)[O-]|C5H6*NO4-2|Biochemical
+721|RHEA:COc1cc(CO)ccc1O|C8H10O3|Biochemical
+722|RHEA:COc1cc(C=O)ccc1O|C8H8O3|Biochemical
+723|RHEA:Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)([O-])[O-])[C@@H](OP(=O)([O-])[O-])[C@H]1O|C10H11N5O10P2-4|Biochemical
+724|RHEA:Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C10H12N5O7P-2|Biochemical
+725|RHEA:O=P([O-])([O-])O|HO4P-2|Biochemical
+726|RHEA:OC1CCCCC1|C6H12O|Biochemical
+727|RHEA:NC(=O)c1ccc[n+]([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])OC[C@H]3O[C@@H](n4cnc5c(N)ncnc54)[C@H](O)[C@@H]3O)[C@@H](O)[C@H]2O)c1|C21H26N7O14P2-|Biochemical
+728|RHEA:O=C1CCCCC1|C6H10O|Biochemical
+729|RHEA:NC(=O)C1=CN([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])OC[C@H]3O[C@@H](n4cnc5c(N)ncnc54)[C@H](O)[C@@H]3O)[C@@H](O)[C@H]2O)C=CC1|C21H27N7O14P2-2|Biochemical
+730|RHEA:CC(=O)OCC[C@H]([NH3+])C(=O)[O-]|C6H11NO4|Biochemical
+731|RHEA:CS|CH4S|Biochemical
+732|RHEA:CSCC[C@H]([NH3+])C(=O)[O-]|C5H11NO2S|Biochemical
+733|RHEA:CC(=O)[O-]|C2H3O2-|Biochemical
+734|RHEA:CC(C)C[C@@H](O)C(=O)[O-]|C6H11O3-|Biochemical
+735|RHEA:CC(C)CC(=O)C(=O)[O-]|C6H9O3-|Biochemical
+736|RHEA:C[C@H]([NH3+])CC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C25H40N8O17P3S-3|Biochemical
+737|RHEA:C/C=C/C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C25H36N7O17P3S-4|Biochemical
+738|RHEA:[NH3+][C@H](Cc1c[nH]c2ccccc12)C(=O)[O-]|C11H12N2O2|Biochemical
+739|RHEA:CC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C23H34N7O17P3S-4|Biochemical
+740|RHEA:CC(=O)N[C@H](Cc1c[nH]c2ccccc12)C(=O)[O-]|C13H13N2O3-|Biochemical
+741|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCS|C21H32N7O16P3S-4|Biochemical
+742|RHEA:Nc1nc2c(c(=O)[nH]1)N1CN(c3ccc(C(=O)N[C@@H](CCC(=O)[O-])C(=O)[O-])cc3)C[C@H]1CN2|C20H21N7O6-2|Biochemical
+743|RHEA:C[C@@H]([NH3+])C(=O)[O-]|C3H7NO2|Biochemical
+744|RHEA:CC([NH3+])(CO)C(=O)[O-]|C4H9NO3|Biochemical
+745|RHEA:Nc1nc2c(c(=O)[nH]1)N[C@@H](CNc1ccc(C(=O)N[C@@H](CCC(=O)[O-])C(=O)[O-])cc1)CN2|C19H21N7O6-2|Biochemical
+746|RHEA:C[NH+](C)CC(=O)[O-]|C4H9NO2|Biochemical
+747|RHEA:C[N+](C)(C)CC(=O)[O-]|C5H11NO2|Biochemical
+748|RHEA:OC[C@H]1O[C@@H](O[C@H]2[C@H](O)[C@@H](O)C(O)O[C@@H]2CO)[C@H](O)[C@@H](O)[C@H]1O|C12H22O11|Biochemical
+749|RHEA:OC[C@H]1O[C@@H](O)[C@H](O)[C@@H](O)[C@H]1O|C6H12O6|Biochemical
+750|RHEA:OC[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O|C6H12O6|Biochemical
+751|RHEA:O=C1C=C([O-])CC(O)C1|C6H7O3-|Biochemical
+752|RHEA:Oc1cc(O)cc(O)c1|C6H6O3|Biochemical
+753|RHEA:O=C([O-])c1ccc(O)c(O)c1|C7H5O4-|Biochemical
+754|RHEA:O=C([O-])/C=C\C(=C/C(=O)[O-])C(=O)[O-]|C7H3O6-3|Biochemical
+755|RHEA:OC[C@H]1O[C@@](CO)(O[C@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)[C@@H](O)[C@@H]1O|C12H22O11|Biochemical
+756|RHEA:O=c1ccn([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])O[C@H]3O[C@H](CO)[C@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1|C15H22N2O17P2-2|Biochemical
+757|RHEA:OC[C@H]1O[C@H](OC[C@H]2O[C@@](CO)(O[C@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@@H]2O)[C@H](O)[C@@H](O)[C@H]1O|C18H32O16|Biochemical
+758|RHEA:O=c1ccn([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c(=O)[nH]1|C9H11N2O12P2-3|Biochemical
+759|RHEA:*[C@H]1C[C@H](OP(=O)([O-])[O-])[C@@H](CO)O1|C5H8*O6P-2|Biochemical
+760|RHEA:*[C@H]1C[C@H](O)[C@@H](CO)O1|C5H9*O3|Biochemical
+761|RHEA:*N[C@@H](COP(=O)([O-])OCC(C)(C)[C@@H](O)C(=O)NCCC(=O)NCCSC(*)=O)C(*)=O|C15H24*3N3O9PS-|Biochemical
+762|RHEA:*C(=O)N[C@H]1CCOC1=O|C5H6*NO3|Biochemical
+763|RHEA:CSC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1O|C11H15N5O3S|Biochemical
+764|RHEA:*N[C@@H](COP(=O)([O-])OCC(C)(C)[C@@H](O)C(=O)NCCC(=O)NCCS)C(*)=O|C14H25*2N3O8PS-|Biochemical
+765|RHEA:*C(=O)OC1CCC2(C)C(CCC3C4CCC(*)C4(C)CCC32)C1|C20H30*2O2|Biochemical
+766|RHEA:*C1CCC2C3CCC4CC(O)CCC4(C)C3CCC12C|C19H31*O|Biochemical
+767|RHEA:*C(=O)[O-]|C*O2-|Biochemical
+768|RHEA:C=C1C[C@]23C[C@@]1(O)CC[C@H]2[C@@]12CCC[C@@](C)(C(=O)O1)[C@H]2[C@@H]3C(=O)[O-]|C19H23O5-|Biochemical
+769|RHEA:C=C1C[C@]23C[C@@]1(O)CC[C@H]2[C@@]12CC[C@H](O)[C@@](C)(C(=O)O1)[C@H]2[C@@H]3C(=O)[O-]|C19H23O6-|Biochemical
+770|RHEA:O=C([O-])CCC(=O)[O-]|C4H4O4-2|Biochemical
+771|RHEA:O=C=O|CO2|Biochemical
+772|RHEA:COC1=C[C@]23CC[NH+](C)[C@H](Cc4ccc(OC)c(O)c42)C3=C[C@@H]1O|C19H24NO4+|Biochemical
+773|RHEA:COC1=C[C@]23CC[NH+](C)[C@H](Cc4ccc(OC)c(O)c42)C3=CC1=O|C19H22NO4+|Biochemical
+774|RHEA:[NH3+][C@@H](CCS)C(=O)[O-]|C4H9NO2S|Biochemical
+775|RHEA:[NH3+][C@@H](CO)C(=O)[O-]|C3H7NO3|Biochemical
+776|RHEA:[NH3+][C@@H](CCSC[C@H]([NH3+])C(=O)[O-])C(=O)[O-]|C7H14N2O4S|Biochemical
+777|RHEA:O=C([O-])[C@H](O)[C@@H](O)[C@H](O)[C@H](O)COP(=O)([O-])[O-]|C6H10O10P-3|Biochemical
+778|RHEA:O=C(CO)[C@H](O)[C@H](O)COP(=O)([O-])[O-]|C5H9O8P-2|Biochemical
+779|RHEA:*O[C@H]1[C@@H](O)[C@H](n2cnc3c(N)ncnc32)O[C@@H]1COP(*)(=O)[O-]|C10H11*2N5O6P-|Biochemical
+780|RHEA:*O[C@H]1[C@@H](O)[C@H](N2C=NC3C(=O)N=CN=C32)O[C@@H]1COP(*)(=O)[O-]|C10H10*2N4O7P-|Biochemical
+781|RHEA:CC(=O)Cc1ccccc1|C9H10O|Biochemical
+782|RHEA:CC(=O)OCc1ccccc1|C9H10O2|Biochemical
+783|RHEA:CC(/C=C/C=C(C)/C=C/[C@@]12O[C@]1(C)C[C@@H](O)CC2(C)C)=C\C=C\C=C(C)\C=C\C=C(C)\C=C\[C@@]12O[C@]1(C)C[C@@H](O)CC2(C)C|C40H56O4|Biochemical
+784|RHEA:C\C(C=C=C1C(C)(C)C[C@H](O)C[C@@]1(C)O)=C/C=C/C(C)=C/C=C/C=C(C)/C=C/C=C(C)/C=C/[C@@]12O[C@]1(C)C[C@@H](O)CC2(C)C|C40H56O4|Biochemical
+785|RHEA:O=C([O-])c1ccccc1|C7H5O2-|Biochemical
+786|RHEA:Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)([O-])OP(=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C10H12N5O13P3-4|Biochemical
+787|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)c1ccccc1|C28H36N7O17P3S-4|Biochemical
+788|RHEA:O=P([O-])([O-])OP(=O)([O-])O|HO7P2-3|Biochemical
+789|RHEA:O=CC(=O)[O-]|C2HO3-|Biochemical
+790|RHEA:O=CC(O)C(=O)[O-]|C3H3O4-|Biochemical
+791|RHEA:CCCCC[C@H](O)/C=C/[C@@H]1[C@@H](C/C=C\CCCC(=O)[O-])[C@@H](O)C[C@H]1O|C20H33O5-|Biochemical
+792|RHEA:CCCCC[C@H](O)/C=C/[C@H]1C(=O)C[C@H](O)[C@@H]1C/C=C\CCCC(=O)[O-]|C20H31O5-|Biochemical
+793|RHEA:[1*][C@@H]1O[C@H](CO)[C@@H](OP(=O)([O-])[O-])[C@H]1O|C5H8*O7P-2|Biochemical
+794|RHEA:*[C@@H]1O[C@H](CO)[C@@H](O)[C@H]1O|C5H9*O4|Biochemical
+795|RHEA:CN(CC[C@H]([NH3+])CC(=O)N[C@H]1C=C[C@H](n2ccc(N)nc2=O)O[C@@H]1C(=O)[O-])C(N)=[NH2+]|C17H27N8O5+|Biochemical
+796|RHEA:CN(CCC([NH3+])CC(=O)N[C@H]1C=C[C@H](n2ccc(=O)[nH]c2=O)O[C@@H]1C(=O)[O-])C(N)=[NH2+]|C17H26N7O6+|Biochemical
+797|RHEA:O=C([O-])O|CHO3-|Biochemical
+798|RHEA:NC(=O)OP(=O)([O-])[O-]|CH2NO5P-2|Biochemical
+799|RHEA:Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C10H12N5O10P2-3|Biochemical
+800|RHEA:COc1cc2c(c3c1-c1ccc4cc5c(cc4c1N(C)C3)OCO5)OCO2|C21H17NO5|Biochemical
+801|RHEA:Cc1cc2c(cc1C)N(C[C@H](O)[C@H](O)[C@H](O)COP(=O)([O-])[O-])c1[nH]c(=O)[nH]c(=O)c1N2|C17H21N4O9P-2|Biochemical
+802|RHEA:COc1cc2c(c3c1-c1cc(O)c4cc5c(cc4c1N(C)C3)OCO5)OCO2|C21H17NO6|Biochemical
+803|RHEA:Cc1cc2nc3c(=O)[n-]c(=O)nc-3n(C[C@H](O)[C@H](O)[C@H](O)COP(=O)([O-])[O-])c2cc1C|C17H18N4O9P-3|Biochemical
+804|RHEA:OC[C@H](O)[C@@H](O)[C@H](O)[C@@H](O)CO|C6H14O6|Biochemical
+805|RHEA:O=C(CO)[C@@H](O)[C@H](O)[C@@H](O)CO|C6H12O6|Biochemical
+806|RHEA:O=C([O-])[C@@H](CO)OP(=O)([O-])[O-]|C3H4O7P-3|Biochemical
+807|RHEA:C=C(OP(=O)([O-])[O-])C(=O)[O-]|C3H2O6P-3|Biochemical
+808|RHEA:C=CC1=C(C)[C@@H](CC2=N/C(=C\c3[nH]c(/C=C4\NC(=O)C(C)=C4C=C)c(C)c3CCC(=O)[O-])C(CCC(=O)[O-])=C2C)NC1=O|C33H34N4O6-2|Biochemical
+809|RHEA:[SH]12[Fe]3[SH]4[Fe]1[SH]1[Fe+]2[SH]3[Fe+]41|H4Fe4S4+2|Biochemical
+810|RHEA:C=CC1=C(C)/C(=C/C2=NC(=C\c3[nH]c(/C=C4\NC(=O)C(C)=C4C=C)c(C)c3CCC(=O)[O-])/C(CCC(=O)[O-])=C2C)NC1=O|C33H32N4O6-2|Biochemical
+811|RHEA:[SH]12[Fe]3[SH]4[Fe]1[SH]1[Fe]2[SH]3[Fe+]41|H4Fe4S4+|Biochemical
+812|RHEA:C[C@H](CC(=O)[O-])OC(=O)C[C@@H](C)O|C8H13O5-|Biochemical
+813|RHEA:C[C@@H](O)CC(=O)[O-]|C4H7O3-|Biochemical
+814|RHEA:C[C@H](c1c[nH]c2ccccc12)[C@H](O)C(=O)[O-]|C12H12NO3-|Biochemical
+815|RHEA:C[C@@H](C(=O)C(=O)[O-])c1c[nH]c2ccccc12|C12H10NO3-|Biochemical
+816|RHEA:Nc1nc2c(c(=O)[nH]1)N[C@@H](CN(C=O)c1ccc(C(=O)N[C@@H](CCC(=O)[O-])C(=O)[O-])cc1)CN2|C20H21N7O7-2|Biochemical
+817|RHEA:O=C([O-])CC1=CCC(=O)O1|C6H5O4-|Biochemical
+818|RHEA:O=C([O-])CCC(=O)CC(=O)[O-]|C6H6O5-2|Biochemical
+819|RHEA:CC(=O)CC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C25H36N7O18P3S-4|Biochemical
+820|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)C[C@@](C)(O)CC(=O)[O-]|C27H39N7O20P3S-5|Biochemical
+821|RHEA:O=S(=O)([O-])[O-]|O4S-2|Biochemical
+822|RHEA:O=C([O-])CCC(=O)C1=CC=C[C@@H](O)[C@@H]1C(=O)[O-]|C11H10O6-2|Biochemical
+823|RHEA:O=C([O-])CCC(=O)c1ccccc1C(=O)[O-]|C11H8O5-2|Biochemical
+824|RHEA:CCCC(=O)[O-]|C4H7O2-|Biochemical
+825|RHEA:C/C=C/C(=O)[O-]|C4H5O2-|Biochemical
+826|RHEA:C[NH2+]C|C2H8N+|Biochemical
+827|RHEA:Cc1cc2nc3c(=O)[n-]c(=O)nc-3n(C[C@H](O)[C@H](O)[C@H](O)COP(=O)([O-])OP(=O)([O-])OC[C@H]3O[C@@H](n4cnc5c(N)ncnc54)[C@H](O)[C@@H]3O)c2cc1C|C27H30N9O15P2-3|Biochemical
+828|RHEA:C[NH3+]|CH6N+|Biochemical
+829|RHEA:Cc1cc2c(cc1C)N(C[C@H](O)[C@H](O)[C@H](O)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n3cnc4c(N)ncnc43)[C@H](O)[C@@H]1O)c1[nH]c(=O)[nH]c(=O)c1N2|C27H33N9O15P2-2|Biochemical
+830|RHEA:C=O|CH2O|Biochemical
+831|RHEA:*C(=O)[C@H](*)[NH3+]|C2H4*2NO+|Biochemical
+832|RHEA:*P(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OC(=O)[C@@H]([NH3+])CCCNC(N)=[NH2+]|C16H26*N9O7P+|Biochemical
+833|RHEA:*C(=O)[C@H](*)NC(=O)[C@@H]([NH3+])CCCNC(N)=[NH2+]|C8H17*2N5O2+2|Biochemical
+834|RHEA:*P(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1O|C10H12*N5O6P-|Biochemical
+835|RHEA:[NH3+]CCCCC(=O)[O-]|C5H11NO2|Biochemical
+836|RHEA:O=CCCCC(=O)[O-]|C5H7O3-|Biochemical
+837|RHEA:*OP(=O)([O-])[O-]|*O4P-2|Biochemical
+838|RHEA:[NH3+][C@@H](Cc1ccc(O)cc1)C(=O)[O-]|C9H11NO3|Biochemical
+839|RHEA:*P(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OC(=O)[C@@H](N)Cc1ccc(O)cc1|C19H21*N6O8P-|Biochemical
+840|RHEA:Cc1ncc(CO)c(C=O)c1O|C8H9NO3|Biochemical
+841|RHEA:Cc1ncc(COP(=O)([O-])[O-])c(C=O)c1O|C8H8NO6P-2|Biochemical
+842|RHEA:O=C([O-])CC(O)(CC(=O)[O-])C(=O)[O-]|C6H5O7-3|Biochemical
+843|RHEA:O=C([O-])/C=C(/CC(=O)[O-])C(=O)[O-]|C6H3O6-3|Biochemical
+844|RHEA:O=C1CCN([C@@H]2O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]2O)C(=O)N1|C9H13N2O9P-2|Biochemical
+845|RHEA:O=C1CCNC(=O)N1|C4H6N2O2|Biochemical
+846|RHEA:O=P([O-])([O-])OC[C@H]1O[C@H](OP(=O)([O-])OP(=O)([O-])[O-])[C@H](O)[C@@H]1O|C5H8O14P3-5|Biochemical
+847|RHEA:O=C([O-])/C=C/c1ccccc1O|C9H7O3-|Biochemical
+848|RHEA:O=c1ccn([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])O[C@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1|C15H22N2O17P2-2|Biochemical
+849|RHEA:O=C([O-])/C=C/c1ccccc1O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O|C15H17O8-|Biochemical
+850|RHEA:*CCC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OC[C@H](N*)C(*)=O|C17H28*3N3O9PS-|Biochemical
+851|RHEA:*/C=C/C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OC[C@H](N*)C(*)=O|C17H26*3N3O9PS-|Biochemical
+852|RHEA:O=C([O-])/C=C/C(=O)CC(=O)CC(=O)[O-]|C8H6O6-2|Biochemical
+853|RHEA:CC(=O)CC(=O)[O-]|C4H5O3-|Biochemical
+854|RHEA:O=C([O-])/C=C/C(=O)[O-]|C4H2O4-2|Biochemical
+855|RHEA:O=c1ccn([C@H]2C[C@H](O)[C@@H](COP(=O)([O-])OP(=O)([O-])OP(=O)([O-])[O-])O2)c(=O)[nH]1|C9H11N2O14P3-4|Biochemical
+856|RHEA:O=c1ccn([C@H]2C[C@H](O)[C@@H](COP(=O)([O-])[O-])O2)c(=O)[nH]1|C9H11N2O8P-2|Biochemical
+857|RHEA:[NH3+][C@@H](COP(=O)([O-])[O-])C(=O)[O-]|C3H6NO6P-2|Biochemical
+858|RHEA:[SH-]|HS-|Biochemical
+859|RHEA:[NH3+][C@@H](CS)C(=O)[O-]|C3H7NO2S|Biochemical
+860|RHEA:[Mg+2]|Mg+2|Biochemical
+861|RHEA:OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O|C6H12O6|Biochemical
+862|RHEA:OC[C@H]1O[C@@H](O)[C@H](O)[C@@H](O)[C@@H]1O|C6H12O6|Biochemical
+863|RHEA:O=C([O-])C(=O)C[C@H](O)[C@H](O)C(=O)[O-]|C6H6O7-2|Biochemical
+864|RHEA:CC(=O)C(=O)[O-]|C3H3O3-|Biochemical
+865|RHEA:[1*]C(=O)OC[C@H](CO)OC([2*])=O|C5H6*2O5|Biochemical
+866|RHEA:[1*]C(=O)OC[C@H](COP(=O)([O-])[O-])OC([2*])=O|C5H5*2O8P-2|Biochemical
+867|RHEA:Cn1c(=O)[nH]c2ncn(C)c2c1=O|C7H8N4O2|Biochemical
+868|RHEA:Cn1c(=O)c2c(ncn2C)n(C)c1=O|C8H10N4O2|Biochemical
+869|RHEA:CC(C)C[C@H]([NH3+])C(=O)[O-]|C6H13NO2|Biochemical
+870|RHEA:CC(C)[C@H]([NH3+])CC(=O)[O-]|C6H13NO2|Biochemical
+871|RHEA:C[C@H](O)[C@@H]1OC(=O)[C@H](O)[C@@H]1O|C6H10O5|Biochemical
+872|RHEA:C[C@H](O)[C@H](O)[C@@H](O)[C@@H](O)C(=O)[O-]|C6H11O6-|Biochemical
+873|RHEA:[NH3+][C@H]1C(O)O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@@H]1O|C6H13NO8P-|Biochemical
+874|RHEA:CC(=O)N[C@H]1C(O)O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@@H]1O|C8H14NO9P-2|Biochemical
+875|RHEA:O=C[C@H](O)COP(=O)([O-])[O-]|C3H5O6P-2|Biochemical
+876|RHEA:O=C(OP(=O)([O-])[O-])[C@H](O)COP(=O)([O-])[O-]|C3H4O10P2-4|Biochemical
+877|RHEA:*C(=O)O[C@H](CO)COP(=O)([O-])OCC[NH3+]|C6H13*NO7P|Biochemical
+878|RHEA:[1*]C(=O)OC[C@H](COP(=O)([O-])OCC[NH3+])OC([2*])=O|C7H12*2NO8P|Biochemical
+879|RHEA:O=C([O-])c1ccc(C(=O)[O-])cc1|C8H4O4-2|Biochemical
+880|RHEA:O=C([O-])C1=C[C@H](O)[C@@](O)(C(=O)[O-])C=C1|C8H6O6-2|Biochemical
+881|RHEA:Cc1c[nH]c(=O)[nH]c1=O|C5H6N2O2|Biochemical
+882|RHEA:O=c1[nH]cc(CO)c(=O)[nH]1|C5H6N2O3|Biochemical
+883|RHEA:O=C([O-])[C@H]1[NH2+]CC[C@@H]1O|C5H9NO3|Biochemical
+884|RHEA:O=C([O-])C1=[NH+]CCC1|C5H7NO2|Biochemical
+885|RHEA:[1*][C@@H](O)CO|C2H5*O2|Biochemical
+886|RHEA:[1*]C(=O)CO|C2H3*O2|Biochemical
+887|RHEA:[1*]C(=O)O[C@H](CO)COP(=O)([O-])OCC[N+](C)(C)C|C9H19*NO7P|Biochemical
+888|RHEA:[1*]C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C22H31*N7O17P3S-4|Biochemical
+889|RHEA:[1*]C(=O)OC[C@H](COP(=O)([O-])OCC[N+](C)(C)C)OC([2*])=O|C10H18*2NO8P|Biochemical
+890|RHEA:O=C([O-])C[C@H](C(=O)[O-])[C@@H](O)C(=O)[O-]|C6H5O7-3|Biochemical
+891|RHEA:CC(C)=CCC/C(C)=C/CC/C(C)=C/COP(=O)([O-])OP(=O)([O-])[O-]|C15H25O7P2-3|Biochemical
+892|RHEA:C=C(C)[C@@H]1CC[C@@]2(C1)C(C)=CCC[C@H]2C|C15H24|Biochemical
+893|RHEA:*/C=C\OC[C@@H](O)COP(=O)([O-])OCC[N+](C)(C)C|C10H21*NO6P|Biochemical
+894|RHEA:*/C=C\OC[C@H](COP(=O)([O-])OCC[N+](C)(C)C)OC(*)=O|C11H20*2NO7P|Biochemical
+895|RHEA:O=C1CC[C@@H](C(=O)[O-])N1|C5H6NO3-|Biochemical
+896|RHEA:*CNC(C)=O|C3H6*NO|Biochemical
+897|RHEA:*C[NH3+]|CH5*N+|Biochemical
+898|RHEA:C[C@]12CC[C@@H](O)C[C@H]1CC[C@@H]1[C@@H]2CC[C@]2(C)C(=O)CC[C@@H]12|C19H30O2|Biochemical
+899|RHEA:C[C@]12CCC(=O)C[C@H]1CC[C@@H]1[C@@H]2CC[C@]2(C)C(=O)CC[C@@H]12|C19H28O2|Biochemical
+900|RHEA:O=C1CCc2ccccc2O1|C9H8O2|Biochemical
+901|RHEA:O=C([O-])CCc1ccccc1O|C9H9O3-|Biochemical
+902|RHEA:CCCCCCCCCCCC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C33H54N7O17P3S-4|Biochemical
+903|RHEA:CCCCCCCCCC[C@H](C(=O)[O-])[C@@](O)(CCC(=O)[O-])C(=O)[O-]|C17H27O7-3|Biochemical
+904|RHEA:Cc1cn([C@H]2C[C@H](O)[C@@H](COP(=O)([O-])OP(=O)([O-])O[C@H]3O[C@H](C)[C@H]([NH3+])[C@H](O)[C@H]3O)O2)c(=O)[nH]c1=O|C16H26N3O14P2-|Biochemical
+905|RHEA:Cc1cn([C@H]2C[C@H](O)[C@@H](COP(=O)([O-])OP(=O)([O-])O[C@H]3O[C@H](C)C(=O)[C@H](O)[C@H]3O)O2)c(=O)[nH]c1=O|C16H22N2O15P2-2|Biochemical
+906|RHEA:O=C([O-])C(=O)c1ccccc1|C8H5O3-|Biochemical
+907|RHEA:[Cu+2]|Cu+2|Biochemical
+908|RHEA:O=C([O-])c1cc(=O)[nH]c(=O)n1[C@@H]1O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C10H10N2O11P-3|Biochemical
+909|RHEA:O=C([O-])c1cc(=O)[nH]c(=O)[nH]1|C5H3N2O4-|Biochemical
+910|RHEA:C/C([O-])=C1/C(=O)N[C@@H](Cc2c[nH]c3ccccc23)C1=O|C15H13N2O3-|Biochemical
+911|RHEA:CC(C)=CCOP(=O)([O-])OP(=O)([O-])[O-]|C5H9O7P2-3|Biochemical
+912|RHEA:CC(C)=CCc1cccc2[nH]cc(C[C@@H]3NC(=O)/C(=C(/C)[O-])C3=O)c12|C20H21N2O3-|Biochemical
+913|RHEA:O=C([O-])CC(=O)C(=O)[O-]|C4H2O5-2|Biochemical
+914|RHEA:Nc1nc2c(ncn2[C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c(=O)[nH]1|C10H12N5O14P3-4|Biochemical
+915|RHEA:Nc1nc2c(ncn2[C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c(=O)[nH]1|C10H12N5O11P2-3|Biochemical
+916|RHEA:OC/C=C/c1ccccc1|C9H10O|Biochemical
+917|RHEA:O=C/C=C/c1ccccc1|C9H8O|Biochemical
+918|RHEA:*[C@H]([NH3+])C(=O)[O-]|C2H4*NO2|Biochemical
+919|RHEA:[1*]C(=O)C(=O)[O-]|C2*O3-|Biochemical
+920|RHEA:NC(=O)CC[C@H]([NH3+])C(=O)[O-]|C5H10N2O3|Biochemical
+921|RHEA:NC(=O)CCC(=O)C(=O)[O-]|C5H6NO4-|Biochemical
+922|RHEA:C[C@H]([NH3+])C(=O)[O-]|C3H7NO2|Biochemical
+923|RHEA:CC(C)CCCC(C)CCCC(C)CCC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C37H62N7O17P3S-4|Biochemical
+924|RHEA:CCC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C24H36N7O17P3S-4|Biochemical
+925|RHEA:CC(C)CCCC(C)CCCC(C)CCC(=O)C(C)C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C40H66N7O18P3S-4|Biochemical
+926|RHEA:Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)([O-])OP(=O)([O-])OC[C@H]2OC(O)[C@H](O)[C@@H]2O)[C@@H](O)[C@H]1O|C15H21N5O14P2-2|Biochemical
+927|RHEA:O=P([O-])([O-])OC[C@H]1OC(O)[C@H](O)[C@@H]1O|C5H9O8P-2|Biochemical
+928|RHEA:Cc1ccccc1|C7H8|Biochemical
+929|RHEA:O=C([O-])CC(Cc1ccccc1)C(=O)[O-]|C11H10O4-2|Biochemical
+930|RHEA:[NH3+]CCS(=O)(=O)[O-]|C2H7NO3S|Biochemical
+931|RHEA:O=CCS(=O)(=O)[O-]|C2H3O4S-|Biochemical
+932|RHEA:O=C([O-])CNC(=O)c1ccccc1|C9H8NO3-|Biochemical
+933|RHEA:[NH3+]CC(=O)[O-]|C2H5NO2|Biochemical
+934|RHEA:CCCCC/C=C\C/C=C\C/C=C\C/C=C\CCCC(=O)[O-]|C20H31O2-|Biochemical
+935|RHEA:CCCCC/C=C\C[C@@H](/C=C/C=C\C/C=C\CCCC(=O)[O-])OO|C20H31O4-|Biochemical
+936|RHEA:CC(=O)N/C=C(/CC(=O)[O-])C(=O)[O-]|C7H7NO5-2|Biochemical
+937|RHEA:O=CCCC(=O)[O-]|C4H5O3-|Biochemical
+938|RHEA:O=C1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O|C6H10O6|Biochemical
+939|RHEA:O=C([O-])[C@H](O)[C@@H](O)[C@H](O)[C@H](O)CO|C6H11O7-|Biochemical
+940|RHEA:COc1ccc(C[C@H]2c3cc(O)c(OC)cc3CC[NH+]2C)cc1O|C19H24NO4+|Biochemical
+941|RHEA:COc1ccc(C[C@H]2c3cc(OC)c(OC)cc3CC[NH+]2C)cc1O|C20H26NO4+|Biochemical
+942|RHEA:*c1c(*)c(*)c(C2Oc3c(*)c(*)c(*)c(*)c3C(=O)C2*)c(*)c1*|C15H2*10O2|Biochemical
+943|RHEA:*c1c(*)c(*)c(-c2oc3c(*)c(*)c(*)c(*)c3c(=O)c2*)c(*)c1*|C15*10O2|Biochemical
+944|RHEA:N#CC(SC[C@H]([NH3+])C(=O)[O-])c1c[nH]c2ccccc12|C13H13N3O2S|Biochemical
+945|RHEA:O=C([O-])[C@@H]1CSC(c2c[nH]c3ccccc23)=N1|C12H9N2O2S-|Biochemical
+946|RHEA:C#N|CHN|Biochemical
+947|RHEA:OC[C@H]1O[C@H](O[C@H]2[C@H](O)[C@@H](O)C(O)O[C@@H]2CO)[C@H](O)[C@@H](O)[C@@H]1O|C12H22O11|Biochemical
+948|RHEA:CC(=O)OC1O[C@H](CO)[C@@H](O[C@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)[C@H](O)[C@H]1O|C14H24O12|Biochemical
+949|RHEA:CCCCC[C@H](O)/C=C/[C@H]1C=CC(=O)[C@@H]1CCCCCCC(=O)[O-]|C20H31O4-|Biochemical
+950|RHEA:CCCCC[C@H](O)/C=C/C1=CCC(=O)[C@@H]1CCCCCCC(=O)[O-]|C20H31O4-|Biochemical
+951|RHEA:O=C(CO)[C@@H](O)[C@H](O)COP(=O)([O-])[O-]|C5H9O8P-2|Biochemical
+952|RHEA:CC(=O)OP(=O)([O-])[O-]|C2H3O5P-2|Biochemical
+953|RHEA:C[C@H](C(=O)[O-])[C@@](C)(O)C(=O)[O-]|C6H8O5-2|Biochemical
+954|RHEA:CCC(=O)[O-]|C3H5O2-|Biochemical
+955|RHEA:[NH3+][C@@H](CC(O)C(=O)[O-])C(=O)[O-]|C5H8NO5-|Biochemical
+956|RHEA:O=C([O-])C(=O)CC(O)C(=O)[O-]|C5H4O6-2|Biochemical
+957|RHEA:COc1cc(/C=C/C(=O)NCC(=O)[O-])ccc1O|C12H12NO5-|Biochemical
+958|RHEA:COc1cc(/C=C/C(=O)[O-])ccc1O|C10H9O4-|Biochemical
+959|RHEA:Nc1nc2c(c(=O)[nH]1)N(C=O)[C@@H](CNc1ccc(C(=O)N[C@@H](CCC(=O)[O-])C(=O)[O-])cc1)CN2|C20H21N7O7-2|Biochemical
+960|RHEA:Nc1nc2c(c(=O)[nH]1)[N+]1=CN(c3ccc(C(=O)N[C@@H](CCC(=O)[O-])C(=O)[O-])cc3)C[C@H]1CN2|C20H20N7O6-|Biochemical
+961|RHEA:C[N+](C)(C)CCOP(=O)([O-])[O-]|C5H13NO4P-|Biochemical
+962|RHEA:CCCC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C25H38N7O17P3S-4|Biochemical
+963|RHEA:CCC(C(=O)[O-])C(O)C(=O)[O-]|C6H8O5-2|Biochemical
+964|RHEA:O=C(CO)[C@@H](O)[C@H](O)[C@H](O)[C@H](O)COP(=O)([O-])[O-]|C7H13O10P-2|Biochemical
+965|RHEA:O=C[C@H](O)[C@H](O)[C@H](O)COP(=O)([O-])[O-]|C5H9O8P-2|Biochemical
+966|RHEA:O=C([O-])[C@H]1CC[C@H](O)[C@H](O)C1|C7H11O4-|Biochemical
+967|RHEA:O=C([O-])[C@H]1CC[C@H](O)C(=O)C1|C7H9O4-|Biochemical
+968|RHEA:[1*]C(=O)OC[C@H](CO[C@@H]1O[C@H](CO)[C@H](O)[C@H](O)[C@H]1O)OC([2*])=O|C11H16*2O10|Biochemical
+969|RHEA:[1*]C(=O)OC[C@H](CO[C@@H]1O[C@H](CO[C@H]2O[C@H](CO)[C@H](O)[C@H](O)[C@H]2O)[C@H](O)[C@H](O)[C@H]1O)OC([2*])=O|C17H26*2O15|Biochemical
+970|RHEA:CN1Cc2c(ccc3c2OCO3)-c2ccc3cc4c(cc3c21)OCO4|C20H15NO4|Biochemical
+971|RHEA:CN1Cc2c3c(cc(O)c2-c2ccc4cc5c(cc4c21)OCO5)OCO3|C20H15NO5|Biochemical
+972|RHEA:O=P([O-])([O-])OC[C@@H](O)[C@@H](O)c1c[nH]c2ccccc12|C11H12NO6P-2|Biochemical
+973|RHEA:[NH3+][C@@H](Cc1c[nH]c2ccccc12)C(=O)[O-]|C11H12N2O2|Biochemical
+974|RHEA:CC(=O)N[C@H]1C(O)O[C@H](COS(=O)(=O)[O-])[C@H](O)[C@@H]1O[C@@H]1OC(C(=O)[O-])=C[C@H](O)[C@H]1O|C14H19NO14S-2|Biochemical
+975|RHEA:CC(=O)N[C@H]1C(O)O[C@H](CO)[C@H](O)[C@@H]1O[C@@H]1OC(C(=O)[O-])=C[C@H](O)[C@H]1O|C14H20NO11-|Biochemical
+976|RHEA:Nc1nc2c(c(=O)[nH]1)N=C([C@H](O)[C@H](O)CO)CN2|C9H13N5O4|Biochemical
+977|RHEA:Nc1nc2c(c(=O)[nH]1)N=C(CO)CN2|C7H9N5O2|Biochemical
+978|RHEA:O=CCO|C2H4O2|Biochemical
+979|RHEA:NC(=[NH2+])NCCC[C@H]([NH3+])C(=O)[O-]|C6H15N4O2+|Biochemical
+980|RHEA:NC(=[NH2+])NCCCC(N)=O|C5H13N4O+|Biochemical
+981|RHEA:O=C1C(O)O[C@H](CO)[C@@H](O)[C@@H]1O|C6H10O6|Biochemical
+982|RHEA:NC(=[NH2+])NCCC[C@H]([NH2+]CCC(=O)[O-])C(=O)[O-]|C9H18N4O4|Biochemical
+983|RHEA:O=C([O-])C1=NCC(O)C1|C5H6NO3-|Biochemical
+984|RHEA:O=CCCC(=O)C(=O)[O-]|C5H5O4-|Biochemical
+985|RHEA:COC(=O)CC(=O)C(=O)[O-]|C5H5O5-|Biochemical
+986|RHEA:CO|CH4O|Biochemical
+987|RHEA:O=c1cc(-c2ccc(O)c(O)c2)oc2cc([O-])cc(O)c12|C15H9O6-|Biochemical
+988|RHEA:O=C([O-])[C@H]1O[C@H](OP(=O)([O-])OP(=O)([O-])OC[C@H]2O[C@@H](n3ccc(=O)[nH]c3=O)[C@H](O)[C@@H]2O)[C@H](O)[C@@H](O)[C@@H]1O|C15H19N2O18P2-3|Biochemical
+989|RHEA:O=C([O-])[C@H]1O[C@@H](Oc2cc([O-])c3c(=O)cc(-c4ccc(O)c(O)c4)oc3c2)[C@H](O)[C@@H](O)[C@@H]1O|C21H16O12-2|Biochemical
+990|RHEA:C=CCC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C25H36N7O17P3S-4|Biochemical
+991|RHEA:C[NH2+]CCOP(=O)([O-])[O-]|C3H9NO4P-|Biochemical
+992|RHEA:Nc1ccn([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c(=O)n1|C9H12N3O14P3-4|Biochemical
+993|RHEA:C[NH2+]CCOP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2ccc(N)nc2=O)[C@H](O)[C@@H]1O|C12H21N4O11P2-|Biochemical
+994|RHEA:*c1cc(*)c(C2(*)Oc3c(*)c(*)c(*)c(*)c3C(=O)C2(*)*)c(*)c1|C15H2*10O2|Biochemical
+995|RHEA:*c1cc(*)c(C2(*)Oc3c(*)c(*)c(*)c(*)c3C(=O)C2(*)*)c(*)c1O|C15H2*10O3|Biochemical
+996|RHEA:*N[C@@H](Cc1ccc(O)cc1)C(*)=O|C9H9*2NO2|Biochemical
+997|RHEA:*N[C@@H](Cc1ccc(OP(=O)([O-])[O-])cc1)C(*)=O|C9H8*2NO5P-2|Biochemical
+998|RHEA:CCCCC[C@H](O)/C=C/[C@@H]1[C@@H](C/C=C\CCCC(=O)[O-])[C@@H]2C[C@H]1OO2|C20H31O5-|Biochemical
+999|RHEA:O=C([O-])/C=C/c1ccccc1|C9H7O2-|Biochemical
+1000|RHEA:O=C([O-])/C=C/c1ccc(O)cc1|C9H7O3-|Biochemical
+1001|RHEA:Oc1cc(O)c2c(c1)O[C@H](c1ccc(O)c(O)c1)[C@@H](O)C2|C15H14O6|Biochemical
+1002|RHEA:Oc1cc(O)c2c(c1)O[C@H](c1ccc(O)c(O)c1)[C@@H](O)[C@H]2O|C15H14O7|Biochemical
+1003|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)/C=C/c1ccccc1|C30H38N7O17P3S-4|Biochemical
+1004|RHEA:O=C([O-])[C@@H](O)[C@@H](O)[C@H](O)[C@H](O)CO|C6H11O7-|Biochemical
+1005|RHEA:O=C[C@@H](O)[C@@H](O)[C@H](O)[C@H](O)C(=O)[O-]|C6H9O7-|Biochemical
+1006|RHEA:O=C([O-])c1cc(C(=O)[O-])oc(=O)c1|C7H2O6-2|Biochemical
+1007|RHEA:O=C([O-])/C=C(\CC(=O)C(=O)[O-])C(=O)[O-]|C7H3O7-3|Biochemical
+1008|RHEA:O=C1CCCCC1O|C6H10O2|Biochemical
+1009|RHEA:O=C1CCCCC(O)O1|C6H10O3|Biochemical
+1010|RHEA:*C=O|CH*O|Biochemical
+1011|RHEA:NC(=[NH2+])NCC(=O)[O-]|C3H7N3O2|Biochemical
+1012|RHEA:CN(CC(=O)[O-])C(N)=[NH2+]|C4H9N3O2|Biochemical
+1013|RHEA:*N[C@@H](CO)C(*)=O|C3H5*2NO2|Biochemical
+1014|RHEA:*N[C@H](CO)C(*)=O|C3H5*2NO2|Biochemical
+1015|RHEA:C=C(C)C1CC=C(CO)CC1|C10H16O|Biochemical
+1016|RHEA:C=C(C)C1CC=C(C=O)CC1|C10H14O|Biochemical
+1017|RHEA:*P(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OC(=O)[C@@H]([NH3+])CCCC[NH3+]|C16H26*N7O7P+|Biochemical
+1018|RHEA:*C(=O)OC[C@H](COP(=O)([O-])OC[C@@H](O)CO)OC(*)=O|C8H12*2O10P-|Biochemical
+1019|RHEA:*C(=O)OC[C@H](COP(=O)([O-])OC[C@@H](O)COC(=O)[C@@H]([NH3+])CCCC[NH3+])OC(*)=O|C14H26*2N2O11P+|Biochemical
+1020|RHEA:*O[C@H]1C[C@H]2O[C@@H]1COP(=O)([O-])O[C@H]1C[C@@H](O[C@@H]1COP(*)(=O)[O-])N1C(=O)NC(=O)[C@@]3(C)[C@@H]1[C@H]1N2C(=O)NC(=O)[C@]13C|C20H24*2N4O14P2-2|Biochemical
+1021|RHEA:*O[C@H]1C[C@H](n2cc(C)c(=O)[nH]c2=O)O[C@@H]1COP(=O)([O-])O[C@H]1C[C@H](n2cc(C)c(=O)[nH]c2=O)O[C@@H]1COP(*)(=O)[O-]|C20H24*2N4O14P2-2|Biochemical
+1022|RHEA:CC(C)[C@H](C(=O)[O-])[C@@H](O)C(=O)[O-]|C7H10O5-2|Biochemical
+1023|RHEA:CC(C)/C(=C/C(=O)[O-])C(=O)[O-]|C7H8O4-2|Biochemical
+1024|RHEA:O=C([O-])[C@@H]1CCC[NH2+]1|C5H9NO2|Biochemical
+1025|RHEA:O=C([O-])[C@H]1CCC[NH2+]1|C5H9NO2|Biochemical
+1026|RHEA:[NH3+]C(CC1=CC2=C(NC(C(=O)[O-])CC2C(=O)[O-])C(=O)C1=O)C(=O)[O-]|C14H12N2O8-2|Biochemical
+1027|RHEA:O=C([O-])c1cc(C(=O)[O-])c2c(n1)C(=O)C(=O)c1cc(C(=O)[O-])[nH]c1-2|C14H3N2O8-3|Biochemical
+1028|RHEA:C=C(C)C1CCC2(C)OC2C1|C10H16O|Biochemical
+1029|RHEA:C=C(C)C1CCC(C)(O)C(O)C1|C10H18O2|Biochemical
+1030|RHEA:CC(C)[C@H]([NH3+])C(=O)[O-]|C5H11NO2|Biochemical
+1031|RHEA:*P(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OC(=O)[C@@H]([NH3+])C(C)C|C15H22*N6O7P|Biochemical
+1032|RHEA:O=P([O-])([O-])O[C@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O|C6H11O9P-2|Biochemical
+1033|RHEA:Nc1nc2c(ncn2[C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])OC3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1|C16H23N5O16P2-2|Biochemical
+1034|RHEA:[NH3+][C@@H](Cc1ccccc1)C(=O)[O-]|C9H11NO2|Biochemical
+1035|RHEA:NC(=O)Cc1ccccc1|C8H9NO|Biochemical
+1036|RHEA:O=P([O-])([O-])OC[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O|C6H11O9P-2|Biochemical
+1037|RHEA:O=P([O-])([O-])O[C@@H]1[C@@H](O)[C@H](O)[C@@H](O)[C@H](O)[C@@H]1O|C6H11O9P-2|Biochemical
+1038|RHEA:CC(=O)C1=Nc2c(nc(N)[nH]c2=O)NCC1|C9H11N5O2|Biochemical
+1039|RHEA:[NH3+][C@@H](CCC(=O)N[C@@H](CSSC[C@H](NC(=O)CC[C@H]([NH3+])C(=O)[O-])C(=O)NCC(=O)[O-])C(=O)NCC(=O)[O-])C(=O)[O-]|C20H30N6O12S2-2|Biochemical
+1040|RHEA:CC(=O)C(=O)[C@H]1CNc2nc(N)[nH]c(=O)c2N1|C9H11N5O3|Biochemical
+1041|RHEA:[NH3+][C@@H](CCC(=O)N[C@@H](CS)C(=O)NCC(=O)[O-])C(=O)[O-]|C10H16N3O6S-|Biochemical
+1042|RHEA:C[C@H]1O[C@H](OP(=O)([O-])OP(=O)([O-])OC[C@H]2O[C@@H](n3cnc4c(=O)[nH]c(N)nc43)[C@H](O)[C@@H]2O)[C@@H](O)[C@@H](O)[C@H]1O|C16H23N5O15P2-2|Biochemical
+1043|RHEA:C[C@H]1O[C@H](OP(=O)([O-])OP(=O)([O-])OC[C@H]2O[C@@H](n3cnc4c(=O)[nH]c(N)nc43)[C@H](O)[C@@H]2O)[C@@H](O)[C@@H](O)C1=O|C16H21N5O15P2-2|Biochemical
+1044|RHEA:O=C([O-])[C@H]1CSC(c2nc3ccc(O)cc3s2)=N1|C11H7N2O3S2-|Biochemical
+1045|RHEA:O=C1CSC(c2nc3ccc(O)cc3s2)=N1|C10H6N2O2S2|Biochemical
+1046|RHEA:*CO|CH3*O|Biochemical
+1047|RHEA:*C(*)O|CH2*2O|Biochemical
+1048|RHEA:[1*]C([2*])=O|C*2O|Biochemical
+1049|RHEA:[O-]C1=C(c2ccc(O)c(O)c2)Oc2cc(O)cc(O)c2[C@@H]1O|C15H11O7-|Biochemical
+1050|RHEA:Oc1ccc([C@H]2Oc3cc(O)cc(O)c3[C@H](O)[C@@H]2O)cc1|C15H14O6|Biochemical
+1051|RHEA:[O-]C1=C(c2ccc(O)cc2)Oc2cc(O)cc(O)c2[C@@H]1O|C15H11O6-|Biochemical
+1052|RHEA:O=P([O-])([O-])OC[C@H]1O[C@@H](O[C@H]2[C@H](O)[C@@H](O)C(O)O[C@@H]2CO)[C@H](O)[C@@H](O)[C@@H]1O|C12H21O14P-2|Biochemical
+1053|RHEA:O=C([O-])[C@H](O)Cc1ccc(O)cc1|C9H9O4-|Biochemical
+1054|RHEA:O=C([O-])C(=O)Cc1ccc(O)cc1|C9H7O4-|Biochemical
+1055|RHEA:O=C([O-])C(=O)[C@@H](O)[C@H](O)[C@H](O)CO|C6H9O7-|Biochemical
+1056|RHEA:O=C([O-])C(=O)[C@@H](O)[C@H](O)[C@H](O)COP(=O)([O-])[O-]|C6H8O10P-3|Biochemical
+1057|RHEA:Nc1c(C(=O)[O-])[nH+]cn1[C@@H]1O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C9H12N3O9P-2|Biochemical
+1058|RHEA:Nc1c[nH+]cn1[C@@H]1O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C8H13N3O7P-|Biochemical
+1059|RHEA:CCCSc1ccc2[nH]c(NC(=O)OC)nc2c1|C12H15N3O2S|Biochemical
+1060|RHEA:CCCS(=O)c1ccc2[nH]c(NC(=O)OC)nc2c1|C12H15N3O3S|Biochemical
+1061|RHEA:O=c1[nH]c(=O)c2ncn([C@@H]3O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]3O)c2[nH]1|C10H11N4O9P-2|Biochemical
+1062|RHEA:O=c1[nH]c(=O)c2nc[nH]c2[nH]1|C5H4N4O2|Biochemical
+1063|RHEA:NC(=O)N[C@H]1NC(=O)NC1=O|C4H6N4O3|Biochemical
+1064|RHEA:NC(=O)N[C@@H]1NC(=O)NC1=O|C4H6N4O3|Biochemical
+1065|RHEA:C[C@H](O)CP(=O)([O-])O|C3H8O4P-|Biochemical
+1066|RHEA:C[C@@H]1O[C@@H]1P(=O)([O-])O|C3H6O4P-|Biochemical
+1067|RHEA:O=CCC[C@H](NC(=O)CCC(=O)[O-])C(=O)[O-]|C9H11NO6-2|Biochemical
+1068|RHEA:O=C([O-])CCC(=O)N[C@@H](CCC(=O)[O-])C(=O)[O-]|C9H10NO7-3|Biochemical
+1069|RHEA:CO[C@@H]1O[C@H](CO)[C@H](O)[C@H](O)[C@H]1O[C@@H]1O[C@@H](C)[C@@H](O)[C@@H](O)[C@@H]1O|C13H24O10|Biochemical
+1070|RHEA:CO[C@@H]1O[C@H](CO)[C@H](O)[C@H](O)[C@H]1O|C7H14O6|Biochemical
+1071|RHEA:C[C@@H]1OC(O)[C@@H](O)[C@H](O)[C@@H]1O|C6H12O5|Biochemical
+1072|RHEA:O=C([O-])C[C@H](C(=O)[O-])[C@H](O)C(=O)[O-]|C6H5O7-3|Biochemical
+1073|RHEA:O=C([O-])C[C@H](O)C(=O)[O-]|C4H4O5-2|Biochemical
+1074|RHEA:Nc1ccccc1C(=O)[O-]|C7H6NO2-|Biochemical
+1075|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)c1ccccc1N|C28H37N8O17P3S-4|Biochemical
+1076|RHEA:*C(=O)OC[C@H](COP(=O)([O-])O[C@@H]1[C@H](O)[C@H](O)[C@@H](O)[C@H](O)[C@H]1O[C@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1[NH3+])OC(*)=O|C17H28*2NO17P|Biochemical
+1077|RHEA:[NH3+][C@H]1[C@@H](O[C@H]2[C@H](O)[C@H](O)[C@H](O)[C@@H](O)[C@@H]2O)O[C@H](CO)[C@@H](O)[C@@H]1O|C12H24NO10+|Biochemical
+1078|RHEA:[NH3+][C@@H](CCOP(=O)([O-])[O-])C(=O)[O-]|C4H8NO6P-2|Biochemical
+1079|RHEA:C[C@@H](O)[C@H]([NH3+])C(=O)[O-]|C4H9NO3|Biochemical
+1080|RHEA:Cc1ncc(CO)c(C[NH3+])c1O|C8H13N2O2+|Biochemical
+1081|RHEA:[NH3+][C@@H](CC(=O)[O-])C(=O)[O-]|C4H6NO4-|Biochemical
+1082|RHEA:*N[C@@H](*)C(*)=O|C2H2*3NO|Biochemical
+1083|RHEA:CC(C)=CCc1c(O)cc(O)c2c1O[C@H](c1ccc(O)cc1O)CC2=O|C20H20O6|Biochemical
+1084|RHEA:C=C(C)[C@H](CC=C(C)C)Cc1c(O)cc(O)c2c1O[C@H](c1ccc(O)cc1O)CC2=O|C25H28O6|Biochemical
+1085|RHEA:[1*]C(O)C(=O)N[C@@H](CO)[C@H](O)/C=C/CCCCCCCCCCCCC|C20H38*NO4|Biochemical
+1086|RHEA:[1*]C(O)C(=O)N[C@@H](CO[C@@H]1O[C@H](CO)[C@H](O)[C@H](O)[C@H]1O)[C@H](O)/C=C/CCCCCCCCCCCCC|C26H48*NO9|Biochemical
+1087|RHEA:Cc1ncc(C(=O)[O-])cc1O|C7H6NO3-|Biochemical
+1088|RHEA:[1*]C(=O)OC[C@H](COC([3*])=O)OC([2*])=O|C6H5*3O6|Biochemical
+1089|RHEA:[1*]C(=O)N[C@@H](CC(=O)[O-])C(=O)[O-]|C5H4*NO5-2|Biochemical
+1090|RHEA:[1*]C(=O)[O-]|C*O2-|Biochemical
+1091|RHEA:O=C([O-])c1ccc(O)cc1|C7H5O3-|Biochemical
+1092|RHEA:C[n+]1cn([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c2[nH]c(=O)[nH]c(=O)c21|C11H15N4O6+|Biochemical
+1093|RHEA:Cn1cnc2[nH]c(=O)[nH]c(=O)c21|C6H6N4O2|Biochemical
+1094|RHEA:OC[C@H]1OC(O)[C@H](O)[C@@H]1O|C5H10O5|Biochemical
+1095|RHEA:CC(C)[C@@]1(CC[C@@H](C)[C@H]2CC[C@H]3[C@@H]4CC=C5C[C@@H](O)CC[C@]5(C)[C@H]4CC[C@]23C)O[C@@H]1C|C29H48O2|Biochemical
+1096|RHEA:CC(C)=CCC[C@@H](C)[C@H]1CC[C@H]2[C@@H]3CC=C4C[C@@H](O)CC[C@]4(C)[C@H]3CC[C@]12C|C27H44O|Biochemical
+1097|RHEA:CC=O|C2H4O|Biochemical
+1098|RHEA:CC(C)[C@H](C(=O)[O-])C(=O)C(=O)[O-]|C7H8O5-2|Biochemical
+1099|RHEA:CC1(C)O[C@H]2CC(=O)OC[C@]23[C@H]2CC[C@@]4(C)[C@H](c5ccoc5)OC(=O)[C@H]5O[C@]54[C@]2(C)C(=O)C[C@@H]13|C26H30O8|Biochemical
+1100|RHEA:CC1(C)O[C@@H](CC(=O)[O-])[C@]2(CO)[C@H]3CC[C@@](C)([C@@H](O)c4ccoc4)[C@@]4(O[C@@H]4C(=O)[O-])[C@]3(C)C(=O)C[C@@H]12|C26H32O10-2|Biochemical
+1101|RHEA:*C(=O)C(=O)[O-]|C2*O3-|Biochemical
+1102|RHEA:*N[C@@H](CS)C(=O)N[C@@H](CC(C)C)C(=O)N[C@H](C(=O)N[C@@H](CS)C(=O)[O-])C(C)C|C17H30*N4O5S2-|Biochemical
+1103|RHEA:*|*|Biochemical
+1104|RHEA:*N[C@H]1CS/C=C\NC(=O)[C@H](C(C)C)NC(=O)[C@H](CC(C)C)NC1=O|C16H27*N4O3S|Biochemical
+1105|RHEA:[H]*[H]|H2*|Biochemical
+1106|RHEA:C[C@H](CCC(=O)NCC(=O)[O-])[C@H]1CC[C@H]2[C@@H]3CC[C@@H]4C[C@H](O)CC[C@]4(C)[C@H]3CC[C@]12C|C26H42NO4-|Biochemical
+1107|RHEA:Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)([O-])OS(=O)(=O)[O-])[C@@H](OP(=O)([O-])[O-])[C@H]1O|C10H11N5O13P2S-4|Biochemical
+1108|RHEA:C[C@H](CCC(=O)NCC(=O)[O-])[C@H]1CC[C@H]2[C@@H]3CC[C@@H]4C[C@H](OS(=O)(=O)[O-])CC[C@]4(C)[C@H]3CC[C@]12C|C26H41NO7S-2|Biochemical
+1109|RHEA:CC(C)(CO)[C@@H](O)C(=O)[O-]|C6H11O4-|Biochemical
+1110|RHEA:[NH3+]CCC(=O)[O-]|C3H7NO2|Biochemical
+1111|RHEA:CC(C)(CO)[C@@H](O)C(=O)NCCC(=O)[O-]|C9H16NO5-|Biochemical
+1112|RHEA:O=C([O-])/C=C1\C=C(Cl)C(=O)O1|C6H2ClO4-|Biochemical
+1113|RHEA:O=C([O-])/C=C1/C=C(Cl)C(=O)O1|C6H2ClO4-|Biochemical
+1114|RHEA:C=C1C[C@@]23CC[C@H]4[C@@](C)(CCC[C@@]4(C)C=O)[C@@H]2CC[C@H]1C3|C20H30O|Biochemical
+1115|RHEA:C=C1C[C@@]23CC[C@H]4[C@@](C)(CCC[C@@]4(C)C(=O)[O-])[C@@H]2CC[C@@H]1C3|C20H29O2-|Biochemical
+1116|RHEA:NC(=O)NCCC[C@H]([NH3+])C(=O)[O-]|C6H13N3O3|Biochemical
+1117|RHEA:[NH2+]=C(NCCC[C@H]([NH3+])C(=O)[O-])NC(CC(=O)[O-])C(=O)[O-]|C10H17N4O6-|Biochemical
+1118|RHEA:CCCCCCCCCCC1=C(C)C(=O)C(OC)=C(OC)C1=O|C19H30O4|Biochemical
+1119|RHEA:O=S(=O)([O-])S|HO3S2-|Biochemical
+1120|RHEA:CCCCCCCCCCc1c(C)c(O)c(OC)c(OC)c1O|C19H32O4|Biochemical
+1121|RHEA:O=S(=O)([O-])SSS(=O)(=O)[O-]|O6S4-2|Biochemical
+1122|RHEA:CC(C)=CCC/C(C)=C/COP(=O)([O-])OP(=O)([O-])[O-]|C10H17O7P2-3|Biochemical
+1123|RHEA:C=C(C)[C@H]1CC=C(C)CC1|C10H16|Biochemical
+1124|RHEA:O=c1[nH]cc([C@@H]2O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c(=O)[nH]1|C9H11N2O9P-2|Biochemical
+1125|RHEA:O=c1[nH]cc([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c(=O)[nH]1|C9H12N2O6|Biochemical
+1126|RHEA:[NH3+][C@H]1C(O)O[C@H](CO)[C@@H](O)[C@@H]1O|C6H14NO5+|Biochemical
+1127|RHEA:O=C([O-])C(O)C(=O)[O-]|C3H2O5-2|Biochemical
+1128|RHEA:COc1cc(/C=C/C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]2O[C@@H](n3cnc4c(N)ncnc43)[C@H](O)[C@@H]2OP(=O)([O-])[O-])cc(OC)c1O|C32H42N7O20P3S-4|Biochemical
+1129|RHEA:COc1cc(/C=C/C(=O)OC(C(=O)[O-])C(=O)[O-])cc(OC)c1O|C14H12O9-2|Biochemical
+1130|RHEA:C[C@H](O)C(=O)[O-]|C3H5O3-|Biochemical
+1131|RHEA:C[C@@H](O)C(=O)[O-]|C3H5O3-|Biochemical
+1132|RHEA:O=C(CO)[C@@H](O)[C@H](O)CO|C5H10O5|Biochemical
+1133|RHEA:Oc1ccc2ccccc2n1|C9H7NO|Biochemical
+1134|RHEA:Oc1ccc2c(n1)C=CC(O)C2O|C9H9NO3|Biochemical
+1135|RHEA:[NH3+][C@H](CO)C(=O)[O-]|C3H7NO3|Biochemical
+1136|RHEA:N#[N+][O-]|N2O|Biochemical
+1137|RHEA:[N]=O|NO|Biochemical
+1138|RHEA:O=C([O-])CO|C2H3O3-|Biochemical
+1139|RHEA:CC(C)C=NO|C4H9NO|Biochemical
+1140|RHEA:CON=CC(C)C|C5H11NO|Biochemical
+1141|RHEA:*[C@@H](NC(N)=O)C(=O)[O-]|C3H4*N2O3-|Biochemical
+1142|RHEA:*[C@@H]([NH3+])C(=O)[O-]|C2H4*NO2|Biochemical
+1143|RHEA:O=C([O-])c1ccccc1O|C7H5O3-|Biochemical
+1144|RHEA:Oc1ccccc1O|C6H6O2|Biochemical
+1145|RHEA:*O[C@H]1[C@@H](O)[C@H](*)O[C@@H]1COP(=O)([O-])OP(=O)([O-])OP(=O)([O-])[O-]|C5H7*2O13P3-4|Biochemical
+1146|RHEA:*O[C@H]1[C@@H](O)[C@H](*)O[C@@H]1COP(=O)([O-])OP(=O)([O-])[O-]|C5H7*2O10P2-3|Biochemical
+1147|RHEA:NC(=O)[C@@H]([NH3+])Cc1c[nH]c2ccccc12|C11H14N3O+|Biochemical
+1148|RHEA:NC(=O)NC(NC(N)=O)C(=O)[O-]|C4H7N4O4-|Biochemical
+1149|RHEA:NC(=O)N[C@@H](O)C(=O)[O-]|C3H5N2O4-|Biochemical
+1150|RHEA:NC(N)=O|CH4N2O|Biochemical
+1151|RHEA:O=P([O-])([O-])O[C@@H]1[C@H](O)[C@H](O)[C@@H](OP(=O)([O-])[O-])[C@H](OP(=O)([O-])[O-])[C@H]1O|C6H9O15P3-6|Biochemical
+1152|RHEA:O=P([O-])([O-])O[C@H]1[C@H](O)[C@@H](OP(=O)([O-])[O-])[C@H](OP(=O)([O-])[O-])[C@@H](OP(=O)([O-])[O-])[C@H]1O|C6H8O18P4-8|Biochemical
+1153|RHEA:NP(=O)([O-])[O-]|H2NO3P-2|Biochemical
+1154|RHEA:OC[C@H]1OC(O)[C@@H](O)[C@@H](O)[C@@H]1O|C6H12O6|Biochemical
+1155|RHEA:O=P([O-])([O-])OC[C@H]1OC(O)[C@@H](O)[C@@H](O)[C@@H]1O|C6H11O9P-2|Biochemical
+1156|RHEA:O=C([O-])C[C@@]1(Cl)C=CC(=O)O1|C6H4ClO4-|Biochemical
+1157|RHEA:O=C([O-])/C=C\C(Cl)=C/C(=O)[O-]|C6H3ClO4-2|Biochemical
+1158|RHEA:*[N+]([1*])([2*])[3*]|*4N+|Biochemical
+1159|RHEA:O=P([O-])([O-])OC[C@@H](O)[C@@H](O)c1c[nH]cn1|C6H9N2O6P-2|Biochemical
+1160|RHEA:O=C(COP(=O)([O-])[O-])Cc1c[nH]cn1|C6H7N2O5P-2|Biochemical
+1161|RHEA:*CC(=O)[O-]|C2H2*O2-|Biochemical
+1162|RHEA:[*-]|*-|Biochemical
+1163|RHEA:[1*]OC[C@@H](O)COP(=O)([O-])O[2*]|C3H6*2O6P-|Biochemical
+1164|RHEA:*OC[C@H](COP(=O)([O-])OCC[N+](C)(C)C)OC(C)=O|C10H21*NO7P|Biochemical
+1165|RHEA:[1*]OC[C@H](COP(=O)([O-])O[2*])OC(C)=O|C5H8*2O7P-|Biochemical
+1166|RHEA:*OC[C@@H](O)COP(=O)([O-])OCC[N+](C)(C)C|C8H19*NO6P|Biochemical
+1167|RHEA:Nc1ccc(C(=O)[O-])cc1|C7H6NO2-|Biochemical
+1168|RHEA:Nc1ccc(O)cc1|C6H7NO|Biochemical
+1169|RHEA:CC[C@H](C)[C@H]([NH3+])C(=O)[O-]|C6H13NO2|Biochemical
+1170|RHEA:*P(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OC(=O)[C@@H]([NH3+])[C@@H](C)CC|C16H24*N6O7P|Biochemical
+1171|RHEA:O=P([O-])([O-])OC[C@H]1O[C@](O)(COP(=O)([O-])[O-])[C@@H](O)[C@@H]1O|C6H10O12P2-4|Biochemical
+1172|RHEA:O=P([O-])([O-])OC[C@H]1O[C@](O)(CO)[C@@H](O)[C@@H]1O|C6H11O9P-2|Biochemical
+1173|RHEA:*N[C@@H](CC[C@H](C[NH3+])O[C@@H]1O[C@H](CO)[C@H](O)[C@H](O)[C@H]1O[C@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O)C(*)=O|C18H33*2N2O12+|Biochemical
+1174|RHEA:*N[C@@H](CC[C@H](C[NH3+])O[C@@H]1O[C@H](CO)[C@H](O)[C@H](O)[C@H]1O)C(*)=O|C12H23*2N2O7+|Biochemical
+1175|RHEA:Cc1cn([C@H]2C[C@H](O)[C@@H](COP(=O)([O-])[O-])O2)c(=O)[nH]c1=O|C10H13N2O8P-2|Biochemical
+1176|RHEA:Cc1cn([C@H]2C[C@H](O)[C@@H](CO)O2)c(=O)[nH]c1=O|C10H14N2O5|Biochemical
+1177|RHEA:O=C([O-])[C@@H](O)C(=O)[C@H](O)[C@@H](O)CO|C6H9O7-|Biochemical
+1178|RHEA:O=C(CO)[C@H](O)[C@@H](O)CO|C5H10O5|Biochemical
+1179|RHEA:O=P1([O-])OP(=O)([O-])OP(=O)([O-])O1|O9P3-3|Biochemical
+1180|RHEA:O=P([O-])([O-])OP(=O)([O-])OP(=O)([O-])[O-]|O10P3-5|Biochemical
+1181|RHEA:O=P([O-])([O-])OC[C@H](O)CO|C3H7O6P-2|Biochemical
+1182|RHEA:O=C(CO)COP(=O)([O-])[O-]|C3H5O6P-2|Biochemical
+1183|RHEA:CCC(=O)C(O)CC|C6H12O2|Biochemical
+1184|RHEA:CCC=O|C3H6O|Biochemical
+1185|RHEA:C[NH+](C)[C@@H](Cc1c[nH]cn1)C(=O)[O-]|C8H13N3O2|Biochemical
+1186|RHEA:C[N+](C)(C)[C@@H](Cc1c[nH]cn1)C(=O)[O-]|C9H15N3O2|Biochemical
+1187|RHEA:C=C(O[C@H]1C=CC=C(C(=O)[O-])[C@@H]1O)C(=O)[O-]|C10H8O6-2|Biochemical
+1188|RHEA:O=C([O-])C1=CC=C[C@H](O)[C@H]1O|C7H7O4-|Biochemical
+1189|RHEA:N#C[O-]|CNO-|Biochemical
+1190|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)/C=C/c1ccc(O)cc1|C30H38N7O18P3S-4|Biochemical
+1191|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)CC(=O)[O-]|C24H33N7O19P3S-5|Biochemical
+1192|RHEA:O=C(/C=C/c1ccc(O)cc1)c1c(O)cc(O)cc1O|C15H12O5|Biochemical
+1193|RHEA:C=Cc1c(C)c2[n]3c1=CC1=[N+]4C(=Cc5c(C)c6c7[n]5[Mg-2]34[N+]3=C(C=2)[C@@H](C)[C@H](CCC(=O)[O-])C3=C7[C-](C(=O)OC)C6=O)C(CC)=C1C|C35H32MgN4O5-2|Biochemical
+1194|RHEA:C=Cc1c(C)c2[n]3c1=CC1=[N+]4C(=Cc5c(C)c6c7[n]5[Mg-2]34[N+]3=C(C=2)C(C)=C(CCC(=O)[O-])C3=C7[C-](C(=O)OC)C6=O)C(CC)=C1C|C35H30MgN4O5-2|Biochemical
+1195|RHEA:*O[C@H]1O[C@H](CO)[C@H](O)[C@H](O[C@@H]2O[C@H](CO)[C@H](O)[C@H](O)[C@H]2O)[C@H]1NC(C)=O|C14H24*NO11|Biochemical
+1196|RHEA:CC(=O)N[C@H]1[C@H]([C@H](O)[C@H](O)CO)O[C@](OP(=O)([O-])OC[C@H]2O[C@@H](n3ccc(N)nc3=O)[C@H](O)[C@@H]2O)(C(=O)[O-])C[C@@H]1O|C20H29N4O16P-2|Biochemical
+1197|RHEA:*O[C@H]1O[C@H](CO[C@]2(C(=O)[O-])C[C@H](O)[C@@H](NC(C)=O)[C@H]([C@H](O)[C@H](O)CO)O2)[C@H](O)[C@H](O[C@@H]2O[C@H](CO)[C@H](O)[C@H](O)[C@H]2O)[C@H]1NC(C)=O|C25H40*N2O19-|Biochemical
+1198|RHEA:Nc1ccn([C@@H]2O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c(=O)n1|C9H12N3O8P-2|Biochemical
+1199|RHEA:O=P([O-])([O-])O[C@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@@H]1O|C6H11O9P-2|Biochemical
+1200|RHEA:Cc1ncc(C(=O)[O-])c(CO)c1O|C8H8NO4-|Biochemical
+1201|RHEA:CC(=O)NC=C(C(=O)[O-])C(CO)C(=O)[O-]|C8H9NO6-2|Biochemical
+1202|RHEA:CC(C)C(=O)C(=O)[O-]|C5H7O3-|Biochemical
+1203|RHEA:[NH3+]CC[C@H]([NH3+])C(=O)[O-]|C4H11N2O2+|Biochemical
+1204|RHEA:[NH3+][C@@H](CC=O)C(=O)[O-]|C4H7NO3|Biochemical
+1205|RHEA:[1*]C(=O)OC[C@H](COP(=O)([O-])OCC[NH2+]C)OC([2*])=O|C8H14*2NO8P|Biochemical
+1206|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)CC(O)CCCC(=O)[O-]|C28H41N7O20P3S-5|Biochemical
+1207|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)CC(=O)CCCC(=O)[O-]|C28H39N7O20P3S-5|Biochemical
+1208|RHEA:CN1c2c(nc(N)[nH]c2=O)NC[C@@H]1CNc1ccc(C(=O)N[C@@H](CCC(=O)[O-])C(=O)[O-])cc1|C20H23N7O6-2|Biochemical
+1209|RHEA:OC[C@H]1O[C@H](O[C@H]2C(O)O[C@H](CO)[C@@H](O)[C@@H]2O)[C@H](O)[C@@H](O)[C@@H]1O|C12H22O11|Biochemical
+1210|RHEA:O=P([O-])([O-])O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O|C6H11O9P-2|Biochemical
+1211|RHEA:NC(=O)C[C@H]([NH3+])C(=O)[O-]|C4H8N2O3|Biochemical
+1212|RHEA:*P(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OC(=O)[C@@H](N)CC(N)=O|C14H18*N7O8P-|Biochemical
+1213|RHEA:NC(=O)NCCC(=O)[O-]|C4H7N2O3-|Biochemical
+1214|RHEA:N#CC[C@H]([NH3+])C(=O)[O-]|C4H6N2O2|Biochemical
+1215|RHEA:*C(*)C(=O)[O-]|C2H*2O2-|Biochemical
+1216|RHEA:[1*][C@@H](O)C(=O)[O-]|C2H2*O3-|Biochemical
+1217|RHEA:Cc1cc2nc[nH]c2cc1C|C9H10N2|Biochemical
+1218|RHEA:O=C([O-])c1ccc[n+]([C@@H]2O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c1|C11H12NO9P-2|Biochemical
+1219|RHEA:Cc1cc2ncn([C@H]3O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]3O)c2cc1C|C14H17N2O7P-2|Biochemical
+1220|RHEA:O=C([O-])c1cccnc1|C6H4NO2-|Biochemical
+1221|RHEA:O=C([O-])CCCC[C@@H]1SC[C@@H]2NC(=O)N[C@@H]21|C10H15N2O3S-|Biochemical
+1222|RHEA:*N[C@@H](CCCCNC(=O)CCCC[C@@H]1SC[C@@H]2NC(=O)N[C@@H]21)C(*)=O|C16H26*2N4O3S|Biochemical
+1223|RHEA:c1ccc2[nH]ccc2c1|C8H7N|Biochemical
+1224|RHEA:O=CNc1ccccc1C=O|C8H7NO2|Biochemical
+1225|RHEA:*[C@H]1C[C@H](O)[C@@H](COP(=O)([O-])[O-])O1|C5H8*O6P-2|Biochemical
+1226|RHEA:*[C@H]1C[C@H](O)[C@@H](COP(=O)([O-])OP(=O)([O-])[O-])O1|C5H8*O9P2-3|Biochemical
+1227|RHEA:*O[C@H]1[C@@H](O)[C@H](*)O[C@@H]1COP(=O)([O-])OP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(=O)[nH]c(N)nc32)[C@H](O)[C@@H]1O|C15H19*2N5O17P3-3|Biochemical
+1228|RHEA:*O[C@H]1[C@@H](O)[C@H](*)O[C@@H]1COP(=O)([O-])OP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2c[n+](C)c3c(=O)[nH]c(N)nc32)[C@H](O)[C@@H]1O|C16H22*2N5O17P3-2|Biochemical
+1229|RHEA:C[C@@H]([NH3+])C(=O)N[C@H](C)C(=O)[O-]|C6H12N2O3|Biochemical
+1230|RHEA:OC1C[C@@H](c2ccccc2)Oc2ccccc21|C15H14O2|Biochemical
+1231|RHEA:O=C1C[C@@H](c2ccccc2)Oc2ccccc21|C15H12O2|Biochemical
+1232|RHEA:[NH3+]CCCC[NH3+]|C4H14N2+2|Biochemical
+1233|RHEA:[NH3+]CCCC[NH2+]CCC[NH3+]|C7H22N3+3|Biochemical
+1234|RHEA:[NH3+]CCCC[NH2+]CCCC[NH3+]|C8H24N3+3|Biochemical
+1235|RHEA:[NH3+]CCC[NH3+]|C3H12N2+2|Biochemical
+1236|RHEA:Cc1ncc(C[n+]2csc(CCOP(=O)([O-])OP(=O)([O-])[O-])c2C)c(N)n1|C12H16N4O7P2S-2|Biochemical
+1237|RHEA:Cc1ncc(C[n+]2csc(CCOP(=O)([O-])OP(=O)([O-])OP(=O)([O-])[O-])c2C)c(N)n1|C12H16N4O10P3S-3|Biochemical
+1238|RHEA:NO|H3NO|Biochemical
+1239|RHEA:[NH3+][C@@H](CC(=O)NO)C(=O)[O-]|C4H8N2O4|Biochemical
+1240|RHEA:CC1(C)O[C@H]2CC(=O)OC[C@]23[C@H]2CC[C@@](C)([C@@H](O[C@@H]4O[C@H](CO)[C@@H](O)[C@H](O)[C@H]4O)c4ccoc4)[C@@]4(O[C@@H]4C(=O)[O-])[C@]2(C)C(=O)C[C@@H]13|C32H41O14-|Biochemical
+1241|RHEA:[NH3+][C@H](CS)C(=O)[O-]|C3H7NO2S|Biochemical
+1242|RHEA:[1*]C1=C([2*])C(=O)C([3*])=C([4*])C1=O|C6*4O2|Biochemical
+1243|RHEA:[1*]c1c([2*])c(O)c([3*])c([4*])c1O|C6H2*4O2|Biochemical
+1244|RHEA:Oc1ccc(O)cc1|C6H6O2|Biochemical
+1245|RHEA:[O]c1ccc(O)cc1|C6H5O2|Biochemical
+1246|RHEA:Nc1ccn([C@H]2C[C@H](O)[C@@H](COP(=O)([O-])[O-])O2)c(=O)n1|C9H12N3O7P-2|Biochemical
+1247|RHEA:Nc1nc(=O)n([C@H]2C[C@H](O)[C@@H](COP(=O)([O-])[O-])O2)cc1CO|C10H14N3O8P-2|Biochemical
+1248|RHEA:O=C([O-])C(=O)C(=O)[O-]|C3O5-2|Biochemical
+1249|RHEA:COc1cc2c(c3c1-c1cc(OC)c4cc5c(cc4c1N(C)C3)OCO5)OCO2|C22H19NO6|Biochemical
+1250|RHEA:COc1cc2c3c(OC)cc4c(c3c[n+](C)c2c2cc3c(cc12)OCO3)OCO4|C22H18NO6+|Biochemical
+1251|RHEA:CO[C@H]1/C=C/O[C@@]2(C)Oc3c(C)c([O-])c4c(O)c(cc(OCC(=O)[O-])c4c3C2=O)NC(=O)/C(C)=C\C=C\[C@H](C)[C@H](O)[C@@H](C)[C@@H](O)[C@@H](C)[C@H](OC(C)=O)[C@@H]1C|C39H47NO14-2|Biochemical
+1252|RHEA:CO[C@H]1/C=C/O[C@@]2(C)Oc3c(C)c(O)c4c(c3C2=O)C2(C=C(NC(=O)/C(C)=C\C=C\[C@H](C)[C@H](O)[C@@H](C)[C@@H](O)[C@@H](C)[C@H](OC(C)=O)[C@@H]1C)C4=O)OCC(=O)O2|C39H47NO14|Biochemical
+1253|RHEA:CO[C@H]1[C@H](O)[C@@H](O)[C@@H](O)[C@@H](O)[C@@H]1O|C7H14O6|Biochemical
+1254|RHEA:CO[C@H]1[C@H](O)[C@@H](O)[C@@H](O)C(=O)[C@@H]1O|C7H12O6|Biochemical
+1255|RHEA:CCNc1nc(Cl)nc(NC(C)C)n1|C8H14ClN5|Biochemical
+1256|RHEA:CCNc1nc(O)nc(NC(C)C)n1|C8H15N5O|Biochemical
+1257|RHEA:[Cl-]|Cl-|Biochemical
+1258|RHEA:*C=NO|CH2*NO|Biochemical
+1259|RHEA:*C#N|C*N|Biochemical
+1260|RHEA:O=c1ccn([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])O[C@H]3OC[C@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1|C14H20N2O16P2-2|Biochemical
+1261|RHEA:O=c1ccn([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])O[C@H]3OC[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1|C14H20N2O16P2-2|Biochemical
+1262|RHEA:C=C(C)CCOP(=O)([O-])OP(=O)([O-])[O-]|C5H9O7P2-3|Biochemical
+1263|RHEA:CC(C)=CCC/C(C)=C\COP(=O)([O-])OP(=O)([O-])[O-]|C10H17O7P2-3|Biochemical
+1264|RHEA:CC[C@]12C=CC[NH+]3CC[C@@]4(c5ccc(OC)cc5N[C@H]4[C@@](O)(C(=O)OC)C1)[C@@H]32|C22H29N2O4+|Biochemical
+1265|RHEA:CC[C@]12C=CC[NH+]3CC[C@@]4(c5ccc(OC)cc5N(C)[C@H]4[C@@](O)(C(=O)OC)C1)[C@@H]32|C23H31N2O4+|Biochemical
+1266|RHEA:NC(=[NH2+])NCCCC(=O)C(=O)[O-]|C6H11N3O3|Biochemical
+1267|RHEA:NC(=[NH2+])NCCCC=O|C5H12N3O+|Biochemical
+1268|RHEA:*C(=O)N[C@H]1[C@H]([C@H](O)[C@H](O)CO)OC(O)(C(=O)[O-])C[C@@H]1O|C10H15*NO9-|Biochemical
+1269|RHEA:*C(=O)N[C@H]1[C@H]([C@@H](O)[C@@H](O)CO)O[C@](OP(=O)([O-])OC[C@H]2O[C@@H](n3ccc(N)nc3=O)[C@H](O)[C@@H]2O)(C(=O)[O-])C[C@@H]1O|C19H26*N4O16P-2|Biochemical
+1270|RHEA:[O-][As](O)O|H2AsO3-|Biochemical
+1271|RHEA:C/C=C1/CN2CCc3c([nH]c4ccccc34)[C@@H]2C[C@@H]1/C(=C/O)C(=O)OC|C21H24N2O3|Biochemical
+1272|RHEA:C/C=C1/C=[N+]2CCc3c([nH]c4ccccc34)[C@@H]2C[C@@H]1/C(=C/O)C(=O)OC|C21H23N2O3+|Biochemical
+1273|RHEA:C[N+](C)(C)CCP(=O)([O-])O|C5H14NO3P|Biochemical
+1274|RHEA:C[N+](C)(C)C[C@H](O)P(=O)([O-])O|C5H14NO4P|Biochemical
+1275|RHEA:CCCCCCCCCCCCCCCC[C@H](O)C(=O)[O-]|C18H35O3-|Biochemical
+1276|RHEA:CCCCCCCCCCCCCCCCC(=O)C(=O)[O-]|C18H33O3-|Biochemical
+1277|RHEA:*C1CCC2C3CCC4CCCCC4(C)C3[C@@H](O)CC12C|C19H31*O|Biochemical
+1278|RHEA:*C1CCC2C3CCC4CCCCC4(C)C3C(=O)CC12C|C19H29*O|Biochemical
+1279|RHEA:O=P([O-])([O-])O[C@H]1[C@H](O)[C@@H](O)[C@H](OP(=O)([O-])[O-])[C@@H](OP(=O)([O-])[O-])[C@H]1O|C6H9O15P3-6|Biochemical
+1280|RHEA:Cc1cn([C@H]2C[C@H](O)[C@@H](COP(=O)([O-])[O-])O2)c(=O)nc1N|C10H14N3O7P-2|Biochemical
+1281|RHEA:Cc1cn([C@H]2C[C@H](O)[C@@H](COP(=O)([O-])OP(=O)([O-])[O-])O2)c(=O)nc1N|C10H14N3O10P2-3|Biochemical
+1282|RHEA:CC(C)C1=C[C@H]2C[C@]3(C=O)[C@@H]4CC[C@@H](C)[C@H]4C[C@@]2(CO)[C@]13C(=O)[O-]|C20H27O4-|Biochemical
+1283|RHEA:C[C@H]1O[C@H](OP(=O)([O-])OP(=O)([O-])OC[C@H]2O[C@@H](n3cnc4c(=O)[nH]c(N)nc43)[C@H](O)[C@@H]2O)[C@@H](O)[C@H](O)[C@@H]1O|C16H23N5O15P2-2|Biochemical
+1284|RHEA:CC(C)C1=C[C@H]2C[C@]3(C=O)[C@@H]4CC[C@@H](C)[C@H]4C[C@@]2(CO[C@@H]2O[C@H](C)[C@@H](O)[C@@H](O)[C@@H]2O)[C@]13C(=O)[O-]|C26H37O8-|Biochemical
+1285|RHEA:O=C([O-])[C@H]1O[C@H](OP(=O)([O-])OP(=O)([O-])OC[C@H]2O[C@@H](n3ccc(=O)[nH]c3=O)[C@H](O)[C@@H]2O)[C@H](O)[C@@H](O)[C@H]1O|C15H19N2O18P2-3|Biochemical
+1286|RHEA:Cc1cc2nc3c(=O)[n-]c(=O)nc-3n(C[C@H](O)[C@H](O)[C@H](O)CO)c2cc1C|C17H19N4O6-|Biochemical
+1287|RHEA:Cc1cc2nc3[nH]c(=O)[nH]c(=O)c3nc2cc1C|C12H10N4O2|Biochemical
+1288|RHEA:OC[C@@H](O)[C@@H](O)[C@@H](O)CO|C5H12O5|Biochemical
+1289|RHEA:Nc1nc2c(c(=O)[nH]1)N=C(COP(=O)([O-])OP(=O)([O-])[O-])CN2|C7H8N5O8P2-3|Biochemical
+1290|RHEA:O=C(O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O)c1cc(O)c(O)c(O)c1|C13H16O10|Biochemical
+1291|RHEA:O=C(OC[C@H]1O[C@@H](OC(=O)c2cc(O)c(O)c(O)c2)[C@H](O)[C@@H](O)[C@@H]1O)c1cc(O)c(O)c(O)c1|C20H20O14|Biochemical
+1292|RHEA:C/C=C1/C[C@@H](C)[C@@](C)(O)C(=O)OCC2=CC[NH+]3CC[C@@H](OC1=O)[C@@H]23|C18H26NO5+|Biochemical
+1293|RHEA:C/C=C1/C[C@@H](C)[C@@](C)(O)C(=O)OCC2=CC[N+]3([O-])CC[C@@H](OC1=O)[C@@H]23|C18H25NO6|Biochemical
+1294|RHEA:*N[C@H](C(*)=O)[C@@H](C)O|C4H7*2NO2|Biochemical
+1295|RHEA:*N[C@H](C(*)=O)[C@@H](C)OP(=O)([O-])[O-]|C4H6*2NO5P-2|Biochemical
+1296|RHEA:C[C@@H]1O[C@H](O[C@@H]2[C@@H](O)[C@H](O)[C@@H](CO)O[C@H]2c2c([O-])cc(O)c3c(=O)cc(-c4ccc(O)cc4)oc23)[C@H](O)[C@H](O)[C@H]1O|C27H29O14-|Biochemical
+1297|RHEA:COc1cc([O-])c2c(=O)cc(-c3ccc(O)cc3)oc2c1[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O[C@H]1O[C@@H](C)[C@H](O)[C@@H](O)[C@H]1O|C28H31O14-|Biochemical
+1298|RHEA:[O-]c1c(Cl)c(Cl)cc(Cl)c1Cl|C6HCl4O-|Biochemical
+1299|RHEA:[O-]c1c(Cl)c(Cl)c([O-])c(Cl)c1Cl|C6Cl4O2-2|Biochemical
+1300|RHEA:CC(=O)N[C@H]1C(O)O[C@H](CO)[C@H](OS(=O)(=O)[O-])[C@@H]1O[C@@H]1OC(C(=O)[O-])=C[C@H](O)[C@H]1O|C14H19NO14S-2|Biochemical
+1301|RHEA:C[C@]12CC[C@H]3[C@@H](CCC4CCCC[C@@]43C)[C@@H]1CC[C@@H]2CCO|C21H36O|Biochemical
+1302|RHEA:C[C@]12CC[C@H]3[C@@H](CCC4CCCC[C@@]43C)[C@@H]1CC[C@@H]2CC=O|C21H34O|Biochemical
+1303|RHEA:COC(=O)C1=CO[C@@H](O[C@@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)[C@H]2[C@@H]1CC[C@@H]2C|C17H26O9|Biochemical
+1304|RHEA:COC(=O)C1=CO[C@@H](O[C@@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)[C@@H]2[C@@H](C)[C@@H](O)C[C@H]12|C17H26O10|Biochemical
+1305|RHEA:[NH3+][C@@H](CCSSCC[C@H]([NH3+])C(=O)[O-])C(=O)[O-]|C8H16N2O4S2|Biochemical
+1306|RHEA:CC[C@H](C)C(=O)C(=O)[O-]|C6H9O3-|Biochemical
+1307|RHEA:*[C@H]([NH2+]C)C(=O)[O-]|C3H6*NO2|Biochemical
+1308|RHEA:O=P([O-])([O-])OCC(O)CO|C3H7O6P-2|Biochemical
+1309|RHEA:OCC(O)CO|C3H8O3|Biochemical
+1310|RHEA:O=C([O-])c1cccc(O)c1|C7H5O3-|Biochemical
+1311|RHEA:[Fe+3]|Fe+3|Biochemical
+1312|RHEA:[Fe+2]|Fe+2|Biochemical
+1313|RHEA:CC1=C(/C=C/C(C)=C/C=C/C(C)=C/CO)C(C)(C)CCC1|C20H30O|Biochemical
+1314|RHEA:*C(=O)OC/C=C(C)/C=C/C=C(C)/C=C/C1=C(C)CCCC1(C)C|C21H29*O2|Biochemical
+1315|RHEA:C[C@@H](OP(=O)([O-])[O-])[C@H]([NH3+])C(=O)[O-]|C4H8NO6P-2|Biochemical
+1316|RHEA:C[C@H](C[NH3+])OP(=O)([O-])[O-]|C3H9NO4P-|Biochemical
+1317|RHEA:CC(=O)OC[C@H]([NH3+])C(=O)[O-]|C5H9NO4|Biochemical
+1318|RHEA:O=c1cc[nH]c(=O)[nH]1|C4H4N2O2|Biochemical
+1319|RHEA:[NH3+][C@@H](Cn1ccc(=O)[nH]c1=O)C(=O)[O-]|C7H9N3O4|Biochemical
+1320|RHEA:O=C([O-])[C@@]1(O)C[C@@H](O)[C@@H](O)[C@@H]([C@H](O)COP(=O)([O-])[O-])O1|C8H12O11P-3|Biochemical
+1321|RHEA:O=C([O-])[C@@]1(O)C[C@@H](O)[C@@H](O)[C@@H]([C@H](O)CO)O1|C8H13O8-|Biochemical
+1322|RHEA:O=c1c2c(O)cccc2oc2c3c(cc(O)c12)O[C@H]1OC=C[C@@H]31|C17H10O6|Biochemical
+1323|RHEA:COc1cc2c(c3oc4cccc(O)c4c(=O)c13)[C@@H]1C=CO[C@@H]1O2|C18H12O6|Biochemical
+1324|RHEA:*N[C@@H](CC(=O)[O-])C(*)=O|C4H4*2NO3-|Biochemical
+1325|RHEA:*N[C@H](C(*)=O)C(O)C(=O)[O-]|C4H4*2NO4-|Biochemical
+1326|RHEA:OCc1ccccc1O|C7H8O2|Biochemical
+1327|RHEA:OCc1ccccc1O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O|C13H18O7|Biochemical
+1328|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)CCC(=O)[O-]|C25H35N7O19P3S-5|Biochemical
+1329|RHEA:CC(C)[C@@H]1CC[C@@H](C)C[C@H]1O|C10H20O|Biochemical
+1330|RHEA:CC(C)[C@@H]1CC[C@@H](C)C[C@H]1O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O|C16H30O6|Biochemical
+1331|RHEA:CC(C)CCC[C@@H](C)[C@H]1CC[C@H]2[C@@H]3CC[C@@H]4CC(=O)CC[C@]4(C)[C@H]3CC[C@]12C|C27H46O|Biochemical
+1332|RHEA:CC(C)CCC[C@@H](C)[C@H]1CC[C@H]2[C@@H]3CCC4=CC(=O)CC[C@]4(C)[C@H]3CC[C@]12C|C27H44O|Biochemical
+1333|RHEA:*C(=O)N[C@@H](C=O)[C@H](O)[C@@H](O)[C@@H](O)CO|C7H12*NO6|Biochemical
+1334|RHEA:[1*]C(=O)N[C@@H]1C(=O)O[C@H](CO)[C@@H](O)[C@@H]1O|C7H10*NO6|Biochemical
+1335|RHEA:CC(=O)N[C@@H]1[C@@H](O)[C@H](O)[C@@H](CO)O[C@H]1NC(=O)C[C@H]([NH3+])C(=O)[O-]|C12H21N3O8|Biochemical
+1336|RHEA:CC(=O)N[C@@H]1[C@@H](O)[C@H](O)[C@@H](CO)O[C@H]1N|C8H16N2O5|Biochemical
+1337|RHEA:CC(=O)OCCC#Cc1ccc(-c2cccs2)s1|C14H12O2S2|Biochemical
+1338|RHEA:OCCC#Cc1ccc(-c2cccs2)s1|C12H10OS2|Biochemical
+1339|RHEA:*OC[C@H](CO)OC(C)=O|C5H9*O4|Biochemical
+1340|RHEA:*OC[C@@H](O)CO|C3H7*O3|Biochemical
+1341|RHEA:C[N+](C)(C)C[C@@H](O)CC(=O)[O-]|C7H15NO3|Biochemical
+1342|RHEA:C[N+](C)(C)CC(=O)CC(=O)[O-]|C7H13NO3|Biochemical
+1343|RHEA:O=C([O-])[C@@]1(O)C=CC=C[C@@H]1O|C7H7O4-|Biochemical
+1344|RHEA:O=C([O-])[C@H](O)[C@@H](O)[C@H](O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H](O)CO|C12H21O12-|Biochemical
+1345|RHEA:Nc1nc2c(c(=O)[nH]1)N=C(CNc1ccc(C(=O)N[C@@H](CCC(=O)[O-])C(=O)[O-])cc1)CN2|C19H19N7O6-2|Biochemical
+1346|RHEA:C[C@H](CCC(=O)[O-])[C@H]1CC[C@H]2[C@@H]3CC[C@@H]4C[C@H](O)CC[C@]4(C)[C@H]3CC[C@]12C|C24H39O3-|Biochemical
+1347|RHEA:C[C@H](CCC(=O)[O-])[C@H]1CC[C@H]2[C@@H]3[C@H](O)C[C@@H]4C[C@H](O)CC[C@]4(C)[C@H]3CC[C@]12C|C24H39O4-|Biochemical
+1348|RHEA:Cc1ncc(C[n+]2csc(CCO)c2C)c(N)n1|C12H17N4OS+|Biochemical
+1349|RHEA:[1*]C(=O)OC[C@H](COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2ccc(N)nc2=O)[C@H](O)[C@@H]1O)OC([2*])=O|C14H17*2N3O15P2-2|Biochemical
+1350|RHEA:O[C@H]1[C@H](O)[C@@H](O)[C@H](O)[C@@H](O)[C@H]1O|C6H12O6|Biochemical
+1351|RHEA:*C(=O)OC[C@H](COP(=O)([O-])O[C@@H]1[C@H](O)[C@H](O)[C@@H](O)[C@H](O)[C@H]1O)OC(*)=O|C11H16*2O13P-|Biochemical
+1352|RHEA:[NH3+]CCC[C@H]([NH3+])C(=O)[O-]|C5H13N2O2+|Biochemical
+1353|RHEA:[NH3+]CCC[C@@H]([NH3+])C(=O)[O-]|C5H13N2O2+|Biochemical
+1354|RHEA:c1ccc2cnccc2c1|C9H7N|Biochemical
+1355|RHEA:O=c1[nH]ccc2ccccc12|C9H7NO|Biochemical
+1356|RHEA:*N[C@@H](COP(=O)([O-])OCC(C)(C)[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)C[C@H](O)C[C@H](O)CC[C@@H]1[C@H]2CC[C@@H](C)C[C@@H]2C=C[C@@H]1C)C(*)=O|C33H55*2N3O11PS-|Biochemical
+1357|RHEA:C[C@@H]1CC[C@@H]2[C@@H](CC[C@@H](O)C[C@@H](O)CC(=O)[O-])[C@@H](C)C=C[C@H]2C1|C19H31O4-|Biochemical
+1358|RHEA:O=c1ccn([C@@H]2O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c(=O)[nH]1|C9H11N2O9P-2|Biochemical
+1359|RHEA:Nc1ccn([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c(=O)n1|C9H12N3O11P2-3|Biochemical
+1360|RHEA:C=C(Cl)C[C@H]([NH3+])C(=O)[O-]|C5H8ClNO2|Biochemical
+1361|RHEA:C=CCC(=O)C(=O)[O-]|C5H5O3-|Biochemical
+1362|RHEA:CC(=NO)C(=O)[O-]|C3H4NO3-|Biochemical
+1363|RHEA:CC(C)=O|C3H6O|Biochemical
+1364|RHEA:CC(C)=NO|C3H7NO|Biochemical
+1365|RHEA:[NH3+][C@@H](C[SeH])C(=O)[O-]|C3H7NO2Se|Biochemical
+1366|RHEA:[SeH-]|HSe-|Biochemical
+1367|RHEA:CCCCC[C@H](O)/C=C/[C@H]1[C@H](O)CC(=O)[C@@H]1CCCCCCC(=O)[O-]|C20H33O5-|Biochemical
+1368|RHEA:CCCCCC(=O)/C=C/[C@H]1[C@H](O)CC(=O)[C@@H]1CCCCCCC(=O)[O-]|C20H31O5-|Biochemical
+1369|RHEA:*c1c(*)c(*)c([C@H]2Oc3c(*)c(*)c(*)c(*)c3C(*)[C@H]2O)c(*)c1*|C15H4*10O2|Biochemical
+1370|RHEA:*c1c(*)c(*)c(-c2[o+]c3c(*)c(*)c(*)c(*)c3c(*)c2[O-])c(*)c1*|C15*10O2|Biochemical
+1371|RHEA:C[C@@H]1CC[C@@H](C(C)(C)O)[C@H](O)C1|C10H20O2|Biochemical
+1372|RHEA:*N[C@@H](COP(=O)([O-])OCC(C)(C)[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)[C@@H]1CCC[NH2+]1)C(*)=O|C19H33*2N4O9PS|Biochemical
+1373|RHEA:[1*]C(=O)O[C@H](COC([2*])=O)COP(=O)([O-])O[C@@H]1[C@H](O)[C@H](O)[C@@H](O)[C@H](O)[C@H]1O[C@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1NC(C)=O|C19H29*2NO18P-|Biochemical
+1374|RHEA:*C(=O)OC[C@H](CO[C@@H]1O[C@H](CO)[C@H](O)[C@H](O[C@]2(C(=O)[O-])C[C@H](O)[C@@H](NC(C)=O)[C@H]([C@H](O)[C@H](O)CO)O2)[C@H]1O)OC(*)=O|C22H32*2NO18-|Biochemical
+1375|RHEA:C=C(O[C@@H]1C=C(C(=O)[O-])C=C[C@H]1O)C(=O)[O-]|C10H8O6-2|Biochemical
+1376|RHEA:C=C(O[C@@H]1C=C(C(=O)[O-])C=C[C@H]1[NH3+])C(=O)[O-]|C10H10NO5-|Biochemical
+1377|RHEA:O=C([O-])[C@H](O)[C@H](O)[C@H](O)CO|C5H9O6-|Biochemical
+1378|RHEA:Nc1nc2c(ncn2[C@@H]2O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c(=O)[nH]1|C10H12N5O8P-2|Biochemical
+1379|RHEA:C[As](O)O|CH5AsO2|Biochemical
+1380|RHEA:C[As](C)(=O)[O-]|C2H6AsO2-|Biochemical
+1381|RHEA:*P(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OC(=O)[C@@H]([NH3+])CC(C)C|C16H24*N6O7P|Biochemical
+1382|RHEA:C[NH2+][C@@H]1C[C@H]2O[C@@](C)([C@@H]1O)n1c3ccccc3c3c4c(c5c6ccccc6n2c5c31)C(=O)NC4|C27H25N4O3+|Biochemical
+1383|RHEA:C[NH2+][C@@H]1C[C@H]2O[C@@](C)([C@@H]1OC)n1c3ccccc3c3c4c(c5c6ccccc6n2c5c31)C(=O)NC4|C28H27N4O3+|Biochemical
+1384|RHEA:CC(=O)[C@H]1CC[C@H]2[C@@H]3CCC4=CC(=O)CC[C@]4(C)[C@H]3CC[C@]12C|C21H30O2|Biochemical
+1385|RHEA:CC(=O)O[C@H]1CC[C@H]2[C@@H]3CCC4=CC(=O)CC[C@]4(C)[C@H]3CC[C@]12C|C21H30O3|Biochemical
+1386|RHEA:NC(=O)NCNC(=O)[O-]|C3H6N3O3-|Biochemical
+1387|RHEA:NC(=O)NC[NH3+]|C2H8N3O+|Biochemical
+1388|RHEA:O=c1[nH]cnc2c1ncn2[C@@H]1O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C10H11N4O8P-2|Biochemical
+1389|RHEA:[S]1[Fe+][S][Fe+]1|Fe2S2+2|Biochemical
+1390|RHEA:CC(C)C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C25H38N7O17P3S-4|Biochemical
+1391|RHEA:[S]1[Fe][S][Fe+]1|Fe2S2+|Biochemical
+1392|RHEA:NC(=O)*C(=O)[O-]|C2H2*NO3-|Biochemical
+1393|RHEA:O=C([O-])*C(=O)[O-]|C2*O4-2|Biochemical
+1394|RHEA:CN1CC(=O)NC1=O|C4H6N2O2|Biochemical
+1395|RHEA:CN(CC(=O)[O-])C(N)=O|C4H7N2O3-|Biochemical
+1396|RHEA:O=S([O-])[O-]|O3S-2|Biochemical
+1397|RHEA:OC1CCCC1|C5H10O|Biochemical
+1398|RHEA:O=C1CCCC1|C5H8O|Biochemical
+1399|RHEA:CC(C)=CCc1c(O)cc(O)c2c1O[C@H](c1ccc(O)cc1)CC2=O|C20H20O5|Biochemical
+1400|RHEA:CC1(C)O[C@]2(C)CC[C@H]1C[C@@H]2O|C10H18O2|Biochemical
+1401|RHEA:CC1(C)O[C@]2(C)CC[C@H]1CC2=O|C10H16O2|Biochemical
+1402|RHEA:O=CCF|C2H3FO|Biochemical
+1403|RHEA:[NH3+][C@H](C(=O)[O-])[C@H](O)CF|C4H8FNO3|Biochemical
+1404|RHEA:CC(=O)Oc1ccccc1C(=O)[O-]|C9H7O4-|Biochemical
+1405|RHEA:CNC(N)=[NH2+]|C2H8N3+|Biochemical
+1406|RHEA:O=C([O-])c1ccccc1N[C@@H]1O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C12H13NO9P-3|Biochemical
+1407|RHEA:CC(O)C(=O)[C@H]1CNc2nc(N)[nH]c(=O)c2N1|C9H13N5O3|Biochemical
+1408|RHEA:*N[C@@H](COP(=O)([O-])OCC(C)(C)[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)CCCCCCCCCCCCCCCCC)C(*)=O|C32H59*2N3O9PS-|Biochemical
+1409|RHEA:*N[C@@H](COP(=O)([O-])OCC(C)(C)[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)CCCCCCC/C=C\CCCCCCCC)C(*)=O|C32H57*2N3O9PS-|Biochemical
+1410|RHEA:*N[C@@H](CO[C@@H]1OC[C@@H](O[C@@H]2O[C@H](CO)[C@H](O)[C@H](O)[C@H]2O)[C@H](O)[C@H]1O)C(*)=O|C14H23*2NO11|Biochemical
+1411|RHEA:*N[C@@H](CO[C@@H]1OC[C@@H](O[C@@H]2O[C@H](CO)[C@H](O)[C@H](O[C@@H]3O[C@H](CO)[C@H](O)[C@H](O)[C@H]3O)[C@H]2O)[C@H](O)[C@H]1O)C(*)=O|C20H33*2NO16|Biochemical
+1412|RHEA:C=CC|C3H6|Biochemical
+1413|RHEA:CC1CO1|C3H6O|Biochemical
+1414|RHEA:C[C@H]([C@H](O)CCC(C)(C)O)[C@H]1CC[C@@]2(O)C3=CC(=O)[C@@H]4C[C@@H](O)[C@@H](O)C[C@]4(C)[C@H]3CC[C@]12C|C27H44O6|Biochemical
+1415|RHEA:C[C@H]([C@H](O)CCC(C)(C)O)[C@H]1CC[C@@]2(O)C3=CC(=O)[C@@H]4CC(=O)[C@@H](O)C[C@]4(C)[C@H]3CC[C@]12C|C27H42O6|Biochemical
+1416|RHEA:NC(=O)c1ccc[n+]([C@@H]2O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c1|C11H14N2O8P-|Biochemical
+1417|RHEA:O=c1ccc2c([O-])c3ccoc3cc2o1|C11H5O4-|Biochemical
+1418|RHEA:COc1c2ccoc2cc2oc(=O)ccc12|C12H8O4|Biochemical
+1419|RHEA:O=P([O-])([O-])OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O|C6H11O9P-2|Biochemical
+1420|RHEA:*N[C@@H](Cc1c[nH]c(CC[C@@H](C(N)=O)[N+](C)(C)C)n1)C(*)=O|C13H22*2N5O2+|Biochemical
+1421|RHEA:*N[C@@H](Cc1cn([C@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])OC[C@H]3O[C@@H](n4cnc5c(N)ncnc54)[C@H](O)[C@@H]3O)[C@@H](O)[C@H]2O)c(CC[C@@H](C(N)=O)[N+](C)(C)C)n1)C(*)=O|C28H41*2N10O15P2-|Biochemical
+1422|RHEA:NC(=O)c1cccnc1|C6H6N2O|Biochemical
+1423|RHEA:CC(C)(CO)C(=O)C(=O)[O-]|C6H9O4-|Biochemical
+1424|RHEA:*[C@@H]1O[C@H](COP(*)(=O)[O-])[C@H]2OP(=O)([O-])O[C@H]21|C5H6*2O8P2-2|Biochemical
+1425|RHEA:*[C@@H]1O[C@H](COP(*)(=O)[O-])[C@@H](O)[C@H]1OP(=O)([O-])[O-]|C5H7*2O9P2-3|Biochemical
+1426|RHEA:O[C@@H]1c2ccccc2C=C[C@@H]1O|C10H10O2|Biochemical
+1427|RHEA:Oc1ccc2ccccc2c1O|C10H8O2|Biochemical
+1428|RHEA:CC(=O)N[C@@H]1[C@@H](O)[C@H](O[C@@H]2O[C@H](CO)[C@H](O)[C@H](O)[C@H]2O)[C@@H](CO)O[C@H]1O|C14H25NO11|Biochemical
+1429|RHEA:CC(=O)N[C@@H]1[C@@H](O)[C@H](O[C@@H]2O[C@H](CO[C@]3(C(=O)[O-])C[C@H](O)[C@@H](NC(C)=O)[C@H]([C@H](O)[C@H](O)CO)O3)[C@H](O)[C@H](O)[C@H]2O)[C@@H](CO)O[C@H]1O|C25H41N2O19-|Biochemical
+1430|RHEA:O=Cc1ccccc1|C7H6O|Biochemical
+1431|RHEA:O=C[O-]|CHO2-|Biochemical
+1432|RHEA:C[NH+](C)C|C3H10N+|Biochemical
+1433|RHEA:CSC[C@H]1O[C@H](OP(=O)([O-])[O-])[C@H](O)[C@@H]1O|C6H11O7PS-2|Biochemical
+1434|RHEA:Nc1ncnc2[nH]cnc12|C5H5N5|Biochemical
+1435|RHEA:O=P([O-])([O-])O[C@@H]1[C@@H](OP(=O)([O-])[O-])[C@H](OP(=O)([O-])[O-])[C@@H](O)[C@@H](O)[C@H]1OP(=O)([O-])[O-]|C6H8O18P4-8|Biochemical
+1436|RHEA:O=P([O-])([O-])O[C@@H]1[C@@H](OP(=O)([O-])[O-])[C@H](OP(=O)([O-])[O-])[C@H](O)[C@H](OP(=O)([O-])[O-])[C@H]1OP(=O)([O-])[O-]|C6H7O21P5-10|Biochemical
+1437|RHEA:*N[C@@H](Cc1c[nH]cn1)C(*)=O|C6H7*2N3O|Biochemical
+1438|RHEA:*N[C@@H](Cc1cn(P(=O)([O-])[O-])cn1)C(*)=O|C6H6*2N3O4P-2|Biochemical
+1439|RHEA:OC[C@@H](O)C(O)[C@H](O)CO|C5H12O5|Biochemical
+1440|RHEA:O=C(CO)[C@H](O)[C@H](O)CO|C5H10O5|Biochemical
+1441|RHEA:C[C@]12C[C@H](O)[C@H]3[C@@H](CCC4=CC(=O)CC[C@@]43C)[C@@H]1CC[C@@H]2C(=O)CO|C21H30O4|Biochemical
+1442|RHEA:C[C@]12CCC(=O)C=C1CC[C@@H]1[C@@H]2[C@@H](O)C[C@]2(CO)[C@@H](C(=O)CO)CC[C@@H]12|C21H30O5|Biochemical
+1443|RHEA:CCCCC[C@H](O)/C=C/[C@H]1[C@H](O)CC(=O)[C@@H]1C/C=C\CCCC(=O)[O-]|C20H31O5-|Biochemical
+1444|RHEA:CCCCCC(=O)/C=C/[C@H]1[C@H](O)CC(=O)[C@@H]1C/C=C\CCCC(=O)[O-]|C20H29O5-|Biochemical
+1445|RHEA:C[NH+]1CCC[C@H]1c1ccc(O)nc1|C10H15N2O+|Biochemical
+1446|RHEA:C[C@]12CCC(=O)C=C1CC[C@@H]1[C@@H]2[C@@H](O)C[C@@]2(C)[C@H]1CC[C@]2(O)C(=O)CO|C21H30O5|Biochemical
+1447|RHEA:C[C@]12CCC(=O)C=C1CC[C@@H]1[C@@H]2[C@@H](O)C[C@@]2(C)[C@H]1CC[C@]2(O)C(=O)COS(=O)(=O)[O-]|C21H29O8S-|Biochemical
+1448|RHEA:COc1cc2c(cc1O)C(Cc1ccc(O)c(O)c1)[NH2+]CC2|C17H20NO4+|Biochemical
+1449|RHEA:COc1cc(CC2[NH2+]CCc3cc(OC)c(O)cc32)ccc1O|C18H22NO4+|Biochemical
+1450|RHEA:CC(C)CCC[C@@H](C)[C@H]1CC[C@H]2[C@@H]3[C@H](O)C=C4C[C@@H](O)CC[C@]4(C)[C@H]3CC[C@]12C|C27H46O2|Biochemical
+1451|RHEA:CC(C)CCC[C@@H](C)[C@H]1CC[C@H]2[C@@H]3[C@H](O)CC4=CC(=O)CC[C@]4(C)[C@H]3CC[C@]12C|C27H44O2|Biochemical
+1452|RHEA:O=C([O-])CC[C@H](C(=O)[O-])[C@@H](O)C(=O)[O-]|C7H7O7-3|Biochemical
+1453|RHEA:O=C([O-])CCCC(=O)C(=O)[O-]|C6H6O5-2|Biochemical
+1454|RHEA:Nc1nc(O)c2nccnc2n1|C6H5N5O|Biochemical
+1455|RHEA:Oc1nc(O)c2nccnc2n1|C6H4N4O2|Biochemical
+1456|RHEA:CCCC(=O)CC(=O)CCC|C9H16O2|Biochemical
+1457|RHEA:CCCC(C)=O|C5H10O|Biochemical
+1458|RHEA:CCCCCC(=O)CC[C@H]1[C@H](O)CC(=O)[C@@H]1C/C=C\CCCC(=O)[O-]|C20H31O5-|Biochemical
+1459|RHEA:C[C@H](O)[C@H](O)[C@H]1CNC2=NC(N)=NC(=O)[C@]2(O)N1|C9H15N5O4|Biochemical
+1460|RHEA:C[C@H](O)[C@H](O)[C@H]1CNC2=NC(N)=NC(=O)C2=N1|C9H13N5O3|Biochemical
+1461|RHEA:NN|H4N2|Biochemical
+1462|RHEA:CC(C)(O)C#N|C4H7NO|Biochemical
+1463|RHEA:ClC1=C[C@@H](Cl)C(Cl)=C[C@H]1Cl|C6H4Cl4|Biochemical
+1464|RHEA:OC1C=C(Cl)C(O)C=C1Cl|C6H6Cl2O2|Biochemical
+1465|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)c1ccc(O)cc1|C28H36N7O18P3S-4|Biochemical
+1466|RHEA:O=C([O-])C(=O)CO|C3H3O4-|Biochemical
+1467|RHEA:CC(C)CCC[C@@H](C)[C@H]1CC[C@H]2[C@@H]3CC=C4C[C@@H](O[C@@H]5O[C@H](CO)[C@@H](O)[C@H](O)[C@H]5O)CC[C@]4(C)[C@H]3CC[C@]12C|C33H56O6|Biochemical
+1468|RHEA:CC(C)CCC[C@@H](C)[C@H]1CC[C@H]2[C@@H]3CC=C4C[C@@H](O)CC[C@]4(C)[C@H]3CC[C@]12C|C27H46O|Biochemical
+1469|RHEA:[NH3+][C@@H](CCC[C@H](NC(=O)CCC(=O)[O-])C(=O)[O-])C(=O)[O-]|C11H16N2O7-2|Biochemical
+1470|RHEA:O=C([O-])CCC(=O)N[C@@H](CCCC(=O)C(=O)[O-])C(=O)[O-]|C11H12NO8-3|Biochemical
+1471|RHEA:CC(C)CCC[C@@H](C)[C@H]1CC[C@H]2[C@@H]3C[C@@H]4O[C@@]45C[C@@H](O)CC[C@]5(C)[C@H]3CC[C@]12C|C27H46O2|Biochemical
+1472|RHEA:CC(C)CCC[C@@H](C)[C@H]1CC[C@H]2[C@@H]3C[C@@H](O)[C@@]4(O)C[C@@H](O)CC[C@]4(C)[C@H]3CC[C@]12C|C27H48O3|Biochemical
+1473|RHEA:O=C([O-])c1cc(O)c2ccccc2n1|C10H6NO3-|Biochemical
+1474|RHEA:O=C([O-])c1cc(O)c2c(n1)C(O)C(O)C=C2|C10H8NO5-|Biochemical
+1475|RHEA:Cc1c2c(c(O)c3c(O)cccc13)C(=O)[C@]1(O)C(=O)C(C(N)=O)=C([O-])[C@@H]([NH+](C)C)[C@@H]1C2|C22H22N2O7|Biochemical
+1476|RHEA:C[NH+](C)[C@@H]1C([O-])=C(C(N)=O)C(=O)[C@@]2(O)C(=O)C3=C(C[C@@H]12)[C@](C)(O)c1cccc(O)c1C3=O|C22H22N2O8|Biochemical
+1477|RHEA:[NH3+][C@@H](CCC(=O)N[C@@H](CS)C(=O)[O-])C(=O)[O-]|C8H13N2O5S-|Biochemical
+1478|RHEA:[NH3+]C(CCC(=O)NC(CSSCC(NC(=O)CCC([NH3+])C(=O)[O-])C(=O)[O-])C(=O)[O-])C(=O)[O-]|C16H24N4O10S2-2|Biochemical
+1479|RHEA:*/C=C\CCCCCCCC(=O)O[C@H](COC(*)=O)COP(=O)([O-])O*|C14H21*3O8P-|Biochemical
+1480|RHEA:*OP(=O)([O-])OC[C@@H](COC(*)=O)OC(=O)CCCCCCCC1CC1*|C15H23*3O8P-|Biochemical
+1481|RHEA:O=C([O-])[C@@H]1CCCC[NH2+]1|C6H11NO2|Biochemical
+1482|RHEA:O=C([O-])[C@@H]1CCCC=N1|C6H8NO2-|Biochemical
+1483|RHEA:Oc1ccccc1-c1ccccc1|C12H10O|Biochemical
+1484|RHEA:Oc1cccc(-c2ccccc2)c1O|C12H10O2|Biochemical
+1485|RHEA:Oc1c[nH]c2ccccc12|C8H7NO|Biochemical
+1486|RHEA:OC[C@H]1O[C@@H](Oc2c[nH]c3ccccc23)[C@H](O)[C@@H](O)[C@@H]1O|C14H17NO6|Biochemical
+1487|RHEA:Cc1ncc(C[n+]2csc(CCOP(=O)([O-])[O-])c2C)c(N)n1|C12H16N4O4PS-|Biochemical
+1488|RHEA:C=C1/C=C/[C@H](C(C)C)CC/C(C)=C/CC1|C15H24|Biochemical
+1489|RHEA:*C(N)=O|CH2*NO|Biochemical
+1490|RHEA:COc1cc(/C=C/C(=O)O[C@@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)cc(OC)c1O|C17H22O10|Biochemical
+1491|RHEA:O=C([O-])C[C@@H]1NC(=O)NC1=O|C5H5N2O4-|Biochemical
+1492|RHEA:NC(=O)N[C@@H](CC(=O)[O-])C(=O)[O-]|C5H6N2O5-2|Biochemical
+1493|RHEA:[1*]C(=O)CC([2*])OC([3*])=O|C4H3*3O3|Biochemical
+1494|RHEA:*C(=O)CC(*)O|C3H4*2O2|Biochemical
+1495|RHEA:O=C([O-])[C@@H](O)Cc1cnc[nH]1|C6H7N2O3-|Biochemical
+1496|RHEA:O=C([O-])C(=O)Cc1cnc[nH]1|C6H5N2O3-|Biochemical
+1497|RHEA:[1*]C(=O)OCC(COC([3*])=O)OC([2*])=O|C6H5*3O6|Biochemical
+1498|RHEA:*OCC(CO*)O*|C3H5*3O3|Biochemical
+1499|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)CC(=O)CCC(=O)[O-]|C27H37N7O20P3S-5|Biochemical
+1500|RHEA:C=C1CCC[C@]1(C)[C@]1(C)CC=C(C)CC1|C15H24|Biochemical
+1501|RHEA:O=C[C@H](O)[C@H](O)COP(=O)([O-])[O-]|C4H7O7P-2|Biochemical
+1502|RHEA:O=C([O-])[C@H](O)[C@H](O)COP(=O)([O-])[O-]|C4H6O8P-3|Biochemical
+1503|RHEA:*[C@H](O)C(=O)[O-]|C2H2*O3-|Biochemical
+1504|RHEA:*N[C@@H](COP(=O)([O-])OCC(C)(C)[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)CC(=O)[O-])C(*)=O|C17H26*2N3O11PS-2|Biochemical
+1505|RHEA:*N[C@@H](COP(=O)([O-])OCC(C)(C)[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)CC(C)=O)C(*)=O|C18H29*2N3O10PS-|Biochemical
+1506|RHEA:OC[C@@H](O)[C@@H](O)[C@H](O)[C@H](O)CO|C6H14O6|Biochemical
+1507|RHEA:OC[C@H]1OC(O)(CO)[C@@H](O)[C@@H]1O|C6H12O6|Biochemical
+1508|RHEA:[1*]C(=O)N[C@@H](CO)[C@H](O)/C=C/CCCCCCCCCCCCC|C19H36*NO3|Biochemical
+1509|RHEA:*C(=O)N[C@@H](CO[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H](O)/C=C/CCCCCCCCCCCCC|C25H46*NO8|Biochemical
+1510|RHEA:CC(=O)[C@H](C)O|C4H8O2|Biochemical
+1511|RHEA:CC(=O)[C@@H](C)O|C4H8O2|Biochemical
+1512|RHEA:O=CNCc1ccccc1|C8H9NO|Biochemical
+1513|RHEA:[NH3+]Cc1ccccc1|C7H10N+|Biochemical
+1514|RHEA:O=C1CO[C@H](CO)[C@@H](O)[C@@H]1O|C6H10O5|Biochemical
+1515|RHEA:O=C1C=CCOC1(O)CO|C6H8O4|Biochemical
+1516|RHEA:O=C([O-])C(=O)Cc1c[nH]c2ccccc12|C11H8NO3-|Biochemical
+1517|RHEA:[H][H]|H2|Biochemical
+1518|RHEA:Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)([O-])OP(=O)([O-])O[C@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)[C@@H](O)[C@H]1O|C16H23N5O15P2-2|Biochemical
+1519|RHEA:O=C([O-])C1=C[C@@H](O)[C@@H](O)[C@H](O)C1|C7H9O5-|Biochemical
+1520|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)C=Cc1ccc(O)cc1|C30H38N7O18P3S-4|Biochemical
+1521|RHEA:O=C(/C=C/c1ccc(O)cc1)O[C@@H]1CC(C(=O)[O-])=C[C@@H](O)[C@H]1O|C16H15O7-|Biochemical
+1522|RHEA:[Cd+2]|Cd+2|Biochemical
+1523|RHEA:*CC/C=C/C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C26H37*N7O17P3S-4|Biochemical
+1524|RHEA:*/C=C/C=C/C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C26H35*N7O17P3S-4|Biochemical
+1525|RHEA:ClC1=C[C@@H](Cl)[C@H](Cl)[C@H](Cl)[C@H]1Cl|C6H5Cl5|Biochemical
+1526|RHEA:C=CC(C)(CO)SC[C@H](NC(=O)CC[C@H]([NH3+])C(=O)[O-])C(=O)NCC(=O)[O-]|C15H24N3O7S-|Biochemical
+1527|RHEA:C=CC(C)(SC[C@H](NC(=O)CC[C@H]([NH3+])C(=O)[O-])C(=O)NCC(=O)[O-])C(=O)[O-]|C15H21N3O8S-2|Biochemical
+1528|RHEA:O=C([O-])C[C@@H](O)[C@H](O)[C@H](O)CO|C6H11O6-|Biochemical
+1529|RHEA:O=C([O-])CC(=O)[C@H](O)[C@H](O)CO|C6H9O6-|Biochemical
+1530|RHEA:*c1c(*)c(*)c(O)c(*)c1*|C6H*5O|Biochemical
+1531|RHEA:*c1c(*)c(*)c(OS(=O)(=O)[O-])c(*)c1*|C6*5O4S-|Biochemical
+1532|RHEA:C=CCO|C3H6O|Biochemical
+1533|RHEA:C=CC=O|C3H4O|Biochemical
+1534|RHEA:[NH3+][C@@H]1[C@@H](O)[C@H](O)[C@@H](COP(=O)([O-])[O-])O[C@@H]1O|C6H13NO8P-|Biochemical
+1535|RHEA:[NH3+]CC(O)c1ccccc1|C8H12NO+|Biochemical
+1536|RHEA:C[NH2+]CC(O)c1ccccc1|C9H14NO+|Biochemical
+1537|RHEA:CNc1ccccc1C(=O)[O-]|C8H8NO2-|Biochemical
+1538|RHEA:C[C@H](O)[C@H](C)O|C4H10O2|Biochemical
+1539|RHEA:*N[C@@H](CCCCNC(=O)CCCC[C@@H]1CCSS1)C(*)=O|C14H24*2N2O2S2|Biochemical
+1540|RHEA:*N[C@@H](CCCCNC(=O)CCCC[C@@H](S)CCSC(=O)CCC(=O)[O-])C(*)=O|C18H29*2N2O5S2-|Biochemical
+1541|RHEA:C/C1=C\[C@@H](O)[C@@H](C(C)C)CC/C(C)=C/CC1|C15H26O|Biochemical
+1542|RHEA:O=C(CO)[C@@H](O)[C@H](O)[C@H](O)COP(=O)([O-])[O-]|C6H11O9P-2|Biochemical
+1543|RHEA:O=C([O-])[C@H](CC[NH+]1CC[C@H]1C(=O)[O-])[NH2+]CC[C@H](O)C(=O)[O-]|C12H19N2O7-|Biochemical
+1544|RHEA:O=C([O-])[C@@H]([NH2+]CC[C@H](O)C(=O)[O-])[C@@H](O)C[NH+]1CC[C@H]1C(=O)[O-]|C12H19N2O8-|Biochemical
+1545|RHEA:C[C@@H]1CC[C@H]2C(=C[C@@H](O)[C@H](C)[C@@H]2CC[C@@H](O)C[C@@H](O)CC(=O)[O-])C1|C19H31O5-|Biochemical
+1546|RHEA:CC(=O)Oc1ccc2c(C)cc(=O)oc2c1|C12H10O4|Biochemical
+1547|RHEA:Cc1cc(=O)oc2cc(O)ccc12|C10H8O3|Biochemical
+1548|RHEA:OC1c2ccccc2-c2ccccc21|C13H10O|Biochemical
+1549|RHEA:O=C1c2ccccc2-c2ccccc21|C13H8O|Biochemical
+1550|RHEA:O=C([O-])c1ccc(O)nc1|C6H4NO3-|Biochemical
+1551|RHEA:CC(=O)N[C@H]1[C@@H](OP(=O)([O-])OP(=O)([O-])OC[C@H]2O[C@@H](n3ccc(=O)[nH]c3=O)[C@H](O)[C@@H]2O)O[C@H](CO)[C@@H](O)[C@@H]1O[C@H](C)C(=O)[O-]|C20H28N3O19P2-3|Biochemical
+1552|RHEA:C=C(O[C@H]1[C@H](O)[C@@H](CO)O[C@H](OP(=O)([O-])OP(=O)([O-])OC[C@H]2O[C@@H](n3ccc(=O)[nH]c3=O)[C@H](O)[C@@H]2O)[C@@H]1NC(C)=O)C(=O)[O-]|C20H26N3O19P2-3|Biochemical
+1553|RHEA:COc1cc(/C=C/CO)ccc1O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O|C16H22O8|Biochemical
+1554|RHEA:COc1cc(/C=C/CO)ccc1O|C10H12O3|Biochemical
+1555|RHEA:[NH3+][C@@H](CC1(C(=O)[O-])C=CC(O)C=C1)C(=O)[O-]|C10H12NO5-|Biochemical
+1556|RHEA:C1=[NH+]CCC1|C4H8N+|Biochemical
+1557|RHEA:[NH3+][C@@H](Cc1ccc(O)c(O)c1)C(=O)[O-]|C9H11NO4|Biochemical
+1558|RHEA:[NH3+]CCc1ccc(O)c(O)c1|C8H12NO2+|Biochemical
+1559|RHEA:CC(C)CC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C26H40N7O17P3S-4|Biochemical
+1560|RHEA:CC(C)=CC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C26H38N7O17P3S-4|Biochemical
+1561|RHEA:*C(=O)OC[C@H](COP(=O)([O-])O[C@H]1[C@H](O)[C@@H](OP(=O)([O-])[O-])[C@H](O)[C@@H](O)[C@H]1O)OC(*)=O|C11H15*2O16P2-3|Biochemical
+1562|RHEA:*C(=O)OC[C@H](COP(=O)([O-])O[C@@H]1[C@H](O)[C@H](O)[C@@H](OP(=O)([O-])[O-])[C@H](OP(=O)([O-])[O-])[C@H]1O)OC(*)=O|C11H14*2O19P3-5|Biochemical
+1563|RHEA:CC(O)(CC(=O)[O-])CC(=O)[O-]|C6H8O5-2|Biochemical
+1564|RHEA:[1*]O[C@@H]1O[C@@H](C)[C@@H](O)[C@@H](O)[C@@H]1O|C6H11*O5|Biochemical
+1565|RHEA:*P(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OC(=O)[C@@H](N)CO|C13H17*N6O8P-|Biochemical
+1566|RHEA:C=C[C@H]1[C@H](O[C@@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)OC=C(C(=O)OC)[C@H]1C[C@H]1[NH2+]CCc2cc(O)c(O)cc21|C25H34NO11+|Biochemical
+1567|RHEA:C=C[C@H]1[C@H](O[C@@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)OC=C(C(=O)OC)[C@H]1CC=O|C17H24O10|Biochemical
+1568|RHEA:*O[C@H]1[C@@H](O)[C@H](n2ccc(=O)[nH]c2=O)O[C@@H]1COP(*)(=O)[O-]|C9H10*2N2O8P-|Biochemical
+1569|RHEA:*O[C@H]1[C@@H](O)[C@H](n2ccc(=O)n(CC[C@H]([NH3+])C(=O)[O-])c2=O)O[C@@H]1COP(*)(=O)[O-]|C13H17*2N3O10P-|Biochemical
+1570|RHEA:[NH3+][C@@H](CCCC(=O)[O-])C(=O)[O-]|C6H10NO4-|Biochemical
+1571|RHEA:O=S1(=O)c2ccccc2-c2ccccc21|C12H8O2S|Biochemical
+1572|RHEA:O=S([O-])c1ccccc1-c1ccccc1O|C12H9O3S-|Biochemical
+1573|RHEA:*C(=O)OC[C@H](COP(=O)([O-])O[C@@H]1[C@H](O)[C@H](OP(=O)([O-])[O-])[C@@H](O)[C@H](O)[C@H]1O)OC(*)=O|C11H15*2O16P2-3|Biochemical
+1574|RHEA:CC[C@H]1[C@@H]2C[C@H]3[C@@H]4Nc5ccccc5[C@]45C[C@@H](C2[C@H]5OC(C)=O)[NH+]3[C@@H]1O|C21H27N2O3+|Biochemical
+1575|RHEA:C/C=C1/[C@@H](O)N2[C@H]3C[C@@]45c6ccccc6N[C@H]4[C@@H]2C[C@@H]1C3[C@H]5OC(C)=O|C21H24N2O3|Biochemical
+1576|RHEA:CC(=O)N[C@H]1C(O)O[C@H](CO)[C@@H](O)[C@@H]1O|C8H15NO6|Biochemical
+1577|RHEA:O=C([O-])COC(CC(=O)[O-])C(=O)[O-]|C6H5O7-3|Biochemical
+1578|RHEA:*C(=O)[C@@H]([NH3+])CCCC[NH3+]|C6H15*N2O+2|Biochemical
+1579|RHEA:*C(=O)[C@H](CCCC[NH3+])NC(=O)[C@@H]([NH3+])CC(C)C|C12H26*N3O2+2|Biochemical
+1580|RHEA:[NH3+][C@H](C=O)CCC(=O)[O-]|C5H9NO3|Biochemical
+1581|RHEA:*P(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OC(=O)[C@@H]([NH3+])CCC(=O)[O-]|C15H19*N6O9P-|Biochemical
+1582|RHEA:O=C([O-])C[C@H]1C=CC(=O)O1|C6H5O4-|Biochemical
+1583|RHEA:O=C1O[C@H]([C@@H](O)CO)[C@H](O)[C@@H]1O|C6H10O6|Biochemical
+1584|RHEA:O=C1O[C@H]([C@@H](O)CO)C(=O)[C@@H]1O|C6H8O6|Biochemical
+1585|RHEA:O=P([O-])([O-])OC[C@H]1OC(O)(CO)[C@@H](O)[C@@H]1O|C6H11O9P-2|Biochemical
+1586|RHEA:O=C1CCC[C@@H]2[C@@H]3C[C@H](CN12)[C@H]1C[C@@H](O)CC[NH+]1C3|C15H25N2O2+|Biochemical
+1587|RHEA:C/C=C(\C)C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C26H38N7O17P3S-4|Biochemical
+1588|RHEA:C/C=C(\C)C(=O)O[C@H]1CC[NH+]2C[C@H]3C[C@H](CN4C(=O)CCC[C@H]34)[C@H]2C1|C20H31N2O3+|Biochemical
+1589|RHEA:NC(=O)C1=CN([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)C=CC1|C11H16N2O5|Biochemical
+1590|RHEA:NC(=O)c1ccc[n+]([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c1|C11H15N2O5+|Biochemical
+1591|RHEA:O=C([O-])C(=O)[C@@H](O)[C@H](O)C(=O)CO|C6H7O7-|Biochemical
+1592|RHEA:O=C([O-])C=C1C=CC(=O)O1|C6H3O4-|Biochemical
+1593|RHEA:O=C([O-])C=CC(=O)CC(=O)[O-]|C6H4O5-2|Biochemical
+1594|RHEA:C[C@H](O)[C@@H](O)[C@@H](O)C(=O)CO|C6H12O5|Biochemical
+1595|RHEA:C[C@H](O)[C@@H](O)[C@@H](O)C(=O)COP(=O)([O-])[O-]|C6H11O8P-2|Biochemical
+1596|RHEA:COc1ccc(-c2coc3cc([O-])ccc3c2=O)cc1|C16H11O4-|Biochemical
+1597|RHEA:COc1ccc(-c2coc3cc([O-])ccc3c2=O)c(O)c1|C16H11O5-|Biochemical
+1598|RHEA:Cc1cn([C@H]2C[C@H](O)[C@@H](COP(=O)([O-])OP(=O)([O-])OC3O[C@H](CO)[C@H](O)[C@H](O)[C@H]3O)O2)c(=O)[nH]c1=O|C16H24N2O16P2-2|Biochemical
+1599|RHEA:Cc1cn([C@H]2C[C@H](O)[C@@H](COP(=O)([O-])OP(=O)([O-])OC3O[C@H](C(=O)[O-])[C@H](O)[C@H](O)[C@H]3O)O2)c(=O)[nH]c1=O|C16H21N2O17P2-3|Biochemical
+1600|RHEA:[NH3+]CCCC[C@H]([NH3+])C(=O)[O-]|C6H15N2O2+|Biochemical
+1601|RHEA:O=C([O-])[C@H](O)COP(=O)([O-])[O-]|C3H4O7P-3|Biochemical
+1602|RHEA:O=C([O-])[C@H](O)CO|C3H5O4-|Biochemical
+1603|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)CC[NH3+]|C24H38N8O17P3S-3|Biochemical
+1604|RHEA:C=CC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C24H34N7O17P3S-4|Biochemical
+1605|RHEA:O=P([O-])([O-])OC[C@H]1OC(O)(CO)[C@@H](O)[C@H]1O|C6H11O9P-2|Biochemical
+1606|RHEA:O=P([O-])([O-])OC[C@H]1OC(O)(COP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C6H10O12P2-4|Biochemical
+1607|RHEA:[NH3+][C@H](C(=O)[O-])[C@H](O)C(=O)[O-]|C4H6NO5-|Biochemical
+1608|RHEA:O=C1C=CC(=O)C([O-])=C1|C6H3O3-|Biochemical
+1609|RHEA:Oc1ccc(O)c(O)c1|C6H6O3|Biochemical
+1610|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)/C=C/c1ccc(O)c(O)c1|C30H38N7O19P3S-4|Biochemical
+1611|RHEA:[NH3+]CCCCNC(=O)/C=C/c1ccc(O)c(O)c1|C13H19N2O3+|Biochemical
+1612|RHEA:CCCCCCCCCCCCCCCC=O|C16H32O|Biochemical
+1613|RHEA:CCCCCCCCCCCCC/C=C/C=O|C16H30O|Biochemical
+1614|RHEA:O=P([O-])([O-])O[C@H]1[C@H](OP(=O)([O-])[O-])[C@@H](OP(=O)([O-])[O-])[C@@H](O)[C@@H](O)[C@@H]1OP(=O)([O-])[O-]|C6H8O18P4-8|Biochemical
+1615|RHEA:O=P([O-])([O-])OC[C@@H](O)[C@@H](O)[C@@H](O)CO|C5H11O8P-2|Biochemical
+1616|RHEA:Nc1ccn([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])OC[C@@H](O)[C@@H](O)[C@@H](O)CO)[C@@H](O)[C@H]2O)c(=O)n1|C14H23N3O15P2-2|Biochemical
+1617|RHEA:OC[C@H]1O[C@H](O[C@@H]2[C@@H](O)[C@H](O)[C@@H](O)[C@H](O)[C@@H]2O)[C@H](O)[C@@H](O)[C@H]1O|C12H22O11|Biochemical
+1618|RHEA:CC[NH2+]CC(=O)[O-]|C4H9NO2|Biochemical
+1619|RHEA:CC[NH3+]|C2H8N+|Biochemical
+1620|RHEA:O=CN[C@@H](CCC(=O)[O-])C(=O)[O-]|C6H7NO5-2|Biochemical
+1621|RHEA:[NH3+]CC(=O)CCC(=O)[O-]|C5H9NO3|Biochemical
+1622|RHEA:O=CC(=O)CCC(=O)[O-]|C5H5O4-|Biochemical
+1623|RHEA:[1*][C@@H]1O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C5H8*O7P-2|Biochemical
+1624|RHEA:[NH3+][C@@H](C(=O)[O-])[C@@H](O)[C@H](O)[C@H](O)CO|C6H13NO6|Biochemical
+1625|RHEA:O=C([O-])C(=O)C[C@H](O)[C@H](O)CO|C6H9O6-|Biochemical
+1626|RHEA:CSCC[C@@H]([NH3+])C(=O)[O-]|C5H11NO2S|Biochemical
+1627|RHEA:O=C([O-])[C@@H]1CSCC[NH2+]1|C5H9NO2S|Biochemical
+1628|RHEA:O=C([O-])C1=NCCSC1|C5H6NO2S-|Biochemical
+1629|RHEA:C[C@@H]1[C@H]2[C@H](O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)OC=C(C(=O)[O-])[C@H]2C[C@@H]1O|C16H23O10-|Biochemical
+1630|RHEA:[NH3+][C@H](CC(=O)[O-])C(=O)[O-]|C4H6NO4-|Biochemical
+1631|RHEA:C=C(C)[C@H]1C/C=C(\C)CC/C=C(\C)CC1|C15H24|Biochemical
+1632|RHEA:O=C([O-])/C=C/c1ccc(O)c(O)c1|C9H7O4-|Biochemical
+1633|RHEA:O=C([O-])C1=[NH+]CCCC1|C6H9NO2|Biochemical
+1634|RHEA:C[C@@H](OP(=O)([O-])[O-])[C@H](NC(=O)CCCCCCS)C(=O)[O-]|C11H19NO7PS-3|Biochemical
+1635|RHEA:CSCCS(=O)(=O)[O-]|C3H7O3S2-|Biochemical
+1636|RHEA:C|CH4|Biochemical
+1637|RHEA:C[C@@H](OP(=O)([O-])[O-])[C@H](NC(=O)CCCCCCSSCCS(=O)(=O)[O-])C(=O)[O-]|C13H22NO10PS3-4|Biochemical
+1638|RHEA:*P(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OC(=O)[C@H](C)[NH3+]|C13H18*N6O7P|Biochemical
+1639|RHEA:CC(=C/C=O)/C=C/[C@@]12O[C@]1(C)C[C@@H](O)CC2(C)C|C15H22O3|Biochemical
+1640|RHEA:CC1=CC(=O)CC(C)(C)[C@@]1(O)/C=C/C(C)=C\C=O|C15H20O3|Biochemical
+1641|RHEA:O=C1O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H](O)[C@H]1O|C6H9O9P-2|Biochemical
+1642|RHEA:OC[C@H]1O[C@@H](Oc2ccc(O)cc2)[C@H](O)[C@@H](O)[C@@H]1O|C12H16O7|Biochemical
+1643|RHEA:O=[N+]([O-])c1ccc([O-])cc1|C6H4NO3-|Biochemical
+1644|RHEA:O=[N+]([O-])c1ccc([O-])c(O)c1|C6H4NO4-|Biochemical
+1645|RHEA:C[C@@H]([NH2+]CCS(=O)(=O)[O-])C(=O)[O-]|C5H10NO5S-|Biochemical
+1646|RHEA:CC(=O)[C@H]1[C@H](O)C[C@H]2[C@@H]3CCC4=CC(=O)CC[C@]4(C)[C@H]3CC[C@@]21C|C21H30O3|Biochemical
+1647|RHEA:CC(=O)C1=CC[C@H]2[C@@H]3CCC4=CC(=O)CC[C@]4(C)[C@H]3CC[C@]12C|C21H28O2|Biochemical
+1648|RHEA:*C(=O)OC[C@H](COP(=O)([O-])OC[C@@H](O)COP(=O)([O-])[O-])OC(*)=O|C8H11*2O13P2-3|Biochemical
+1649|RHEA:CP(=O)([O-])CC[C@H]([NH3+])C(=O)[O-]|C5H11NO4P-|Biochemical
+1650|RHEA:CC(=O)N[C@@H](CCP(C)(=O)[O-])C(=O)[O-]|C7H12NO5P-2|Biochemical
+1651|RHEA:CC(=O)[C@@H](O)[C@H](O)COP(=O)([O-])[O-]|C5H9O7P-2|Biochemical
+1652|RHEA:S=c1[nH]cnc2nc[nH]c12|C5H4N4S|Biochemical
+1653|RHEA:CSc1ncnc2[nH]cnc12|C6H6N4S|Biochemical
+1654|RHEA:[NH3+][C@@H](CSSC[C@H]([NH3+])C(=O)[O-])C(=O)[O-]|C6H12N2O4S2|Biochemical
+1655|RHEA:CC(=O)N[C@@H]1[C@@H](O)[C@@H](O)[C@@H](CO)O[C@@H]1O|C8H15NO6|Biochemical
+1656|RHEA:CC(=O)N[C@H]1[C@@H](OP(=O)([O-])[O-])O[C@H](CO)[C@H](O)[C@@H]1O|C8H14NO9P-2|Biochemical
+1657|RHEA:COc1cc(/C=C/C(=O)[O-])cc(OC)c1OC(=O)[C@@H](O)CC(=O)[O-]|C15H14O9-2|Biochemical
+1658|RHEA:C[NH+]1[C@@H]2CC[C@H]1C[C@@H](OC(=O)[C@H](CO)c1ccccc1)C2|C17H24NO3+|Biochemical
+1659|RHEA:C[NH+]1[C@H]2C[C@H](OC(=O)C(CO)c3ccccc3)C[C@@H]1[C@@H](O)C2|C17H24NO4+|Biochemical
+1660|RHEA:*N[C@@H](CC[C@@H](O)C[NH3+])C(*)=O|C6H13*2N2O2+|Biochemical
+1661|RHEA:O=C([O-])C(=O)COP(=O)([O-])[O-]|C3H2O7P-3|Biochemical
+1662|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)Cc1c[nH]c2ccccc12|C31H39N8O17P3S-4|Biochemical
+1663|RHEA:C[C@H](O)[C@@H]1OC(O)[C@H](O)[C@@H]1O|C6H12O5|Biochemical
+1664|RHEA:[1*][C@H](C)C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C24H35*N7O17P3S-4|Biochemical
+1665|RHEA:[1*][C@@H](C)C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C24H35*N7O17P3S-4|Biochemical
+1666|RHEA:C[N+](C)(C)C[C@H](O)CC(=O)[O-]|C7H15NO3|Biochemical
+1667|RHEA:CCCCCCCCCCCCCCCC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C37H62N7O17P3S-4|Biochemical
+1668|RHEA:CCCCCCCCCCCCCCCC(=O)O[C@H](CC(=O)[O-])C[N+](C)(C)C|C23H45NO4|Biochemical
+1669|RHEA:*O[C@@H]1[C@@H](O)[C@H](O*)[C@@H]([NH3+])C[C@H]1[NH3+]|C6H14*2N2O3+2|Biochemical
+1670|RHEA:[1*]O[C@@H]1[C@@H](O)[C@H](O[2*])[C@@H](NC(C)=O)C[C@H]1[NH3+]|C8H15*2N2O4+|Biochemical
+1671|RHEA:*N[C@@H](COP(=O)([O-])[O-])C(*)=O|C3H4*2NO5P-2|Biochemical
+1672|RHEA:CC1=C(CC/C(C)=C/OC=O)C(C)(C)CCC1|C15H24O2|Biochemical
+1673|RHEA:CC(=O)CCC1=C(C)CCCC1(C)C|C13H22O|Biochemical
+1674|RHEA:CN1CC(=O)NC1=N|C4H7N3O|Biochemical
+1675|RHEA:Oc1ccncc1O|C5H5NO2|Biochemical
+1676|RHEA:[NH3+][C@@H](C[n+]1ccc(O)c([O-])c1)C(=O)[O-]|C8H10N2O4|Biochemical
+1677|RHEA:Nc1nc2c(ncn2[C@H]2C[C@H](O)[C@@H](COP(=O)([O-])[O-])O2)c(=O)[nH]1|C10H12N5O7P-2|Biochemical
+1678|RHEA:Nc1nc2c(ncn2[C@H]2C[C@H](O)[C@@H](COP(=O)([O-])OP(=O)([O-])[O-])O2)c(=O)[nH]1|C10H12N5O10P2-3|Biochemical
+1679|RHEA:*[C@H]1C[C@H](O)[C@@H](COP(=O)([O-])OP(=O)([O-])OP(=O)([O-])[O-])O1|C5H8*O12P3-4|Biochemical
+1680|RHEA:*[C@@H]1O[C@H](COP(=O)([O-])OP(=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C5H8*O13P3-4|Biochemical
+1681|RHEA:*N[C@@H](CC(*)=O)C(=O)[O-]|C4H4*2NO3-|Biochemical
+1682|RHEA:*N[C@@H](CC(*)=O)C(=O)OC|C5H7*2NO3|Biochemical
+1683|RHEA:[1*][C@@H]1O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]1[2*]|C5H7*2O6P-2|Biochemical
+1684|RHEA:*[C@@H]1[C@H](OP(=O)([O-])OP(=O)([O-])[O-])[C@@H](COP(=O)([O-])[O-])O[C@H]1*|C5H6*2O12P3-5|Biochemical
+1685|RHEA:O=P([O-])([O-])O[C@@H]1[C@@H](O)[C@H](OP(=O)([O-])[O-])[C@@H](OP(=O)([O-])[O-])[C@@H](O)[C@H]1OP(=O)([O-])[O-]|C6H8O18P4-8|Biochemical
+1686|RHEA:C[S+](CCC[NH3+])C[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1O|C14H24N6O3S+2|Biochemical
+1687|RHEA:OC[C@@H](O)[C@H](O)[C@@H](O)[C@H](O)CO|C6H14O6|Biochemical
+1688|RHEA:O=C(CO)[C@H](O)[C@@H](O)[C@H](O)CO|C6H12O6|Biochemical
+1689|RHEA:CC1=C[C@H](O)CC(C)(C)[C@H]1/C=C/C(C)=C/C=C/C(C)=C/C=C/C=C(C)/C=C/C=C(C)/C=C/C1=C(C)C[C@@H](O)CC1(C)C|C40H56O2|Biochemical
+1690|RHEA:CC1=C(/C=C/C(C)=C/C=C/C(C)=C/C=C/C=C(C)/C=C/C=C(C)/C=C/C2=C(C)C[C@H](O)CC2(C)C)C(C)(C)C[C@H](O)C1|C40H56O2|Biochemical
+1691|RHEA:O=C([O-])c1cccnc1C(=O)[O-]|C7H3NO4-2|Biochemical
+1692|RHEA:*N[C@@H](CS[Se]C[C@H](N*)C(*)=O)C(*)=O|C6H8*4N2O2SSe|Biochemical
+1693|RHEA:*N[C@@H](C[SeH])C(*)=O|C3H5*2NOSe|Biochemical
+1694|RHEA:O=c1[nH]cnc2c1ncn2[C@@H]1O[C@H](COP(=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C10H11N4O11P2-3|Biochemical
+1695|RHEA:*C1OC(=O)C(*)C1*|C4H3*3O2|Biochemical
+1696|RHEA:*C(O)C(*)C(*)C(=O)[O-]|C4H4*3O3-|Biochemical
+1697|RHEA:O=C([O-])c1cc(O)c(O)c(O)c1|C7H5O5-|Biochemical
+1698|RHEA:Oc1cccc(O)c1O|C6H6O3|Biochemical
+1699|RHEA:O=C(CO)CO|C3H6O3|Biochemical
+1700|RHEA:C[C@@H](CO)CCNc1ncnc2nc[nH]c12|C10H15N5O|Biochemical
+1701|RHEA:CC(=CCNc1ncnc2[nH]cnc12)CO|C10H13N5O|Biochemical
+1702|RHEA:[NH3+]CC[C@@H](O)[C@@H](C(=O)[O-])N1CCC1=O|C8H14N2O4|Biochemical
+1703|RHEA:[NH3+]CC[C@H]1O[C@H]2CC(=O)N2[C@@H]1C(=O)[O-]|C8H12N2O4|Biochemical
+1704|RHEA:O=P([O-])([O-])O[C@H]1[C@H](OP(=O)([O-])[O-])[C@@H](OP(=O)([O-])[O-])[C@H](OP(=O)([O-])[O-])[C@@H](OP(=O)([O-])[O-])[C@H]1OP(=O)([O-])[O-]|C6H6O24P6-12|Biochemical
+1705|RHEA:O=P([O-])([O-])O[C@H]1[C@@H](OP(=O)([O-])[O-])[C@H](OP(=O)([O-])[O-])[C@@H](OP(=O)([O-])OP(=O)([O-])[O-])[C@H](OP(=O)([O-])[O-])[C@H]1OP(=O)([O-])[O-]|C6H6O27P7-13|Biochemical
+1706|RHEA:CN1[C@@H]2C[C@@H](OC(=O)[C@H](CO)c3ccccc3)C[C@H]1[C@@H]1O[C@@H]12|C17H21NO4|Biochemical
+1707|RHEA:COc1ccc2c(c1OC)CN1CCc3cc4c(cc3[C@@H]1C2)OCO4|C20H21NO4|Biochemical
+1708|RHEA:COc1ccc2c(c1OC)C[N@+]1(C)CCc3cc4c(cc3[C@@H]1C2)OCO4|C21H24NO4+|Biochemical
+1709|RHEA:O=c1cc2oc3ccccc3oc-2cc1=O|C12H6O4|Biochemical
+1710|RHEA:COc1ccc(C2COc3cc(O)cc(O)c3C2=O)cc1|C16H14O5|Biochemical
+1711|RHEA:COc1ccc(-c2coc3cc([O-])cc(O)c3c2=O)cc1|C16H11O5-|Biochemical
+1712|RHEA:O=P([O-])([O-])OC[C@H]1OC(O)C[C@@H]1O|C5H9O7P-2|Biochemical
+1713|RHEA:C[NH2+]CC(=O)[O-]|C3H7NO2|Biochemical
+1714|RHEA:C[C@H](C(=O)[O-])[C@H]([NH3+])C(=O)[O-]|C5H8NO4-|Biochemical
+1715|RHEA:C/C(=C\C(=O)[O-])C(=O)[O-]|C5H4O4-2|Biochemical
+1716|RHEA:[1*]C(=O)N[C@H](CCC(=O)[O-])C(=O)[O-]|C6H6*NO5-2|Biochemical
+1717|RHEA:N#C[C@@H](O)c1ccc(O)cc1|C8H7NO2|Biochemical
+1718|RHEA:N#C[C@@H](O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O)c1ccc(O)cc1|C14H17NO7|Biochemical
+1719|RHEA:Nc1nc2c(ncn2[C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c(=O)[nH]1|C10H13N5O5|Biochemical
+1720|RHEA:O=c1[nH]c(=O)c2ncn([C@@H]3O[C@H](CO)[C@@H](O)[C@H]3O)c2[nH]1|C10H12N4O6|Biochemical
+1721|RHEA:Cn1cnc2c(ncn2[C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c1=N|C11H15N5O4|Biochemical
+1722|RHEA:Cn1cnc2ncnc-2c1N|C6H7N5|Biochemical
+1723|RHEA:C=C(C)[C@@H]1CC=C(C)CC1|C10H16|Biochemical
+1724|RHEA:CC(=O)CC(C)=O|C5H8O2|Biochemical
+1725|RHEA:CC(=O)C=O|C3H4O2|Biochemical
+1726|RHEA:O=P([O-])([O-])OC[C@@H](CO)O[C@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O|C9H17O11P-2|Biochemical
+1727|RHEA:*O[C@H]1[C@@H](O)[C@H](n2cc(CN[C@H]3C=C[C@H](O)[C@@H]3O)c3c(=O)[nH]c(N)nc32)O[C@@H]1COP(*)(=O)[O-]|C17H21*2N5O9P-|Biochemical
+1728|RHEA:Nc1nc2c(ncn2[C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])O[C@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1|C16H23N5O16P2-2|Biochemical
+1729|RHEA:*O[C@H]1[C@@H](O)[C@H](n2cc(CN[C@H]3C=C[C@H](O[C@H]4O[C@H](CO)[C@@H](O)[C@H](O)[C@@H]4O)[C@@H]3O)c3c(=O)[nH]c(N)nc32)O[C@@H]1COP(*)(=O)[O-]|C23H31*2N5O14P-|Biochemical
+1730|RHEA:O=C([O-])[C@@H](O)[C@@H](O)[C@H](O)[C@@H](O)CO|C6H11O7-|Biochemical
+1731|RHEA:CC1=CC(=O)CC(C)(C)[C@@]1(O)/C=C/C(C)=C\C(=O)[O-]|C15H19O4-|Biochemical
+1732|RHEA:CC1=CC(=O)C[C@](C)(CO)[C@@]1(O)/C=C/C(C)=C\C(=O)[O-]|C15H19O5-|Biochemical
+1733|RHEA:NC(=[NH2+])NCCC[C@@H]([NH3+])C(=O)[O-]|C6H15N4O2+|Biochemical
+1734|RHEA:O=[N+]([O-])[O-]|NO3-|Biochemical
+1735|RHEA:O=N[O-]|NO2-|Biochemical
+1736|RHEA:O=C([O-])CCCC[C@@H]1CCSS1|C8H13O2S2-|Biochemical
+1737|RHEA:Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)([O-])OC(=O)CCCC[C@@H]2CCSS2)[C@@H](O)[C@H]1O|C18H25N5O8PS2-|Biochemical
+1738|RHEA:C=C[C@H]1[C@H](O[C@@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)OC=C(C(=O)OC)[C@H]1C[C@@H]1[NH2+]CCc2c1[nH]c1ccccc21|C27H35N2O9+|Biochemical
+1739|RHEA:C=C[C@H]1[C@H](O)OC=C(C(=O)OC)[C@H]1C[C@@H]1[NH2+]CCc2c1[nH]c1ccccc21|C21H25N2O4+|Biochemical
+1740|RHEA:*N[C@@H](CCCC[NH2+]CC(=O)[C@H](O)COP(=O)([O-])[O-])C(*)=O|C10H18*2N2O7P-|Biochemical
+1741|RHEA:O=C([O-])CC[C@@](O)(CC(=O)[O-])C(=O)[O-]|C7H7O7-3|Biochemical
+1742|RHEA:C[C@H](O)C=O|C3H6O2|Biochemical
+1743|RHEA:[1*]C(=O)OC[C@@H](O)COP(=O)([O-])OCC[N+](C)(C)C|C9H19*NO7P|Biochemical
+1744|RHEA:C[C@@H](O)[C@H](O)[C@H](O)[C@@H](O)C(=O)[O-]|C6H11O6-|Biochemical
+1745|RHEA:C[C@@H](O)[C@H](O)CC(=O)C(=O)[O-]|C6H9O5-|Biochemical
+1746|RHEA:*OC(C)=O|C2H3*O2|Biochemical
+1747|RHEA:O=C([O-])[C@H]1OC(O)[C@H](O)[C@@H](O)[C@H]1O|C6H9O7-|Biochemical
+1748|RHEA:O=C([O-])[C@H]1O[C@H](OP(=O)([O-])[O-])[C@H](O)[C@@H](O)[C@H]1O|C6H8O10P-3|Biochemical
+1749|RHEA:*OP(=O)([O-])OC[C@H](O)CO|C3H7*O6P-|Biochemical
+1750|RHEA:CN(CC(=O)[O-])C(=[NH2+])NP(=O)([O-])[O-]|C4H8N3O5P-2|Biochemical
+1751|RHEA:[NH3+][C@@H](CCC(=O)N[C@@H](CSS)C(=O)NCC(=O)[O-])C(=O)[O-]|C10H16N3O6S2-|Biochemical
+1752|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)C1=CCCCC1|C28H40N7O17P3S-4|Biochemical
+1753|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)C1=CCCC=C1|C28H38N7O17P3S-4|Biochemical
+1754|RHEA:O=C([O-])[C@@H](O)[C@H](O)[C@H](O)[C@@H](O)C(=O)[O-]|C6H8O8-2|Biochemical
+1755|RHEA:COc1cc(/C=C/C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]2O[C@@H](n3cnc4c(N)ncnc43)[C@H](O)[C@@H]2OP(=O)([O-])[O-])ccc1O|C31H40N7O19P3S-4|Biochemical
+1756|RHEA:COc1cc(/C=C/C(=O)O[C@@H](C(=O)[O-])[C@@H](O)[C@@H](O)[C@H](O)C(=O)[O-])ccc1O|C16H16O11-2|Biochemical
+1757|RHEA:O=P([O-])([O-])O[C@H]1[C@@H](OP(=O)([O-])[O-])[C@H](OP(=O)([O-])[O-])[C@@H](O)[C@H](OP(=O)([O-])[O-])[C@H]1OP(=O)([O-])[O-]|C6H7O21P5-10|Biochemical
+1758|RHEA:c1ccc(CC2[NH2+]CCc3ccccc32)cc1|C16H18N+|Biochemical
+1759|RHEA:C[NH+]1CCc2ccccc2C1Cc1ccccc1|C17H20N+|Biochemical
+1760|RHEA:[NH3+][C@@H](CC(=O)c1ccccc1NC=O)C(=O)[O-]|C11H12N2O4|Biochemical
+1761|RHEA:Nc1ccccc1C(=O)C[C@H]([NH3+])C(=O)[O-]|C10H12N2O3|Biochemical
+1762|RHEA:*O[C@@H]1O[C@H](CO)[C@@H](O[C@@H]2O[C@H](CO)[C@H](O)[C@H](O)[C@H]2O)[C@H](O)[C@H]1NC(C)=O|C14H24*NO11|Biochemical
+1763|RHEA:*O[C@@H]1O[C@H](CO)[C@@H](O[C@@H]2O[C@H](CO)[C@H](O)[C@H](O[C@H]3O[C@H](CO)[C@H](O)[C@H](O)[C@H]3O)[C@H]2O)[C@H](O)[C@H]1NC(C)=O|C20H34*NO16|Biochemical
+1764|RHEA:COc1cc(C(=O)[O-])ccc1O|C8H7O4-|Biochemical
+1765|RHEA:*N[C@@H](CCCCNC(=O)CCCC[C@@H]1SC[C@H]2[C@@H]1NC(=O)N2C(=O)[O-])C(*)=O|C17H25*2N4O5S-|Biochemical
+1766|RHEA:C/C(=C\C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])CC(=O)[O-]|C27H37N7O19P3S-5|Biochemical
+1767|RHEA:CC(=O)N[C@@H](C(=O)[O-])[C@@H](O)[C@H](O)[C@H](O)CO|C8H14NO7-|Biochemical
+1768|RHEA:O=C[C@H](O)[C@@H](O)[C@@H](O)[C@H](O)COP(=O)([O-])[O-]|C6H11O9P-2|Biochemical
+1769|RHEA:O=C(CO)[C@@H](O)[C@@H](O)[C@H](O)COP(=O)([O-])[O-]|C6H11O9P-2|Biochemical
+1770|RHEA:O=c1[nH]cnc2c1ncn2[C@@H]1O[C@H](COP(=O)([O-])OP(=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C10H11N4O14P3-4|Biochemical
+1771|RHEA:O=C1C=C2C[C@@H](C(=O)[O-])NC2=CC1=O|C9H6NO4-|Biochemical
+1772|RHEA:O=C([O-])c1cc2cc(O)c(O)cc2[nH]1|C9H6NO4-|Biochemical
+1773|RHEA:C=C1C[C@@]23CC[C@@H]4C(C)(C)CCC[C@@]4(C)[C@@H]2CC[C@@H]1C3|C20H32|Biochemical
+1774|RHEA:C=C1C[C@@]23CC[C@@H]4[C@](C)(CO)CCC[C@@]4(C)[C@@H]2CC[C@H]1C3|C20H32O|Biochemical
+1775|RHEA:O=C([O-])[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O|C6H9O7-|Biochemical
+1776|RHEA:O=C([O-])[C@H]1OC(O)(CO)[C@@H](O)[C@@H]1O|C6H9O7-|Biochemical
+1777|RHEA:O=C([O-])C(=O)Cc1ccccc1|C9H7O3-|Biochemical
+1778|RHEA:*C(=O)N[C@H]1[C@H]([C@H](O)[C@H](O)COP(=O)([O-])[O-])OC(O)(C(=O)[O-])C[C@@H]1O|C10H14*NO12P-3|Biochemical
+1779|RHEA:[NH3+][C@@H](CCC(=O)N[C@@H](CSS(=O)[O-])C(=O)NCC(=O)[O-])C(=O)[O-]|C10H15N3O8S2-2|Biochemical
+1780|RHEA:[NH3+]CCO|C2H8NO+|Biochemical
+1781|RHEA:[NH3+]CCOP(=O)([O-])[O-]|C2H7NO4P-|Biochemical
+1782|RHEA:Nc1nc2c(ncn2[C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])OP(=O)([O-])[O-])[C@@H](OP(=O)([O-])OP(=O)([O-])O)[C@H]2O)c(=O)[nH]1|C10H12N5O20P5-6|Biochemical
+1783|RHEA:Nc1nc2c(ncn2[C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])O)[C@@H](OP(=O)([O-])OP(=O)([O-])[O-])[C@H]2O)c(=O)[nH]1|C10H12N5O17P4-5|Biochemical
+1784|RHEA:NC(=O)CCCC[C@@H]1SC[C@@H]2NC(=O)N[C@@H]21|C10H17N3O2S|Biochemical
+1785|RHEA:O=C([O-])C1=N[C@H](C(=O)[O-])CCC1|C7H7NO4-2|Biochemical
+1786|RHEA:CC(=O)N[C@@H](CCCC(=O)C(=O)[O-])C(=O)[O-]|C9H11NO6-2|Biochemical
+1787|RHEA:*C(=O)N[C@@H](CO[C@@H]1O[C@H](CO)[C@H](O)[C@H](O)[C@H]1O)[C@H](O)/C=C/CCCCCCCCCCCCC|C25H46*NO8|Biochemical
+1788|RHEA:*N[C@@H](COP(=O)([O-])OCC(C)(C)[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)C[C@@H](*)O)C(*)=O|C17H28*3N3O10PS-|Biochemical
+1789|RHEA:O=C([O-])CC[c-]1[nH]c[nH+]c1=O|C6H7N2O3-|Biochemical
+1790|RHEA:O=C([O-])/C=C/c1c[nH]cn1|C6H5N2O2-|Biochemical
+1791|RHEA:O=P([O-])([O-])OC(CO)CO|C3H7O6P-2|Biochemical
+1792|RHEA:CC(=O)Nc1ccc2c(c1)Cc1ccccc1-2|C15H13NO|Biochemical
+1793|RHEA:CC(=O)N(O)c1ccc2c(c1)Cc1ccccc1-2|C15H13NO2|Biochemical
+1794|RHEA:c1cn[nH]c1|C3H4N2|Biochemical
+1795|RHEA:[NH3+][C@@H](Cn1cccn1)C(=O)[O-]|C6H9N3O2|Biochemical
+1796|RHEA:O=C([O-])C1=C[C@@H](OP(=O)([O-])[O-])[C@@H](O)[C@H](O)C1|C7H8O8P-3|Biochemical
+1797|RHEA:O=C([O-])/C=C\c1ccc(O)cc1|C9H7O3-|Biochemical
+1798|RHEA:O=C([O-])/C=C\c1ccc(O[C@@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)cc1|C15H17O8-|Biochemical
+1799|RHEA:CC(C)=CCC[C@@H](C)[C@H]1CC[C@@]2(C)[C@@H]3CC[C@H]4C(C)(C)[C@@H](O)CC[C@@]45C[C@@]35CC[C@]12C|C30H50O|Biochemical
+1800|RHEA:C=C(C)[C@@H](C)CC[C@@H](C)[C@H]1CC[C@@]2(C)[C@@H]3CC[C@H]4C(C)(C)[C@@H](O)CC[C@@]45C[C@@]35CC[C@]12C|C31H52O|Biochemical
+1801|RHEA:CC(=O)N[C@H]1C(O)O[C@H](CO)[C@@H](O[C@@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@@H]2O)[C@@H]1O|C14H25NO11|Biochemical
+1802|RHEA:O=C([O-])C(=O)C(O)C(=O)[O-]|C4H2O6-2|Biochemical
+1803|RHEA:CC(=O)[C@H]([NH3+])C(=O)[O-]|C4H7NO3|Biochemical
+1804|RHEA:O=C([O-])/C=C\C(=O)[O-]|C4H2O4-2|Biochemical
+1805|RHEA:OP(O)O|H3O3P|Biochemical
+1806|RHEA:O=C([O-])C[C@@H](O)[C@H](O)C(=O)COP(=O)([O-])[O-]|C6H8O9P-3|Biochemical
+1807|RHEA:O=CCC(=O)[O-]|C3H3O3-|Biochemical
+1808|RHEA:[NH3+]Cc1[nH]cc(CCC(=O)[O-])c1CC(=O)[O-]|C10H13N2O4-|Biochemical
+1809|RHEA:O=C([O-])CCc1c[nH]c(Cc2[nH]c(Cc3[nH]c(Cc4[nH]c(CO)c(CC(=O)[O-])c4CCC(=O)[O-])c(CC(=O)[O-])c3CCC(=O)[O-])c(CC(=O)[O-])c2CCC(=O)[O-])c1CC(=O)[O-]|C40H38N4O17-8|Biochemical
+1810|RHEA:OC[C@@H](O)CO[C@@H]1O[C@H](CO)[C@H](O)[C@H](O)[C@H]1O|C9H18O8|Biochemical
+1811|RHEA:O=C([O-])Nc1cncn1[C@@H]1O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]1O|C9H11N3O9P-3|Biochemical
+1812|RHEA:O=c1ccn([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])O[C@H]3O[C@H](CS(=O)(=O)[O-])[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1|C15H21N2O19P2S-3|Biochemical
+1813|RHEA:O=c1ccn([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c(=O)[nH]1|C9H11N2O15P3-4|Biochemical
+1814|RHEA:*OP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2ccc(=O)[nH]c2=O)[C@H](O)[C@@H]1O|C9H11*N2O12P2-2|Biochemical
+1815|RHEA:C[C@@](O)(CCO)CC(=O)[O-]|C6H11O4-|Biochemical
+1816|RHEA:C[C@@](O)(CC=O)CC(=O)[O-]|C6H9O4-|Biochemical
+1817|RHEA:O=P([O-])([O-])O[C@H]1O[C@H](CO)[C@@H](O)[C@H]1O|C5H9O8P-2|Biochemical
+1818|RHEA:Nc1nc2[nH]cnc2c(=O)[nH]1|C5H5N5O|Biochemical
+1819|RHEA:C[C@@H]1O[C@H](O)[C@@H](O)[C@H](O)[C@@H]1O|C6H12O5|Biochemical
+1820|RHEA:C[C@@H]1O[C@H](OP(=O)([O-])[O-])[C@@H](O)[C@H](O)[C@@H]1O|C6H11O8P-2|Biochemical
+1821|RHEA:C[C@@H](O)CSCCS(=O)(=O)[O-]|C5H11O4S2-|Biochemical
+1822|RHEA:CC(=O)CSCCS(=O)(=O)[O-]|C5H9O4S2-|Biochemical
+1823|RHEA:[NH3+][C@@H]1[C@@H](O)[C@H](O)[C@@H](OP(=O)([O-])[O-])[C@H](O)[C@H]1O|C6H13NO8P-|Biochemical
+1824|RHEA:NC(=[NH2+])N[C@H]1[C@H](O)[C@@H](O)[C@H](OP(=O)([O-])[O-])[C@@H](O)[C@@H]1O|C7H15N3O8P-|Biochemical
+1825|RHEA:*OCC(CO[C@H]1O[C@H](CO[C@H]2O[C@H](CO[C@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H](O)[C@H]2O)[C@@H](O)[C@H](O)[C@H]1O)OC(*)=O|C22H36*2O19|Biochemical
+1826|RHEA:[1*]C(=O)OC(CO[2*])CO[C@H]1O[C@H](CO[C@H]2O[C@H](CO[C@H]3O[C@H](COS(=O)(=O)[O-])[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H](O)[C@H]2O)[C@@H](O)[C@H](O)[C@H]1O|C22H35*2O22S-|Biochemical
+1827|RHEA:C[C@H](O)[C@H](C)C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C26H40N7O18P3S-4|Biochemical
+1828|RHEA:CC(=O)C(C)C(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-]|C26H38N7O18P3S-4|Biochemical
+1829|RHEA:*C(=O)OC[C@@H](O)CO|C4H7*O4|Biochemical
+1830|RHEA:O=C([O-])[C@H](O)[C@@H](O)C(=O)[O-]|C4H4O6-2|Biochemical
+1831|RHEA:CC(C)(C(=O)[O-])[C@@H](O)C(=O)[O-]|C6H8O5-2|Biochemical
+1832|RHEA:CC(=O)N[C@H]1[C@@H](OP(=O)([O-])OP(=O)([O-])OC[C@H]2O[C@@H](n3ccc(=O)[nH]c3=O)[C@H](O)[C@@H]2O)O[C@H](CO)[C@@H](O)[C@@H]1O|C17H25N3O17P2-2|Biochemical
+1833|RHEA:CC(=O)N[C@H]1[C@@H](OP(=O)([O-])OP(=O)([O-])OC[C@H]2O[C@@H](n3ccc(=O)[nH]c3=O)[C@H](O)[C@@H]2O)O[C@H](C(=O)[O-])[C@@H](O)[C@@H]1O|C17H22N3O18P2-3|Biochemical
+1834|RHEA:*C1CCC2C3CCC4CC(=O)CCC4(C)C3CCC12C|C19H29*O|Biochemical
+1835|RHEA:*C1CCC2C3CCC4CC(=O)C=CC4(C)C3CCC12C|C19H27*O|Biochemical
+1836|RHEA:O=P([O-])([O-])OC[C@H]1O[C@@](CO)(OP(=O)([O-])[O-])[C@@H](O)[C@@H]1O|C6H10O12P2-4|Biochemical
+1837|RHEA:O=P([O-])([O-])O[C@]1(CO)O[C@H](CO)[C@@H](O)[C@@H]1O|C6H11O9P-2|Biochemical
+1838|RHEA:O=C[C@H]1OC(=O)[C@@H](O)[C@@H](O)[C@@H]1O|C6H8O6|Biochemical
+1839|RHEA:*N[C@@H](CSC/C=C(\C)CC/C=C(\C)CCC=C(C)C)C(*)=O|C18H29*2NOS|Biochemical
+1840|RHEA:CC/C=C\C[C@H]1C(=O)CC[C@@H]1CC(=O)[O-]|C12H17O3-|Biochemical
+1841|RHEA:CC/C=C\C[C@H]1C(=O)CC[C@@H]1CC(=O)OC|C13H20O3|Biochemical
+1842|RHEA:O=C([O-])CCO|C3H5O3-|Biochemical
+1843|RHEA:Nc1ccn([C@@H]2O[C@H](COP(=O)([O-])OP(=O)([O-])OC[C@H](O)CO)[C@@H](O)[C@H]2O)c(=O)n1|C12H19N3O13P2-2|Biochemical
+1844|RHEA:C=CC(=C)C|C5H8|Biochemical
+1845|RHEA:O=P([O-])([O-])OC[C@H]1O[C@H](OP(=O)([O-])[O-])[C@H](O)[C@@H](O)[C@@H]1O|C6H10O12P2-4|Biochemical
+1846|RHEA:CCCCCCCCCC(=O)CC(=O)[O-]|C12H21O3-|Biochemical
+1847|RHEA:CCCCCCCCCC(C)=O|C11H22O|Biochemical
+1848|RHEA:CC(C)(COP(=O)([O-])OP(=O)([O-])OC[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1OP(=O)([O-])[O-])[C@@H](O)C(=O)NCCC(=O)NCCSC(=O)CCCC(=O)[O-]|C26H37N7O19P3S-5|Biochemical
+1849|RHEA:O=CCCCCC(=O)[O-]|C6H9O3-|Biochemical
+1850|RHEA:O=C([O-])CCCCC(=O)[O-]|C6H8O4-2|Biochemical
+1851|RHEA:CC(C)=CCC/C(C)=C/CC/C(C)=C/CO|C15H26O|Biochemical
+1852|RHEA:CC(C)=CCC/C(C)=C/CC/C(C)=C\CO|C15H26O|Biochemical
+1853|RHEA:NC(=[NH2+])NCCCC[NH3+]|C5H16N4+2|Biochemical
+1854|RHEA:NC(=[NH2+])NCCCCNC(=O)C=Cc1ccc(O)cc1|C14H21N4O2+|Biochemical
+1855|RHEA:Nc1nc2[nH]cc(C[NH3+])c2c(=O)[nH]1|C7H10N5O+|Biochemical
+1856|RHEA:N#Cc1c[nH]c2nc(N)[nH]c(=O)c12|C7H5N5O|Biochemical
+1857|RHEA:[NH3+]C(CC(=O)c1cccc2c1Nc1c(cc(O)c3nc(C(=O)[O-])cc(O)c13)O2)C(=O)[O-]|C20H14N3O8-|Biochemical
+1858|RHEA:[NH3+]C(CC(=O)c1cccc2oc3cc(=O)c4nc(C(=O)[O-])cc(O)c4c-3nc12)C(=O)[O-]|C20H12N3O8-|Biochemical
+1859|RHEA:*C(=O)N[C@H](C=O)[C@@H](O)[C@H](O)[C@H](O)COP(=O)([O-])[O-]|C7H11*NO9P-2|Biochemical

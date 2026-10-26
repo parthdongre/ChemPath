@@ -1,0 +1,60 @@
+{
+  "capturedAt": "2026-10-26T06:54:17.830Z",
+  "repository": "parthdongre/ChemPath",
+  "sourceBranch": "main",
+  "captures": [
+    {
+      "name": "01-home-hero",
+      "path": "screenshots/01-home-hero.png",
+      "bytes": 946934
+    },
+    {
+      "name": "02-network-explorer",
+      "path": "screenshots/02-network-explorer.png",
+      "bytes": 371489
+    },
+    {
+      "name": "03-dijkstra-trace",
+      "path": "screenshots/03-dijkstra-trace.png",
+      "bytes": 239768
+    },
+    {
+      "name": "04-algorithm-comparison",
+      "path": "screenshots/04-algorithm-comparison.png",
+      "bytes": 307912
+    },
+    {
+      "name": "05-alternative-pathways",
+      "path": "screenshots/05-alternative-pathways.png",
+      "bytes": 195952
+    },
+    {
+      "name": "06-scc-condensation",
+      "path": "screenshots/06-scc-condensation.png",
+      "bytes": 277308
+    },
+    {
+      "name": "07-csr-benchmarks",
+      "path": "screenshots/07-csr-benchmarks.png",
+      "bytes": 198359
+    },
+    {
+      "name": "08-trie-search",
+      "path": "screenshots/08-trie-search.png",
+      "bytes": 260831
+    },
+    {
+      "name": "09-graph-playground",
+      "path": "screenshots/09-graph-playground.png",
+      "bytes": 220197
+    },
+    {
+      "name": "10-mobile-lab",
+      "path": "screenshots/10-mobile-lab.png",
+      "bytes": 123343
+    }
+  ],
+  "errors": [
+    "CONSOLE: Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ]
+}

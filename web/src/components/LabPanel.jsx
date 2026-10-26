@@ -73,6 +73,23 @@ export default function LabPanel({network,from,to}){
     const edges=network.edges.filter(e=>preferred.has(e.source)&&preferred.has(e.target));
     return {nodes,edges};
   },[network,trace,sourceId,to]);
+  const dagNetwork=useMemo(()=>{
+    if(!components)return null;
+    const selected=new Set();
+    components.components.forEach((c,i)=>{if(c.length>1 && selected.size<75)selected.add(i);});
+    for(const [u,v] of components.dagEdges){
+      if(selected.size>=110)break;
+      if(selected.has(u)||selected.has(v)){selected.add(u);selected.add(v);}
+    }
+    for(let i=0;i<components.components.length && selected.size<65;i++)selected.add(i);
+    return {
+      nodes:[...selected].map(i=>({id:i,name:"SCC "+i,
+        formula:components.components[i].length+" nodes",category:"SCC"})),
+      edges:components.dagEdges.filter(([u,v])=>selected.has(u)&&selected.has(v))
+        .map(([u,v])=>({id:"dag-"+u+"-"+v,source:u,target:v,
+          reaction:"SCC condensation edge",cost:1}))
+    };
+  },[components]);
   const maxVisited=Math.max(1,...(comparison?.algorithms||[]).map(x=>x.visited));
   return <section className="lab-panel" id="algorithm-lab">
     <header className="lab-header"><div><small>ALGORITHM LAB / C++17 ENGINE</small>
@@ -152,7 +169,8 @@ export default function LabPanel({network,from,to}){
     {tab==="components"&&<div className="lab-section">
       <div className="lab-toolbar"><button className="lab-primary" disabled={busy} onClick={()=>execute(async()=>{
         setComponents(await api.labComponents());})}>Build SCC condensation DAG</button><small>Tarjan + DSU + topological ordering</small></div>
-      {components&&<><div className="lab-metrics">
+      {components&&<>{dagNetwork&&<div className="lab-focus-graph lab-dag"><NetworkGraph network={dagNetwork}/></div>}
+        <div className="lab-metrics">
         <Metric title="Strong components" value={components.components.length}/>
         <Metric title="Weak components" value={components.weakCount}/>
         <Metric title="Condensation edges" value={components.dagEdges.length}/>

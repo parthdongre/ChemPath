@@ -5,7 +5,7 @@ import NetworkGraph from "./NetworkGraph.jsx";
 import "./Lab.css";
 
 const tabs=[["trace","Execution"],["compare","Comparison"],["paths","Routes"],
-  ["components","Components"],["bench","Benchmarks"],["sandbox","Playground"]];
+  ["components","Components"],["bench","Benchmarks"],["trie","Trie"],["sandbox","Playground"]];
 const number=(x)=>typeof x==="number"?x.toLocaleString(undefined,{maximumFractionDigits:3}):"—";
 function Metric({title,value,unit=""}){
   return <div className="lab-metric"><span>{title}</span><strong>{number(value)}</strong><small>{unit}</small></div>;
@@ -31,6 +31,8 @@ export default function LabPanel({network,from,to}){
   const [csr,setCsr]=useState(null),[synthetic,setSynthetic]=useState(null);
   const [nodeCount,setNodeCount]=useState(1000),[edgeCount,setEdgeCount]=useState(4000);
   const [seed,setSeed]=useState(42),[blocked,setBlocked]=useState(""),[sandbox,setSandbox]=useState(null);
+  const [editMode,setEditMode]=useState("remove"),[editWeight,setEditWeight]=useState(2);
+  const [editTarget,setEditTarget]=useState(""),[trieQuery,setTrieQuery]=useState("meth"),[trieMatches,setTrieMatches]=useState(null);
   const [busy,setBusy]=useState(false),[error,setError]=useState("");
   const byId=useMemo(()=>new Map((network?.nodes||[]).map(n=>[n.id,n])),[network]);
   const sourceId=network?.nodes?.find(n=>n.name===from)?.id;
@@ -180,17 +182,63 @@ export default function LabPanel({network,from,to}){
           <Metric title="Dijkstra" value={synthetic.dijkstraUs} unit="µs"/></div>}
       </div>
     </div>}
+    {tab==="trie"&&<div className="lab-section">
+      <div className="lab-toolbar"><label>Prefix to traverse
+        <input value={trieQuery} onChange={e=>setTrieQuery(e.target.value)} placeholder="Compound prefix"/>
+      </label><button className="lab-primary" disabled={busy||!trieQuery.trim()} onClick={()=>execute(async()=>{
+        setTrieMatches((await api.search(trieQuery.trim())).matches||[]);
+      })}>Search C++ Trie</button></div>
+      <div className="lab-trie-flow">{[...trieQuery].map((letter,index)=>
+        <div key={index}><small>{index===0?"ROOT →":"↓"}</small><strong>{letter.toLowerCase()}</strong></div>)}</div>
+      <p className="lab-muted">Each character follows a hash-map child pointer; terminal and descendant IDs are collected for matching compounds.</p>
+      {trieMatches&&<div className="lab-components">
+        {trieMatches.map(n=><article key={n.id}><b>{n.formula}</b><span>{n.name}</span></article>)}
+        {!trieMatches.length&&<span>No matching prefix</span>}
+      </div>}
+    </div>}
     {tab==="sandbox"&&<div className="lab-section">
-      <div className="lab-toolbar"><label>Block one outgoing directed edge from {from}
-        <select value={blocked} onChange={e=>setBlocked(e.target.value)}>
-          <option value="">Select an edge</option>
-          {outgoing.map(e=><option key={e.id} value={e.id}>{byId.get(e.target)?.name||e.target} · {e.reaction}</option>)}
+      <div className="lab-toolbar">
+        <label>Sandbox operation<select value={editMode} onChange={e=>{setEditMode(e.target.value);setSandbox(null);}}>
+          <option value="remove">Remove directed edge</option>
+          <option value="replace">Change edge weight</option>
+          <option value="add">Add hypothetical directed edge</option>
         </select></label>
-        <button className="lab-primary" disabled={busy||!blocked} onClick={()=>execute(async()=>{
-          const e=outgoing.find(x=>x.id===blocked);
-          setSandbox(await api.labPlayground(from,to,e.source,e.target,e.reactionId));
-        })}>Recompute without edge</button></div>
-      <p className="lab-muted">This is a query-only graph edit; the chemistry dataset is not modified.</p>
+        {editMode==="add"?<label>Target for hypothetical edge
+          <select value={editTarget} onChange={e=>setEditTarget(e.target.value)}>
+            <option value="">Current search destination ({to})</option>
+            {(network?.nodes||[]).map(n=><option key={n.id} value={n.id}>{n.name}</option>)}
+          </select>
+        </label>:<label>Existing edge from {from}
+          <select value={blocked} onChange={e=>setBlocked(e.target.value)}>
+            <option value="">Select an outgoing edge</option>
+            {outgoing.map(e=><option key={e.id} value={e.id}>
+              {byId.get(e.target)?.name||e.target} · {e.reaction}
+            </option>)}
+          </select>
+        </label>}
+        {editMode!=="remove"&&<label>Graph weight
+          <input type="number" min="1" max="1000" value={editWeight} onChange={e=>setEditWeight(Number(e.target.value))}/>
+        </label>}
+        <button className="lab-primary" disabled={busy||(editMode!=="add"&&!blocked)}
+          onClick={()=>execute(async()=>{
+            if(editMode==="remove"){
+              const e=outgoing.find(x=>x.id===blocked);
+              if(!e)throw new Error("Select an edge");
+              setSandbox(await api.labPlayground(from,to,e.source,e.target,e.reactionId));
+            }else{
+              const e=outgoing.find(x=>x.id===blocked);
+              if(editMode==="replace"&&!e)throw new Error("Select an edge");
+              const targetNode=network?.nodes?.find(n=>n.name===to);
+              const targetId=editTarget?Number(editTarget):targetNode?.id;
+              if(editMode==="add"&&(sourceId===undefined||targetId===undefined))throw new Error("Select two compounds");
+              setSandbox(await api.labEdit(from,to,editMode,
+                editMode==="add"?sourceId:e.source,
+                editMode==="add"?targetId:e.target,
+                editMode==="add"?-2:e.reactionId,editWeight));
+            }
+          })}>Recompute route</button>
+      </div>
+      <p className="lab-muted">Hypothetical edges are graph-only demonstrations, not real chemical reactions. Original data remains immutable.</p>
       {sandbox&&<RouteView route={sandbox.route}/>}
     </div>}
     <footer className="lab-footer">DSA learning mode · reaction participation graph · not a laboratory synthesis planner</footer>

@@ -57,6 +57,9 @@ std::vector<PathResult> kShortest(const ReactionGraph& graph, const std::string&
                                   const std::string& to, std::size_t k = 3);
 PathResult withoutEdge(const ReactionGraph& graph, const std::string& from,
                        const std::string& to, int source, int target, int reactionId);
+PathResult withEdge(const ReactionGraph& graph, const std::string& from,
+                    const std::string& to, int source, int target,
+                    int reactionId, int weight, bool replaceExisting);
 RepresentationStats compareRepresentations(const ReactionGraph& graph, int iterations = 1000);
 SyntheticStats synthetic(int nodes, int edges, int seed);
 } // namespace chempath::lab

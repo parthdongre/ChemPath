@@ -38,6 +38,9 @@ jobs:
           ctest --test-dir engine/build-release --output-on-failure -C Release
           ./engine/build-release/chempath_bench data/compounds.csv data/reactions.csv 96
 
+      - name: Compare baseline and optimized engine
+        run: bash scripts/compare-engine-baseline.sh
+
       - name: Build frontend
         run: npm run build:web
 

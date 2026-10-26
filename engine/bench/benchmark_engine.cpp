@@ -115,8 +115,10 @@ int main(int argc, char** argv) {
                 std::chrono::duration<double, std::micro>(end - start).count());
             visited += result.visitedOrder.size();
             found += result.found ? 1 : 0;
+            // Compare minimum hop count (BFS) or total weight (weighted
+            // methods). Equally optimal routes may use different node counts.
             checksum += result.found
-                ? static_cast<std::size_t>(result.totalCost + result.compoundIds.size())
+                ? static_cast<std::size_t>(result.totalCost)
                 : 0;
         }
 

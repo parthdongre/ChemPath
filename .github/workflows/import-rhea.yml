@@ -25,5 +25,5 @@ jobs:
           git add data/expanded/
           if ! git diff --cached --quiet; then
             git commit -m "data: add Rhea CC-BY-4.0 sample as an expanded graph"
-            git push origin HEAD:feat/dsa-algorithm-lab
+            git push origin HEAD:$GITHUB_REF_NAME
           fi

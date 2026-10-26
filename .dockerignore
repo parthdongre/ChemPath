@@ -13,3 +13,10 @@ screenshots
 .DS_Store
 .vscode
 .idea
+
+# ORD database and source Parquet files are deployed as external mounted storage.
+data/ord/*.sqlite
+data/ord/*.sqlite-*
+data/ord/cache/
+data/ord-demo/
+.venv/

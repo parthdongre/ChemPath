@@ -1,12 +1,11 @@
 import cors from "cors";
 import express from "express";
-import { execFile } from "node:child_process";
+import { spawn } from "node:child_process";
+import readline from "node:readline";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { promisify } from "node:util";
 import fs from "node:fs";
 
-const execFileAsync = promisify(execFile);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, "..");
@@ -21,53 +20,82 @@ const engineCandidates = process.platform === "win32"
 const enginePath = engineCandidates.find((candidate) => fs.existsSync(candidate))
   ?? engineCandidates[0];
 
-const dataDir = path.join(repoRoot, "data");
+const dataDir = process.env.CHEMPATH_DATA_DIR
+  ? path.resolve(process.env.CHEMPATH_DATA_DIR)
+  : path.join(repoRoot, "data");
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-async function runEngine(args = []) {
-  try {
-    const { stdout, stderr } = await execFileAsync(
-      enginePath,
-      [...args, "--data", dataDir],
-      {
-        cwd: repoRoot,
-        timeout: 10000,
-        maxBuffer: 16 * 1024 * 1024
-      }
-    );
-
-    if (stderr?.trim()) {
-      console.warn("[ChemPath engine]", stderr.trim());
-    }
-
-    return JSON.parse(stdout);
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      const buildHint = process.platform === "win32"
-        ? "Run: cmake -S engine -B engine/build && cmake --build engine/build --config Release"
-        : "Run: npm run build:engine";
-
-      const friendlyError = new Error(`C++ engine not found. ${buildHint}`);
-      friendlyError.status = 503;
-      throw friendlyError;
-    }
-
-    const output = error.stdout?.toString?.().trim();
-    if (output) {
-      try {
-        const parsed = JSON.parse(output);
-        const engineError = new Error(parsed.error || "C++ engine command failed.");
-        engineError.status = 400;
-        throw engineError;
-      } catch {
-        // fall through to the original process error
-      }
-    }
+// Persistent C++ worker: one graph load, then JSON-line replies per command.
+let worker = null;
+const pending = [];
+function failPending(error) {
+  while (pending.length) {
+    const request = pending.shift();
+    clearTimeout(request.timer);
+    request.reject(error);
+  }
+}
+function startWorker() {
+  if (worker) return worker;
+  if (!fs.existsSync(enginePath)) {
+    const error = new Error("C++ engine not found. Run: npm run build:engine");
+    error.status = 503;
     throw error;
   }
+  const child = spawn(enginePath, ["serve", "--data", dataDir], {
+    cwd: repoRoot, stdio: ["pipe", "pipe", "pipe"]
+  });
+  worker = child;
+  const lines = readline.createInterface({ input: child.stdout });
+  lines.on("line", (line) => {
+    const job = pending.shift();
+    if (!job) return;
+    clearTimeout(job.timer);
+    try {
+      const payload = JSON.parse(line);
+      if (payload.ok === false) {
+        const error = new Error(payload.error || "Engine command failed");
+        error.status = 400;
+        job.reject(error);
+      } else job.resolve(payload);
+    } catch {
+      job.reject(new Error("Invalid engine response"));
+    }
+  });
+  child.stderr.on("data", (chunk) => console.warn("[ChemPath engine]", String(chunk)));
+  const stop = (cause) => {
+    if (worker === child) worker = null;
+    failPending(new Error("C++ engine stopped: " + cause));
+  };
+  child.on("error", (err) => stop(err.message));
+  child.on("exit", (code) => stop("exit code " + code));
+  return child;
+}
+function runEngine(args = []) {
+  if (args.some((part) => /[\t\r\n]/.test(String(part)))) {
+    const error = new Error("Invalid control characters in request");
+    error.status = 400;
+    return Promise.reject(error);
+  }
+  try {
+    const child = startWorker();
+    return new Promise((resolve, reject) => {
+      const job = { resolve, reject, timer: null };
+      pending.push(job);
+      job.timer = setTimeout(() => {
+        if (worker === child) { worker = null; child.kill(); }
+        failPending(new Error("Engine request timed out; worker restarted"));
+      }, 30000);
+      child.stdin.write(args.map(String).join("\t") + "\n", (error) => {
+        if (!error) return;
+        if (worker === child) { worker = null; child.kill(); }
+        failPending(error);
+      });
+    });
+  } catch (error) { return Promise.reject(error); }
 }
 
 function route(handler) {
@@ -147,6 +175,44 @@ app.get("/api/search", route(async (req) => {
   if (!q) return { ok: true, dataStructure: "Trie", query: q, matches: [] };
   return runEngine(["search", q]);
 }));
+
+app.get("/api/lab/trace", route(async (req) => {
+  const algorithm = String(req.query.algorithm || "bfs").toLowerCase();
+  if (!["bfs", "dfs", "dijkstra", "tarjan"].includes(algorithm)) {
+    const error = new Error("Unsupported trace algorithm"); error.status = 400; throw error;
+  }
+  if (algorithm !== "tarjan" && (!req.query.from || !req.query.to)) {
+    const error = new Error("Trace requires from and to"); error.status = 400; throw error;
+  }
+  return runEngine(["labtrace", algorithm, String(req.query.from || "_"), String(req.query.to || "_")]);
+}));
+app.get("/api/lab/compare", route(async (req) => {
+  if (!req.query.from || !req.query.to) {
+    const error = new Error("Compare requires from and to"); error.status = 400; throw error;
+  }
+  return runEngine(["labcompare", String(req.query.from), String(req.query.to)]);
+}));
+app.get("/api/lab/components", route(async () => runEngine(["labcomponents"])));
+app.get("/api/lab/kpaths", route(async (req) => {
+  if (!req.query.from || !req.query.to) {
+    const error = new Error("Routes require from and to"); error.status = 400; throw error;
+  }
+  const count = Math.max(1, Math.min(8, Number(req.query.k) || 3));
+  return runEngine(["labkpaths", String(req.query.from), String(req.query.to), String(Math.trunc(count))]);
+}));
+app.get("/api/lab/playground", route(async (req) => {
+  const { from, to, edgeFrom, edgeTo, reactionId } = req.query;
+  if (![from,to,edgeFrom,edgeTo,reactionId].every(v=>v!==undefined)) {
+    const error = new Error("Requires from, to and selected edge"); error.status = 400; throw error;
+  }
+  return runEngine(["labplayground",String(from),String(to),String(edgeFrom),String(edgeTo),String(reactionId)]);
+}));
+app.get("/api/lab/csr", route(async (req) =>
+  runEngine(["labcsr", String(Math.max(1, Math.min(2000, Number(req.query.iterations)||250)))])));
+app.get("/api/lab/synthetic", route(async (req) =>
+  runEngine(["labsynthetic", String(Math.max(2, Math.min(25000, Number(req.query.nodes)||1000))),
+    String(Math.max(1, Math.min(250000, Number(req.query.edges)||3000))),
+    String(Math.trunc(Number(req.query.seed)||42))])));
 
 const port = Number(process.env.PORT || 8787);
 app.listen(port, () => {

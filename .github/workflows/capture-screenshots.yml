@@ -1,0 +1,63 @@
+name: Capture ChemPath UI Screenshots
+on:
+  push:
+    branches: [docs/chempath-screenshots]
+    paths:
+      - scripts/capture-screenshots.mjs
+      - .github/workflows/capture-screenshots.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install app and browser automation
+        run: |
+          npm install
+          npm install --no-save playwright-core@1.56.1
+          which google-chrome || which chromium || true
+      - name: Build C++ engine
+        run: npm run build:engine
+      - name: Start actual frontend and backend
+        run: |
+          npm run dev > /tmp/chempath-visual-server.log 2>&1 &
+          echo $! > /tmp/chempath-visual-server.pid
+          for i in $(seq 1 80); do
+            if curl -fsS http://127.0.0.1:5173 >/dev/null && curl -fsS http://127.0.0.1:8787/api/health >/dev/null; then
+              echo "Frontend and C++ API ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/chempath-visual-server.log
+          exit 1
+      - name: Capture actual UI in Chromium
+        run: node scripts/capture-screenshots.mjs
+      - name: Publish screenshot gallery to screenshot branch
+        if: always()
+        run: |
+          if [ ! -d screenshots ]; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add screenshots
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: screenshots of running ChemPath frontend and DSA laboratory"
+            git push origin HEAD:docs/chempath-screenshots
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: chempath-actual-ui-screenshots
+          path: screenshots/
+          if-no-files-found: warn
+      - name: Print server log on failure
+        if: failure()
+        run: tail -120 /tmp/chempath-visual-server.log || true

@@ -95,7 +95,7 @@ def main():
             continue
         rhea_id = row[0].strip()
         reaction_smiles = row[1].strip()
-        if ">>" not in reaction_smiles or rhea_id.lower().startswith("rhea"):
+        if ">>" not in reaction_smiles or rhea_id.lower() in {"rhea_id", "rhea-id", "id"}:
             skipped += 1
             continue
         sides = reaction_smiles.split(">>")

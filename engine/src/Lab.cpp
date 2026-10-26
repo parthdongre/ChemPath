@@ -62,7 +62,7 @@ PathResult filteredPath(const ReactionGraph& graph, int start, int target,
     result.totalCost = dist[target];
     for (int node=target; node!=-1; node=parent[node]) {
         result.compoundIds.push_back(node);
-        if (reaction[node]>=0) result.reactionIds.push_back(reaction[node]);
+        if (reaction[node]!=-1) result.reactionIds.push_back(reaction[node]);
     }
     std::reverse(result.compoundIds.begin(),result.compoundIds.end());
     std::reverse(result.reactionIds.begin(),result.reactionIds.end());

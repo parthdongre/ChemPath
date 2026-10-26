@@ -1,6 +1,10 @@
 #include "ReactionGraph.hpp"
 
 #include <algorithm>
+// Keep assertions active for Release builds: they are the test harness.
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
 #include <cassert>
 #include <iostream>
 #include <string>

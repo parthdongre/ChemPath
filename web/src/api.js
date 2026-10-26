@@ -16,6 +16,7 @@ async function request(path) {
 
 export const api = {
   network: () => request("/network"),
+  neighborhood: (center, depth=2, limit=350) => request(`/graph/neighborhood?center=${encodeURIComponent(center)}&depth=${depth}&limit=${limit}`),
   stats: () => request("/stats"),
   path: (from, to, algorithm = "bfs") =>
     request(

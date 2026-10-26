@@ -28,8 +28,8 @@ jobs:
         run: npm run build:engine
       - name: Start actual frontend and backend
         run: |
-          npm run dev > /tmp/chempath-visual-server.log 2>&1 &
-          echo $! > /tmp/chempath-visual-server.pid
+          node server/index.js > /tmp/chempath-visual-server.log 2>&1 &
+          npm --workspace web run dev -- --host 127.0.0.1 >> /tmp/chempath-visual-server.log 2>&1 &
           for i in $(seq 1 80); do
             if curl -fsS http://127.0.0.1:5173 >/dev/null && curl -fsS http://127.0.0.1:8787/api/health >/dev/null; then
               echo "Frontend and C++ API ready"

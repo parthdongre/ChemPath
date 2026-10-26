@@ -242,15 +242,26 @@ int main(int argc, char** argv) {
     assert(!scc.components.empty());
     assert(!scc.visitedOrder.empty());
 
-    // Deterministic cross-algorithm regression on diverse source/target pairs,
+    // Deterministic cross-algorithm regression on reachable and no-path pairs,
     // not just the single mid-semester demonstration route. This also detects
     // stale reverse-index data and path reconstruction errors.
-    constexpr int sampleCount = 36;
+    constexpr int sampleCount = 384;
     for (int sample = 0; sample < sampleCount; ++sample) {
         const auto& source = graph.compounds()[
             (static_cast<std::size_t>(sample) * 37 + 11) % graph.compounds().size()];
-        const auto& target = graph.compounds()[
-            (static_cast<std::size_t>(sample) * 83 + 5) % graph.compounds().size()];
+        std::size_t targetId =
+            (static_cast<std::size_t>(sample) * 83 + 5) % graph.compounds().size();
+        if (sample % 2 == 0) {
+            const auto hops = graph.hopDistances(source.name);
+            int bestHops = -1;
+            for (std::size_t j = 0; j < hops.size(); ++j) {
+                if (hops[j] > bestHops) {
+                    bestHops = hops[j];
+                    targetId = j;
+                }
+            }
+        }
+        const auto& target = graph.compounds()[targetId];
 
         const auto ordinary = graph.shortestPathBfs(source.name, target.name);
         const auto twoFront = graph.shortestPathBidirectional(source.name, target.name);

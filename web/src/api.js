@@ -25,5 +25,13 @@ export const api = {
     request(`/reachable?from=${encodeURIComponent(from)}`),
   cycles: () => request("/cycles"),
   scc: () => request("/scc"),
-  search: (query) => request(`/search?q=${encodeURIComponent(query)}`)
+  search: (query) => request(`/search?q=${encodeURIComponent(query)}`),
+  labTrace: (algorithm, from, to) => request(`/lab/trace?algorithm=${encodeURIComponent(algorithm)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`),
+  labCompare: (from,to) => request(`/lab/compare?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`),
+  labComponents: () => request("/lab/components"),
+  labPaths: (from,to,k=3) => request(`/lab/kpaths?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&k=${k}`),
+  labPlayground: (from,to,edgeFrom,edgeTo,reactionId) =>
+    request(`/lab/playground?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&edgeFrom=${edgeFrom}&edgeTo=${edgeTo}&reactionId=${reactionId}`),
+  labCsr: () => request("/lab/csr"),
+  labSynthetic: (nodes,edges,seed) => request(`/lab/synthetic?nodes=${nodes}&edges=${edges}&seed=${seed}`)
 };

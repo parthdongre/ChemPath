@@ -58,9 +58,23 @@ int main(int argc, char** argv) {
     for (int i = 0; i < samples; ++i) {
         const auto& from = compounds[
             (static_cast<std::size_t>(i) * 37 + 11) % compounds.size()];
-        const auto& to = compounds[
-            (static_cast<std::size_t>(i) * 83 + 5) % compounds.size()];
-        queries.emplace_back(from.name, to.name);
+        std::size_t targetId =
+            (static_cast<std::size_t>(i) * 83 + 5) % compounds.size();
+
+        // Half the queries stress nontrivial reachable paths (furthest known
+        // target); the other half sample the full catalog, including no-path
+        // cases. Avoid benchmarking mostly immediate no-path exits.
+        if (i % 2 == 0) {
+            const auto hops = graph.hopDistances(from.name);
+            int bestHops = -1;
+            for (std::size_t j = 0; j < hops.size(); ++j) {
+                if (hops[j] > bestHops) {
+                    bestHops = hops[j];
+                    targetId = j;
+                }
+            }
+        }
+        queries.emplace_back(from.name, compounds[targetId].name);
     }
 
     constexpr std::array<Algorithm, 7> algorithms{{
@@ -77,6 +91,7 @@ int main(int argc, char** argv) {
     std::cout << "Graph: " << compounds.size() << " compounds, "
               << graph.edgeCount() << " directed edges; " << samples
               << " fixed source-target pairs.\n";
+    std::cout << "Query mix: half farthest reachable, half catalog-wide pairs.\n";
     std::cout << "Timing unit: microseconds, in-memory only (not CSV parsing/process startup).\n";
     std::cout << "Algorithm,p50_us,p95_us,mean_us,avg_visited,found,checksum\n";
 

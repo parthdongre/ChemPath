@@ -1,4 +1,6 @@
 name: Deployability and WebGL UI
+permissions:
+  contents: write
 on:
   pull_request:
     branches: [main]
@@ -40,6 +42,21 @@ jobs:
         env:
           TEST_APP_URL: http://127.0.0.1:8080
         run: node scripts/smoke-webgl.mjs
+      - name: Publish production WebGL screenshot
+        if: success() && github.event_name == 'pull_request'
+        run: |
+          cp screenshots/webgl-hosted.png /tmp/chempath-webgl-hosted.png
+          git fetch origin docs/chempath-screenshots
+          git checkout -B docs/chempath-screenshots origin/docs/chempath-screenshots
+          mkdir -p screenshots
+          cp /tmp/chempath-webgl-hosted.png screenshots/11-sigma-webgl-hosted.png
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add screenshots/11-sigma-webgl-hosted.png
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: add real Chromium WebGL screenshot for Sigma.js explorer"
+            git push origin HEAD:docs/chempath-screenshots
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -67,7 +67,7 @@ potential path distance. The bucket array uses O(C) storage for maximum edge
 weight C, plus queued entries, instead of O(CV) bucket allocation for V
 vertices. Bidirectional BFS uses an O(1) visited marker for replay deduplication.
 
-The C++ regression tests check 36 deterministic source-target pairs, confirm
+The C++ regression tests check 384 deterministic source-target pairs (including long reachable routes), confirm
 every returned path follows existing directed reaction edges, and compare
 weighted algorithms against Dijkstra. These are regression checks, not a
 mathematical proof of algorithm correctness.
@@ -83,9 +83,21 @@ ctest --test-dir engine/build-release --output-on-failure -C Release
 ./engine/build-release/chempath_bench data/compounds.csv data/reactions.csv 128
 ~~~
 
+Optional base-versus-optimized comparison (requires a local Git remote named
+`origin` and the Release benchmark binary above):
+
+~~~bash
+bash scripts/compare-engine-baseline.sh
+~~~
+
+This compiles the original C++ engine from `main` against the same benchmark
+harness, then reports both runs on identical query pairs. Differences vary by
+compiler, hardware and workload; treat the timing results as measurements, not
+promised speedups.
+
 The benchmark runs seven pathfinding algorithms on the same deterministic
 compound pairs and reports **p50/p95/mean elapsed microseconds**, average visited
-nodes, found-path count, and checksums. It times only in-memory C++ searches:
+nodes, found-path count, and cost checksums. It times only in-memory C++ searches:
 process startup, CSV parsing, JSON serialization, HTTP, and graph rendering are
 not part of these results. Compare performance on the same machine and build
 settings; CI timings are informational, not fixed speed guarantees.

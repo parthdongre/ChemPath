@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:8787/api";
+const API_BASE = import.meta.env.VITE_API_URL ?? (import.meta.env.PROD ? "/api" : "http://localhost:8787/api");
 
 async function request(path) {
   const response = await fetch(`${API_BASE}${path}`);

@@ -1,5 +1,9 @@
 import cytoscape from "cytoscape";
-import { useEffect, useMemo, useRef } from "react";
+import fcose from "cytoscape-fcose";
+import dagre from "cytoscape-dagre";
+cytoscape.use(fcose);
+cytoscape.use(dagre);
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const categoryClass = (category = "") =>
   `category-${category.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
@@ -15,11 +19,16 @@ export default function NetworkGraph({
 }) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
+  const positionsRef = useRef(new Map());
+  const viewportRef = useRef(null);
+  const [layoutMode, setLayoutMode] = useState("fcose");
+  const [inspected, setInspected] = useState(null);
 
   const elements = useMemo(() => {
     if (!network) return [];
 
     const nodes = network.nodes.map((node) => ({
+      position: positionsRef.current.get(String(node.id)),
       data: {
         id: String(node.id),
         label: node.formula || node.name,
@@ -55,22 +64,20 @@ export default function NetworkGraph({
       wheelSensitivity: 0.2,
       minZoom: 0.08,
       maxZoom: 3.2,
-      layout: {
-        name: "cose",
-        animate: false,
-        fit: true,
-        padding: 90,
-        randomize: true,
-        nodeRepulsion: network.nodes.length > 500 ? 240000 : 190000,
-        idealEdgeLength: network.nodes.length > 500 ? 132 : 112,
-        edgeElasticity: 62,
-        nestingFactor: 0.9,
-        gravity: network.nodes.length > 500 ? 0.10 : 0.18,
-        numIter: network.nodes.length > 500 ? 360 : 520,
-        initialTemp: 170,
-        coolingFactor: 0.95,
-        minTemp: 1
-      },
+      layout: (() => {
+        if (layoutMode === "dagre") {
+          return { name: "dagre", rankDir: "LR", nodeSep: 70,
+                   rankSep: 115, fit: true, padding: 70, animate: false };
+        }
+        const allKnown = elements.every(e =>
+          e.data.source || positionsRef.current.has(String(e.data.id)));
+        return allKnown
+          ? { name: "preset", fit: false, padding: 70 }
+          : { name: "fcose", quality: "default", randomize: false,
+              animate: false, fit: true, padding: 80,
+              nodeRepulsion: 8500, idealEdgeLength: 115,
+              nodeSeparation: 65, gravity: 0.18, numIter: 900 };
+      })(),
       style: [
         {
           selector: "node",
@@ -214,8 +221,19 @@ export default function NetworkGraph({
     });
 
     cyRef.current = cy;
-    return () => cy.destroy();
-  }, [elements]);
+    cy.on("tap", "node", (event) => setInspected(event.target.data()));
+    cy.one("layoutstop", () => {
+      cy.nodes().forEach(node => positionsRef.current.set(node.id(), { ...node.position() }));
+      if (viewportRef.current && layoutMode !== "dagre") {
+        cy.zoom(viewportRef.current.zoom);
+        cy.pan(viewportRef.current.pan);
+      }
+    });
+    return () => {
+      viewportRef.current = { zoom: cy.zoom(), pan: { ...cy.pan() } };
+      cy.destroy();
+    };
+  }, [elements, layoutMode]);
 
   useEffect(() => {
     const cy = cyRef.current;
@@ -298,5 +316,19 @@ export default function NetworkGraph({
     }
   }, [highlightedNodeIds, simulationRunning]);
 
-  return <div className="network-canvas" ref={containerRef} />;
+  return <>
+    <div className="network-graph-buttons" aria-label="Graph layout controls">
+      <button type="button" className={layoutMode === "fcose" ? "active" : ""}
+        onClick={() => { positionsRef.current.clear(); viewportRef.current=null; setLayoutMode("fcose"); }}>Clustered</button>
+      <button type="button" className={layoutMode === "dagre" ? "active" : ""}
+        onClick={() => { positionsRef.current.clear(); viewportRef.current=null; setLayoutMode("dagre"); }}>Directed</button>
+    </div>
+    <div className="network-canvas" ref={containerRef} />
+    {inspected && <div className="graph-node-inspector">
+      <button aria-label="Close inspector" onClick={() => setInspected(null)}>×</button>
+      <small>COMPOUND INSPECTOR</small>
+      <strong>{inspected.formula || inspected.name}</strong>
+      <span>{inspected.name} · {inspected.category}</span>
+    </div>}
+  </>;
 }

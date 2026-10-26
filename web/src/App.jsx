@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "./api";
 import NetworkGraph from "./components/NetworkGraph.jsx";
+import LabPanel from "./components/LabPanel.jsx";
 
 const EMPTY_HIGHLIGHT = { nodes: [], edges: [] };
 const MAX_SIMULATION_MS = 120_000;
@@ -1523,6 +1524,8 @@ export default function App() {
             <span><i className="inorganic" /> Inorganic</span>
           </div>
         </div>
+
+        <LabPanel network={network} from={from} to={to} />
 
         <section className="result-dock">
           <div className="result-label">

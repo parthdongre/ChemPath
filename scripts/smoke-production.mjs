@@ -34,6 +34,7 @@ try {
   assert.match(html, /<div id="root"><\/div>/);
   assert.match(html, /\/assets\/index-/);
   const fallback = await fetch(base + "/dashboard");
+  if (fallback.status !== 200) console.error("Deep-link response:", fallback.status, (await fallback.clone().text()).slice(0, 1000), "\nSERVER LOG:", log);
   assert.equal(fallback.status, 200);
   assert.match(await fallback.text(), /<div id="root"><\/div>/);
   const network = await json("/api/network");

@@ -18,5 +18,4 @@ screenshots
 data/ord/*.sqlite
 data/ord/*.sqlite-*
 data/ord/cache/
-data/ord-demo/
 .venv/

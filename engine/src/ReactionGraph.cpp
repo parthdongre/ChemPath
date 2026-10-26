@@ -411,55 +411,58 @@ PathResult ReactionGraph::shortestPathDial(const std::string& from, const std::s
 
     const auto start = compoundId(from);
     const auto target = compoundId(to);
-    if (!start || !target) return result;
+    if (!start || !target || maxEdgeCost_ <= 0) return result;
 
     const int count = static_cast<int>(compounds_.size());
     const int infinity = std::numeric_limits<int>::max() / 4;
 
-    int maxEdgeCost = 0;
-    for (const auto& edges : adjacency_) {
-        for (const auto& edge : edges) {
-            maxEdgeCost = std::max(maxEdgeCost, edge.cost);
-        }
-    }
-    if (maxEdgeCost <= 0) return result;
-
-    // Any shortest path can be taken simple, so at most V-1 positive edges.
-    const int maxDistance = maxEdgeCost * std::max(1, count - 1);
-    std::vector<std::deque<int>> buckets(static_cast<std::size_t>(maxDistance) + 1);
-
+    // Dial's circular buckets: with integer weights in [1, C], relaxing a
+    // vertex at distance d only inserts distances in [d+1, d+C].
+    // Reuse C+1 buckets instead of allocating O(C*V) deques per query.
+    const std::size_t bucketCount = static_cast<std::size_t>(maxEdgeCost_) + 1;
+    std::vector<std::deque<std::pair<int, int>>> buckets(bucketCount);
     std::vector<int> distance(count, infinity);
     std::vector<int> parent(count, -1);
     std::vector<int> parentReaction(count, -1);
     std::vector<bool> settled(count, false);
 
     distance[*start] = 0;
-    buckets[0].push_back(*start);
+    buckets[0].push_back({0, *start});
+    std::size_t queuedEntries = 1;
+    int currentDistance = 0;
 
-    int currentBucket = 0;
-    while (currentBucket <= maxDistance) {
-        while (currentBucket <= maxDistance && buckets[currentBucket].empty()) {
-            ++currentBucket;
+    while (queuedEntries > 0) {
+        auto& bucket = buckets[static_cast<std::size_t>(currentDistance) % bucketCount];
+        if (bucket.empty() || bucket.front().first > currentDistance) {
+            ++currentDistance;
+            continue;
         }
-        if (currentBucket > maxDistance) break;
 
-        const int current = buckets[currentBucket].front();
-        buckets[currentBucket].pop_front();
+        const auto [queuedDistance, current] = bucket.front();
+        bucket.pop_front();
+        --queuedEntries;
 
-        if (settled[current] || distance[current] != currentBucket) continue;
+        if (queuedDistance != currentDistance ||
+            settled[current] ||
+            distance[current] != queuedDistance) {
+            continue;
+        }
+
         settled[current] = true;
         result.visitedOrder.push_back(current);
-
         if (current == *target) break;
 
         for (const auto& edge : adjacency_[current]) {
-            const int candidate = currentBucket + edge.cost;
-            if (candidate >= distance[edge.to] || candidate > maxDistance) continue;
+            if (currentDistance > infinity - edge.cost) continue;
+            const int candidate = currentDistance + edge.cost;
+            if (candidate >= distance[edge.to]) continue;
 
             distance[edge.to] = candidate;
             parent[edge.to] = current;
             parentReaction[edge.to] = edge.reactionId;
-            buckets[candidate].push_back(edge.to);
+            buckets[static_cast<std::size_t>(candidate) % bucketCount]
+                .push_back({candidate, edge.to});
+            ++queuedEntries;
         }
     }
 
@@ -467,7 +470,6 @@ PathResult ReactionGraph::shortestPathDial(const std::string& from, const std::s
 
     result.found = true;
     result.totalCost = distance[*target];
-
     for (int cursor = *target; cursor != -1; cursor = parent[cursor]) {
         result.compoundIds.push_back(cursor);
         if (parentReaction[cursor] != -1) {

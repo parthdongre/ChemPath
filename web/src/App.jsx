@@ -3,6 +3,7 @@ import { api } from "./api";
 import NetworkGraph from "./components/NetworkGraph.jsx";
 import SigmaNetwork from "./components/SigmaNetwork.jsx";
 import LabPanel from "./components/LabPanel.jsx";
+import OrdExplorer from "./components/OrdExplorer.jsx";
 
 const EMPTY_HIGHLIGHT = { nodes: [], edges: [] };
 const MAX_SIMULATION_MS = 120_000;
@@ -1262,6 +1263,7 @@ export default function App() {
 
         <nav className="nav-links" aria-label="Primary">
           <a href="#explorer">Explorer</a>
+          <a href="#ord-database">ORD Database</a>
           <a href="#engine">Engine</a>
         </nav>
 
@@ -1564,6 +1566,8 @@ export default function App() {
         </div>
 
         <LabPanel network={network} from={from} to={to} />
+
+        <OrdExplorer />
 
         <section className="result-dock">
           <div className="result-label">

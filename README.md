@@ -102,6 +102,57 @@ process startup, CSV parsing, JSON serialization, HTTP, and graph rendering are
 not part of these results. Compare performance on the same machine and build
 settings; CI timings are informational, not fixed speed guarantees.
 
+## WebGL graph explorer and public hosting
+
+The **main compound network now defaults to Sigma.js 3 + Graphology** for
+WebGL-backed rendering with stable coordinates and a bounded synchronous
+ForceAtlas2 layout. A **Path Layout** toggle keeps the existing Cytoscape
+renderer for the smaller directed and stepwise algorithm diagrams.
+
+Click a compound to inspect it; choose **Expand neighborhood** to request a
+bounded, bidirectional 1–3-hop subgraph from the API (max 1,200 nodes), or
+return to the full displayed network. A backend snapshot is cached across
+requests. The existing classroom graphs (690 compounds and optional 1,860
+expanded compounds) are still fully loaded at application startup for the
+compound catalog; this is **not** an ingestion implementation for the entire
+2M+ Open Reaction Database.
+
+### Single-service production deployment
+
+The repository contains a multi-stage Dockerfile that compiles C++17 and
+builds the React frontend, then runs **one Express service**. Express serves
+both the Vite static assets and the persistent C++ API under \`/api\`.
+Production \`VITE_API_URL\` defaults to a relative \`/api\`, removing the
+need for cross-origin requests. Production services listen on \`0.0.0.0\`,
+respect \`PORT\`, and expose the **\`/api/health\`** health check.
+
+Build and test locally with Docker:
+
+~~~bash
+docker build -t chempath:local .
+docker run --rm -p 8080:8080 chempath:local
+# Visit http://localhost:8080/
+~~~
+
+To deploy on [Railway](https://railway.com/), import this GitHub repository
+as a new service and select the root \`Dockerfile\`. The checked-in
+\`railway.json\` configures the health check. Under Settings → Networking,
+generate a public domain once deployment succeeds. The initial deployment
+can use the curated \`data/\` dataset; set
+\`CHEMPATH_DATA_DIR=/app/data/expanded\` to select the larger Rhea subset.
+
+The small public demo has a per-instance in-memory API rate limiter
+(default 120 requests/IP/minute), a 16-request engine queue bound, query
+parameter validation, and a 30-second C++ worker timeout. These are **basic
+abuse controls**, not a substitute for a gateway-level WAF, persistent rate
+limiter, authentication, observability or multi-instance scalability.
+Do not host it as an unrestricted compute service for untrusted workloads.
+
+CI builds the real production Docker container and exercises the API and
+Chromium/WebGL rendering. See
+[docs/HOSTING.md](docs/HOSTING.md) for the full deployment checklist,
+limitations and troubleshooting.
+
 ## DSA Algorithm Laboratory (end-sem upgrade)
 
 The C++17 engine now has a dedicated **algorithm laboratory**. The

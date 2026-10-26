@@ -55,6 +55,9 @@ jobs:
       - name: Build frontend
         run: npm run build:web
 
+      - name: Verify single-origin production server
+        run: node scripts/smoke-production.mjs
+
       - name: Smoke-test CLI
         run: |
           ./engine/build/chempath stats

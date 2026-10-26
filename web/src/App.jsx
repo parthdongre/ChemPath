@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "./api";
 import NetworkGraph from "./components/NetworkGraph.jsx";
+import SigmaNetwork from "./components/SigmaNetwork.jsx";
 import LabPanel from "./components/LabPanel.jsx";
 
 const EMPTY_HIGHLIGHT = { nodes: [], edges: [] };
@@ -739,6 +740,9 @@ function SimulationHud({ simulation, currentCompound, onSkip }) {
 
 export default function App() {
   const [network, setNetwork] = useState(null);
+  const [rendererMode, setRendererMode] = useState('sigma');
+  const [neighborhood, setNeighborhood] = useState(null);
+  const [neighborhoodError, setNeighborhoodError] = useState("");
   const [stats, setStats] = useState(null);
   const [from, setFrom] = useState("Methane");
   const [to, setTo] = useState("Bicarbonate");
@@ -1502,15 +1506,49 @@ export default function App() {
           />
 
           {graphNetwork ? (
-            <NetworkGraph
-              network={graphNetwork}
-              highlightedNodeIds={highlight.nodes}
-              highlightedEdgeIds={highlight.edges}
-              selectedNodeId={selectedFromId}
-              visitedNodeIds={simulation.visited}
-              activeNodeId={simulation.active}
-              simulationRunning={simulation.running}
-            />
+            <>
+              <div className="renderer-switch" role="group" aria-label="Graph renderer">
+                <button type="button" className={rendererMode === "sigma" ? "active" : ""}
+                  onClick={() => setRendererMode("sigma")}>GPU Network</button>
+                <button type="button" className={rendererMode === "cytoscape" ? "active" : ""}
+                  onClick={() => setRendererMode("cytoscape")}>Path Layout</button>
+                {neighborhood && <button type="button" onClick={() => setNeighborhood(null)}>
+                  Full graph
+                </button>}
+              </div>
+              {neighborhoodError && <div className="graph-neighborhood-error" role="alert">{neighborhoodError}</div>}
+              {rendererMode === "sigma" ? (
+                <SigmaNetwork
+                  network={neighborhood || graphNetwork}
+                  highlightedNodeIds={highlight.nodes}
+                  highlightedEdgeIds={highlight.edges}
+                  selectedNodeId={selectedFromId}
+                  visitedNodeIds={simulation.visited}
+                  activeNodeId={simulation.active}
+                  simulationRunning={simulation.running}
+                  onSelectCompound={(name) => {
+                    setFrom(name);
+                    setResult(null);
+                  }}
+                  onExpandNode={(id, name) => {
+                    setNeighborhoodError("");
+                    api.neighborhood(name, 2, 350)
+                      .then(setNeighborhood)
+                      .catch((error) => setNeighborhoodError(error.message));
+                  }}
+                />
+              ) : (
+                <NetworkGraph
+                  network={graphNetwork}
+                  highlightedNodeIds={highlight.nodes}
+                  highlightedEdgeIds={highlight.edges}
+                  selectedNodeId={selectedFromId}
+                  visitedNodeIds={simulation.visited}
+                  activeNodeId={simulation.active}
+                  simulationRunning={simulation.running}
+                />
+              )}
+            </>
           ) : (
             <div className="graph-loading">Waiting for C++ engine</div>
           )}

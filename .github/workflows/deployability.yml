@@ -1,0 +1,68 @@
+name: Deployability and WebGL UI
+permissions:
+  contents: write
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  container-and-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build deployment container
+        run: docker build --tag chempath:ci .
+      - name: Boot production Docker container
+        run: |
+          docker run --detach --name chempath-ci -p 127.0.0.1:8080:8080 chempath:ci
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8080/api/health >/dev/null; then
+              echo "Production container healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs chempath-ci
+          exit 1
+      - name: Smoke-test same-origin API and frontend
+        run: |
+          curl --fail http://127.0.0.1:8080/ | grep -q '<div id="root"></div>'
+          curl --fail 'http://127.0.0.1:8080/api/graph/neighborhood?center=Methane&depth=2&limit=100' -o /tmp/neighborhood.json
+          node -e 'const x=require("/tmp/neighborhood.json"); if (!x.nodes || x.nodes.length<2 || x.nodes.length>100) process.exit(1); console.log("Validated",x.nodes.length,"compound nodes")'
+      - name: Install Chromium automation
+        run: npm install --no-save --no-audit playwright-core@1.56.1
+      - name: Browser WebGL and DSA smoke test
+        env:
+          TEST_APP_URL: http://127.0.0.1:8080
+        run: node scripts/smoke-webgl.mjs
+      - name: Publish production WebGL screenshot
+        if: success() && github.event_name == 'pull_request'
+        run: |
+          cp screenshots/webgl-hosted.png /tmp/chempath-webgl-hosted.png
+          git fetch origin docs/chempath-screenshots
+          git checkout -B docs/chempath-screenshots origin/docs/chempath-screenshots
+          mkdir -p screenshots
+          cp /tmp/chempath-webgl-hosted.png screenshots/11-sigma-webgl-hosted.png
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add screenshots/11-sigma-webgl-hosted.png
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: add real Chromium WebGL screenshot for Sigma.js explorer"
+            git push origin HEAD:docs/chempath-screenshots
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: chempath-sigma-ui
+          path: screenshots/webgl-hosted.png
+          if-no-files-found: warn
+      - name: Container logs
+        if: failure()
+        run: docker logs chempath-ci || true

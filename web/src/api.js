@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:8787/api";
+const API_BASE = import.meta.env.VITE_API_URL ?? (import.meta.env.PROD ? "/api" : "http://localhost:8787/api");
 
 async function request(path) {
   const response = await fetch(`${API_BASE}${path}`);
@@ -16,6 +16,7 @@ async function request(path) {
 
 export const api = {
   network: () => request("/network"),
+  neighborhood: (center, depth=2, limit=350) => request(`/graph/neighborhood?center=${encodeURIComponent(center)}&depth=${depth}&limit=${limit}`),
   stats: () => request("/stats"),
   path: (from, to, algorithm = "bfs") =>
     request(

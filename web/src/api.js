@@ -32,6 +32,8 @@ export const api = {
   labPaths: (from,to,k=3) => request(`/lab/kpaths?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&k=${k}`),
   labPlayground: (from,to,edgeFrom,edgeTo,reactionId) =>
     request(`/lab/playground?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&edgeFrom=${edgeFrom}&edgeTo=${edgeTo}&reactionId=${reactionId}`),
+  labEdit: (from,to,mode,edgeFrom,edgeTo,reactionId,weight) =>
+    request(`/lab/edit?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&mode=${mode}&edgeFrom=${edgeFrom}&edgeTo=${edgeTo}&reactionId=${reactionId}&weight=${weight}`),
   labCsr: () => request("/lab/csr"),
   labSynthetic: (nodes,edges,seed) => request(`/lab/synthetic?nodes=${nodes}&edges=${edges}&seed=${seed}`)
 };

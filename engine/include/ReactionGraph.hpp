@@ -3,6 +3,7 @@
 #include "Models.hpp"
 #include "Trie.hpp"
 
+#include <cstddef>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -42,6 +43,11 @@ private:
     std::vector<Compound> compounds_;
     std::vector<Reaction> reactions_;
     std::vector<std::vector<Edge>> adjacency_;
+    // Built once with the forward graph; incoming entries use Edge::to as predecessor.
+    std::vector<std::vector<Edge>> reverseAdjacency_;
+    int minEdgeCost_{0};
+    int maxEdgeCost_{0};
+    std::size_t edgeCount_{0};
     std::unordered_map<std::string, int> nameToId_;
     std::unordered_map<int, std::size_t> reactionIndexById_;
     Trie trie_;

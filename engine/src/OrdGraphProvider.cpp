@@ -155,7 +155,7 @@ OrdPathResult OrdGraphProvider::shortestPath(const std::string& from,
        options.maxNeighborLinks>250000 || options.cacheBudgetBytes>256*1024*1024)
         throw std::invalid_argument("ORD search exceeds resource bounds");
     const auto began=std::chrono::steady_clock::now();
-    cacheBudgetBytes_=options.cacheBudgetBytes;
+    if(options.cacheBudgetBytes!=0)cacheBudgetBytes_=options.cacheBudgetBytes;
     while(!lru_.empty() && cacheBytes_>cacheBudgetBytes_) {
         auto last=std::prev(lru_.end());
         const auto it=cache_.find(*last);

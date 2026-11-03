@@ -111,7 +111,7 @@ Actions artifact **chempath-milestone-c-benchmark-evidence**.
 
 ~~~bash
 mkdir -p /tmp/chempath-ord-bench
-for nodes in 900 3000 9000; do
+for nodes in 900 3000 9000 30000; do
   d="/tmp/chempath-ord-bench/$nodes"
   python3 scripts/generate-ord-benchmark.py \
     --output-dir "$d" --nodes "$nodes" --queries 25 --seed 42

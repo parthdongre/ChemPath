@@ -48,9 +48,14 @@ OrdGraphProvider::OrdGraphProvider(const std::string& path, std::size_t cacheBud
         sqlCheck(sqlite3_prepare_v2(db_,
                  "SELECT ord_id FROM ord_reactions WHERE id=?1",-1,&lookupId_,nullptr),
                  db_,"Prepare ORD ID lookup");
+        sqlCheck(sqlite3_prepare_v2(db_,
+                 "SELECT 1 FROM ord_participants WHERE smiles=?1 "
+                 "AND role IN ('reactant','product') LIMIT 1",
+                 -1,&existsAsCompound_,nullptr), db_, "Prepare source membership lookup");
     } catch (...) {
         if(adjacent_)sqlite3_finalize(adjacent_);
         if(lookupId_)sqlite3_finalize(lookupId_);
+        if(existsAsCompound_)sqlite3_finalize(existsAsCompound_);
         adjacent_=nullptr; lookupId_=nullptr;
         sqlite3_close(db_);
         db_=nullptr;
@@ -60,6 +65,7 @@ OrdGraphProvider::OrdGraphProvider(const std::string& path, std::size_t cacheBud
 OrdGraphProvider::~OrdGraphProvider() {
     if(adjacent_)sqlite3_finalize(adjacent_);
     if(lookupId_)sqlite3_finalize(lookupId_);
+    if(existsAsCompound_)sqlite3_finalize(existsAsCompound_);
     if(db_)sqlite3_close(db_);
 }
 
@@ -163,6 +169,27 @@ OrdPathResult OrdGraphProvider::shortestPath(const std::string& from,
         lru_.erase(last);
     }
     OrdPathResult result;
+    // A zero-hop graph route is valid only if the compound is actually
+    // indexed as a reactant or product. An unknown identifier (or an
+    // agent-only identifier) must not be reported as a found route.
+    if(from==to) {
+        ++result.sqlQueries;
+        resetStatement(existsAsCompound_);
+        sqlCheck(sqlite3_bind_text(existsAsCompound_,1,from.c_str(),
+                 static_cast<int>(from.size()),SQLITE_TRANSIENT),
+                 db_,"Bind zero-hop compound");
+        const int rc=sqlite3_step(existsAsCompound_);
+        resetStatement(existsAsCompound_);
+        if(rc!=SQLITE_ROW && rc!=SQLITE_DONE)
+            throw std::runtime_error("ORD compound membership lookup failed");
+        if(rc==SQLITE_DONE) {
+            result.elapsedMs=std::chrono::duration<double,std::milli>(
+                std::chrono::steady_clock::now()-began).count();
+            result.cachedBytes=cacheBytes_;
+            result.cacheEntries=cache_.size();
+            return result;
+        }
+    }
     struct Node {std::string smiles;int parent;std::int64_t reactionId;};
     std::vector<Node> discovered;
     discovered.reserve(std::min(options.maxVisited,static_cast<std::size_t>(4096)));

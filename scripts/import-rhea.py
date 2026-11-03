@@ -183,6 +183,8 @@ def import_file(source_file: Path, output: Path, limit: int | None,
     report = {
         "source_url": SOURCE,
         "source_sha256": source_hash(source_file),
+        "rdkit_version": Chem.rdBase.rdkitVersion,
+        "importer_format_version": 2,
         "import_mode": "full" if limit is None else "limited",
         "requested_limit": limit,
         "includes_curated": include_curated,

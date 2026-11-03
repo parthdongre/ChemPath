@@ -58,6 +58,12 @@ try {
   assert.equal(add.route.totalCost, 1);
   assert.equal(add.route.reactionPath[0].sourceKey, "SANDBOX");
   await get("/api/lab/edit?from=Methane&to=Bicarbonate&mode=add&edgeFrom=0&edgeTo=1&reactionId=-2&weight=0", 400);
+  const feasibility = await get("/api/feasible?available=Water%3BCarbon%20Dioxide&target=Bicarbonate");
+  assert.equal(feasibility.mode, "reaction-dependency");
+  assert.equal(typeof feasibility.targetAvailable, "boolean");
+  assert.ok(feasibility.availableCount >= 2);
+  assert.ok(Array.isArray(feasibility.activationSample));
+  await get("/api/feasible?available=UnknownFakeCompound&target=Bicarbonate", 400);
   const bfs = await get("/api/lab/trace?algorithm=bfs&from=Methane&to=Bicarbonate");
   assert.ok(bfs.events.some(e => e.type === "enqueue"));
   const tarjan = await get("/api/lab/trace?algorithm=tarjan");

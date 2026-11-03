@@ -124,6 +124,11 @@ def open_database(path: Path) -> sqlite3.Connection:
           role TEXT NOT NULL CHECK (role IN ('reactant','agent','product')),
           PRIMARY KEY (smiles, reaction_id, role)
         ) WITHOUT ROWID;
+        -- Needed for efficient disk-backed expansion from reaction ID to products.
+        -- The existing WITHOUT ROWID primary key starts with smiles, so it
+        -- cannot efficiently answer a reaction_id-first lookup.
+        CREATE INDEX IF NOT EXISTS idx_ord_participants_reaction_role_smiles
+            ON ord_participants(reaction_id, role, smiles);
         CREATE TABLE IF NOT EXISTS ord_files (
           source_file TEXT PRIMARY KEY,
           processed INTEGER NOT NULL DEFAULT 0,

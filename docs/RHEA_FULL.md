@@ -50,6 +50,15 @@ For deterministic builds, import the same source bytes and options.
 The rows, IDs and manifest are independent of wall-clock time. Different
 source releases can legitimately change totals.
 
+## Download without running RDKit
+
+The pull request CI imports the full source and uploads the generated
+graph as the `chempath-rhea-full` GitHub Actions artifact (30-day
+retention). Download/extract the artifact into `data/rhea/full/` and run
+`CHEMPATH_DATA_DIR=data/rhea/full npm run dev` after building the C++
+engine. The artifact is not committed to Git; attribution and provenance
+files are bundled with it.
+
 ## Tests
 
 ```bash

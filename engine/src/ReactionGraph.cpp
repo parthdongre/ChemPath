@@ -179,8 +179,49 @@ bool ReactionGraph::loadReactions(const std::string& path) {
     return true;
 }
 
+bool ReactionGraph::loadRequirements(const std::string& reactionsPath) {
+    const auto lastSlash = reactionsPath.find_last_of("/\\");
+    const std::string directory = lastSlash == std::string::npos
+        ? "" : reactionsPath.substr(0, lastSlash + 1);
+    std::ifstream source(directory + "reaction_requirements.csv");
+    if (!source) return true; // Important: unknown, not implicitly empty.
+    std::string line;
+    if (!std::getline(source, line) || trim(line) != "reaction_id|reagents|catalysts")
+        return false;
+    while (std::getline(source, line)) {
+        if (trim(line).empty()) continue;
+        const auto cols = split(line, '|');
+        if (cols.size() != 3) return false;
+        int id;
+        try {
+            std::size_t consumed = 0;
+            id = std::stoi(cols[0], &consumed);
+            if (consumed != cols[0].size()) return false;
+        } catch (...) { return false; }
+        const auto it = reactionIndexById_.find(id);
+        if (it == reactionIndexById_.end()) return false;
+        Reaction& reaction = reactions_[it->second];
+        if (reaction.requirementsKnown) return false;
+        const auto parseNames = [&](const std::string& cell) {
+            std::vector<std::string> out;
+            for (const auto& item : split(cell, ';')) {
+                const auto normalized = normalize(item);
+                if (!normalized.empty()) out.push_back(normalized);
+            }
+            std::sort(out.begin(), out.end());
+            out.erase(std::unique(out.begin(), out.end()), out.end());
+            return out;
+        };
+        reaction.requirementsKnown = true;
+        reaction.requiredReagents = parseNames(cols[1]);
+        reaction.requiredCatalysts = parseNames(cols[2]);
+    }
+    return true;
+}
+
 bool ReactionGraph::loadFromFiles(const std::string& compoundsPath, const std::string& reactionsPath) {
-    return loadCompounds(compoundsPath) && loadReactions(reactionsPath);
+    return loadCompounds(compoundsPath) && loadReactions(reactionsPath) &&
+           loadRequirements(reactionsPath);
 }
 
 const std::vector<Compound>& ReactionGraph::compounds() const {

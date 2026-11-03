@@ -2,7 +2,7 @@ name: ChemPath CI
 
 on:
   push:
-    branches: [main, midsem-build]
+    branches: [main, midsem-build, feat/milestone-b-csr-constrained-pareto]
   pull_request:
     branches: [main]
 

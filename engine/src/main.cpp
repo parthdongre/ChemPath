@@ -1,4 +1,5 @@
 #include "ReactionGraph.hpp"
+#include "ReactionDependencyGraph.hpp"
 #include "Lab.hpp"
 
 #include <chrono>
@@ -194,6 +195,68 @@ std::vector<std::string> splitProtocol(const std::string& line){
 int runCommand(const ReactionGraph& graph,const std::vector<std::string>& args) {
     if(args.empty()){printError("Command required");return 1;}
     const std::string command = args[0];
+
+    if (command == "feasible") {
+        if (args.size() != 3) {
+            printError("feasible requires <semicolon-separated initial compounds> <target>");
+            return 1;
+        }
+        std::vector<int> seeds;
+        std::istringstream list(args[1]);
+        std::string name;
+        while (std::getline(list, name, ';')) {
+            auto id = graph.compoundId(name);
+            if (!id) {
+                printError("Unknown initial compound: " + name);
+                return 1;
+            }
+            seeds.push_back(*id);
+        }
+        if (seeds.empty()) {
+            printError("At least one initial compound required");
+            return 1;
+        }
+        const auto targetId = graph.compoundId(args[2]);
+        if (!targetId) {
+            printError("Unknown target compound: " + args[2]);
+            return 1;
+        }
+
+        // One immutable loaded graph per CLI invocation or persistent worker.
+        static const chempath::ReactionDependencyGraph dependency(
+            graph.compounds().size(), graph.reactions());
+        const auto outcome = dependency.closure(seeds, *targetId);
+        constexpr std::size_t MAX_SAMPLE = 80;
+        const auto compoundSampleSize = std::min(MAX_SAMPLE, outcome.discoveryOrder.size());
+        std::vector<int> sample(outcome.discoveryOrder.begin(),
+                                outcome.discoveryOrder.begin() + compoundSampleSize);
+        std::cout << "{\"ok\":true,\"mode\":\"reaction-dependency\",\"target\":\""
+                  << jsonEscape(args[2]) << "\",\"targetAvailable\":"
+                  << (outcome.targetAvailable ? "true" : "false")
+                  << ",\"initialCount\":" << seeds.size()
+                  << ",\"availableCount\":" << outcome.discoveryOrder.size()
+                  << ",\"activatedCount\":" << outcome.activationOrder.size()
+                  << ",\"availableSample\":";
+        printCompoundArray(graph, sample);
+        std::cout << ",\"activationSample\":[";
+        for (std::size_t i = 0;
+             i < std::min(MAX_SAMPLE, outcome.activationOrder.size()); ++i) {
+            const auto& activation = outcome.activationOrder[i];
+            if (i) std::cout << ",";
+            const auto* reaction = graph.reaction(activation.reactionId);
+            std::cout << "{\"reactionId\":" << activation.reactionId
+                      << ",\"reverse\":" << (activation.reverse ? "true" : "false")
+                      << ",\"name\":\""
+                      << jsonEscape(reaction ? reaction->name : "")
+                      << "\"}";
+        }
+        std::cout << "],\"truncatedSample\":"
+                  << ((outcome.discoveryOrder.size() > MAX_SAMPLE ||
+                       outcome.activationOrder.size() > MAX_SAMPLE) ? "true" : "false")
+                  << "}\n";
+        return 0;
+    }
+
 
     if(command=="labtrace"){
         if(args.size()<3){printError("labtrace requires algorithm and source");return 1;}

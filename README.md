@@ -53,7 +53,7 @@ See **data/CHEMISTRY_AUDIT.md** for the source families, assumptions, and exampl
 
 ChemPath is still an **educational reaction-network model**, not a laboratory synthesis planner.
 
-A graph edge means that a documented transformation connects those compounds under the stated conditions. It does not imply that simply mixing the displayed graph nodes will automatically produce the shown product. Catalysts, solvent, temperature, pressure, concentration, selectivity, competing reactions, and laboratory safety are outside this Data Structures project.
+A graph edge means that a documented transformation connects those compounds under the stated conditions. It does not imply that simply mixing the displayed graph nodes will automatically produce the shown product. ChemPath can filter requirements that have been explicitly annotated for DSA demonstrations, but it cannot independently validate catalysts, solvent, temperature, pressure, concentration, selectivity, competing reactions, or laboratory safety.
 
 The Dijkstra weight is also **not** an activation energy, free-energy change, yield, reaction time, price, or hazard score. It is an illustrative graph weight for demonstrating weighted shortest-path algorithms.
 

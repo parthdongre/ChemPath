@@ -7,6 +7,8 @@
 #include <cassert>
 #include <algorithm>
 #include <iostream>
+#include <functional>
+#include <utility>
 #include <vector>
 
 using namespace chempath;
@@ -57,6 +59,35 @@ int main(int argc,char** argv) {
     assert(pareto.routes[0].steps==1 && pareto.routes[0].graphCost==15);
     assert(pareto.routes[1].steps==2 && pareto.routes[1].graphCost==11);
     assert(pareto.routes[2].steps==3 && pareto.routes[2].graphCost==6);
+    // Independent brute-force enumeration of ALL loopless paths on this small
+    // fixture, then Pareto-filter by (steps, weight). The result must agree.
+    std::vector<std::pair<int,int>> brute;
+    std::vector<bool> onPath(csr.compounds().size(),false);
+    std::function<void(int,int,int)> visit=[&](int u,int steps,int cost) {
+        if(u==3) { brute.push_back({steps,cost}); return; }
+        onPath[u]=true;
+        for(const auto& edge:csr.neighbors(u)) {
+            if(!onPath[edge.to])visit(edge.to,steps+1,cost+edge.cost);
+        }
+        onPath[u]=false;
+    };
+    visit(0,0,0);
+    std::vector<std::pair<int,int>> bruteFront;
+    for(const auto& candidate:brute) {
+        bool dominated=false;
+        for(const auto& other:brute) {
+            if(other.first<=candidate.first && other.second<=candidate.second &&
+               (other.first<candidate.first || other.second<candidate.second)) {
+                dominated=true; break;
+            }
+        }
+        if(!dominated)bruteFront.push_back(candidate);
+    }
+    std::sort(bruteFront.begin(),bruteFront.end());
+    std::vector<std::pair<int,int>> actual;
+    for(const auto& route:pareto.routes)actual.push_back({route.steps,route.graphCost});
+    std::sort(actual.begin(),actual.end());
+    assert(actual==bruteFront);
     opt.includeReagentOccurrences=true;
     const auto reagentPareto=MultiObjective::search(csr,"A","D",opt);
     assert(reagentPareto.complete);

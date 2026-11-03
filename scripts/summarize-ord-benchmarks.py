@@ -13,6 +13,8 @@ import math
 from pathlib import Path
 import platform
 import statistics
+import os
+import subprocess
 
 
 def load_csv(path: Path):
@@ -50,10 +52,25 @@ def main():
     parser.add_argument("--sizes", type=int, nargs="+", default=[900, 3000, 9000])
     args = parser.parse_args()
 
+    cpu_model = platform.processor() or platform.machine()
+    cpuinfo = Path("/proc/cpuinfo")
+    if cpuinfo.is_file():
+        for line in cpuinfo.read_text(encoding="utf-8").splitlines():
+            if line.startswith("model name") and ":" in line:
+                cpu_model = line.partition(":")[2].strip()
+                break
+    try:
+        compiler = subprocess.run(["c++", "--version"], capture_output=True, text=True,
+                                  check=True).stdout.splitlines()[0]
+    except (OSError, subprocess.SubprocessError, IndexError):
+        compiler = "unknown"
     evidence = {
         "environment": {
             "operatingSystem": platform.platform(),
-            "cpu": platform.processor() or platform.machine(),
+            "cpu": cpu_model,
+            "compiler": compiler,
+            "build": "Release - use engine/build-release/chempath_ord_bench",
+            "gitCommit": os.environ.get("GITHUB_SHA", "local"),
             "python": platform.python_version(),
             "source": "deterministic synthetic ORD-shaped SQLite graph (not chemistry)",
         },
@@ -73,6 +90,9 @@ def main():
         "latencies. Setup time excludes per-query work; cold mode includes "
         "opening SQLite for every query. RSS is full process peak and therefore "
         "includes the runtime, SQLite and test harness, not only graph arrays.",
+        "",
+        f'**Environment:** {cpu_model}; {compiler}; Release build; '
+        f'commit {os.environ.get("GITHUB_SHA", "local")[:12]}.',
         "",
         "| Vertices | Directed links | Mode | Setup ms | p50 ms | p95 ms | Mean ms | Peak RSS KiB | Mean SQL queries | Incomplete |",
         "|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|",

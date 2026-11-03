@@ -24,6 +24,14 @@ if(SQLite3_FOUND)
     target_sources(chempath_core PRIVATE src/OrdGraphProvider.cpp)
     target_link_libraries(chempath_core PUBLIC SQLite::SQLite3)
     target_compile_definitions(chempath_core PUBLIC CHEMPATH_HAS_SQLITE=1)
+
+    add_executable(chempath_ord_tests tests/test_ord_graph_provider.cpp)
+    target_link_libraries(chempath_ord_tests PRIVATE chempath_core)
+    add_test(NAME ord_disk_backed_graph_tests COMMAND chempath_ord_tests)
+
+    add_executable(chempath_ord_bench bench/benchmark_ord.cpp)
+    target_link_libraries(chempath_ord_bench PRIVATE chempath_core)
+
 endif()
 
 

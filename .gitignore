@@ -20,3 +20,9 @@ data/ord/*.sqlite-*
 data/ord/cache/
 data/ord-demo/
 .venv/
+
+# Full Rhea snapshots and generated graph exports stay outside Git.
+data/rhea/cache/
+data/rhea/full/
+__pycache__/
+*.pyc

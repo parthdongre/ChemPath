@@ -13,6 +13,7 @@ const fixture = [
   "CREATE TABLE ord_reactions(id INTEGER PRIMARY KEY,ord_id TEXT UNIQUE,reaction_smiles TEXT,source_file TEXT);",
   "CREATE TABLE ord_participants(smiles TEXT,reaction_id INTEGER,role TEXT,PRIMARY KEY(smiles,reaction_id,role)) WITHOUT ROWID;",
   "CREATE TABLE ord_files(source_file TEXT PRIMARY KEY,processed INTEGER,records INTEGER,indexed INTEGER);",
+  "CREATE INDEX idx_ord_participants_reaction_role_smiles ON ord_participants(reaction_id,role,smiles);",
   "''')",
   "db.execute('INSERT INTO ord_reactions VALUES (1,?,?,?)',('ord-example-1','CCO.C>>CCOC','test.parquet'))",
   "db.execute('INSERT INTO ord_reactions VALUES (2,?,?,?)',('ord-example-2','CCO.O>>CC=O','test.parquet'))",
@@ -64,10 +65,36 @@ try {
   assert.ok(hood.nodes.some(n=>n.id === "rxn:1"));
   assert.ok(hood.nodes.some(n=>n.id === "mol:CCO"));
   assert.equal(hood.edges.filter(e=>e.source === "mol:CCO").length, 2);
+
+  const shortest = await get("/api/ord/path?from=CCO&to=CCOC");
+  assert.equal(shortest.backend, "sqlite-lazy");
+  assert.equal(shortest.mode, "ord-participation");
+  assert.equal(shortest.found, true);
+  assert.equal(shortest.complete, true);
+  assert.equal(shortest.hopCount, 1);
+  assert.equal(shortest.steps[0].ordId, "ord-example-1");
+  const warmed = await get("/api/ord/path?from=CCO&to=CCOC");
+  assert.ok(warmed.metrics.cacheHits >= 1, "Persistent C++ worker should reuse adjacency cache");
+  const unreachable = await get("/api/ord/path?from=CCO&to=NOT_PRESENT");
+  assert.equal(unreachable.found, false);
+  assert.equal(unreachable.complete, true);
+  const capped = await get("/api/ord/path?from=CCO&to=NOT_PRESENT&maxExpanded=1");
+  assert.equal(capped.found, false);
+  assert.equal(capped.complete, false);
+  assert.equal(capped.limitReason, "maxExpanded");
+  const agentOnly = await get("/api/ord/path?from=O&to=CC%3DO");
+  assert.equal(agentOnly.found, false);
+  assert.equal(agentOnly.complete, true);
+  const degLimited = await get("/api/ord/path?from=CCO&to=NOT_PRESENT&maxNeighbors=1");
+  assert.equal(degLimited.found, false);
+  assert.equal(degLimited.complete, false);
+  assert.equal(degLimited.limitReason, "maxNeighborLinks");
+  await get("/api/ord/path?from=CCO&to=CCOC&maxExpanded=0",400);
+  await get("/api/ord/path?from=CCO",400);
   await get("/api/ord/reaction/999", 404);
   await get("/api/ord/search?q=x", 400);
   await get("/api/ord/neighborhood?smiles=CCO&limit=999", 400);
-  console.log("ORD SQLite API integration passed: stats, search, details, bipartite graph, validation.");
+  console.log("ORD SQLite API integration passed: browsing, exact lazy C++ paths, cache reuse, limits, validation.");
 } finally {
   server.kill();
   fs.rmSync(dir, { recursive: true, force: true });

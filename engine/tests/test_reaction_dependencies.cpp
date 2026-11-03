@@ -1,5 +1,8 @@
 #include "ReactionDependencyGraph.hpp"
 #include <algorithm>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
 #include <cassert>
 #include <stdexcept>
 #include <vector>

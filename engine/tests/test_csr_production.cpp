@@ -7,6 +7,8 @@
 #include <cassert>
 #include <algorithm>
 #include <iostream>
+#include <filesystem>
+#include <fstream>
 #include <vector>
 
 int main(int argc, char** argv) {
@@ -25,6 +27,18 @@ int main(int argc, char** argv) {
     assert(rebuilt.size()==src.size());
     assert(rebuilt[0].size()==3);
     assert(rebuilt[0][1].reactionId==11);
+    const auto path=(std::filesystem::temp_directory_path()/"chempath-csr-roundtrip.cpg").string();
+    assert(csr.save(path));
+    chempath::CSRGraph loaded;
+    assert(loaded.load(path));
+    assert(loaded.vertices()==csr.vertices() && loaded.edges()==csr.edges());
+    assert(loaded.neighbors(0).size()==3);
+    assert(loaded.neighbors(0)[1].reactionId==11);
+    {std::ofstream corrupt(path,std::ios::binary|std::ios::trunc);
+     corrupt << "invalid"; }
+    assert(!loaded.load(path)); // Invalid payload cannot corrupt valid loaded state.
+    assert(loaded.neighbors(0).size()==3);
+    std::filesystem::remove(path);
     if(argc<3) return 1;
 
     chempath::ReactionGraph a, b;

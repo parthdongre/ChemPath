@@ -4,6 +4,7 @@
 #include "MultiObjective.hpp"
 #include "Lab.hpp"
 
+#include <cctype>
 #include <chrono>
 #include <algorithm>
 #include <cmath>

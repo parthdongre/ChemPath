@@ -75,7 +75,7 @@ materializeReference(const std::string& filename) {
     while(sqlite3_step(stmt)==SQLITE_ROW) {
         const auto* a=reinterpret_cast<const char*>(sqlite3_column_text(stmt,0));
         const auto* b=reinterpret_cast<const char*>(sqlite3_column_text(stmt,1));
-        if(a && b)graph[a].push_back(b);
+        if(a && b) { graph[a].push_back(b); graph.try_emplace(b); }
     }
     sqlite3_finalize(stmt);
     sqlite3_close(db);
@@ -84,7 +84,7 @@ materializeReference(const std::string& filename) {
 static int referenceDistance(
     const std::unordered_map<std::string,std::vector<std::string>>& graph,
     const std::string& from,const std::string& to) {
-    if(from==to)return 0;
+    if(from==to)return graph.count(from)?0:-1;
     std::queue<std::string> q;
     std::unordered_map<std::string,int> dist;
     dist.emplace(from,0); q.push(from);

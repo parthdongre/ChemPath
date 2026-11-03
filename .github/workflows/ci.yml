@@ -67,6 +67,12 @@ jobs:
           python3 -m pip install rdkit
           python3 scripts/test_import_rhea.py -v
 
+      - name: Validate complete Rhea source import and C++ graph loading
+        timeout-minutes: 8
+        run: |
+          python3 scripts/import-rhea.py --all --rhea-only --output /tmp/chempath-rhea-full
+          ./engine/build/chempath stats --data /tmp/chempath-rhea-full
+
       - name: Build frontend
         run: npm run build:web
 

@@ -277,7 +277,7 @@ ChemPath now supports an **on-demand local SQLite index** of the official
 [Open Reaction Database](https://huggingface.co/datasets/open-reaction-database/ord-data).
 The full upstream source contains millions of records and roughly gigabyte-scale
 Parquet files. The dataset files and SQLite database are downloaded on your
-machine, not committed to Git and not loaded into the React graph or C++ engine.
+machine, not committed to Git and not fully materialized in React or the C++ ORD search. The C++ engine can traverse indexed neighborhoods lazily from SQLite.
 
 ### Mac / Linux: install and sample the ORD dataset
 
@@ -314,6 +314,42 @@ The importer processes Parquet in batches and resumes completed source files.
 A full import requires substantial download space, SQLite storage and processing
 time; the existing curated and Rhea datasets remain usable while no ORD index
 is installed.
+
+### New: C++ shortest paths directly over the disk-backed ORD index
+
+Milestone C enables **C++ breadth-first search through the local full ORD
+SQLite index**, fetching only the reactant→product participation links needed
+for each expansion. The algorithm uses prepared SQL queries and an LRU
+adjacency cache, but does **not** load all ORD reaction records into memory.
+
+Upgrade an existing ORD SQLite database to the indexed graph schema:
+
+~~~bash
+python3 scripts/index-ord-graph.py --db data/ord/ord.sqlite
+npm run build:engine
+CHEMPATH_ORD_DB=data/ord/ord.sqlite ./engine/build/chempath ordpath CCO 'CC=O'
+npm run dev
+~~~
+
+The ORD Explorer now includes a **C++ on-demand shortest-path** panel.
+Every query clearly reports whether its result is complete or interrupted
+by a resource limit; a capped search is never labeled globally unreachable.
+The C++ search uses exact stored SMILES strings, not canonical molecular
+identity, and participation paths are not synthesis-feasibility proofs.
+
+### Reproducible DSA benchmark evidence
+
+The same deterministic synthetic ORD-shaped graphs are benchmarked with
+**eager in-memory BFS, persistent lazy SQLite BFS and cold SQLite BFS**.
+C++ records per-query timings, SQL access and cache metrics, setup time
+and process peak memory; the Python summarizer checks every exact path
+against the eager reference before generating a Markdown/JSON report.
+The full raw query pairs, CSV results and reports are downloadable as
+GitHub Actions benchmark artifacts. **These fixtures are synthetic, not
+real reaction examples**.
+
+See [docs/MILESTONE_C.md](docs/MILESTONE_C.md) for algorithm complexity,
+commands, tests, benchmark methodology and important limits.
 
 ### Use ORD with C++ BFS/Dijkstra/Tarjan
 

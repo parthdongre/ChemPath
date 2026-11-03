@@ -534,7 +534,7 @@ int runCommand(const ReactionGraph& graph,const std::vector<std::string>& args) 
             << ",\"directedEdges\":" << graph.edgeCount()
             << ",\"backend\":\"" << (graph.backend()==ReactionGraph::Backend::CSR ? "CSR" : "Adjacency") << "\""
             << ",\"graphStorageBytes\":" << graph.graphStorageBytes()
-            << ",\"structures\":[\"Graph\",\"Adjacency List\",\"Queue\",\"Stack\",\"Hash Table\",\"Trie\",\"Priority Queue\",\"Low-link Stack\"]"
+            << ",\"structures\":[\"Graph\",\"CSR\",\"Adjacency List\",\"Queue\",\"Stack\",\"Hash Table\",\"Trie\",\"Priority Queue\",\"Low-link Stack\"]"
             << ",\"algorithms\":[\"BFS\",\"Dijkstra\",\"A*\",\"Dial\",\"Bellman-Ford\",\"Bidirectional BFS\",\"Bidirectional Dijkstra\",\"Duan et al. 2025-inspired Pivot Frontier\",\"DFS\",\"Directed Cycle Detection\",\"Tarjan SCC\",\"Prefix Search\"]"
             << ",\"chemistryAudit\":\"curated-v1\""
             << "}\n";

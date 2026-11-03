@@ -17,6 +17,16 @@ add_library(chempath_core
 
 target_include_directories(chempath_core PUBLIC include)
 
+# Optional read-only SQLite backend for full ORD index traversal.
+# Native builds without SQLite keep the curated/Rhea algorithms working.
+find_package(SQLite3 QUIET)
+if(SQLite3_FOUND)
+    target_sources(chempath_core PRIVATE src/OrdGraphProvider.cpp)
+    target_link_libraries(chempath_core PUBLIC SQLite::SQLite3)
+    target_compile_definitions(chempath_core PUBLIC CHEMPATH_HAS_SQLITE=1)
+endif()
+
+
 if(MSVC)
     target_compile_options(chempath_core PRIVATE /W4)
 else()

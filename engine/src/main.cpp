@@ -408,6 +408,8 @@ int runCommand(const ReactionGraph& graph,const std::vector<std::string>& args) 
             << ",\"compounds\":" << graph.compounds().size()
             << ",\"reactions\":" << graph.reactions().size()
             << ",\"directedEdges\":" << graph.edgeCount()
+            << ",\"backend\":\"" << (graph.backend()==ReactionGraph::Backend::CSR ? "CSR" : "Adjacency") << "\""
+            << ",\"graphStorageBytes\":" << graph.graphStorageBytes()
             << ",\"structures\":[\"Graph\",\"Adjacency List\",\"Queue\",\"Stack\",\"Hash Table\",\"Trie\",\"Priority Queue\",\"Low-link Stack\"]"
             << ",\"algorithms\":[\"BFS\",\"Dijkstra\",\"A*\",\"Dial\",\"Bellman-Ford\",\"Bidirectional BFS\",\"Bidirectional Dijkstra\",\"Duan et al. 2025-inspired Pivot Frontier\",\"DFS\",\"Directed Cycle Detection\",\"Tarjan SCC\",\"Prefix Search\"]"
             << ",\"chemistryAudit\":\"curated-v1\""
@@ -430,8 +432,8 @@ int runCommand(const ReactionGraph& graph,const std::vector<std::string>& args) 
         std::cout << "],\"edges\":[";
 
         bool firstEdge = true;
-        for (std::size_t from = 0; from < graph.adjacency().size(); ++from) {
-            for (const auto& edge : graph.adjacency()[from]) {
+        for (std::size_t from = 0; from < graph.compounds().size(); ++from) {
+            for (const auto& edge : graph.neighbors(static_cast<int>(from))) {
                 const auto* reaction = graph.reaction(edge.reactionId);
                 if (!reaction) continue;
                 if (!firstEdge) std::cout << ",";
@@ -610,6 +612,10 @@ int main(int argc,char** argv){
         printError("Usage: chempath <command> [args] [--data dir]");return 1;
     }
     ReactionGraph graph;
+    if (const char* mode = std::getenv("CHEMPATH_GRAPH_BACKEND")) {
+        if (std::string(mode) == "adjacency")
+            graph.setBackend(ReactionGraph::Backend::Adjacency);
+    }
     const std::string dir=dataPathFromArgs(argc,argv);
     if(!graph.loadFromFiles(dir+"/compounds.csv",dir+"/reactions.csv")){
         printError("Could not load ChemPath dataset from "+dir);return 2;

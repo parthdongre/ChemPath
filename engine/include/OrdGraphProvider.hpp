@@ -75,6 +75,7 @@ private:
     sqlite3* db_{nullptr};
     sqlite3_stmt* adjacent_{nullptr};
     sqlite3_stmt* lookupId_{nullptr};
+    sqlite3_stmt* existsAsCompound_{nullptr};
     std::size_t cacheBytes_{0};
     std::size_t cacheBudgetBytes_{0};
     std::list<std::string> lru_;

@@ -214,6 +214,7 @@ int runCommand(const ReactionGraph& graph,const std::vector<std::string>& args) 
         }
         try {
             chempath::OrdSearchOptions opts;
+            opts.cacheBudgetBytes = 8 * 1024 * 1024;
             auto parseSize=[](const std::string& arg) -> std::size_t {
                 std::size_t used=0;
                 const auto value=std::stoull(arg,&used);

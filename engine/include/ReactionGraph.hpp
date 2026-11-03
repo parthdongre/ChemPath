@@ -18,6 +18,7 @@ public:
     void setBackend(Backend mode) { backend_ = mode; }
     Backend backend() const { return backend_; }
     std::size_t graphStorageBytes() const;
+    bool saveCsr(const std::string& prefix) const;
     EdgeRange neighbors(int vertex) const;
     EdgeRange incoming(int vertex) const;
     bool loadFromFiles(const std::string& compoundsPath, const std::string& reactionsPath);

@@ -62,6 +62,11 @@ jobs:
             node -e 'const x=require("/tmp/ord-demo-stats.json"); if(x.compounds<10000||x.reactions<5000||x.directedEdges<10000) process.exit(1);console.log("ORD graph verified",x.compounds,x.reactions,x.directedEdges)'
           fi
 
+      - name: Test full-capable Rhea importer with offline fixtures
+        run: |
+          python3 -m pip install rdkit
+          python3 scripts/test_import_rhea.py -v
+
       - name: Build frontend
         run: npm run build:web
 

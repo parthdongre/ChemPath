@@ -163,6 +163,41 @@ app.get("/api/ord/reaction/:id", route(async (req) => ordReaction(req.params.id)
 app.get("/api/ord/neighborhood", route(async (req) =>
   ordNeighborhood(req.query.smiles, req.query.limit)));
 
+// Exact indexed traversal lives in C++, NOT the Node neighborhood renderer.
+// A limited unsuccessful search is never claimed globally unreachable.
+app.get("/api/ord/path", route(async (req) => {
+  if (!ordStatus().available) {
+    const e = new Error("ORD database not installed; import/index it first");
+    e.status = 503;
+    throw e;
+  }
+  const from = req.query.from, to = req.query.to;
+  const safe = v => typeof v === "string" && v.length > 0 &&
+    v.length <= 512 && !/[\x00-\x1f]/.test(v);
+  const parseBound = (value, fallback, ceiling) => {
+    if (value == null) return fallback;
+    const n = Number(value);
+    if (!Number.isSafeInteger(n) || n < 1 || n > ceiling) {
+      const e = new Error("ORD resource limits must be positive bounded integers");
+      e.status = 400;
+      throw e;
+    }
+    return n;
+  };
+  if (!safe(from) || !safe(to)) {
+    const e = new Error("Specify exact source/target indexed SMILES");
+    e.status = 400;
+    throw e;
+  }
+  const maxExpanded = parseBound(req.query.maxExpanded, 2500, 10000);
+  const maxVisited = parseBound(req.query.maxVisited, 20000, 50000);
+  const maxNeighbors = parseBound(req.query.maxNeighbors, 25000, 100000);
+  const cacheMB = parseBound(req.query.cacheMB, 8, 64);
+  return runEngine(["ordpath", from, to, String(maxExpanded),
+    String(maxVisited), String(maxNeighbors), String(cacheMB)]);
+}));
+
+
 // The AND-dependency model is separate from ordinary participation paths.
 app.get("/api/feasible", route(async (req) => {
   const available = req.query.available;

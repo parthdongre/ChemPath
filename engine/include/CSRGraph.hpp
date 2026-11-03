@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <iterator>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 namespace chempath {
@@ -23,6 +24,9 @@ struct EdgeRange {
 class CSRGraph {
 public:
     void build(const std::vector<std::vector<Edge>>& adjacency);
+    // Versioned, checksummed, little-endian graph-core cache.
+    bool save(const std::string& filename) const;
+    bool load(const std::string& filename);
     EdgeRange neighbors(std::size_t vertex) const;
     std::vector<std::vector<Edge>> materialize() const;
     std::size_t vertices() const { return offsets_.empty() ? 0 : offsets_.size() - 1; }

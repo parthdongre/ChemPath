@@ -5,7 +5,7 @@ import NetworkGraph from "./NetworkGraph.jsx";
 import "./Lab.css";
 
 const tabs=[["trace","Execution"],["compare","Comparison"],["paths","Routes"],
-  ["components","Components"],["dependencies","Dependencies"],["bench","Benchmarks"],["trie","Trie"],["sandbox","Playground"]];
+  ["components","Components"],["dependencies","Dependencies"],["constrained","Constraints"],["pareto","Pareto"],["bench","Benchmarks"],["trie","Trie"],["sandbox","Playground"]];
 const number=(x)=>typeof x==="number"?x.toLocaleString(undefined,{maximumFractionDigits:3}):"—";
 function Metric({title,value,unit=""}){
   return <div className="lab-metric"><span>{title}</span><strong>{number(value)}</strong><small>{unit}</small></div>;
@@ -34,13 +34,21 @@ export default function LabPanel({network,from,to}){
   const [editMode,setEditMode]=useState("remove"),[editWeight,setEditWeight]=useState(2);
   const [editTarget,setEditTarget]=useState(""),[trieQuery,setTrieQuery]=useState("meth"),[trieMatches,setTrieMatches]=useState(null);
   const [busy,setBusy]=useState(false),[error,setError]=useState("");
+  const [blockedReactions,setBlockedReactions]=useState("");
+  const [blockedCompounds,setBlockedCompounds]=useState("");
+  const [knownReagents,setKnownReagents]=useState("");
+  const [knownCatalysts,setKnownCatalysts]=useState("");
+  const [strictUnknown,setStrictUnknown]=useState(false);
+  const [constrainedResult,setConstrainedResult]=useState(null);
+  const [paretoObjective,setParetoObjective]=useState("steps-cost");
+  const [paretoResult,setParetoResult]=useState(null);
   const [availableInput,setAvailableInput]=useState("");
   const [feasibility,setFeasibility]=useState(null);
   const byId=useMemo(()=>new Map((network?.nodes||[]).map(n=>[n.id,n])),[network]);
   const sourceId=network?.nodes?.find(n=>n.name===from)?.id;
   const outgoing=useMemo(()=>(network?.edges||[]).filter(e=>e.source===sourceId).slice(0,100),[network,sourceId]);
   useEffect(()=>{
-    setTrace(null);setPaths(null);setComparison(null);setSandbox(null);setFeasibility(null);setStep(0);setPlaying(false);
+    setTrace(null);setPaths(null);setComparison(null);setSandbox(null);setFeasibility(null);setConstrainedResult(null);setParetoResult(null);setStep(0);setPlaying(false);
   },[from,to]);
   useEffect(()=>{
     if(!playing||!trace?.events?.length)return;
@@ -293,6 +301,78 @@ export default function LabPanel({network,from,to}){
         </details>
         {feasibility.truncatedSample&&<p className="lab-muted">Preview limited to 80 results; all reactions were evaluated by C++.</p>}
       </div>}
+    </div>}
+
+    {tab==="constrained"&&<div className="lab-section">
+      <h3>Constrained shortest paths and alternatives</h3>
+      <p className="lab-muted">C++ filtered Dijkstra and Yen's loopless K routes operate on the participation graph. Reagent/catalyst requirements must be explicitly annotated; unknown source metadata is not proof of no requirements.</p>
+      <div className="lab-toolbar">
+        <label>Blocked reaction IDs
+          <input value={blockedReactions} placeholder="e.g. 3,12" onChange={e=>setBlockedReactions(e.target.value)}/>
+        </label>
+        <label>Blocked compound IDs
+          <input value={blockedCompounds} placeholder="e.g. 42" onChange={e=>setBlockedCompounds(e.target.value)}/>
+        </label>
+        <label>Available reagents (semicolon-separated)
+          <input value={knownReagents} placeholder="water;ethanol" onChange={e=>setKnownReagents(e.target.value)}/>
+        </label>
+        <label>Available catalysts (semicolon-separated)
+          <input value={knownCatalysts} placeholder="platinum" onChange={e=>setKnownCatalysts(e.target.value)}/>
+        </label>
+        <label><input type="checkbox" checked={strictUnknown} onChange={e=>setStrictUnknown(e.target.checked)}/>
+          Reject reactions with unknown requirements</label>
+        <button type="button" className="lab-primary" disabled={busy||!from||!to}
+          onClick={()=>execute(async()=>{
+            const list=(text)=>text.trim()?text.split(",").map(v=>Number(v.trim())):[];
+            const names=(text)=>text.trim()?text.split(";").map(v=>v.trim()).filter(Boolean):[];
+            setConstrainedResult(await api.constrained({
+              source:from,target:to,k:3,
+              blockedReactionIds:list(blockedReactions),
+              blockedCompoundIds:list(blockedCompounds),
+              availableReagents:names(knownReagents),
+              availableCatalysts:names(knownCatalysts),
+              unknownRequirements:strictUnknown?"strict":"allow"
+            }));
+          })}>Find constrained routes</button>
+      </div>
+      {constrainedResult&&<>
+        <p className="lab-muted">Structured requirements known for {constrainedResult.knownRequirementReactions}/{constrainedResult.totalReactions} reactions. Unknown requirements {constrainedResult.unknownRequirementsAllowed?"allowed":"excluded"}.</p>
+        {(constrainedResult.routes||[]).length?
+          constrainedResult.routes.map((route,i)=><div key={i} className="lab-section">
+            <h3>Alternative {i+1}</h3><RouteView route={route}/>
+          </div>):<p className="lab-muted">No qualifying route under these constraints.</p>}
+      </>}
+    </div>}
+    {tab==="pareto"&&<div className="lab-section">
+      <h3>Multi-objective Pareto shortest paths</h3>
+      <p className="lab-muted">Multi-label Dijkstra retains non-dominated routes by steps and illustrative edge weights. Reagent-objective mode considers only reactions with explicit requirements metadata, counting occurrences rather than distinct reagents.</p>
+      <div className="lab-toolbar">
+        <label>Objectives
+          <select value={paretoObjective} onChange={e=>setParetoObjective(e.target.value)}>
+            <option value="steps-cost">Reaction count + graph weight</option>
+            <option value="steps-cost-reagents">Add known reagent occurrences</option>
+          </select>
+        </label>
+        <button type="button" className="lab-primary" disabled={busy||!from||!to}
+          onClick={()=>execute(async()=>{
+            setParetoResult(await api.pareto(from,to,paretoObjective,30000,8));
+          })}>Compute Pareto frontier</button>
+      </div>
+      {paretoResult&&<>
+        <div className="lab-metrics">
+          <Metric title="Non-dominated labels" value={paretoResult.nonDominatedCount}/>
+          <Metric title="Labels generated" value={paretoResult.labelsGenerated}/>
+          <Metric title="Labels expanded" value={paretoResult.labelsExpanded}/>
+        </div>
+        {!paretoResult.complete&&<p className="lab-muted">Resource budget reached: partial frontier only. Do not interpret as the complete Pareto set.</p>}
+        {paretoResult.routesOmitted&&<p className="lab-muted">Only the first 8 non-dominated routes are displayed.</p>}
+        {paretoResult.reagentObjective&&<p className="lab-muted">{paretoResult.skippedUnknownRequirements} unannotated transitions were excluded.</p>}
+        {(paretoResult.routes||[]).length?paretoResult.routes.map((p,i)=>
+          <div key={i} className="lab-section"><h3>Route {i+1}: {p.steps} reactions · weight {p.graphCost}
+            {paretoResult.reagentObjective?" · "+p.knownReagentOccurrences+" reagent occurrences":""}</h3>
+            <RouteView route={p.route}/>
+          </div>):<p className="lab-muted">No matching route in this search mode.</p>}
+      </>}
     </div>}
     <footer className="lab-footer">DSA learning · participation shortest paths and separate multi-reactant closure · not a laboratory synthesis planner</footer>
   </section>;

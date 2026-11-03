@@ -20,7 +20,8 @@ struct OrdSearchOptions {
     std::size_t maxExpanded{2500};
     std::size_t maxVisited{20000};
     std::size_t maxNeighborLinks{25000};
-    std::size_t cacheBudgetBytes{8 * 1024 * 1024};
+    // Zero preserves the provider's constructor cache budget.
+    std::size_t cacheBudgetBytes{0};
 };
 
 struct OrdPathStep {

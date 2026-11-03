@@ -73,6 +73,14 @@ jobs:
           python3 scripts/import-rhea.py --all --rhea-only --output /tmp/chempath-rhea-full
           ./engine/build/chempath stats --data /tmp/chempath-rhea-full
 
+      - name: Publish full Rhea graph outside Git
+        uses: actions/upload-artifact@v4
+        with:
+          name: chempath-rhea-full
+          path: /tmp/chempath-rhea-full/
+          retention-days: 30
+          if-no-files-found: error
+
       - name: Build frontend
         run: npm run build:web
 

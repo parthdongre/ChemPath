@@ -7,6 +7,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(chempath_core
     src/CSRGraph.cpp
+    src/ConstrainedSearch.cpp
+    src/MultiObjective.cpp
     src/ReactionGraph.cpp
     src/Lab.cpp
     src/Trie.cpp
@@ -51,3 +53,9 @@ target_link_libraries(chempath_csr_tests PRIVATE chempath_core)
 add_test(NAME csr_production_tests COMMAND chempath_csr_tests
     ${CMAKE_CURRENT_SOURCE_DIR}/../data/compounds.csv
     ${CMAKE_CURRENT_SOURCE_DIR}/../data/reactions.csv)
+
+# Multi-objective and constraint fixtures, including strict requirements.
+add_executable(chempath_milestone_b_tests tests/test_milestone_b.cpp)
+target_link_libraries(chempath_milestone_b_tests PRIVATE chempath_core)
+add_test(NAME milestone_b_paths COMMAND chempath_milestone_b_tests
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures/milestone_b)

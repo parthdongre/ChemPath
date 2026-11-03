@@ -517,6 +517,15 @@ int runCommand(const ReactionGraph& graph,const std::vector<std::string>& args) 
         std::cout << "]}\n";return 0;
     }
 
+    if (command == "csrsave") {
+        if(args.size()!=2) {printError("csrsave requires output prefix");return 1;}
+        const bool saved=graph.saveCsr(args[1]);
+        if(!saved) {printError("CSR save failed (CSR backend required)");return 1;}
+        std::cout << "{\"ok\":true,\"forward\":\"" << jsonEscape(args[1]+".forward.cpg")
+                  << "\",\"reverse\":\"" << jsonEscape(args[1]+".reverse.cpg") << "\"}\n";
+        return 0;
+    }
+
     if (command == "stats") {
         std::cout
             << "{\"ok\":true"

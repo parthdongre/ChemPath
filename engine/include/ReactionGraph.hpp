@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Models.hpp"
+#include "CSRGraph.hpp"
 #include "Trie.hpp"
 
 #include <cstddef>
@@ -13,6 +14,12 @@ namespace chempath {
 
 class ReactionGraph {
 public:
+    enum class Backend { CSR, Adjacency };
+    void setBackend(Backend mode) { backend_ = mode; }
+    Backend backend() const { return backend_; }
+    std::size_t graphStorageBytes() const;
+    EdgeRange neighbors(int vertex) const;
+    EdgeRange incoming(int vertex) const;
     bool loadFromFiles(const std::string& compoundsPath, const std::string& reactionsPath);
 
     const std::vector<Compound>& compounds() const;
@@ -42,9 +49,13 @@ public:
 private:
     std::vector<Compound> compounds_;
     std::vector<Reaction> reactions_;
-    std::vector<std::vector<Edge>> adjacency_;
+    // Lazy compatibility materialization for the DSA Lab and legacy API.
+    mutable std::vector<std::vector<Edge>> adjacency_;
     // Built once with the forward graph; incoming entries use Edge::to as predecessor.
     std::vector<std::vector<Edge>> reverseAdjacency_;
+    CSRGraph csr_;
+    CSRGraph reverseCsr_;
+    Backend backend_{Backend::CSR};
     int minEdgeCost_{0};
     int maxEdgeCost_{0};
     std::size_t edgeCount_{0};

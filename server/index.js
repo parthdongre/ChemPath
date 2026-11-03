@@ -163,6 +163,19 @@ app.get("/api/ord/reaction/:id", route(async (req) => ordReaction(req.params.id)
 app.get("/api/ord/neighborhood", route(async (req) =>
   ordNeighborhood(req.query.smiles, req.query.limit)));
 
+// The AND-dependency model is separate from ordinary participation paths.
+app.get("/api/feasible", route(async (req) => {
+  const available = req.query.available;
+  const target = req.query.target;
+  if (typeof available !== "string" || !available.trim() || available.length > 2000 ||
+      typeof target !== "string" || !target.trim() || target.length > 180) {
+    const error = new Error("Expected available (semicolon-separated) and target compound names");
+    error.status = 400;
+    throw error;
+  }
+  return runEngine(["feasible", available, target]);
+}));
+
 app.get("/api/stats", route(async () => runEngine(["stats"])));
 app.get("/api/network", route(async () => runEngine(["network"])));
 

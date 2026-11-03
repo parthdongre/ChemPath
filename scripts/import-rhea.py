@@ -225,7 +225,7 @@ def main():
     parser.add_argument("--cache-file", type=Path, default=ROOT / "data/rhea/cache/rhea-reaction-smiles.tsv")
     parser.add_argument("--refresh", action="store_true", help="Download a new upstream snapshot")
     parser.add_argument("--rhea-only", action="store_true", help="Do not append curated teaching dataset")
-    parser.add_argument("--output", type=Path, default=ROOT / "data/expanded")
+    parser.add_argument("--output", type=Path, default=None)
     args = parser.parse_args()
     limit = None if args.all else 1500 if args.limit is None else args.limit
     if limit is not None and not 1 <= limit <= 1000000:
@@ -237,7 +237,8 @@ def main():
         if args.source_file:
             parser.error("--source-file does not exist")
         download_source(source_file)
-    report = import_file(source_file, args.output, limit,
+    output = args.output or (ROOT / "data/rhea/full" if args.all else ROOT / "data/expanded")
+    report = import_file(source_file, output, limit,
                          include_curated=not args.rhea_only)
     print(json.dumps(report, indent=2, sort_keys=True))
 

@@ -45,10 +45,12 @@ int main(int argc, char** argv) {
     }
 
     chempath::ReactionGraph graph;
+#ifdef CHEMPATH_HAVE_CSR_BACKEND
     if (const char* mode = std::getenv("CHEMPATH_GRAPH_BACKEND")) {
         if(std::string(mode)=="adjacency")
             graph.setBackend(chempath::ReactionGraph::Backend::Adjacency);
     }
+#endif
     if (!graph.loadFromFiles(argv[1], argv[2])) {
         std::cerr << "Failed to load dataset.\n";
         return 2;
@@ -92,9 +94,11 @@ int main(int argc, char** argv) {
     }};
 
     std::cout << std::fixed << std::setprecision(2);
+#ifdef CHEMPATH_HAVE_CSR_BACKEND
     std::cout << "Backend: "
               << (graph.backend()==chempath::ReactionGraph::Backend::CSR?"CSR":"Adjacency")
               << ", forward+reverse core storage bytes: " << graph.graphStorageBytes() << "\n";
+#endif
     std::cout << "Graph: " << compounds.size() << " compounds, "
               << graph.edgeCount() << " directed edges; " << samples
               << " fixed source-target pairs.\n";

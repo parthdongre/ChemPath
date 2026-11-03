@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(chempath_core
+    src/CSRGraph.cpp
     src/ReactionGraph.cpp
     src/Lab.cpp
     src/Trie.cpp

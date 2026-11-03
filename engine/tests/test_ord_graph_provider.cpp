@@ -162,6 +162,10 @@ int main() {
         assert(!provider.shortestPath("Q","P").found);
         const auto same=provider.shortestPath("A","A");
         assert(same.found && same.complete && same.steps.empty());
+        const auto unknownSame=provider.shortestPath("MISSING","MISSING");
+        assert(!unknownSame.found && unknownSame.complete);
+        const auto agentSame=provider.shortestPath("Q","Q");
+        assert(!agentSame.found && agentSame.complete);
 
         // Very small LRU budget changes performance only, not answer.
         OrdGraphProvider uncached(filename,1);

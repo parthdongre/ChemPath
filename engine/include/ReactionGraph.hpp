@@ -6,6 +6,7 @@
 
 #include <cstddef>
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -15,7 +16,7 @@ namespace chempath {
 class ReactionGraph {
 public:
     enum class Backend { CSR, Adjacency };
-    void setBackend(Backend mode) { backend_ = mode; }
+    void setBackend(Backend mode) { if (!compounds_.empty()) throw std::logic_error("Set backend before loading a graph"); backend_ = mode; }
     Backend backend() const { return backend_; }
     std::size_t graphStorageBytes() const;
     bool saveCsr(const std::string& prefix) const;

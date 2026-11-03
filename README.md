@@ -351,6 +351,11 @@ real reaction examples**.
 See [docs/MILESTONE_C.md](docs/MILESTONE_C.md) for algorithm complexity,
 commands, tests, benchmark methodology and important limits.
 
+**Measured Release-mode benchmark results (900–30,000 synthetic vertices):**
+[docs/BENCHMARKS_MILESTONE_C.md](docs/BENCHMARKS_MILESTONE_C.md).
+The report includes exact-result checks, p50/p95, RSS, setup times and
+explicit limitations of small synthetic experiments.
+
 ### Use ORD with C++ BFS/Dijkstra/Tarjan
 
 The full ORD index is **not** an in-memory C++ graph. Export a smaller

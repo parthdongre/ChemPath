@@ -259,6 +259,11 @@ EdgeRange ReactionGraph::incoming(int vertex) const {
     return {a.data(), a.data() + a.size()};
 }
 
+bool ReactionGraph::saveCsr(const std::string& prefix) const {
+    if(backend_ != Backend::CSR) return false;
+    return csr_.save(prefix + ".forward.cpg") && reverseCsr_.save(prefix + ".reverse.cpg");
+}
+
 std::size_t ReactionGraph::graphStorageBytes() const {
     if (backend_ == Backend::CSR) return csr_.storageBytes() + reverseCsr_.storageBytes();
     std::size_t bytes = (adjacency_.capacity() + reverseAdjacency_.capacity())

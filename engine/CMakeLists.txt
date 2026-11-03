@@ -44,3 +44,10 @@ add_test(
 add_executable(chempath_dependency_tests tests/test_reaction_dependencies.cpp)
 target_link_libraries(chempath_dependency_tests PRIVATE chempath_core)
 add_test(NAME reaction_dependency_tests COMMAND chempath_dependency_tests)
+
+# Differential validation of the production CSR and adjacency-list backends.
+add_executable(chempath_csr_tests tests/test_csr_production.cpp)
+target_link_libraries(chempath_csr_tests PRIVATE chempath_core)
+add_test(NAME csr_production_tests COMMAND chempath_csr_tests
+    ${CMAKE_CURRENT_SOURCE_DIR}/../data/compounds.csv
+    ${CMAKE_CURRENT_SOURCE_DIR}/../data/reactions.csv)

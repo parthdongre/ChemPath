@@ -83,9 +83,9 @@ def load_curated(root: Path):
             load(root / "data/reactions.csv", REACTION_HEADER))
 
 
-def write_rows(path: Path, header: list[str], rows):
+def write_rows(path: Path, header: list[str], rows, delimiter: str = "|"):
     with path.open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.writer(stream, delimiter="|", lineterminator="\n")
+        writer = csv.writer(stream, delimiter=delimiter, lineterminator="\n")
         writer.writerow(header)
         writer.writerows(rows)
 
@@ -179,7 +179,7 @@ def import_file(source_file: Path, output: Path, limit: int | None,
     output.mkdir(parents=True, exist_ok=True)
     write_rows(output / "compounds.csv", COMPOUND_HEADER, compounds)
     write_rows(output / "reactions.csv", REACTION_HEADER, reactions)
-    write_rows(output / "rhea-aliases.tsv", ["rhea_id", "reaction_id", "status"], aliases)
+    write_rows(output / "rhea-aliases.tsv", ["rhea_id", "reaction_id", "status"], aliases, delimiter="\t")
     report = {
         "source_url": SOURCE,
         "source_sha256": source_hash(source_file),

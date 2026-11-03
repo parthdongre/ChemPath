@@ -69,6 +69,7 @@ private:
 
     bool loadCompounds(const std::string& path);
     bool loadReactions(const std::string& path);
+    bool loadRequirements(const std::string& reactionsPath);
     bool dfsCycle(
         int node,
         std::vector<int>& state,

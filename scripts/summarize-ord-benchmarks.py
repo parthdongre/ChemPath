@@ -49,7 +49,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input-dir", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--sizes", type=int, nargs="+", default=[900, 3000, 9000])
+    parser.add_argument("--sizes", type=int, nargs="+", default=[900, 3000, 9000, 30000])
     args = parser.parse_args()
 
     cpu_model = platform.processor() or platform.machine()

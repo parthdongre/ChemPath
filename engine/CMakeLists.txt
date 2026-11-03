@@ -9,6 +9,7 @@ add_library(chempath_core
     src/ReactionGraph.cpp
     src/Lab.cpp
     src/Trie.cpp
+    src/ReactionDependencyGraph.cpp
 )
 
 target_include_directories(chempath_core PUBLIC include)
@@ -37,3 +38,8 @@ add_test(
         ${CMAKE_CURRENT_SOURCE_DIR}/../data/compounds.csv
         ${CMAKE_CURRENT_SOURCE_DIR}/../data/reactions.csv
 )
+
+# Separate dependency-closure tests; does not change the legacy graph tests.
+add_executable(chempath_dependency_tests tests/test_reaction_dependencies.cpp)
+target_link_libraries(chempath_dependency_tests PRIVATE chempath_core)
+add_test(NAME reaction_dependency_tests COMMAND chempath_dependency_tests)

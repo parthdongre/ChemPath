@@ -26,7 +26,7 @@ int main(int argc,char** argv) {
     RouteConstraints any;
     auto all=ConstrainedSearch::kShortest(csr,"A","D",any,4);
     assert(all.totalReactions==8 && all.knownRequirementReactions==8);
-    assert(all.routes.size()==4);
+    assert(all.routes.size()==3);
     assert(all.routes[0].totalCost==6);
     // B->D requires reagent and catalyst, unavailable by default.
     assert(all.routes[1].totalCost==13);
@@ -60,8 +60,9 @@ int main(int argc,char** argv) {
     opt.includeReagentOccurrences=true;
     const auto reagentPareto=MultiObjective::search(csr,"A","D",opt);
     assert(reagentPareto.complete);
-    assert(reagentPareto.routes.size()==3);
+    assert(reagentPareto.routes.size()==4);
     assert(reagentPareto.routes[1].knownReagentOccurrences==1);
+    assert(reagentPareto.routes[2].knownReagentOccurrences==0);
     opt.includeReagentOccurrences=false;
     opt.maxTotalLabels=1;
     const auto bounded=MultiObjective::search(csr,"A","D",opt);

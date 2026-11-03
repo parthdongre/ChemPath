@@ -1,0 +1,9 @@
+id|name|reactants|products|equation|conditions|reversible|note|source|cost
+0|A to B|A|B|A -> B|synthetic|false|DSA fixture|TEST|1
+1|B to D|B|D|B -> D|synthetic|false|DSA fixture|TEST|10
+2|A to C|A|C|A -> C|synthetic|false|DSA fixture|TEST|2
+3|C to E|C|E|C -> E|synthetic|false|DSA fixture|TEST|2
+4|E to D|E|D|E -> D|synthetic|false|DSA fixture|TEST|2
+5|A to D|A|D|A -> D|synthetic|false|DSA fixture|TEST|15
+6|A to F|A|F|A -> F|synthetic|false|DSA fixture|TEST|1
+7|F to D|F|D|F -> D|synthetic|false|DSA fixture|TEST|12

@@ -169,7 +169,14 @@ bool ReactionGraph::loadReactions(const std::string& path) {
         }
     }
 
-    return !reactions_.empty();
+    if (reactions_.empty()) return false;
+    if (backend_ == Backend::CSR) {
+        csr_.build(adjacency_);
+        reverseCsr_.build(reverseAdjacency_);
+        std::vector<std::vector<Edge>>().swap(adjacency_);
+        std::vector<std::vector<Edge>>().swap(reverseAdjacency_);
+    }
+    return true;
 }
 
 bool ReactionGraph::loadFromFiles(const std::string& compoundsPath, const std::string& reactionsPath) {
@@ -185,7 +192,39 @@ const std::vector<Reaction>& ReactionGraph::reactions() const {
 }
 
 const std::vector<std::vector<Edge>>& ReactionGraph::adjacency() const {
+    if (backend_ == Backend::CSR && adjacency_.size() != compounds_.size()) {
+        adjacency_ = csr_.materialize(); // Legacy/test adapter; not hot-path.
+    }
     return adjacency_;
+}
+
+EdgeRange ReactionGraph::neighbors(int vertex) const {
+    if (vertex < 0 || static_cast<std::size_t>(vertex) >= compounds_.size())
+        throw std::out_of_range("Compound ID out of range");
+    if (backend_ == Backend::CSR) return csr_.neighbors(static_cast<std::size_t>(vertex));
+    const auto& a = adjacency_[static_cast<std::size_t>(vertex)];
+    static const Edge empty{};
+    if (a.empty()) return {&empty, &empty};
+    return {a.data(), a.data() + a.size()};
+}
+
+EdgeRange ReactionGraph::incoming(int vertex) const {
+    if (vertex < 0 || static_cast<std::size_t>(vertex) >= compounds_.size())
+        throw std::out_of_range("Compound ID out of range");
+    if (backend_ == Backend::CSR) return reverseCsr_.neighbors(static_cast<std::size_t>(vertex));
+    const auto& a = reverseAdjacency_[static_cast<std::size_t>(vertex)];
+    static const Edge empty{};
+    if (a.empty()) return {&empty, &empty};
+    return {a.data(), a.data() + a.size()};
+}
+
+std::size_t ReactionGraph::graphStorageBytes() const {
+    if (backend_ == Backend::CSR) return csr_.storageBytes() + reverseCsr_.storageBytes();
+    std::size_t bytes = (adjacency_.capacity() + reverseAdjacency_.capacity())
+                      * sizeof(std::vector<Edge>);
+    for (const auto& a : adjacency_) bytes += a.capacity() * sizeof(Edge);
+    for (const auto& a : reverseAdjacency_) bytes += a.capacity() * sizeof(Edge);
+    return bytes;
 }
 
 std::optional<int> ReactionGraph::compoundId(const std::string& name) const {
@@ -227,7 +266,7 @@ PathResult ReactionGraph::shortestPathBfs(const std::string& from, const std::st
 
         if (current == *target) break;
 
-        for (const auto& edge : adjacency_[current]) {
+        for (const auto& edge : neighbors(current)) {
             if (visited[edge.to]) continue;
             visited[edge.to] = true;
             parent[edge.to] = current;
@@ -286,7 +325,7 @@ PathResult ReactionGraph::shortestPathDijkstra(const std::string& from, const st
 
         if (current == *target) break;
 
-        for (const auto& edge : adjacency_[current]) {
+        for (const auto& edge : neighbors(current)) {
             if (currentDistance + edge.cost < distance[edge.to]) {
                 distance[edge.to] = currentDistance + edge.cost;
                 parent[edge.to] = current;
@@ -343,7 +382,7 @@ PathResult ReactionGraph::shortestPathAStar(const std::string& from, const std::
         const int current = hopQueue.front();
         hopQueue.pop();
 
-        for (const auto& incoming : reverseAdjacency_[current]) {
+        for (const auto& incoming : incoming(current)) {
             const int predecessor = incoming.to;
             if (hops[predecessor] != infinity) continue;
             hops[predecessor] = hops[current] + 1;
@@ -375,7 +414,7 @@ PathResult ReactionGraph::shortestPathAStar(const std::string& from, const std::
 
         if (current == *target) break;
 
-        for (const auto& edge : adjacency_[current]) {
+        for (const auto& edge : neighbors(current)) {
             const int candidate = currentDistance + edge.cost;
             if (candidate >= distance[edge.to]) continue;
 
@@ -452,7 +491,7 @@ PathResult ReactionGraph::shortestPathDial(const std::string& from, const std::s
         result.visitedOrder.push_back(current);
         if (current == *target) break;
 
-        for (const auto& edge : adjacency_[current]) {
+        for (const auto& edge : neighbors(current)) {
             if (currentDistance > infinity - edge.cost) continue;
             const int candidate = currentDistance + edge.cost;
             if (candidate >= distance[edge.to]) continue;
@@ -507,7 +546,7 @@ PathResult ReactionGraph::shortestPathBellmanFord(const std::string& from, const
         for (int current = 0; current < count; ++current) {
             if (distance[current] == infinity) continue;
 
-            for (const auto& edge : adjacency_[current]) {
+            for (const auto& edge : neighbors(current)) {
                 const int candidate = distance[current] + edge.cost;
                 if (candidate >= distance[edge.to]) continue;
 
@@ -611,7 +650,7 @@ PathResult ReactionGraph::shortestPathBidirectionalDijkstra(
                 meeting = current;
             }
 
-            for (const auto& edge : adjacency_[current]) {
+            for (const auto& edge : neighbors(current)) {
                 const int candidate = distance + edge.cost;
                 if (candidate < forwardDistance[edge.to]) {
                     forwardDistance[edge.to] = candidate;
@@ -640,7 +679,7 @@ PathResult ReactionGraph::shortestPathBidirectionalDijkstra(
                 meeting = current;
             }
 
-            for (const auto& reverseEdge : reverseAdjacency_[current]) {
+            for (const auto& reverseEdge : incoming(current)) {
                 const int predecessor = reverseEdge.to;
                 const int candidate = distance + reverseEdge.cost;
 
@@ -723,7 +762,7 @@ PathResult ReactionGraph::shortestPathPivotFrontier(
         std::vector<bool> queued(count, false);
 
         for (int current : frontier) {
-            for (const auto& edge : adjacency_[current]) {
+            for (const auto& edge : neighbors(current)) {
                 const int candidate = distance[current] + edge.cost;
                 if (candidate >= distance[edge.to]) continue;
 
@@ -769,7 +808,7 @@ PathResult ReactionGraph::shortestPathPivotFrontier(
 
         if (current == *target) break;
 
-        for (const auto& edge : adjacency_[current]) {
+        for (const auto& edge : neighbors(current)) {
             const int candidate = currentDistance + edge.cost;
             if (candidate >= distance[edge.to]) continue;
 
@@ -844,7 +883,7 @@ PathResult ReactionGraph::shortestPathBidirectional(const std::string& from, con
             return;
         }
 
-        for (const auto& edge : adjacency_[current]) {
+        for (const auto& edge : neighbors(current)) {
             if (!visitedForward[edge.to]) {
                 visitedForward[edge.to] = true;
                 parentForward[edge.to] = current;
@@ -872,7 +911,7 @@ PathResult ReactionGraph::shortestPathBidirectional(const std::string& from, con
             return;
         }
 
-        for (const auto& reverseEdge : reverseAdjacency_[current]) {
+        for (const auto& reverseEdge : incoming(current)) {
             const int predecessor = reverseEdge.to;
             if (!visitedBackward[predecessor]) {
                 visitedBackward[predecessor] = true;
@@ -939,7 +978,7 @@ std::vector<int> ReactionGraph::reachableDfs(const std::string& from) const {
         visited[current] = true;
         order.push_back(current);
 
-        const auto& edges = adjacency_[current];
+        const auto& edges = neighbors(current);
         for (auto it = edges.rbegin(); it != edges.rend(); ++it) {
             if (!visited[it->to]) stack.push(it->to);
         }
@@ -962,7 +1001,7 @@ std::vector<int> ReactionGraph::hopDistances(const std::string& from) const {
         const int current = queue.front();
         queue.pop();
 
-        for (const auto& edge : adjacency_[current]) {
+        for (const auto& edge : neighbors(current)) {
             if (distance[edge.to] != -1) continue;
             distance[edge.to] = distance[current] + 1;
             queue.push(edge.to);
@@ -981,7 +1020,7 @@ bool ReactionGraph::dfsCycle(
 
     state[node] = 1;
 
-    for (const auto& edge : adjacency_[node]) {
+    for (const auto& edge : neighbors(node)) {
         const int next = edge.to;
         if (state[next] == 0) {
             parent[next] = node;
@@ -1033,7 +1072,7 @@ SccResult ReactionGraph::stronglyConnectedComponents() const {
         onStack[node] = true;
         result.visitedOrder.push_back(node);
 
-        for (const auto& edge : adjacency_[node]) {
+        for (const auto& edge : neighbors(node)) {
             const int next = edge.to;
             if (index[next] == -1) {
                 visit(next);

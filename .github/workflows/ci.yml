@@ -149,3 +149,15 @@ jobs:
           ./engine/build/chempath stats
           ./engine/build/chempath path Methane Bicarbonate
           ./engine/build/chempath search meth
+
+      - name: One-command final academic release verification
+        timeout-minutes: 6
+        run: npm run verify:release -- --report /tmp/chempath-release-checks.json
+
+      - name: Publish final release verification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: chempath-final-review-checks
+          path: /tmp/chempath-release-checks.json
+          retention-days: 30
+          if-no-files-found: error

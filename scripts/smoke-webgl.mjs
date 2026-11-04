@@ -130,7 +130,22 @@ try {
 
   // Responsive real-Chromium QA on the same running application.
   await page.setViewportSize({width:1920,height:1080});
-  await page.waitForTimeout(180);
+  await page.waitForTimeout(650); // resize-triggered Sigma route camera fitting
+  const routeViewport=await page.locator(".sigma-route-overlay").evaluate(svg=>{
+    const path=svg.querySelector(".sigma-route-path");
+    const d=path?.getAttribute("d")||"";
+    const points=[...d.matchAll(/[ML](-?[0-9.]+) (-?[0-9.]+)/g)]
+      .map(m=>({x:Number(m[1]),y:Number(m[2])}));
+    const rect=svg.getBoundingClientRect();
+    return {width:rect.width,height:rect.height,points};
+  });
+  assert.ok(routeViewport.points.length>=2,"Actual route should have waypoints");
+  for(const point of routeViewport.points){
+    assert.ok(point.x>=12&&point.x<=routeViewport.width-12,
+      "Route waypoint horizontally clipped by resized graph canvas");
+    assert.ok(point.y>=12&&point.y<=routeViewport.height-12,
+      "Route waypoint vertically clipped by resized graph canvas");
+  }
   await page.evaluate(()=>window.scrollTo(0,0));
   await page.screenshot({path:"screenshots/studio-widescreen.png",animations:"disabled"});
 

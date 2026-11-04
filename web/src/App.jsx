@@ -1287,79 +1287,36 @@ export default function App() {
     setMode(nextMode);
   }
 
+  const selectedCompound=compounds.find(compound=>compound.name===from)??null;
   return (
-    <main className="site-shell">
-      <header className="nav">
-        <a className="wordmark" href="#top" aria-label="ChemPath home">
-          <span className="mark">CP</span>
-          <span>ChemPath</span>
-        </a>
-
-        <nav className="nav-links" aria-label="Primary">
-          <a href="#explorer">Explorer</a>
-          <a href="#ord-database">ORD Database</a>
-          <a href="#engine">Engine</a>
-        </nav>
-
-        <Status status={status} />
-      </header>
-
-      <section className="hero hero-editorial" id="top">
-        <div className="hero-copy">
-          <p className="eyebrow">INTERACTIVE REACTION NETWORK · C++ GRAPH ENGINE</p>
-          <h1 className="hero-display">
-            <span>REACTIONS</span>
-            <span>HAVE A</span>
-            <span>PATH.</span>
-          </h1>
-
-          <p className="lede">
-            Compounds are vertices. Reactions are directed edges. C++ graph
-            algorithms reveal the routes between them.
-          </p>
-
-          <div className="hero-actions">
-            <a className="hero-cta primary" href="#explorer">START EXPLORING</a>
-            <a className="hero-cta ghost" href="#engine">C++ ENGINE ↗</a>
-          </div>
-
-          <p className="hero-whisper">from compound to compound</p>
-        </div>
-
-        <div className="hero-visual" aria-hidden="true">
-          <div className="reaction-halo halo-a" />
-          <div className="reaction-halo halo-b" />
-          <div className="reaction-halo halo-c" />
-          <div className="formula-node formula-a">CO₂</div>
-          <div className="formula-node formula-b">NH₃</div>
-          <div className="formula-node formula-c">H₂O</div>
-          <div className="formula-node formula-d">CH₄</div>
-          <div className="formula-node formula-e">SO₂</div>
-          <div className="formula-core">
-            <span>G=(V,E)</span>
-            <strong>CHEM</strong>
-          </div>
-        </div>
-
-        <div className="hero-signal" aria-hidden="true">
-          <span>GRAPH PATH / FOUND</span>
-        </div>
-
-        <div className="hero-stats" aria-label="Dataset statistics">
-          <Stat value={stats?.compounds} label="compounds" />
-          <Stat value={stats?.reactions} label="reactions" />
-          <Stat value={stats?.directedEdges} label="directed edges" />
-        </div>
-
-        <div className="hero-ghost" aria-hidden="true">NETWORK</div>
-      </section>
-
-      <div className="rule">
-        <span>01</span>
-        <p>Reaction explorer</p>
-      </div>
-
-      <section className="explorer" id="explorer">
+    <main className="site-shell studio-app" data-theme={studioTheme}>
+      <StudioTopbar
+        view={studioView} status={status}
+        onSearch={()=>setCommandOpen(true)}
+        onToggleSidebar={()=>setSidebarCollapsed(value=>!value)}
+        onToggleInspector={()=>setInspectorOpen(value=>!value)}
+        onToggleTheme={()=>setStudioTheme(value=>value==="dark"?"light":"dark")}
+        theme={studioTheme} inspectorOpen={inspectorOpen}
+      />
+      <div className={"studio-shell"+(sidebarCollapsed?" sidebar-collapsed":"")}>
+        <StudioSidebar
+          view={studioView} onChange={setStudioPage} collapsed={sidebarCollapsed}
+          onToggle={()=>setSidebarCollapsed(value=>!value)}
+          stats={stats}
+        />
+        <div className="studio-content">
+          {studioView==="explore"&&(
+          <section className={"explorer studio-explore"+(!inspectorOpen?" inspector-collapsed":"")} id="explorer">
+            <div className="studio-page-intro">
+              <div>
+                <span className="studio-section-eyebrow">WORKSPACE / EXPLORE</span>
+                <h1>Find your pathway<span className="studio-title-period">.</span></h1>
+                <p>Explore the network, choose two compounds, and inspect every graph step.</p>
+              </div>
+              <button type="button" className="studio-compact-btn" onClick={()=>setStudioPage("compare")}>
+                Compare algorithms <span aria-hidden="true">↗</span>
+              </button>
+            </div>
         <header className="explorer-head">
           <div className="mode-switch" role="tablist" aria-label="Algorithm mode">
             <button
@@ -1388,9 +1345,7 @@ export default function App() {
           <div className="algorithm-readout">
             <span>{algorithmDescription}</span>
             <em>
-              {simulation.running
-                ? `target ${((simulation.duration ?? FINAL_HOLD_MS) / 1000).toFixed(1)}s`
-                : "adaptive replay · up to 2 min"}
+              {simulation.running ? "Replaying traversal" : "Computed in C++ · replay optional"}
             </em>
           </div>
 
@@ -1438,7 +1393,7 @@ export default function App() {
                   }
                   onClick={runPath}
                 >
-                  {simulation.running ? "Replaying…" : "Run algorithm"}
+                  {busy ? "Searching…" : "Find pathway"}
                 </button>
               </>
             )}
@@ -1524,6 +1479,7 @@ export default function App() {
           </div>
         </div>
 
+        <div className="studio-graph-grid">
         <div className="graph-frame">
           <div className="graph-caption">
             <span>
@@ -1599,11 +1555,15 @@ export default function App() {
           </div>
         </div>
 
-        <LabPanel network={network} from={from} to={to} />
-
-        <OrdExplorer />
-
-        <section className="result-dock">
+        <section className="result-dock" aria-label="Compound and pathway inspector">
+          <StudioInspectorHeading
+            compound={selectedCompound} from={from} to={to} result={result}
+            busy={busy} running={simulation.running}
+            onClose={()=>setInspectorOpen(false)}
+            onSwap={()=>{setFrom(to);setTo(from);reset();}}
+            onReplay={replayCurrentPath}
+            onExplore={()=>setStudioPage("data")}
+          />
           <div className="result-label">
             <span>OUTPUT</span>
             <strong>

@@ -1,8 +1,36 @@
-# ChemPath
+# ChemPath Studio
 
 **ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The C++17 engine stores and searches the full reaction graph, while the browser renders a focused working set so the catalog can grow without forcing Cytoscape to lay out every compound at once.
 
 > **Mid-semester stable build:** 690 compounds, 884 curated reaction records and about 3,044 directed compound-participation edges. The browser renders at most roughly 520 focused compounds for a smoother classroom demo.
+
+## Product workspace (Studio UI)
+
+ChemPath Studio is now a desktop-style, graph-first interface. Its
+**Explore**, **Compare**, **Laboratory** and **Data Library** views share a
+compact navigation shell without changing the C++17 engine or HTTP API.
+
+- **Explore:** choose source/target compounds, run an algorithm instantly,
+  inspect a route in the right panel, or explicitly replay traversal steps.
+  Graph clicking selects the source; **Shift-click** selects the target.
+  Reaction edges can be inspected in the contextual panel.
+- **Compare:** optimized algorithms, alternative paths, constraints and
+  Pareto analysis, consolidated into grouped Laboratory tools.
+- **Laboratory:** Learn / Optimize / Experiment groupings for existing DSA
+  traces, SCCs, graph playground and benchmark instruments.
+- **Data Library:** compound directory and optional indexed ORD database.
+- **Quick commands:** **⌘K** on macOS, **Ctrl+K** elsewhere, or **/** when
+  not editing text. Search indexed compound names and change source/target.
+- **Appearance:** dark graphite and light themes, a collapsible sidebar,
+  and a graph inspector with responsive mobile drawer behavior.
+
+The interface and browser interactions are verified in real Chromium by
+the [Deployability and WebGL UI](.github/workflows/deployability.yml)
+workflow, which uploads desktop, widescreen and mobile screenshots.
+**This is a UX layer over actual data; none of the screenshots are mocks.**
+
+See [Studio design/implementation notes](docs/STUDIO_UI.md) for tokens,
+architecture, a walkthrough, and remaining accessibility/polish work.
 
 ## End-semester release verification and demo
 
@@ -27,7 +55,7 @@ file-by-file algorithm explanations, viva questions and limitations.
 
 Chemical compounds are represented as graph vertices and documented educational transformations as directed edges. ChemPath lets the user inspect that graph with multiple algorithms while seeing the traversal happen step by step.
 
-The React frontend does **not** implement the algorithms. It requests a result from the C++ engine and replays the returned visit order for presentation and learning. Replay duration scales with the traversal size and has no forced minimum.
+The React frontend does **not** implement the algorithms. It requests a result from the C++ engine and displays it immediately. Users may optionally replay the returned visit order for presentation and learning; replay duration scales with traversal size.
 
 ## Algorithms and data structures
 

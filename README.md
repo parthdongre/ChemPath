@@ -4,6 +4,25 @@
 
 > **Mid-semester stable build:** 690 compounds, 884 curated reaction records and about 3,044 directed compound-participation edges. The browser renders at most roughly 520 focused compounds for a smoother classroom demo.
 
+## End-semester release verification and demo
+
+After installing dependencies, you can verify the curated C++ engine, DSA
+algorithms, backend APIs, synthetic ORD SQLite integration, React production
+build and single-origin deployment **offline in one command**:
+
+~~~bash
+npm install
+npm run verify:release
+# Optional detailed JSON checklist for a project report:
+npm run verify:release -- --report /tmp/chempath-review.json
+npm run dev
+~~~
+
+The offline check does not download full Rhea or ORD source files.
+The optional ORD full index must be imported separately. See the
+[final review guide](docs/FINAL_REVIEW.md) for a seven-minute demonstration,
+file-by-file algorithm explanations, viva questions and limitations.
+
 ## Core idea
 
 Chemical compounds are represented as graph vertices and documented educational transformations as directed edges. ChemPath lets the user inspect that graph with multiple algorithms while seeing the traversal happen step by step.

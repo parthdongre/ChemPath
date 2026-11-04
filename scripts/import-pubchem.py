@@ -2,7 +2,7 @@
 """Install a default 8-million-record PubChem CID/SMILES catalog on disk.
 
 The original curated ChemPath reaction graph remains unchanged. These are
-PubChem *compound records*, NOT 500,000 experimentally connected reactions.
+PubChem *compound structures*, NOT millions of experimentally connected reactions.
 
 Official source:
   https://ftp.ncbi.nlm.nih.gov/pubchem/Compound/Extras/CID-SMILES.gz
@@ -40,6 +40,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE_URL = "https://ftp.ncbi.nlm.nih.gov/pubchem/Compound/Extras/CID-SMILES.gz"
 DEFAULT_OUTPUT = ROOT / "data" / "catalog" / "pubchem.sqlite"
 DEFAULT_TARGET = 8_000_000
+MAX_SMILES_BYTES = 1_000_000
 
 
 @contextlib.contextmanager
@@ -66,7 +67,7 @@ def installed_catalog(output: Path) -> dict | None:
     if not output.is_file():
         return None
     try:
-        with sqlite3.connect(f"file:{output.as_posix()}?mode=ro", uri=True) as db:
+        with sqlite3.connect(output.resolve().as_uri() + "?mode=ro", uri=True) as db:
             meta = dict(db.execute("SELECT key,value FROM catalog_meta"))
             if meta.get("format") != "CID-SMILES":
                 return None
@@ -118,7 +119,7 @@ def import_compounds(
             PRAGMA temp_store = FILE;
             CREATE TABLE compounds (
                 cid INTEGER PRIMARY KEY,
-                smiles TEXT NOT NULL CHECK(length(smiles) BETWEEN 1 AND 2048)
+                smiles TEXT NOT NULL CHECK(length(smiles) BETWEEN 1 AND 1000000)
             );
             CREATE TABLE catalog_meta (
                 key TEXT PRIMARY KEY,
@@ -136,7 +137,7 @@ def import_compounds(
                     invalid += 1
                     continue
                 cid_raw, smiles_raw = parts
-                if not cid_raw.isdigit() or not 1 <= len(smiles_raw) <= 2048:
+                if not cid_raw.isdigit() or not 1 <= len(smiles_raw) <= MAX_SMILES_BYTES:
                     invalid += 1
                     continue
                 try:
@@ -238,7 +239,7 @@ def main():
         parser.error("Source file not found: " + str(args.source_file))
     try:
         import_compounds(args.source_file, args.output,
-                         None if args.all else (args.target or DEFAULT_TARGET),
+                         None if args.all else (args.target if args.target is not None else DEFAULT_TARGET),
                          force=args.force)
     except Exception as exc:
         print("PubChem catalog import failed: " + str(exc), file=sys.stderr)

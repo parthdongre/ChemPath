@@ -160,8 +160,10 @@ export default function SigmaNetwork({
         const hasPath = f.highlightedNodes.size > 0 || f.highlightedEdges.size > 0;
         return {
           ...data,
-          color: marked ? "#67dfc8" : hasPath || f.simulationRunning ? "rgba(77,112,127,0.15)" : "rgba(73,108,124,0.37)",
-          size: marked ? 2.9 : data.size,
+          // Sigma WebGL uses packed colors; translucent rgba edges can render
+          // as bright/white fallbacks on some graphics drivers.
+          color: marked ? "#67dfc8" : hasPath || f.simulationRunning ? "#22313d" : "#385466",
+          size: marked ? 2.9 : 0.48,
           zIndex: marked ? 10 : 0
         };
       }

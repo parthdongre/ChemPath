@@ -64,6 +64,28 @@ try {
   assert.ok(feasibility.availableCount >= 2);
   assert.ok(Array.isArray(feasibility.activationSample));
   await get("/api/feasible?available=UnknownFakeCompound&target=Bicarbonate", 400);
+  const pareto = await get("/api/path/pareto?from=Methane&to=Bicarbonate&maxLabels=5000&maxRoutes=3");
+  assert.equal(pareto.algorithm, "multi-label-dijkstra");
+  assert.equal(typeof pareto.complete, "boolean");
+  assert.ok(pareto.labelsGenerated >= 1);
+  const constraintResponse = await fetch(base + "/api/path/constrained", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({source:"Methane",target:"Bicarbonate",k:2,
+      blockedReactionIds:[],blockedCompoundIds:[],availableReagents:[],
+      availableCatalysts:[],unknownRequirements:"allow"})
+  });
+  assert.equal(constraintResponse.status,200);
+  const constrained = await constraintResponse.json();
+  assert.equal(constrained.algorithm,"constrained-yen");
+  assert.ok(constrained.routes.length >= 1);
+  assert.equal(constrained.routes[0].totalCost,
+    (await get("/api/path?from=Methane&to=Bicarbonate&algorithm=dijkstra")).totalCost);
+  const invalidConstraints = await fetch(base + "/api/path/constrained", {
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({source:"Methane",target:"Bicarbonate",blockedReactionIds:["oops"]})
+  });
+  assert.equal(invalidConstraints.status,400);
   const bfs = await get("/api/lab/trace?algorithm=bfs&from=Methane&to=Bicarbonate");
   assert.ok(bfs.events.some(e => e.type === "enqueue"));
   const tarjan = await get("/api/lab/trace?algorithm=tarjan");

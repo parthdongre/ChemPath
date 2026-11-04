@@ -176,6 +176,50 @@ app.get("/api/feasible", route(async (req) => {
   return runEngine(["feasible", available, target]);
 }));
 
+// Constraints run entirely inside the C++ graph engine; the API only validates.
+app.post("/api/path/constrained", route(async (req) => {
+  const q = req.body ?? {};
+  const name = (v) => typeof v === "string" && v.length >= 1 && v.length <= 180 &&
+                         !/[\t\r\n]/.test(v);
+  const ids = (v) => Array.isArray(v) && v.length <= 100 &&
+                     v.every(n => Number.isSafeInteger(n) && n >= 0);
+  const tags = (v) => Array.isArray(v) && v.length <= 30 &&
+                     v.every(x => typeof x === "string" && x.length > 0 && x.length <= 100 &&
+                                  !/[\t\r\n;]/.test(x));
+  const count = q.k ?? 3;
+  if (!name(q.source) || !name(q.target) || !Number.isInteger(count) ||
+      count < 1 || count > 5 ||
+      !ids(q.blockedReactionIds ?? []) || !ids(q.blockedCompoundIds ?? []) ||
+      !tags(q.availableReagents ?? []) || !tags(q.availableCatalysts ?? []) ||
+      !["allow","strict"].includes(q.unknownRequirements ?? "allow")) {
+    const e = new Error("Invalid constrained search parameters");
+    e.status = 400;
+    throw e;
+  }
+  return runEngine(["constrained", q.source, q.target, String(count),
+    (q.blockedReactionIds ?? []).join(","), (q.blockedCompoundIds ?? []).join(","),
+    (q.availableReagents ?? []).join(";"), (q.availableCatalysts ?? []).join(";"),
+    q.unknownRequirements ?? "allow"]);
+}));
+
+app.get("/api/path/pareto", route(async (req) => {
+  const { from, to } = req.query;
+  const objective = req.query.objective ?? "steps-cost";
+  const maxLabels = req.query.maxLabels == null ? 50000 : Number(req.query.maxLabels);
+  const maxRoutes = req.query.maxRoutes == null ? 10 : Number(req.query.maxRoutes);
+  if (typeof from !== "string" || !from || from.length > 180 ||
+      typeof to !== "string" || !to || to.length > 180 ||
+      /[\t\r\n]/.test(from + to) ||
+      !["steps-cost","steps-cost-reagents"].includes(objective) ||
+      !Number.isInteger(maxLabels) || maxLabels < 1 || maxLabels > 100000 ||
+      !Number.isInteger(maxRoutes) || maxRoutes < 1 || maxRoutes > 20) {
+    const e = new Error("Invalid Pareto search parameters");
+    e.status = 400;
+    throw e;
+  }
+  return runEngine(["pareto", from, to, objective, String(maxLabels), String(maxRoutes)]);
+}));
+
 app.get("/api/stats", route(async () => runEngine(["stats"])));
 app.get("/api/network", route(async () => runEngine(["network"])));
 

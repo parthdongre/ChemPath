@@ -1,7 +1,10 @@
 #include "ReactionGraph.hpp"
 #include "ReactionDependencyGraph.hpp"
+#include "ConstrainedSearch.hpp"
+#include "MultiObjective.hpp"
 #include "Lab.hpp"
 
+#include <cctype>
 #include <chrono>
 #include <algorithm>
 #include <cmath>
@@ -195,6 +198,118 @@ std::vector<std::string> splitProtocol(const std::string& line){
 int runCommand(const ReactionGraph& graph,const std::vector<std::string>& args) {
     if(args.empty()){printError("Command required");return 1;}
     const std::string command = args[0];
+
+    if (command == "constrained") {
+        // from, to, k, excluded reaction IDs, excluded compound IDs,
+        // available reagents, available catalysts, unknown policy.
+        if (args.size() != 9) {
+            printError("constrained requires from to k blockedReactions blockedCompounds reagents catalysts allow|strict");
+            return 1;
+        }
+        try {
+            const int k=std::stoi(args[3]);
+            if (k<1 || k>10) throw std::invalid_argument("k must be 1..10");
+            chempath::RouteConstraints filter;
+            auto ids=[](const std::string& cell) {
+                std::unordered_set<int> out;
+                if (cell.empty()) return out;
+                std::istringstream stream(cell);
+                std::string part;
+                while(std::getline(stream,part,',')) {
+                    std::size_t used=0;
+                    const int number=std::stoi(part,&used);
+                    if(used!=part.size() || number<0) throw std::invalid_argument("invalid blocked ID");
+                    out.insert(number);
+                }
+                return out;
+            };
+            auto names=[](const std::string& cell) {
+                std::unordered_set<std::string> out;
+                std::istringstream stream(cell);
+                std::string token;
+                while(std::getline(stream,token,';')) {
+                    const auto a=token.find_first_not_of(" \r\n\t");
+                    if(a==std::string::npos)continue;
+                    const auto b=token.find_last_not_of(" \r\n\t");
+                    std::string normalized=token.substr(a,b-a+1);
+                    std::transform(normalized.begin(),normalized.end(),normalized.begin(),
+                        [](unsigned char ch){return static_cast<char>(std::tolower(ch));});
+                    out.insert(std::move(normalized));
+                }
+                return out;
+            };
+            filter.blockedReactionIds=ids(args[4]);
+            filter.blockedCompoundIds=ids(args[5]);
+            filter.availableReagents=names(args[6]);
+            filter.availableCatalysts=names(args[7]);
+            if(args[8]!="allow" && args[8]!="strict")
+                throw std::invalid_argument("unknown metadata policy must be allow or strict");
+            filter.allowUnknownRequirements=args[8]=="allow";
+            const auto routes=chempath::ConstrainedSearch::kShortest(
+                graph,args[1],args[2],filter,static_cast<std::size_t>(k));
+            std::cout << "{\"ok\":true,\"algorithm\":\"constrained-yen\","
+                      << "\"semantics\":\"participation\","
+                      << "\"knownRequirementReactions\":" << routes.knownRequirementReactions
+                      << ",\"totalReactions\":" << routes.totalReactions
+                      << ",\"unknownRequirementsAllowed\":"
+                      << (routes.unknownRequirementsAllowed?"true":"false")
+                      << ",\"routes\":[";
+            for(std::size_t i=0;i<routes.routes.size();++i) {
+                if(i)std::cout<<",";
+                printRoute(graph,routes.routes[i]);
+            }
+            std::cout << "]}\n";
+        } catch(const std::exception& ex) {
+            printError(std::string("Invalid constrained search: ")+ex.what());
+            return 1;
+        }
+        return 0;
+    }
+
+    if (command == "pareto") {
+        if (args.size()<3 || args.size()>6) {
+            printError("pareto requires from to [steps-cost|steps-cost-reagents] [maxLabels] [maxRoutes]");
+            return 1;
+        }
+        try {
+            chempath::ParetoOptions options;
+            const std::string mode=args.size()>3?args[3]:"steps-cost";
+            if(mode!="steps-cost" && mode!="steps-cost-reagents")
+                throw std::invalid_argument("unknown Pareto objective mode");
+            options.includeReagentOccurrences=mode=="steps-cost-reagents";
+            if(args.size()>4) options.maxTotalLabels=std::stoul(args[4]);
+            if(args.size()>5) options.maxReturnedRoutes=std::stoul(args[5]);
+            if(options.maxTotalLabels>100000 || options.maxReturnedRoutes>20)
+                throw std::invalid_argument("Pareto resource limits exceeded");
+            const auto result=chempath::MultiObjective::search(graph,args[1],args[2],options);
+            std::cout << "{\"ok\":true,\"algorithm\":\"multi-label-dijkstra\","
+                      << "\"semantics\":\"participation\","
+                      << "\"reagentObjective\":" << (result.reagentObjective?"true":"false")
+                      << ",\"complete\":" << (result.complete?"true":"false")
+                      << ",\"routesOmitted\":" << (result.routesOmitted?"true":"false")
+                      << ",\"nonDominatedCount\":" << result.nonDominatedTargetLabels
+                      << ",\"labelsGenerated\":" << result.labelsGenerated
+                      << ",\"labelsExpanded\":" << result.labelsExpanded
+                      << ",\"skippedUnknownRequirements\":" << result.skippedUnknownRequirements
+                      << ",\"routes\":[";
+            for(std::size_t i=0;i<result.routes.size();++i) {
+                if(i)std::cout << ",";
+                const auto& item=result.routes[i];
+                std::cout << "{\"steps\":" << item.steps
+                          << ",\"graphCost\":" << item.graphCost
+                          << ",\"knownReagentOccurrences\":" << item.knownReagentOccurrences
+                          << ",\"route\":";
+                printRoute(graph,item.path);
+                std::cout << "}";
+            }
+            std::cout << "]}\n";
+        } catch(const std::exception& ex) {
+            printError(std::string("Invalid Pareto search: ")+ex.what());
+            return 1;
+        }
+        return 0;
+    }
+
 
     if (command == "feasible") {
         if (args.size() != 3) {
@@ -402,13 +517,24 @@ int runCommand(const ReactionGraph& graph,const std::vector<std::string>& args) 
         std::cout << "]}\n";return 0;
     }
 
+    if (command == "csrsave") {
+        if(args.size()!=2) {printError("csrsave requires output prefix");return 1;}
+        const bool saved=graph.saveCsr(args[1]);
+        if(!saved) {printError("CSR save failed (CSR backend required)");return 1;}
+        std::cout << "{\"ok\":true,\"forward\":\"" << jsonEscape(args[1]+".forward.cpg")
+                  << "\",\"reverse\":\"" << jsonEscape(args[1]+".reverse.cpg") << "\"}\n";
+        return 0;
+    }
+
     if (command == "stats") {
         std::cout
             << "{\"ok\":true"
             << ",\"compounds\":" << graph.compounds().size()
             << ",\"reactions\":" << graph.reactions().size()
             << ",\"directedEdges\":" << graph.edgeCount()
-            << ",\"structures\":[\"Graph\",\"Adjacency List\",\"Queue\",\"Stack\",\"Hash Table\",\"Trie\",\"Priority Queue\",\"Low-link Stack\"]"
+            << ",\"backend\":\"" << (graph.backend()==ReactionGraph::Backend::CSR ? "CSR" : "Adjacency") << "\""
+            << ",\"graphStorageBytes\":" << graph.graphStorageBytes()
+            << ",\"structures\":[\"Graph\",\"CSR\",\"Adjacency List\",\"Queue\",\"Stack\",\"Hash Table\",\"Trie\",\"Priority Queue\",\"Low-link Stack\"]"
             << ",\"algorithms\":[\"BFS\",\"Dijkstra\",\"A*\",\"Dial\",\"Bellman-Ford\",\"Bidirectional BFS\",\"Bidirectional Dijkstra\",\"Duan et al. 2025-inspired Pivot Frontier\",\"DFS\",\"Directed Cycle Detection\",\"Tarjan SCC\",\"Prefix Search\"]"
             << ",\"chemistryAudit\":\"curated-v1\""
             << "}\n";
@@ -430,8 +556,8 @@ int runCommand(const ReactionGraph& graph,const std::vector<std::string>& args) 
         std::cout << "],\"edges\":[";
 
         bool firstEdge = true;
-        for (std::size_t from = 0; from < graph.adjacency().size(); ++from) {
-            for (const auto& edge : graph.adjacency()[from]) {
+        for (std::size_t from = 0; from < graph.compounds().size(); ++from) {
+            for (const auto& edge : graph.neighbors(static_cast<int>(from))) {
                 const auto* reaction = graph.reaction(edge.reactionId);
                 if (!reaction) continue;
                 if (!firstEdge) std::cout << ",";
@@ -610,6 +736,10 @@ int main(int argc,char** argv){
         printError("Usage: chempath <command> [args] [--data dir]");return 1;
     }
     ReactionGraph graph;
+    if (const char* mode = std::getenv("CHEMPATH_GRAPH_BACKEND")) {
+        if (std::string(mode) == "adjacency")
+            graph.setBackend(ReactionGraph::Backend::Adjacency);
+    }
     const std::string dir=dataPathFromArgs(argc,argv);
     if(!graph.loadFromFiles(dir+"/compounds.csv",dir+"/reactions.csv")){
         printError("Could not load ChemPath dataset from "+dir);return 2;

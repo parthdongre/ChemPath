@@ -14,7 +14,10 @@ The React frontend does **not** implement the algorithms. It requests a result f
 
 | Structure / algorithm | ChemPath usage |
 | --- | --- |
-| Adjacency-list graph | Stores the curated reaction network |
+| Forward/reverse CSR graph | Default contiguous production storage and search |
+| Adjacency-list graph | Reference backend and legacy DSA Lab compatibility |
+| Constrained Dijkstra + Yen | Block reactions/compounds and rank loopless alternatives |
+| Multi-label Pareto Dijkstra | Non-dominated reaction-step / graph-weight tradeoffs |
 | Hash table | Compound name → integer vertex ID |
 | Queue + BFS | Minimum number of reaction edges |
 | Priority queue + Dijkstra | Minimum algorithmic graph weight |
@@ -50,16 +53,13 @@ See **data/CHEMISTRY_AUDIT.md** for the source families, assumptions, and exampl
 
 ChemPath is still an **educational reaction-network model**, not a laboratory synthesis planner.
 
-A graph edge means that a documented transformation connects those compounds under the stated conditions. It does not imply that simply mixing the displayed graph nodes will automatically produce the shown product. Catalysts, solvent, temperature, pressure, concentration, selectivity, competing reactions, and laboratory safety are outside this Data Structures project.
+A graph edge means that a documented transformation connects those compounds under the stated conditions. It does not imply that simply mixing the displayed graph nodes will automatically produce the shown product. ChemPath can filter requirements that have been explicitly annotated for DSA demonstrations, but it cannot independently validate catalysts, solvent, temperature, pressure, concentration, selectivity, competing reactions, or laboratory safety.
 
 The Dijkstra weight is also **not** an activation energy, free-energy change, yield, reaction time, price, or hazard score. It is an illustrative graph weight for demonstrating weighted shortest-path algorithms.
 
 ## C++ engine performance and validation
 
-The engine keeps the educational adjacency list and builds an **incoming-edge
-index once while loading reactions**, alongside minimum/maximum positive edge
-weights and a cached directed-edge count. A*, bidirectional BFS, and
-bidirectional Dijkstra reuse the index instead of rebuilding it per query.
+The engine now uses **contiguous forward and reverse CSR indexes by default**, built once while loading reactions. An adjacency-list reference backend remains available for controlled comparisons; legacy DSA Lab functionality can materialize adjacency vectors on demand. A*, bidirectional BFS, and bidirectional Dijkstra reuse the reverse CSR index. Minimum/maximum positive edge weights and directed-edge counts are cached.
 
 Dial's shortest-path implementation uses **circular integer-weight buckets**
 (`maxEdgeWeight + 1` buckets) rather than preallocating a deque for every
@@ -216,6 +216,40 @@ node scripts/smoke-api.mjs
 
 See [docs/DSA_LAB.md](docs/DSA_LAB.md) for the precise data structures,
 algorithm notes, route semantics and test coverage.
+
+## Milestone B — production CSR, constrained routing and Pareto DSA
+
+The C++17 engine now defaults to a **Compressed Sparse Row (CSR)**
+forward/reverse graph rather than storing a vector allocation for every
+vertex. Run `CHEMPATH_GRAPH_BACKEND=adjacency` to compare against the
+reference representation. `stats` exposes the selected backend and
+graph-core storage bytes. A versioned checksummed `.cpg` graph-core
+export is also available via `chempath csrsave <prefix>`; this is not
+an automatic metadata/startup cache.
+
+- **Constrained routes:** Filter blocked compound/reaction IDs and optional
+  structured reagent/catalyst requirements, then run Dijkstra or up to K
+  Yen loopless alternatives. Unknown chemistry requirements are
+  distinguished from confirmed absence of requirements.
+- **Pareto shortest paths:** Multi-label Dijkstra produces non-dominated
+  routes across reaction count and illustrative weight. A third reagent
+  occurrence objective is enabled only when source requirements are
+  explicitly annotated. Label budgets produce an **incomplete** flag, not
+  a false claim of global optimality.
+- **Educational semantics:** Both optimizers use the participation graph.
+  The separate `feasible` command from Milestone A handles multi-reactant
+  AND-dependency closure. Neither mode certifies laboratory synthesis.
+
+```bash
+./engine/build/chempath stats
+./engine/build/chempath constrained Methane Bicarbonate 3 "" "" "" "" allow
+./engine/build/chempath pareto Methane Bicarbonate steps-cost 30000 8
+./engine/build/chempath csrsave /tmp/chempath
+```
+
+The Algorithm Lab now includes **Constraints** and **Pareto** tabs.
+See [docs/MILESTONE_B.md](docs/MILESTONE_B.md) for API contracts,
+structured requirements, complexity, correctness tests and limitations.
 
 ## Large-scale ORD reaction database (millions of records)
 

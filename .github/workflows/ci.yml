@@ -31,6 +31,24 @@ jobs:
       - name: Test C++ engine
         run: npm run test:engine
 
+      - name: Compare CSR and adjacency graph core footprint
+        run: |
+          ./engine/build/chempath stats > /tmp/chempath-csr.json
+          CHEMPATH_GRAPH_BACKEND=adjacency ./engine/build/chempath stats > /tmp/chempath-adj.json
+          node - <<'JS'
+          const fs = require("node:fs");
+          const csr = JSON.parse(fs.readFileSync("/tmp/chempath-csr.json","utf8"));
+          const adj = JSON.parse(fs.readFileSync("/tmp/chempath-adj.json","utf8"));
+          if (csr.backend !== "CSR" || adj.backend !== "Adjacency" ||
+              csr.directedEdges !== adj.directedEdges ||
+              csr.graphStorageBytes >= adj.graphStorageBytes) {
+            throw new Error("CSR graph-core comparison failed");
+          }
+          console.log("CSR bytes:", csr.graphStorageBytes, "Adjacency bytes:",
+                      adj.graphStorageBytes, "Saved:",
+                      (100*(1-csr.graphStorageBytes/adj.graphStorageBytes)).toFixed(1)+"%");
+          JS
+
       - name: Test and benchmark optimized C++ build
         run: |
           cmake -S engine -B engine/build-release -DCMAKE_BUILD_TYPE=Release

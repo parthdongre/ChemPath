@@ -23,6 +23,11 @@ struct Reaction {
     std::string sourceKey;
     bool reversible{false};
     int cost{1};
+    // Optional structured sidecar: absence means requirements are UNKNOWN,
+    // not that no catalyst or reagent is needed.
+    bool requirementsKnown{false};
+    std::vector<std::string> requiredReagents;
+    std::vector<std::string> requiredCatalysts;
 };
 
 struct Edge {

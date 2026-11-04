@@ -1,7 +1,7 @@
 const API_BASE = import.meta.env.VITE_API_URL ?? (import.meta.env.PROD ? "/api" : "http://localhost:8787/api");
 
-async function request(path) {
-  const response = await fetch(`${API_BASE}${path}`);
+async function request(path, options = {}) {
+  const response = await fetch(`${API_BASE}${path}`, options);
   const payload = await response.json().catch(() => ({
     ok: false,
     error: "Invalid API response"
@@ -18,6 +18,11 @@ export const api = {
   network: () => request("/network"),
   neighborhood: (center, depth=2, limit=350) => request(`/graph/neighborhood?center=${encodeURIComponent(center)}&depth=${depth}&limit=${limit}`),
   stats: () => request("/stats"),
+  constrained: (params) => request("/path/constrained",{
+    method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(params)
+  }),
+  pareto: (from,to,objective="steps-cost",maxLabels=50000,maxRoutes=10) =>
+    request(`/path/pareto?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&objective=${objective}&maxLabels=${maxLabels}&maxRoutes=${maxRoutes}`),
   feasible: (available,target) =>
     request(`/feasible?available=${encodeURIComponent(available)}&target=${encodeURIComponent(target)}`),
   path: (from, to, algorithm = "bfs") =>

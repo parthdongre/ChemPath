@@ -102,8 +102,13 @@ try {
   await page.getByRole("dialog", {name:"Command palette"}).waitFor({state:"hidden"});
   await page.getByRole("button", {name:"Find pathway"}).click();
   await page.locator(".result-dock .run-meta").waitFor({state:"visible",timeout:35000});
-  assert.ok(await page.locator(".result-dock .reaction-audit-card").count()>0,
-    "Computed route not shown immediately in inspector");
+  const routeCards=await page.locator(".result-dock .reaction-audit-card").count();
+  if(routeCards===0){
+    const details=await page.locator(".result-dock").innerText().catch(()=>"Inspector was unmounted");
+    throw new Error("Computed route not shown immediately in inspector. "+
+      JSON.stringify({details,source:await page.locator(".compound-picker-value").allInnerTexts(),
+        consoleErrors:errors}));
+  }
   fs.mkdirSync("screenshots", {recursive:true});
   await page.evaluate(()=>{
     document.documentElement.style.scrollBehavior="auto";

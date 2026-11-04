@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install 500,000 genuine PubChem CID/SMILES records in a disk-backed catalog.
+"""Install a default 8-million-record PubChem CID/SMILES catalog on disk.
 
 The original curated ChemPath reaction graph remains unchanged. These are
 PubChem *compound records*, NOT 500,000 experimentally connected reactions.
@@ -7,12 +7,17 @@ PubChem *compound records*, NOT 500,000 experimentally connected reactions.
 Official source:
   https://ftp.ncbi.nlm.nih.gov/pubchem/Compound/Extras/CID-SMILES.gz
 
-A gzip stream is read only until the target record count is reached, avoiding
-downloading the full ~100M+ CID file. The final SQLite file replaces the
-existing catalog atomically, so a failed download cannot corrupt it.
+A gzip stream is read only until the requested record count is reached.
+The default is eight million real CIDs; --all is the explicit full-corpus
+option (read to the gzip EOF). If the installed catalog already contains
+at least the requested amount, the importer skips the download. --force
+refreshes from PubChem. Existing data is atomically preserved on failure.
 
 Examples:
   python3 scripts/import-pubchem.py
+  python3 scripts/import-pubchem.py --target 500000
+  python3 scripts/import-pubchem.py --all
+  python3 scripts/import-pubchem.py --force
   python3 scripts/import-pubchem.py --source-file /tmp/CID-SMILES.gz
   python3 scripts/import-pubchem.py --source-file /tmp/fixture.tsv --target 10 --output /tmp/catalog.sqlite
 """
@@ -24,6 +29,7 @@ import datetime
 import gzip
 import hashlib
 import json
+import os
 from pathlib import Path
 import sqlite3
 import sys
@@ -33,7 +39,7 @@ import urllib.request
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_URL = "https://ftp.ncbi.nlm.nih.gov/pubchem/Compound/Extras/CID-SMILES.gz"
 DEFAULT_OUTPUT = ROOT / "data" / "catalog" / "pubchem.sqlite"
-MAX_TARGET = 500_000
+DEFAULT_TARGET = 8_000_000
 
 
 @contextlib.contextmanager
@@ -49,29 +55,67 @@ def open_source(filename: Path | None):
     request = urllib.request.Request(
         SOURCE_URL, headers={"User-Agent": "ChemPath-DSA-Catalog/1.0 (PubChem bulk download)"}
     )
-    # Close the network stream immediately after the first 500k qualifying CIDs.
+    # The caller closes the stream at the requested count, or at EOF for --all.
     with urllib.request.urlopen(request, timeout=90) as response:
         with gzip.GzipFile(fileobj=response) as stream:
             yield stream
 
 
-def import_compounds(source_file: Path | None, output: Path, target: int) -> dict:
-    if not 1 <= target <= MAX_TARGET:
-        raise ValueError(f"target must be 1..{MAX_TARGET:,}")
+def installed_catalog(output: Path) -> dict | None:
+    """Read trusted installation metadata. Fail closed for corrupt/incomplete DBs."""
+    if not output.is_file():
+        return None
+    try:
+        with sqlite3.connect(f"file:{output.as_posix()}?mode=ro", uri=True) as db:
+            meta = dict(db.execute("SELECT key,value FROM catalog_meta"))
+            if meta.get("format") != "CID-SMILES":
+                return None
+            count = int(meta["count"])
+            if count < 1:
+                return None
+            actual = db.execute("SELECT COUNT(*) FROM compounds").fetchone()[0]
+            return {**meta, "count": count} if actual == count else None
+    except (sqlite3.Error, ValueError, KeyError, OSError):
+        return None
+
+
+def import_compounds(
+    source_file: Path | None, output: Path, target: int | None, force: bool = False
+) -> dict:
+    if target is not None and target < 1:
+        raise ValueError("target must be a positive integer")
+    existing = installed_catalog(output)
+    # Catalog upgrade is monotone: don't overwrite a full install with a prefix.
+    if not force and existing and (
+        (target is not None and existing["count"] >= target) or
+        (target is None and existing.get("scope") == "full")
+    ):
+        details = {
+            "status": "already-installed", "count": existing["count"],
+            "target": target if target is not None else "full",
+            "scope": existing.get("scope", "prefix"),
+            "output": str(output),
+            "source": existing.get("source_url"),
+            "hint": "Use --force (or npm run data:update) to fetch a fresh PubChem snapshot."
+        }
+        print(json.dumps(details, indent=2), flush=True)
+        return details
     output.parent.mkdir(parents=True, exist_ok=True)
     # Use a per-process temporary DB: only publish after the full verified count.
-    temp = output.with_name(output.name + f".{__import__('os').getpid()}.partial")
+    temp = output.with_name(output.name + f".{os.getpid()}.partial")
     temp.unlink(missing_ok=True)
     began = time.monotonic()
     count = 0
     invalid = 0
+    last_progress = 0
     sha = hashlib.sha256()
     db = sqlite3.connect(temp)
     try:
         db.executescript("""
             PRAGMA journal_mode = DELETE;
             PRAGMA synchronous = NORMAL;
-            PRAGMA cache_size = -32768;
+            PRAGMA cache_size = -65536;
+            PRAGMA temp_store = FILE;
             CREATE TABLE compounds (
                 cid INTEGER PRIMARY KEY,
                 smiles TEXT NOT NULL CHECK(length(smiles) BETWEEN 1 AND 2048)
@@ -108,22 +152,36 @@ def import_compounds(source_file: Path | None, output: Path, target: int) -> dic
                 sha.update(cid_raw + b"\t" + smiles_raw + b"\n")
                 if len(rows) >= 5000:
                     before = db.total_changes
-                    db.executemany("INSERT OR IGNORE INTO compounds VALUES (?,?)", rows)
+                    wanted = len(rows) if target is None else min(len(rows), target - count)
+                    db.executemany("INSERT OR IGNORE INTO compounds VALUES (?,?)", rows[:wanted])
                     count += db.total_changes - before
                     rows.clear()
-                    if count and count % 50000 == 0:
-                        print(f"Indexed {count:,}/{target:,} PubChem CID records", flush=True)
-                    if count >= target:
+                    if count - last_progress >= (500_000 if target is None else 100_000):
+                        print(
+                            f"Indexed {count:,}" +
+                            (f"/{target:,}" if target is not None else "") +
+                            " PubChem CID records", flush=True
+                        )
+                        last_progress = count
+                    # A partial SQLite file is disposable, so checkpoint commits
+                    # avoid a multi-gigabyte transaction log during a full import.
+                    if count and count % 50_000 == 0:
+                        db.commit()
+                        db.execute("BEGIN")
+                    if target is not None and count >= target:
                         break
-            if rows and count < target:
+            if rows and (target is None or count < target):
                 before = db.total_changes
-                db.executemany("INSERT OR IGNORE INTO compounds VALUES (?,?)", rows[:target-count])
+                wanted = len(rows) if target is None else min(len(rows), target - count)
+                db.executemany("INSERT OR IGNORE INTO compounds VALUES (?,?)", rows[:wanted])
                 count += db.total_changes - before
-        if count != target:
+        if target is not None and count != target:
             raise RuntimeError(
                 f"Source ended with {count:,} distinct records; expected {target:,}. "
                 "Existing database was NOT replaced."
             )
+        if not count:
+            raise RuntimeError("No valid PubChem CIDs were found; existing database preserved.")
         db.commit()
         # SQL B-tree supports exact CID, exact SMILES and prefix-range lookup.
         db.execute("CREATE INDEX idx_compounds_smiles ON compounds(smiles)")
@@ -132,6 +190,8 @@ def import_compounds(source_file: Path | None, output: Path, target: int) -> dic
             "source": "PubChem Compound Extras",
             "source_url": SOURCE_URL if source_file is None else str(source_file),
             "count": str(count),
+            "scope": "full" if target is None else "prefix",
+            "requested_count": "full" if target is None else str(target),
             "imported_at": date,
             "records_digest_sha256": sha.hexdigest(),
             "format": "CID-SMILES",
@@ -144,8 +204,8 @@ def import_compounds(source_file: Path | None, output: Path, target: int) -> dic
             raise RuntimeError("SQLite catalog integrity check failed: " + str(query))
         # Avoid guessing the source count. SQLite confirms every inserted CID.
         actual = db.execute("SELECT COUNT(*) FROM compounds").fetchone()[0]
-        if actual != target:
-            raise RuntimeError(f"Catalog verification failed: {actual} != {target}")
+        if actual != count:
+            raise RuntimeError(f"Catalog verification failed: {actual} != {count}")
     except Exception:
         db.close()
         temp.unlink(missing_ok=True)
@@ -153,7 +213,8 @@ def import_compounds(source_file: Path | None, output: Path, target: int) -> dic
     db.close()
     temp.replace(output)
     details = {
-        "count": count, "target": target, "skippedInvalid": invalid,
+        "status": "imported", "count": count, "target": target if target is not None else "full",
+        "scope": "full" if target is None else "prefix", "skippedInvalid": invalid,
         "output": str(output), "elapsedSeconds": round(time.monotonic()-began, 2),
         "source": meta["source_url"], "digest": meta["records_digest_sha256"]
     }
@@ -165,12 +226,20 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-file", type=Path, help="Local tab-delimited CID-SMILES[.gz] for offline imports")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
-    parser.add_argument("--target", type=int, default=MAX_TARGET)
+    scope = parser.add_mutually_exclusive_group()
+    scope.add_argument("--target", type=int, default=None,
+                       help=f"Number of real CIDs to index (default {DEFAULT_TARGET:,})")
+    scope.add_argument("--all", action="store_true",
+                       help="Explicitly index every record in the full PubChem gzip corpus")
+    parser.add_argument("--force", action="store_true",
+                        help="Rebuild even if enough records are already installed")
     args = parser.parse_args()
     if args.source_file and not args.source_file.is_file():
         parser.error("Source file not found: " + str(args.source_file))
     try:
-        import_compounds(args.source_file, args.output, args.target)
+        import_compounds(args.source_file, args.output,
+                         None if args.all else (args.target or DEFAULT_TARGET),
+                         force=args.force)
     except Exception as exc:
         print("PubChem catalog import failed: " + str(exc), file=sys.stderr)
         sys.exit(1)

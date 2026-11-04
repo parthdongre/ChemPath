@@ -1677,6 +1677,42 @@ export default function App() {
               </>
             )}
 
+        </section>
+        </div>{/* Graph + inspector */}
+      </section>
+      )}
+
+      {(studioView==="lab"||studioView==="compare")&&(
+        <section className="studio-view studio-lab-view" id="algorithm-lab-workspace">
+          <div className="studio-page-intro">
+            <div>
+              <span className="studio-section-eyebrow">
+                WORKSPACE / {studioView==="compare"?"COMPARE":"LABORATORY"}
+              </span>
+              <h1>{studioView==="compare"?"Compare methods":"Algorithm laboratory"}<span className="studio-title-period">.</span></h1>
+              <p>Inspect C++ traces, graph connectivity, route alternatives, and performance.</p>
+            </div>
+            <button type="button" className="studio-compact-btn" onClick={()=>setStudioPage("explore")}>Back to graph ↗</button>
+          </div>
+          <LabPanel network={network} from={from} to={to} viewMode={studioView}/>
+        </section>
+      )}
+
+      {studioView==="data"&&(
+        <section className="studio-view studio-data-view" id="data-library">
+          <div className="studio-page-intro">
+            <div>
+              <span className="studio-section-eyebrow">WORKSPACE / DATA LIBRARY</span>
+              <h1>Discover the data<span className="studio-title-period">.</span></h1>
+              <p>Explore compounds, reaction records, and local source collections.</p>
+            </div>
+            <button type="button" className="studio-compact-btn" onClick={()=>setStudioPage("explore")}>Back to graph ↗</button>
+          </div>
+          <div className="studio-data-overview">
+            <div><span>CURATED COMPOUNDS</span><strong>{stats?.compounds?.toLocaleString()??"—"}</strong><small>Included network</small></div>
+            <div><span>REACTIONS</span><strong>{stats?.reactions?.toLocaleString()??"—"}</strong><small>Indexed reaction records</small></div>
+            <div><span>GRAPH EDGES</span><strong>{stats?.directedEdges?.toLocaleString()??"—"}</strong><small>Participation links</small></div>
+          </div>
           <CompoundDirectory
             compounds={directoryCompounds}
             total={compounds.length}
@@ -1705,48 +1741,23 @@ export default function App() {
               )
             }
           />
+          <OrdExplorer/>
         </section>
-      </section>
+      )}
 
-      <div className="rule" id="engine">
-        <span>02</span>
-        <p>Algorithm stack</p>
-      </div>
-
-      <section className="engine-map">
-        <div className="engine-copy">
-          <p className="eyebrow">C++17 DATA STRUCTURES ENGINE</p>
-          <h2>Graph algorithms. Two search semantics.</h2>
-          <p>
-            The browser only renders the result and replay. Queue, stack, priority
-            queue, buckets, heaps, parent reconstruction, hashing, Trie search,
-            cycle state and low-link logic all execute in C++. The 2025 research
-            mode is explicitly an educational pivot-frontier hybrid, not a claim
-            to reproduce the full STOC asymptotic construction.
-          </p>
-        </div>
-
-        <div className="structure-table">
-          <div><span>01</span><strong>BFS</strong><small>queue · shortest edge count</small></div>
-          <div><span>02</span><strong>Dijkstra</strong><small>binary heap · weighted SSSP</small></div>
-          <div><span>03</span><strong>A*</strong><small>admissible heuristic · guided search</small></div>
-          <div><span>04</span><strong>Dial</strong><small>bucket queue · small integer weights</small></div>
-          <div><span>05</span><strong>Bellman-Ford</strong><small>repeated relaxation · baseline SSSP</small></div>
-          <div><span>06</span><strong>Bidirectional BFS</strong><small>two unweighted frontiers</small></div>
-          <div><span>07</span><strong>Bidirectional Dijkstra</strong><small>two weighted frontiers</small></div>
-          <div><span>08</span><strong>2025 Pivot Frontier</strong><small>research-inspired Bellman-Ford + frontier hybrid</small></div>
-          <div><span>09</span><strong>DFS</strong><small>stack · reachability</small></div>
-          <div><span>10</span><strong>Tarjan SCC</strong><small>low-link + stack</small></div>
-          <div><span>11</span><strong>Cycle detection</strong><small>DFS state tracking</small></div>
-          <div><span>12</span><strong>Trie search</strong><small>prefix lookup</small></div>
-        </div>
-      </section>
-
-      <footer>
-        <span>ChemPath / dense simulation build</span>
-        <span>C++17 · React · Cytoscape.js</span>
-        <span>Educational reaction-network model · not a synthesis planner</span>
+      <footer className="studio-footer" aria-label="Application status">
+        <span>CHEMPATH STUDIO <span className="studio-footer-divider">/</span> C++17 GRAPH ENGINE</span>
+        <span>Educational participation paths · not verified syntheses</span>
       </footer>
+        </div>{/* studio-content */}
+      </div>{/* studio-shell */}
+      <StudioCommandPalette
+        open={commandOpen} onClose={()=>setCommandOpen(false)}
+        onNavigate={setStudioPage} compounds={compounds}
+        onSelectSource={name=>{setFrom(name);setStudioPage("explore");reset();}}
+        onSelectTarget={name=>{setTo(name);setStudioPage("explore");reset();}}
+        onFind={()=>{setStudioPage("explore");runPath();}}
+      />
     </main>
   );
 }

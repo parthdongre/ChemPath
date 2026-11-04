@@ -1722,7 +1722,7 @@ export default function App() {
       <section className="engine-map">
         <div className="engine-copy">
           <p className="eyebrow">C++17 DATA STRUCTURES ENGINE</p>
-          <h2>Twelve algorithms. One reaction graph.</h2>
+          <h2>Graph algorithms. Two search semantics.</h2>
           <p>
             The browser only renders the result and replay. Queue, stack, priority
             queue, buckets, heaps, parent reconstruction, hashing, Trie search,

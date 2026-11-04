@@ -5,7 +5,7 @@ import NetworkGraph from "./NetworkGraph.jsx";
 import "./Lab.css";
 
 const tabs=[["trace","Execution"],["compare","Comparison"],["paths","Routes"],
-  ["components","Components"],["bench","Benchmarks"],["trie","Trie"],["sandbox","Playground"]];
+  ["components","Components"],["dependencies","Dependencies"],["bench","Benchmarks"],["trie","Trie"],["sandbox","Playground"]];
 const number=(x)=>typeof x==="number"?x.toLocaleString(undefined,{maximumFractionDigits:3}):"—";
 function Metric({title,value,unit=""}){
   return <div className="lab-metric"><span>{title}</span><strong>{number(value)}</strong><small>{unit}</small></div>;
@@ -34,11 +34,13 @@ export default function LabPanel({network,from,to}){
   const [editMode,setEditMode]=useState("remove"),[editWeight,setEditWeight]=useState(2);
   const [editTarget,setEditTarget]=useState(""),[trieQuery,setTrieQuery]=useState("meth"),[trieMatches,setTrieMatches]=useState(null);
   const [busy,setBusy]=useState(false),[error,setError]=useState("");
+  const [availableInput,setAvailableInput]=useState("");
+  const [feasibility,setFeasibility]=useState(null);
   const byId=useMemo(()=>new Map((network?.nodes||[]).map(n=>[n.id,n])),[network]);
   const sourceId=network?.nodes?.find(n=>n.name===from)?.id;
   const outgoing=useMemo(()=>(network?.edges||[]).filter(e=>e.source===sourceId).slice(0,100),[network,sourceId]);
   useEffect(()=>{
-    setTrace(null);setPaths(null);setComparison(null);setSandbox(null);setStep(0);setPlaying(false);
+    setTrace(null);setPaths(null);setComparison(null);setSandbox(null);setFeasibility(null);setStep(0);setPlaying(false);
   },[from,to]);
   useEffect(()=>{
     if(!playing||!trace?.events?.length)return;
@@ -259,6 +261,39 @@ export default function LabPanel({network,from,to}){
       <p className="lab-muted">Hypothetical edges are graph-only demonstrations, not real chemical reactions. Original data remains immutable.</p>
       {sandbox&&<RouteView route={sandbox.route}/>}
     </div>}
-    <footer className="lab-footer">DSA learning mode · reaction participation graph · not a laboratory synthesis planner</footer>
+
+    {tab==="dependencies"&&<div className="lab-section">
+      <h3>Multi-reactant AND-dependency exploration</h3>
+      <p className="lab-muted">Unlike the ordinary pathfinding modes, a reaction activates only once all of its required reactant compounds are available. This is reachability closure, not a guaranteed synthesis route.</p>
+      <div className="lab-toolbar">
+        <label>Initially available compounds (semicolon-separated)
+          <input type="text" value={availableInput}
+            placeholder={from || "Water;Carbon Dioxide"}
+            onChange={event=>setAvailableInput(event.target.value)}/>
+        </label>
+        <button type="button" className="lab-primary" disabled={busy||!to} onClick={()=>execute(async()=>{
+          setFeasibility(await api.feasible(availableInput.trim()||from,to));
+        })}>Compute dependency closure</button>
+      </div>
+      {feasibility&&<div className="lab-section">
+        <div className="lab-metrics">
+          <Metric title="Compounds available" value={feasibility.availableCount}/>
+          <Metric title="Reactions activated" value={feasibility.activatedCount}/>
+          <Metric title="Initially available" value={feasibility.initialCount}/>
+        </div>
+        <p className={feasibility.targetAvailable?"lab-found":"lab-muted"}>
+          Target {feasibility.target}: {feasibility.targetAvailable?"reachable with these available compounds":"not reachable under these dependencies"}.
+        </p>
+        <details><summary>Discovered compounds (first 80)</summary>
+          <p className="lab-muted">{(feasibility.availableSample||[]).map(c=>c.name).join(" · ")}</p>
+        </details>
+        <details><summary>Activated reaction records (first 80)</summary>
+          <div className="lab-reactions">{(feasibility.activationSample||[]).map((r,i)=>
+            <p key={r.reactionId+"-"+i}>{r.name}{r.reverse?" (reverse)":""}</p>)}</div>
+        </details>
+        {feasibility.truncatedSample&&<p className="lab-muted">Preview limited to 80 results; all reactions were evaluated by C++.</p>}
+      </div>}
+    </div>}
+    <footer className="lab-footer">DSA learning · participation shortest paths and separate multi-reactant closure · not a laboratory synthesis planner</footer>
   </section>;
 }

@@ -12,6 +12,31 @@ each listed reactant to each listed product, with additional co-reactants
 implicitly available. This graph is suitable for learning DSA; no shortest
 compound-to-compound path is guaranteed to be a feasible synthesis.
 
+## Reaction-dependency mode (Milestone A)
+
+`ReactionGraph` retains its legacy **participation graph**: every listed
+reactant has an educational projection edge to each product, with other
+reactants implicitly assumed available. That is **not** a chemical
+feasibility guarantee.
+
+The new `ReactionDependencyGraph` uses explicit AND dependencies:
+each directional reaction requires every distinct reactant before its
+products are added to the availability queue. Explicitly reversible source
+records add a reverse direction requiring every original product. No reverse
+direction is inferred for Rhea's directed records.
+
+Data structures: `requiredByCompound` incidence lists, a remaining-input
+counter per reaction, a FIFO queue of newly available compounds, and a
+producer-activation index. One closure query is `O(V + P)` time and memory
+where `P` is total reaction participation links. This model ignores
+stoichiometric quantities, consumption, competing reaction choices, costs,
+catalysts and experimental feasibility.
+
+Command: `chempath feasible "Water;Carbon Dioxide" "Bicarbonate"`.
+The output includes full closure counts and bounded discovery/activation
+samples. Tests cover missing co-reactants, duplicate inputs, cycles,
+reversibility, and independent repeated queries.
+
 ## Main data structures
 
 | Structure | Why / where | Typical cost |

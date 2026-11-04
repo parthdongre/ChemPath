@@ -18,6 +18,8 @@ export const api = {
   network: () => request("/network"),
   neighborhood: (center, depth=2, limit=350) => request(`/graph/neighborhood?center=${encodeURIComponent(center)}&depth=${depth}&limit=${limit}`),
   stats: () => request("/stats"),
+  feasible: (available,target) =>
+    request(`/feasible?available=${encodeURIComponent(available)}&target=${encodeURIComponent(target)}`),
   path: (from, to, algorithm = "bfs") =>
     request(
       `/path?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&algorithm=${encodeURIComponent(algorithm)}`

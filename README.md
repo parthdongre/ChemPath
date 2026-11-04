@@ -298,6 +298,28 @@ separate optional ORD SQLite explorer. For normal coursework, restart without
 See [docs/ORD_DATA.md](docs/ORD_DATA.md) for importer options, attribution,
 limitations, API contract, macOS commands, and hosting considerations.
 
+## Complete Rhea import (Milestone A)
+
+The previous importer was capped at 15,000 records. The updated version
+supports all usable directed Rhea reaction-SMILES records in the pinned
+upstream snapshot while preserving the smaller curated and bundled datasets.
+
+```bash
+python3 -m pip install rdkit
+python3 scripts/import-rhea.py --all
+CHEMPATH_DATA_DIR=data/rhea/full npm run dev
+```
+
+The source TSV is downloaded into ignored `data/rhea/cache/` on demand.
+Full generated outputs are written into ignored `data/rhea/full/` so the
+repository does not grow with the external source data. The export includes
+`manifest.json` with exact counts and SHA256 provenance, plus a
+`rhea-aliases.tsv` mapping duplicate directional transformations. For
+reproducible offline imports, pass `--source-file /path/to/source.tsv`.
+Use `--limit 1500` to reproduce the previous small import.
+
+See [docs/RHEA_FULL.md](docs/RHEA_FULL.md) for tests and limitations.
+
 ## Optional larger Rhea reaction graph
 
 The **validated classroom default remains 690 compounds and 884 curated
@@ -448,12 +470,33 @@ https://arxiv.org/abs/2504.17033
 The paper proves a deterministic `O(m log^(2/3) n)` algorithm for directed non-negative SSSP in the comparison-addition model. ChemPath does **not** claim to reproduce that full BMSSP construction. Its research mode demonstrates the paper's high-level combination of unsorted Bellman-Ford-like frontier relaxation with a later ordered cleanup, while preserving exact shortest-path output for the demo.
 
 
-## Reaction-to-graph projection
+## Two graph semantics: participation versus AND-dependency
 
-Reaction records may contain several reactants and products, but ChemPath must not interpret every co-reactant as an independent substrate. The compound graph therefore uses the **first listed reactant as the primary substrate**. It creates forward edges from that substrate to the recorded products.
+**Legacy participation search (BFS, Dijkstra, A*, Yen, etc.):**
+The implementation in `ReactionGraph::loadReactions` projects each listed
+reactant to each product. It assumes that *other reactants are available*.
+For reversible records, the legacy implementation adds one explicitly
+designated primary-product-to-primary-reactant reverse edge. Such compound
+paths are useful for DSA teaching but **not proof that one compound alone
+can produce another**.
 
-For reversible records, the **first listed product is the designated primary product** and is the only product used to create the reverse edge. Other reactants/products remain visible as chemistry metadata but do not create false entry points. This prevents shortcuts such as treating water in `H2CO3 + H2O ⇌ H3O+ + HCO3-` as though water alone could transform into bicarbonate.
+**New multi-reactant dependency closure (AND semantics):**
+The separate C++ `ReactionDependencyGraph` represents each reaction with
+all required input compounds. A reaction activates only when all distinct
+reactants are available; its products then become available. Reversible
+records add full reverse *requirements*, not the legacy primary reverse
+edge. This solves an availability/reachability problem rather than an
+optimal synthesis-planning problem. Reagents and laboratory conditions
+are not verified.
 
+Run the new algorithm against the selected data directory:
+
+```bash
+./engine/build/chempath feasible "Water;Carbon Dioxide" "Bicarbonate"
+```
+
+The DSA Lab has a **Dependencies** tab for the new algorithm. Ordinary
+algorithm tabs remain explicitly labeled participation-graph results.
 
 ## Mid-semester curated dataset
 

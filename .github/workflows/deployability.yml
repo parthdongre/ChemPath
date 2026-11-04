@@ -68,6 +68,7 @@ jobs:
             screenshots/studio-mobile.png
             screenshots/studio-cartography.png
             screenshots/studio-lens.png
+            screenshots/studio-clusters.png
           if-no-files-found: warn
       - name: Container logs
         if: failure()

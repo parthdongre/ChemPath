@@ -95,7 +95,8 @@ export function buildGraph(network) {
 export default function SigmaNetwork({
   network, highlightedNodeIds = [], highlightedEdgeIds = [],
   selectedNodeId = null, visitedNodeIds = [], activeNodeId = null,
-  simulationRunning = false, onSelectCompound, onExpandNode
+  simulationRunning = false, onSelectCompound, onExpandNode,
+  onSelectEdge, showPopovers = true
 }) {
   const container = useRef(null);
   const sigmaRef = useRef(null);
@@ -106,7 +107,9 @@ export default function SigmaNetwork({
   const [hovered, setHovered] = useState(null);
   const hoveredRef = useRef(null);
   const onSelectRef = useRef(onSelectCompound);
+  const onEdgeRef = useRef(onSelectEdge);
   onSelectRef.current = onSelectCompound;
+  onEdgeRef.current = onSelectEdge;
 
   filters.current = {
     highlightedNodes: new Set(highlightedNodeIds.map(String)),
@@ -140,8 +143,8 @@ export default function SigmaNetwork({
           (!f.simulationRunning && hasPath && !highlighted && !selected);
         return {
           ...data,
-          color: active ? "#fff0be" : highlighted ? "#ff667a" :
-            selected ? "#f4d89b" : visited ? "#62e0d0" : data.color,
+          color: active ? "#f4da9b" : highlighted ? "#5dd6c1" :
+            selected ? "#f2bf7a" : visited ? "#86c8c1" : data.color,
           size: active ? 12 : highlighted ? 9 : selected ? 8.2 : visited ? 6.6 : data.size,
           hidden: false,
           label: (dim && !active) ? "" : data.label,
@@ -154,22 +157,28 @@ export default function SigmaNetwork({
         const hasPath = f.highlightedNodes.size > 0 || f.highlightedEdges.size > 0;
         return {
           ...data,
-          color: marked ? "#fb6075" : hasPath || f.simulationRunning ? "#23445a" : data.color,
-          size: marked ? 3.6 : data.size,
+          color: marked ? "#67dfc8" : hasPath || f.simulationRunning ? "#27404e" : data.color,
+          size: marked ? 2.9 : data.size,
           zIndex: marked ? 10 : 0
         };
       }
     });
     sigmaRef.current = renderer;
-    renderer.on("clickNode", ({ node }) => {
+    renderer.on("clickNode", ({ node, event }) => {
       const attrs = graph.getNodeAttributes(node);
       setInspected({ id: node, ...attrs });
       setEdgeInfo(null);
-      onSelectRef.current?.(attrs.name, Number(node));
+      onSelectRef.current?.(attrs.name, Number(node), Boolean(event?.original?.shiftKey));
     });
     renderer.on("clickEdge", ({ edge }) => {
-      setEdgeInfo({ ...graph.getEdgeAttributes(edge), id: edge });
+      const record={ ...graph.getEdgeAttributes(edge), id: edge };
+      setEdgeInfo(record);
       setInspected(null);
+      onEdgeRef.current?.(record);
+    });
+    renderer.on("doubleClickNode", ({node}) => {
+      const data=graph.getNodeAttributes(node);
+      renderer.getCamera().animate({x:data.x,y:data.y,ratio:0.28},{duration:310});
     });
     renderer.on("enterNode", ({ node }) => {
       hoveredRef.current = node;
@@ -203,6 +212,29 @@ export default function SigmaNetwork({
     renderer.getCamera().animate({ x, y, ratio: 0.35 }, { duration: 260 });
   }, [graph, activeNodeId]);
 
+  // A selected route should become the visual center rather than simply
+  // changing color somewhere in the full, dense network.
+  useEffect(() => {
+    const renderer=sigmaRef.current;
+    if(!renderer||simulationRunning||highlightedNodeIds.length<2)return;
+    const points=highlightedNodeIds.map(String).filter(key=>graph.hasNode(key))
+      .map(key=>graph.getNodeAttributes(key));
+    if(points.length<2)return;
+    const bounds={
+      minX:Math.min(...points.map(p=>p.x)),maxX:Math.max(...points.map(p=>p.x)),
+      minY:Math.min(...points.map(p=>p.y)),maxY:Math.max(...points.map(p=>p.y))
+    };
+    const size=Math.max(bounds.maxX-bounds.minX,bounds.maxY-bounds.minY);
+    const camera=renderer.getCamera();
+    const state={
+      x:(bounds.minX+bounds.maxX)/2,
+      y:(bounds.minY+bounds.maxY)/2,
+      ratio:Math.max(0.19,Math.min(1.25,size*1.8))
+    };
+    if(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches)camera.setState(state);
+    else camera.animate(state,{duration:340});
+  },[graph,highlightedNodeIds,simulationRunning]);
+
   return <div className="sigma-shell">
     <div className="sigma-toolbar">
       <span>WebGL · Sigma.js</span>
@@ -221,7 +253,7 @@ export default function SigmaNetwork({
       {graph.order.toLocaleString()} visible compounds · {graph.size.toLocaleString()} edges
       {hovered && graph.hasNode(hovered) && <span> · {graph.getNodeAttribute(hovered, "name")}</span>}
     </div>
-    {(inspected || edgeInfo) && <div className="sigma-inspector">
+    {showPopovers && (inspected || edgeInfo) && <div className="sigma-inspector">
       <button type="button" className="sigma-close" onClick={() => { setInspected(null); setEdgeInfo(null); }}
         aria-label="Close inspector">×</button>
       <small>{edgeInfo ? "REACTION EDGE" : "COMPOUND"}</small>

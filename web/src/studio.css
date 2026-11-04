@@ -389,7 +389,11 @@ to{opacity:1;transform:translateY(0) scale(1)}}
   .studio-app .explorer-head{align-items:center;flex-wrap:wrap}
   .studio-app .mode-switch button{padding:0 9px;font-size:10px}
   .studio-app .algorithm-readout{display:none}
-  .studio-app .command-primary{display:flex;flex-wrap:wrap}
+  .studio-app .command-primary{display:flex;flex-wrap:nowrap;flex-direction:column;
+    align-items:stretch;width:100%}
+  .studio-app .command-primary>.field{width:100%;flex:none}
+  .studio-app .command-primary .compound-picker-trigger{width:100%}
+
   .studio-app .command-primary .field{flex:1 1 160px}
   .studio-app .command-primary .algorithm-select{flex:1 1 100%}
   .studio-app .command-arrow{display:none}
@@ -407,7 +411,7 @@ to{opacity:1;transform:translateY(0) scale(1)}}
   .studio-app .mode-switch{width:100%}
   .studio-app .mode-switch button{flex:1}
   .studio-app .command-bar{padding:11px}
-  .studio-app .command-primary .field{flex:1 1 100%}
+  .studio-app .command-primary .field{flex:none;width:100%}
   .studio-app .command-primary .run-button{width:100%}
   .studio-graph-grid .result-dock{width:min(330px,95%)}
   .studio-data-overview{grid-template-columns:1fr}

@@ -10,7 +10,7 @@ import Database from "better-sqlite3";
 
 const root=fs.mkdtempSync(path.join(os.tmpdir(),"chempath-pubchem-test-"));
 const source=path.join(root,"CID-SMILES.tsv");
-const db=path.join(root,"pubchem.sqlite");
+const db=path.join(root,"catalog","pubchem.sqlite");
 const records=[
   [1,"CC"],[2,"CCO"],[3,"CC=O"],[4,"CC(=O)O"],[5,"C1CCCCC1"],
   [6,"N"],[7,"O"],[8,"C=C"],[9,"C#C"],[10,"CCN"],
@@ -46,9 +46,27 @@ assert.ok(query.some(row=>row.detail.includes("idx_compounds_smiles")),JSON.stri
 assert.equal(sql.pragma("integrity_check",{simple:true}),"ok");
 sql.close();
 
+// Regression: npm workspaces run from server/, NOT the repository root.
+// The installed default must always point to repoRoot/data/catalog.
+const expectedDefault=path.resolve("data","catalog","pubchem.sqlite");
+const workspaceProbe=spawnSync(process.execPath,[
+  "--input-type=module","-e",
+  "import {catalogDatabasePath} from './compound-catalog.js'; console.log(catalogDatabasePath());"
+],{
+  cwd:path.resolve("server"),encoding:"utf8",timeout:10000,
+  env:{...process.env,CHEMPATH_PUBCHEM_DB:"",CHEMPATH_DATA_DIR:""}
+});
+assert.equal(workspaceProbe.status,0,workspaceProbe.stderr);
+assert.equal(workspaceProbe.stdout.trim(),expectedDefault,
+  "Catalog default must be independent of npm workspace cwd");
+
 const port=9993;
-const server=spawn(process.execPath,["server/index.js"],{
-  env:{...process.env,PORT:String(port),CHEMPATH_PUBCHEM_DB:db},
+// Boot exactly as the npm server workspace does, without overriding the
+// PubChem DB path; CHEMPATH_DATA_DIR selects the fixture's parent folder.
+const server=spawn(process.execPath,["index.js"],{
+  cwd:path.resolve("server"),
+  env:{...process.env,PORT:String(port),
+    CHEMPATH_PUBCHEM_DB:"",CHEMPATH_DATA_DIR:root},
   stdio:["ignore","pipe","pipe"]
 });
 let logs="";

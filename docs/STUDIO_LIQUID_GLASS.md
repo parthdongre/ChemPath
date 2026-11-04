@@ -46,6 +46,9 @@ environment visually rather than trusting CSS.supports alone.
 
 ## Where to see it
 
+- Drag the floating graph toolbar by its dotted grip and move it over
+  compound links to see actual refractive sampling of the changing backdrop.
+  Double-click the grip to reset its position.
 - Hover the **Map clarity / All links / Lens / Fit** floating toolbar over the
   reaction graph. The optical map is live because it samples the graph behind
   the controls instead of warping a decorative pseudo-element.
@@ -60,6 +63,7 @@ environment visually rather than trusting CSS.supports alone.
   markers with truthful counts.
 - Important high-degree compounds and route nodes remain unclustered.
 - Clicking a marker smoothly zooms to its neighborhood.
+- A bounded screen-space collision solver keeps nearby group bubbles from overlapping.
 - Zooming into neighborhood/detail removes the grouping; **All links**
   still reveals the complete unmodified graph.
 - A five-entry in-memory layout cache preserves the normalized ForceAtlas2

@@ -2,9 +2,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { MultiDirectedGraph } from "graphology";
 import forceAtlas2 from "graphology-layout-forceatlas2";
 import Sigma from "sigma";
+import {GripVertical} from "lucide-react";
 import {buildCartographicIndex,cartographicVisibility,mapStageForRatio} from "./graphCartography.js";
 import GraphLens from "./GraphLens.jsx";
 import RouteOverlay from "./RouteOverlay.jsx";
+import {buildOverviewClusters} from "./graphClusters.js";
+import ClusterOverlay from "./ClusterOverlay.jsx";
+import {layoutKey,restoreLayout,rememberLayout} from "./graphLayoutCache.js";
 import "./SigmaNetwork.css";
 
 const palette = {
@@ -63,6 +67,8 @@ export function buildGraph(network) {
     });
   }
 
+  const cacheKey=layoutKey(network);
+  if(restoreLayout(cacheKey,graph))return graph;
   if (graph.order > 1 && graph.size > 0) {
     // Bounded, synchronous layout; avoid expensive long runs in public browsers.
     try {
@@ -97,6 +103,7 @@ export function buildGraph(network) {
       y: 0.08 + 0.84 * (a.y - minY) / span
     });
   });
+  rememberLayout(cacheKey,graph);
   return graph;
 }
 
@@ -107,6 +114,8 @@ export default function SigmaNetwork({
   onSelectEdge, showPopovers = true
 }) {
   const container = useRef(null);
+  const glassBar=useRef(null);
+  const glassDrag=useRef(null);
   const sigmaRef = useRef(null);
   const graph = useMemo(() => buildGraph(network), [network]);
   const cartography=useMemo(()=>buildCartographicIndex(graph),[graph]);
@@ -117,6 +126,16 @@ export default function SigmaNetwork({
     stage:mapStage,showAll:showAllLinks,routeNodes:highlightedNodeIds,
     routeEdges:highlightedEdgeIds,selected:selectedNodeId
   }),[cartography,mapStage,showAllLinks,highlightedNodeIds,highlightedEdgeIds,selectedNodeId]);
+  const clustersInfo=useMemo(()=>{
+    if(mapStage!=="overview"||showAllLinks||visibility.hasRoute)
+      return {clusters:[],hiddenNodeIds:new Set()};
+    return buildOverviewClusters(graph,cartography,visibility.visibleNodes);
+  },[graph,cartography,mapStage,showAllLinks,visibility]);
+  const displayedEdges=useMemo(()=>cartography.entries.filter(edge=>
+    visibility.visibleEdges.has(edge.id)&&
+    !clustersInfo.hiddenNodeIds.has(edge.source)&&
+    !clustersInfo.hiddenNodeIds.has(edge.target)
+  ).length,[cartography,visibility,clustersInfo]);
   const filters = useRef({});
   const [inspected, setInspected] = useState(null);
   const [edgeInfo, setEdgeInfo] = useState(null);
@@ -135,7 +154,8 @@ export default function SigmaNetwork({
     active: activeNodeId == null ? null : String(activeNodeId),
     selected: selectedNodeId == null ? null : String(selectedNodeId),
     simulationRunning, hovered: hoveredRef.current,
-    visibility, stage:mapStage, showAll:showAllLinks
+    visibility, stage:mapStage, showAll:showAllLinks,
+    clusterHidden:clustersInfo.hiddenNodeIds
   };
 
   useEffect(() => {
@@ -177,7 +197,8 @@ export default function SigmaNetwork({
           hovered?8:rank<14?6.5:rank<90?4.7:3.1;
         return {
           ...data,
-          hidden:!shown,
+          hidden:!shown||(!highlighted&&!selected&&!active&&
+            f.clusterHidden.has(key)),
           color:active?"#f4da9b":highlighted?"#66e4ce":
             selected?"#efc98e":secondary?"#496574":
             visited?"#85c7be":data.color,
@@ -194,7 +215,9 @@ export default function SigmaNetwork({
         const background=v.hasRoute&&!marked;
         return {
           ...data,
-          hidden:!v.visibleEdges.has(key),
+          hidden:!v.visibleEdges.has(key)||
+            f.clusterHidden.has(graph.source(key))||
+            f.clusterHidden.has(graph.target(key)),
           // Opaque packed colors avoid Chromium/SwiftShader alpha fallbacks.
           color:marked?"#6eead2":background?"#293e4b":
             tier==="arterial"?"#5d7787":tier==="collector"?"#405868":"#304454",
@@ -251,7 +274,7 @@ export default function SigmaNetwork({
   useEffect(() => {
     sigmaRef.current?.refresh();
   }, [highlightedNodeIds,highlightedEdgeIds,selectedNodeId,
-      visitedNodeIds,activeNodeId,simulationRunning,visibility,mapStage,showAllLinks]);
+      visitedNodeIds,activeNodeId,simulationRunning,visibility,mapStage,showAllLinks,clustersInfo]);
 
   useEffect(() => {
     const renderer = sigmaRef.current;
@@ -351,9 +374,59 @@ export default function SigmaNetwork({
     };
   },[graph,highlightedNodeIds,highlightedEdgeIds,simulationRunning]);
 
+  const onGlassDragStart=event=>{
+    if(event.button!==0)return;
+    const bar=glassBar.current,region=bar?.parentElement;
+    if(!bar||!region)return;
+    const rect=bar.getBoundingClientRect(),bounds=region.getBoundingClientRect();
+    glassDrag.current={
+      pointer:event.pointerId,startX:event.clientX,startY:event.clientY,
+      startOffsetX:Number(bar.dataset.offsetX)||0,
+      startOffsetY:Number(bar.dataset.offsetY)||0,
+      rect,bounds
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  };
+  const onGlassDragMove=event=>{
+    const d=glassDrag.current,bar=glassBar.current;
+    if(!d||!bar||d.pointer!==event.pointerId)return;
+    const x=d.startOffsetX+event.clientX-d.startX;
+    const y=d.startOffsetY+event.clientY-d.startY;
+    const leftAtZero=d.rect.left-d.startOffsetX;
+    const topAtZero=d.rect.top-d.startOffsetY;
+    const nextX=Math.max(d.bounds.left+9-leftAtZero,
+      Math.min(d.bounds.right-9-d.rect.width-leftAtZero,x));
+    const nextY=Math.max(d.bounds.top+9-topAtZero,
+      Math.min(d.bounds.bottom-9-d.rect.height-topAtZero,y));
+    bar.dataset.offsetX=String(nextX);
+    bar.dataset.offsetY=String(nextY);
+    bar.style.transform="translate3d("+nextX+"px,"+nextY+"px,0)";
+  };
+  const onGlassDragEnd=event=>{
+    const d=glassDrag.current;
+    if(!d||d.pointer!==event.pointerId)return;
+    if(event.currentTarget.hasPointerCapture(event.pointerId))
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    glassDrag.current=null;
+  };
+  const resetGlassBar=()=>{
+    const bar=glassBar.current;
+    if(!bar)return;
+    bar.dataset.offsetX="0";bar.dataset.offsetY="0";
+    bar.style.transform="translate3d(0,0,0)";
+  };
+
   return <div className="sigma-shell cartographic-graph" data-map-stage={mapStage}
     data-graph-detail={showAllLinks?"all":"adaptive"}>
-    <div className="sigma-toolbar studio-liquid-glass" data-liquid-glass="true">
+    <div className="sigma-toolbar studio-liquid-glass" data-liquid-glass="true" ref={glassBar}>
+      <button type="button" className="sigma-toolbar-drag"
+        aria-label="Move glass controls" title="Drag to reposition · double-click to reset"
+        onPointerDown={onGlassDragStart}
+        onPointerMove={onGlassDragMove}
+        onPointerUp={onGlassDragEnd}
+        onPointerCancel={onGlassDragEnd}
+        onDoubleClick={resetGlassBar}><GripVertical size={15}/></button>
       <div className="sigma-map-modes" role="group" aria-label="Graph rendering detail">
         <button type="button" aria-pressed={!showAllLinks} className={!showAllLinks?"selected":""}
           onClick={()=>setShowAllLinks(false)} title="Map-like clarity with progressive detail">Map clarity</button>
@@ -382,6 +455,7 @@ export default function SigmaNetwork({
     </div>
     <div className="sigma-canvas" ref={container} role="img"
       aria-label={"Reaction network: " + graph.order + " compounds, " + graph.size + " directed edges"} />
+    <ClusterOverlay clusters={clustersInfo.clusters} rendererRef={sigmaRef}/>
     <RouteOverlay graph={graph} rendererRef={sigmaRef}
       routeNodes={highlightedEdgeIds.length?highlightedNodeIds:[]}
       routeEdges={highlightedEdgeIds}/>
@@ -390,8 +464,9 @@ export default function SigmaNetwork({
       highlightedEdgeIds={highlightedEdgeIds} selectedNodeId={selectedNodeId}/>
     <div className="sigma-footnote studio-liquid-glass" data-liquid-glass="true" role="status">
       <strong>{visibility.mode}</strong>
-      <span>{visibility.visibleNodes.size.toLocaleString()}/{graph.order.toLocaleString()} compounds ·
-        {" "}{visibility.visibleEdges.size.toLocaleString()}/{graph.size.toLocaleString()} drawn links</span>
+      <span>{(visibility.visibleNodes.size-clustersInfo.hiddenNodeIds.size).toLocaleString()}/{graph.order.toLocaleString()} compounds ·
+        {" "}{displayedEdges.toLocaleString()}/{graph.size.toLocaleString()} drawn links</span>
+      {clustersInfo.clusters.length>0&&<span className="sigma-cluster-status">· {clustersInfo.clusters.length} groups</span>}
       {hovered&&graph.hasNode(hovered)&&<span> · {graph.getNodeAttribute(hovered,"name")}</span>}
       <small>{showAllLinks?"Every participation edge drawn":"Visual simplification only · zoom for more detail"}</small>
     </div>

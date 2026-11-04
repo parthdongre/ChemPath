@@ -38,12 +38,43 @@ try {
   );
   assert.ok(rootWebGL, "No usable browser WebGL canvas");
 
+  // Real browser optical material: SDF maps, SVG displacement and CSS backdrop.
+  const optics=await page.locator(".sigma-toolbar").evaluate(element=>{
+    const first=getComputedStyle(element,"::before");
+    const mapCount=document.querySelectorAll(
+      ".studio-glass-svg-filter feDisplacementMap").length;
+    const mode=element.dataset.liquidRefraction;
+    return {mode,mapCount,backdrop:first.backdropFilter||first.webkitBackdropFilter,
+      prefersReduced:document.querySelector(".studio-app")?.dataset.reduceTransparency};
+  });
+  assert.ok(optics.mode==="displacement"||optics.mode==="frosted",
+    "Glass must declare real refractive or readable fallback mode");
+  if(optics.mode==="displacement"){
+    assert.ok(optics.mapCount>=3,"Refraction must use RGB displacement maps");
+    assert.match(optics.backdrop,/url\(/,
+      "Chrome liquid glass must bend its actual backdrop, not only a decorative highlight");
+  }
   // Cartographic detail is visualization-only; C++ paths are unaffected.
   const map=page.locator(".cartographic-graph");
   await map.waitFor({state:"visible"});
   assert.equal(await map.getAttribute("data-graph-detail"),"adaptive");
   await page.waitForFunction(()=>
     document.querySelector(".cartographic-graph")?.getAttribute("data-map-stage")==="overview");
+  const clusters=page.locator(".sigma-compound-cluster");
+  assert.ok(await clusters.count()>0,
+    "Map clarity overview must group nearby lower-salience compounds");
+  fs.mkdirSync("screenshots",{recursive:true});
+  await page.locator(".graph-frame").screenshot({
+    path:"screenshots/studio-clusters.png",animations:"disabled"
+  });
+  const markerOverlaps=await page.locator(".sigma-cluster-layer").evaluate(layer=>{
+    const boxes=[...layer.querySelectorAll(".sigma-compound-cluster")]
+      .filter(node=>getComputedStyle(node).opacity!=="0")
+      .map(node=>node.getBoundingClientRect());
+    return boxes.some((a,i)=>boxes.slice(i+1).some(b=>
+      Math.hypot(a.x+a.width/2-b.x-b.width/2,a.y+a.height/2-b.y-b.height/2)<47));
+  });
+  assert.equal(markerOverlaps,false,"Overview compound groups must not overlap");
   const counts=await page.locator(".sigma-footnote").innerText();
   const match=counts.match(/([\d,]+)\/([\d,]+) drawn links/);
   assert.ok(match,"The visible/total graph-edge counts must be disclosed");
@@ -60,11 +91,28 @@ try {
   await page.waitForFunction(()=>
     document.querySelector(".cartographic-graph")?.getAttribute("data-map-stage")==="neighborhood",
     null,{timeout:10000});
+  assert.equal(await page.locator(".sigma-compound-cluster").count(),0,
+    "Zooming into neighborhood must dissolve overview clusters");
   await page.getByRole("button",{name:"Fit network"}).click();
   await page.waitForFunction(()=>
     document.querySelector(".cartographic-graph")?.getAttribute("data-map-stage")==="overview",
     null,{timeout:10000});
 
+  // The same glass control samples changing live graph content when moved.
+  const handle=page.getByRole("button",{name:"Move glass controls"});
+  const toolbar=page.locator(".sigma-toolbar");
+  const beforeDrag=await toolbar.boundingBox(),grip=await handle.boundingBox();
+  await page.mouse.move(grip.x+grip.width/2,grip.y+grip.height/2);
+  await page.mouse.down();
+  await page.mouse.move(grip.x+grip.width/2-145,grip.y+grip.height/2+205,{steps:9});
+  await page.mouse.up();
+  const afterDrag=await toolbar.boundingBox();
+  assert.ok(afterDrag.y>beforeDrag.y+40,"Glass toolbar should be movable over live graph");
+  await page.locator(".graph-frame").screenshot({
+    path:"screenshots/studio-refractive-controls.png",animations:"disabled"
+  });
+  assert.ok(afterDrag.x<beforeDrag.x-25,"Dragging should move controls horizontally");
+  await handle.dblclick();
   await page.getByRole("button",{name:"Focus lens"}).click();
   const lens=page.locator('[data-testid="graph-focus-lens"]');
   assert.equal(await lens.count(),1,"An enabled map lens must mount");

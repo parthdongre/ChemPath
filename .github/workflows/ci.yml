@@ -30,6 +30,9 @@ jobs:
       - name: Validate cartographic LOD and route preservation
         run: node --test scripts/test-graph-cartography.mjs
 
+      - name: Verify optical glass, compound clustering and stable layouts
+        run: node --test scripts/test-studio-optics.mjs
+
       - name: Audit chemistry dataset
         run: npm run audit:chemistry
 

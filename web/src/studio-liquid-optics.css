@@ -1,0 +1,187 @@
+/*
+ * ChemPath optical glass — production web rendition.
+ *
+ * A shape-matched PNG displacement map is supplied to an SVG filter.
+ * On Chromium the ::before backdrop layer uses url(#filter), so live pixels
+ * of the Sigma WebGL graph really do bend around the bevel.
+ *
+ * Browsers without SVG backdrop filtering retain frosted glass.
+ */
+.studio-app .studio-liquid-glass{
+  --glass-glow:rgba(191,252,244,.22);
+  overflow:visible;
+  transform:translateZ(0);
+  isolation:isolate;
+}
+.studio-app .studio-liquid-glass::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:0;
+  background:linear-gradient(150deg,
+    rgba(255,255,255,.115),
+    rgba(178,219,233,.035) 34%,
+    rgba(151,192,215,.055) 68%,
+    rgba(234,255,255,.075));
+  -webkit-backdrop-filter:blur(8px) saturate(1.25);
+  backdrop-filter:blur(8px) saturate(1.25);
+}
+.studio-app .studio-liquid-glass[data-liquid-refraction="displacement"]{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+.studio-app .studio-liquid-glass[data-liquid-refraction="displacement"]::before{
+  -webkit-backdrop-filter:var(--chempath-lens-filter) blur(2px) saturate(1.34);
+  backdrop-filter:var(--chempath-lens-filter) blur(2px) saturate(1.34);
+}
+.studio-app .studio-liquid-glass::after{
+  /* Rim lighting, not a turbulent noise distortion. */
+  filter:none!important;
+  opacity:.58;
+  z-index:4;
+  background:
+    radial-gradient(
+      ellipse 190px 95px at var(--glass-pointer-x) var(--glass-pointer-y),
+      rgba(245,255,255,.28),rgba(198,248,246,.035) 52%,transparent 80%),
+    linear-gradient(115deg,
+      rgba(245,255,255,.17),
+      transparent 25%,
+      transparent 77%,
+      rgba(205,248,243,.14));
+  box-shadow:
+    inset 0 1px 0 rgba(250,255,255,.35),
+    inset 0 -1px 0 rgba(120,166,190,.21),
+    inset 1px 0 0 rgba(248,255,255,.07),
+    inset -1px 0 0 rgba(184,224,233,.09);
+  transition:opacity 180ms ease,box-shadow 180ms ease;
+}
+.studio-app .studio-liquid-glass:hover::after,
+.studio-app .studio-liquid-glass:focus-within::after{
+  opacity:1;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.52),
+    inset 0 -1px 0 rgba(102,206,191,.31),
+    inset 1px 0 0 rgba(244,255,255,.17),
+    0 0 12px rgba(139,231,219,.075);
+}
+/* Optical overlay renders behind all real interactive text and controls. */
+.studio-app .studio-liquid-glass > :not(.studio-glass-svg-filter){
+  position:relative;
+  z-index:2;
+}
+/* The Studio uses actual visual contrast, not opacity-only UI.
+ * A lower tint reveals the dynamic graph through the glass toolbar. */
+.studio-app .studio-graph-grid .sigma-toolbar.studio-liquid-glass{
+  background:rgba(19,31,42,.39)!important;
+  border:1px solid rgba(202,243,245,.31)!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.16) inset,
+    0 11px 31px rgba(0,0,0,.26),
+    0 0 0 1px rgba(16,71,77,.15);
+  border-radius:17px!important;
+}
+.studio-app .studio-graph-grid .renderer-switch.studio-liquid-glass{
+  background:rgba(19,31,42,.42)!important;
+  border:1px solid rgba(196,240,244,.28)!important;
+  border-radius:15px;
+}
+.studio-app .sigma-footnote.studio-liquid-glass{
+  background:rgba(18,32,42,.48)!important;
+  border:1px solid rgba(183,224,225,.22);
+  border-radius:13px;
+}
+.studio-app .studio-command-dialog.studio-liquid-glass{
+  background:rgba(18,29,39,.86);
+  box-shadow:0 30px 95px rgba(0,0,0,.49);
+}
+.studio-app .studio-top-search.studio-liquid-glass{
+  background:rgba(39,55,68,.53);
+  border-color:rgba(188,215,228,.24);
+}
+.studio-app .sigma-toolbar button,
+.studio-app .renderer-switch button{
+  transition:transform 150ms cubic-bezier(.22,.75,.25,1),
+    color 150ms,background-color 150ms;
+}
+.studio-app .sigma-toolbar button:active,
+.studio-app .renderer-switch button:active{transform:scale(.96)}
+/* Protect essential controls in browsers with unsupported SVG filter URLs. */
+.studio-app[data-reduce-transparency="true"] .studio-liquid-glass,
+.studio-app[data-reduce-transparency="true"] .studio-graph-grid .sigma-toolbar.studio-liquid-glass,
+.studio-app[data-reduce-transparency="true"] .studio-graph-grid .renderer-switch.studio-liquid-glass,
+.studio-app[data-reduce-transparency="true"] .sigma-footnote.studio-liquid-glass{
+  background:#192632!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+.studio-app[data-reduce-transparency="true"] .studio-liquid-glass::before,
+.studio-app[data-reduce-transparency="true"] .studio-liquid-glass::after{
+  display:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+  .studio-app .studio-liquid-glass::before,
+  .studio-app .studio-liquid-glass::after{display:none!important}
+}
+@media(prefers-contrast:more){
+  .studio-app .studio-liquid-glass::before,
+  .studio-app .studio-liquid-glass::after{display:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .studio-app .sigma-toolbar button,
+  .studio-app .renderer-switch button{transition:none!important}
+}
+/* Limit glass surface count. The graph and inspector remain solid. */
+
+/* Spatial grouping is intentionally separate from chemistry graph data. */
+.studio-app .sigma-cluster-layer{
+  position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden;
+}
+.studio-app .sigma-compound-cluster{
+  position:absolute;top:0;left:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:1px;
+  min-width:52px;min-height:52px;max-width:85px;padding:8px;
+  border-radius:999px;border:1px solid rgba(159,225,215,.61);
+  background:rgba(30,65,73,.88);
+  color:#e4fff7;box-shadow:
+    0 0 0 4px rgba(76,155,151,.12),
+    0 7px 28px rgba(0,0,0,.24),
+    inset 0 1px 0 rgba(237,255,254,.23);
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  font-family:-apple-system,BlinkMacSystemFont,Inter,sans-serif;
+  cursor:zoom-in;transition:border-color 170ms,background 170ms,
+    box-shadow 170ms,opacity 170ms;
+  pointer-events:auto;
+}
+.studio-app .sigma-compound-cluster:hover,
+.studio-app .sigma-compound-cluster:focus-visible{
+  background:rgba(44,96,103,.95);
+  border-color:#a1f6e4;
+  box-shadow:0 0 0 6px rgba(94,215,193,.16),0 9px 32px rgba(0,0,0,.29);
+}
+.studio-app .sigma-cluster-count{
+  font-size:16px;font-weight:720;line-height:1;
+  font-variant-numeric:tabular-nums;letter-spacing:-.025em
+}
+.studio-app .sigma-cluster-type{
+  font-size:8px;max-width:70px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;color:#9bd3c8;line-height:1.3
+}
+.studio-app .sigma-footnote .sigma-cluster-status{color:#8ee2d2}
+@media(prefers-reduced-motion:reduce){
+  .studio-app .sigma-compound-cluster{transition:none}
+}
+
+.studio-app .studio-graph-grid .sigma-toolbar .sigma-toolbar-drag{
+  display:grid;place-items:center;min-width:23px!important;
+  padding:5px 3px!important;border-color:transparent!important;
+  border-radius:8px!important;background:transparent!important;
+  color:rgba(211,243,242,.73)!important;cursor:grab;touch-action:none;
+}
+.studio-app .studio-graph-grid .sigma-toolbar .sigma-toolbar-drag:hover{
+  background:rgba(149,229,221,.11)!important;
+  color:#f5fffe!important;
+}
+.studio-app .studio-graph-grid .sigma-toolbar .sigma-toolbar-drag:active{
+  cursor:grabbing;transform:none!important
+}

@@ -171,3 +171,17 @@
 @media(prefers-reduced-motion:reduce){
   .studio-app .sigma-compound-cluster{transition:none}
 }
+
+.studio-app .studio-graph-grid .sigma-toolbar .sigma-toolbar-drag{
+  display:grid;place-items:center;min-width:23px!important;
+  padding:5px 3px!important;border-color:transparent!important;
+  border-radius:8px!important;background:transparent!important;
+  color:rgba(211,243,242,.73)!important;cursor:grab;touch-action:none;
+}
+.studio-app .studio-graph-grid .sigma-toolbar .sigma-toolbar-drag:hover{
+  background:rgba(149,229,221,.11)!important;
+  color:#f5fffe!important;
+}
+.studio-app .studio-graph-grid .sigma-toolbar .sigma-toolbar-drag:active{
+  cursor:grabbing;transform:none!important
+}

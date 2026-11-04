@@ -283,27 +283,64 @@ export default function SigmaNetwork({
     },320);
   },[graph,selectedNodeId,highlightedEdgeIds]);
 
-  // A selected route should become the visual center rather than simply
-  // changing color somewhere in the full, dense network.
+  // Fit the whole returned route using Sigma's *framed* graph coordinates,
+  // not raw graph x/y (these are not the same coordinate system).
+  // Pixel-space projection ensures every reaction waypoint has breathing room,
+  // including after a desktop window/inspector resize.
   useEffect(() => {
     const renderer=sigmaRef.current;
-    if(!renderer||simulationRunning||highlightedNodeIds.length<2)return;
+    if(!renderer||simulationRunning||highlightedNodeIds.length<2||
+      highlightedEdgeIds.length<1)return undefined;
     const points=highlightedNodeIds.map(String).filter(key=>graph.hasNode(key))
       .map(key=>graph.getNodeAttributes(key));
-    if(points.length<2)return;
-    const bounds={
-      minX:Math.min(...points.map(p=>p.x)),maxX:Math.max(...points.map(p=>p.x)),
-      minY:Math.min(...points.map(p=>p.y)),maxY:Math.max(...points.map(p=>p.y))
+    if(points.length<2)return undefined;
+
+    const fit=()=>{
+      const liveRenderer=sigmaRef.current;
+      if(!liveRenderer)return;
+      const {width,height}=liveRenderer.getDimensions();
+      if(width<100||height<100)return;
+      const framed=points.map(point=>liveRenderer.graphToFramedGraph({x:point.x,y:point.y}));
+      const x=(Math.min(...framed.map(p=>p.x))+Math.max(...framed.map(p=>p.x)))/2;
+      const y=(Math.min(...framed.map(p=>p.y))+Math.max(...framed.map(p=>p.y)))/2;
+      const padX=Math.min(100,Math.max(40,width*.12));
+      const padY=Math.min(120,Math.max(48,height*.17));
+      const usableWidth=Math.max(100,width-2*padX);
+      const usableHeight=Math.max(100,height-2*padY);
+      let ratio=0.25;
+      // 5 attempts, at most 2N projections each, on selection/resize only.
+      for(let pass=0;pass<5;pass++){
+        const cameraState={x,y,ratio,angle:0};
+        const projected=points.map(point=>
+          liveRenderer.graphToViewport({x:point.x,y:point.y},{cameraState}));
+        const spanX=Math.max(...projected.map(p=>p.x))-Math.min(...projected.map(p=>p.x));
+        const spanY=Math.max(...projected.map(p=>p.y))-Math.min(...projected.map(p=>p.y));
+        const factor=Math.max(spanX/usableWidth,spanY/usableHeight);
+        if(!Number.isFinite(factor)||factor<=1)break;
+        ratio=Math.min(6,ratio*Math.max(1.06,factor*1.06));
+      }
+      animateCamera(liveRenderer.getCamera(),{x,y,ratio,angle:0},340);
     };
-    const size=Math.max(bounds.maxX-bounds.minX,bounds.maxY-bounds.minY);
-    const camera=renderer.getCamera();
-    const state={
-      x:(bounds.minX+bounds.maxX)/2,
-      y:(bounds.minY+bounds.maxY)/2,
-      ratio:Math.max(0.19,Math.min(1.25,size*1.8))
+
+    fit();
+    let frame=0;
+    let lastWidth=0,lastHeight=0;
+    const resizeObserver=typeof ResizeObserver==="function"?new ResizeObserver(()=>{
+      // Wait until Sigma has measured the new viewport.
+      const renderer=sigmaRef.current;
+      if(!renderer)return;
+      const {width,height}=renderer.getDimensions();
+      if(width===lastWidth&&height===lastHeight)return;
+      lastWidth=width;lastHeight=height;
+      if(frame)cancelAnimationFrame(frame);
+      frame=requestAnimationFrame(()=>{frame=0;fit();});
+    }):null;
+    if(resizeObserver&&container.current)resizeObserver.observe(container.current);
+    return ()=>{
+      if(frame)cancelAnimationFrame(frame);
+      resizeObserver?.disconnect();
     };
-    animateCamera(camera,state,340);
-  },[graph,highlightedNodeIds,simulationRunning]);
+  },[graph,highlightedNodeIds,highlightedEdgeIds,simulationRunning]);
 
   return <div className="sigma-shell cartographic-graph" data-map-stage={mapStage}
     data-graph-detail={showAllLinks?"all":"adaptive"}>

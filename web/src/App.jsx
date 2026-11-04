@@ -764,6 +764,7 @@ export default function App() {
   const [pathAlgorithm, setPathAlgorithm] = useState("bfs");
   const [structureAlgorithm, setStructureAlgorithm] = useState("scc");
   const [result, setResult] = useState(null);
+  const [selectedReaction,setSelectedReaction]=useState(null);
   const [highlight, setHighlight] = useState(EMPTY_HIGHLIGHT);
   const [status, setStatus] = useState("Connecting to C++");
   const [busy, setBusy] = useState(false);
@@ -1187,6 +1188,7 @@ export default function App() {
     try{
       const data=await api.path(from,to,pathAlgorithm);
       setResult(data);
+      setSelectedReaction(null);
       setHighlight(buildPathHighlight(data));
       setInspectorOpen(true);
     }catch(error){
@@ -1518,9 +1520,16 @@ export default function App() {
                   visitedNodeIds={simulation.visited}
                   activeNodeId={simulation.active}
                   simulationRunning={simulation.running}
-                  onSelectCompound={(name) => {
-                    setFrom(name);
+                  showPopovers={false}
+                  onSelectEdge={reaction=>{
+                    setSelectedReaction(reaction);
+                    setInspectorOpen(true);
+                  }}
+                  onSelectCompound={(name,id,shift) => {
+                    if(shift)setTo(name);else setFrom(name);
                     setResult(null);
+                    setSelectedReaction(null);
+                    setInspectorOpen(true);
                   }}
                   onExpandNode={(id, name) => {
                     setNeighborhoodError("");
@@ -1557,12 +1566,17 @@ export default function App() {
 
         <section className="result-dock" aria-label="Compound and pathway inspector">
           <StudioInspectorHeading
-            compound={selectedCompound} from={from} to={to} result={result}
+            compound={selectedCompound} reaction={selectedReaction} from={from} to={to} result={result}
             busy={busy} running={simulation.running}
             onClose={()=>setInspectorOpen(false)}
             onSwap={()=>{setFrom(to);setTo(from);reset();}}
             onReplay={replayCurrentPath}
             onExplore={()=>setStudioPage("data")}
+            onExpand={selectedCompound?()=>{
+              setNeighborhoodError("");
+              api.neighborhood(selectedCompound.name,2,350).then(setNeighborhood)
+                .catch(error=>setNeighborhoodError(error.message));
+            }:null}
           />
           <div className="result-label">
             <span>OUTPUT</span>

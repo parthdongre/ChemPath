@@ -157,7 +157,7 @@ export function StudioCommandPalette({
 }
 
 export function StudioInspectorHeading({
-  compound, from, to, result, busy, running, onClose, onReplay, onSwap, onExplore
+  compound, reaction, from, to, result, busy, running, onClose, onReplay, onSwap, onExplore, onExpand
 }) {
   return <div className="studio-inspector-heading">
     <div className="studio-inspector-topline">
@@ -172,6 +172,13 @@ export function StudioInspectorHeading({
         <span>{compound.category||"Compound"}</span>
       </div>
     </div>:<div className="studio-compound-placeholder">Select a compound to inspect its graph relationships.</div>}
+    {reaction&&<div className="studio-reaction-selection">
+      <span>SELECTED REACTION</span>
+      <strong>{reaction.reaction||"Reaction participation"}</strong>
+      <p>{reaction.equation||"Directed graph edge"}</p>
+      {reaction.conditions&&<small>{reaction.conditions}</small>}
+      {reaction.cost!=null&&<small>Illustrative graph weight: {reaction.cost}</small>}
+    </div>}
     <div className="studio-inspector-route">
       <div className="studio-inspector-route-caption">CURRENT QUERY</div>
       <div className="studio-inspector-route-endpoints">
@@ -183,6 +190,10 @@ export function StudioInspectorHeading({
         title="Swap start and target compounds"><ArrowLeftRight size={15}/> Swap</button>
       <button type="button" onClick={onExplore} title="Open compound library"><BookOpen size={15}/> Library</button>
     </div>
+    {compound&&onExpand&&
+      <button type="button" className="studio-replay-action" onClick={onExpand}>
+        <Layers3 size={14}/> Explore neighborhood <ChevronRight size={14}/>
+      </button>}
     {result?.found&&!running&&
       <button type="button" className="studio-replay-action" onClick={onReplay} disabled={busy}>
         <Play size={14}/> Replay traversal <ChevronRight size={14}/>

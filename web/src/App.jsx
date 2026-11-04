@@ -752,6 +752,10 @@ export default function App() {
   const [sidebarCollapsed,setSidebarCollapsed]=useState(false);
   const [inspectorOpen,setInspectorOpen]=useState(()=>window.innerWidth>1140);
   const [commandOpen,setCommandOpen]=useState(false);
+  const [reduceTransparency,setReduceTransparency]=useState(()=>{
+    try{return localStorage.getItem("chempath-reduce-transparency")==="true";}
+    catch{return false;}
+  });
   const [studioTheme,setStudioTheme]=useState(()=>{
     try{return localStorage.getItem("chempath-theme")==="light"?"light":"dark";}
     catch{return "dark";}
@@ -805,6 +809,10 @@ export default function App() {
     window.addEventListener("resize",onResize);
     return ()=>window.removeEventListener("resize",onResize);
   },[]);
+  useEffect(()=>{
+    try{localStorage.setItem("chempath-reduce-transparency",String(reduceTransparency));}
+    catch{/* ephemeral setting */}
+  },[reduceTransparency]);
   useEffect(()=>{
     try{localStorage.setItem("chempath-theme",studioTheme);}
     catch{/* ephemeral theme preference */}
@@ -1300,7 +1308,8 @@ export default function App() {
 
   const selectedCompound=compounds.find(compound=>compound.name===from)??null;
   return (
-    <main className="site-shell studio-app" data-theme={studioTheme}>
+    <main className="site-shell studio-app" data-theme={studioTheme}
+      data-reduce-transparency={reduceTransparency?"true":"false"}>
       <StudioGlassEffects/>
       <StudioTopbar
         view={studioView} status={status}
@@ -1309,6 +1318,8 @@ export default function App() {
         onToggleInspector={()=>setInspectorOpen(value=>!value)}
         onToggleTheme={()=>setStudioTheme(value=>value==="dark"?"light":"dark")}
         theme={studioTheme} inspectorOpen={inspectorOpen}
+        reduceTransparency={reduceTransparency}
+        onToggleTransparency={()=>setReduceTransparency(previous=>!previous)}
       />
       <div className={"studio-shell"+(sidebarCollapsed?" sidebar-collapsed":"")}>
         <StudioSidebar

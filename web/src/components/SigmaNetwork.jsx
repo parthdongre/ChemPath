@@ -3,6 +3,7 @@ import { MultiDirectedGraph } from "graphology";
 import forceAtlas2 from "graphology-layout-forceatlas2";
 import Sigma from "sigma";
 import {buildCartographicIndex,cartographicVisibility,mapStageForRatio} from "./graphCartography.js";
+import GraphLens from "./GraphLens.jsx";
 import "./SigmaNetwork.css";
 
 const palette = {
@@ -110,6 +111,7 @@ export default function SigmaNetwork({
   const cartography=useMemo(()=>buildCartographicIndex(graph),[graph]);
   const [mapStage,setMapStage]=useState("overview");
   const [showAllLinks,setShowAllLinks]=useState(false);
+  const [lensEnabled,setLensEnabled]=useState(false);
   const visibility=useMemo(()=>cartographicVisibility(cartography,{
     stage:mapStage,showAll:showAllLinks,routeNodes:highlightedNodeIds,
     routeEdges:highlightedEdgeIds,selected:selectedNodeId
@@ -288,6 +290,12 @@ export default function SigmaNetwork({
         <button type="button" aria-pressed={showAllLinks} className={showAllLinks?"selected":""}
           onClick={()=>setShowAllLinks(true)} title="Show every graph edge regardless of zoom">All links</button>
       </div>
+      <button type="button" aria-pressed={lensEnabled}
+        className={"sigma-lens-toggle"+(lensEnabled?" selected":"")}
+        title="Inspect the underlying network through a magnifying glass"
+        aria-label="Focus lens" onClick={()=>setLensEnabled(value=>!value)}>
+        Lens
+      </button>
       <span className="sigma-toolbar-divider" aria-hidden="true"></span>
       <button type="button" aria-label="Fit network" title="Fit network"
         onClick={()=>animateCamera(sigmaRef.current?.getCamera(),{
@@ -304,6 +312,9 @@ export default function SigmaNetwork({
     </div>
     <div className="sigma-canvas" ref={container} role="img"
       aria-label={"Reaction network: " + graph.order + " compounds, " + graph.size + " directed edges"} />
+    <GraphLens enabled={lensEnabled} containerRef={container} rendererRef={sigmaRef}
+      graph={graph} cartography={cartography}
+      highlightedEdgeIds={highlightedEdgeIds} selectedNodeId={selectedNodeId}/>
     <div className="sigma-footnote studio-liquid-glass" data-liquid-glass="true" role="status">
       <strong>{visibility.mode}</strong>
       <span>{visibility.visibleNodes.size.toLocaleString()}/{graph.order.toLocaleString()} compounds ·

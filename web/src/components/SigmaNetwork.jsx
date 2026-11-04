@@ -7,6 +7,7 @@ import GraphLens from "./GraphLens.jsx";
 import RouteOverlay from "./RouteOverlay.jsx";
 import {buildOverviewClusters} from "./graphClusters.js";
 import ClusterOverlay from "./ClusterOverlay.jsx";
+import {layoutKey,restoreLayout,rememberLayout} from "./graphLayoutCache.js";
 import "./SigmaNetwork.css";
 
 const palette = {
@@ -65,6 +66,8 @@ export function buildGraph(network) {
     });
   }
 
+  const cacheKey=layoutKey(network);
+  if(restoreLayout(cacheKey,graph))return graph;
   if (graph.order > 1 && graph.size > 0) {
     // Bounded, synchronous layout; avoid expensive long runs in public browsers.
     try {
@@ -99,6 +102,7 @@ export function buildGraph(network) {
       y: 0.08 + 0.84 * (a.y - minY) / span
     });
   });
+  rememberLayout(cacheKey,graph);
   return graph;
 }
 

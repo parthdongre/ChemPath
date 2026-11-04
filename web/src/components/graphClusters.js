@@ -37,3 +37,46 @@ export function buildOverviewClusters(graph,index,visibleNodes,{
   clusters.sort((a,b)=>a.id.localeCompare(b.id));
   return {clusters,hiddenNodeIds};
 }
+
+
+/**
+ * Resolve overlaps in screen-space, preserving the centroid where possible.
+ * Bounded O(rounds*N^2) with N typically < 25 overview clusters.
+ */
+export function spreadClusterMarkers(markers,width,height,{
+  radius=27,gap=8,rounds=14,padding=10
+}={}){
+  const placed=markers.map((point,index)=>({
+    ...point,
+    x:Math.min(Math.max(point.x,radius+padding),width-radius-padding),
+    y:Math.min(Math.max(point.y,radius+padding),height-radius-padding),
+    index
+  }));
+  const minimum=radius*2+gap;
+  for(let round=0;round<rounds;round++){
+    let collision=false;
+    for(let i=0;i<placed.length;i++){
+      for(let j=i+1;j<placed.length;j++){
+        const a=placed[i],b=placed[j];
+        let dx=b.x-a.x,dy=b.y-a.y,dist=Math.hypot(dx,dy);
+        if(dist>=minimum)continue;
+        collision=true;
+        if(dist<.001){
+          // Deterministic tie-breaker for exactly coincident centroids.
+          const theta=((i*19+j*23)%37)*Math.PI/18;
+          dx=Math.cos(theta);dy=Math.sin(theta);dist=1;
+        }
+        const shift=(minimum-dist)*.51;
+        const nx=dx/dist,ny=dy/dist;
+        a.x-=nx*shift;a.y-=ny*shift;
+        b.x+=nx*shift;b.y+=ny*shift;
+      }
+    }
+    for(const point of placed){
+      point.x=Math.min(Math.max(point.x,radius+padding),width-radius-padding);
+      point.y=Math.min(Math.max(point.y,radius+padding),height-radius-padding);
+    }
+    if(!collision)break;
+  }
+  return placed;
+}

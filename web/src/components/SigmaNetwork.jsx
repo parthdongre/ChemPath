@@ -144,8 +144,11 @@ export default function SigmaNetwork({
         return {
           ...data,
           color: active ? "#f4da9b" : highlighted ? "#5dd6c1" :
-            selected ? "#f2bf7a" : visited ? "#86c8c1" : data.color,
-          size: active ? 12 : highlighted ? 9 : selected ? 8.2 : visited ? 6.6 : data.size,
+            selected ? "#f2bf7a" : dim ? "#314956" :
+            visited ? "#86c8c1" : data.color,
+          size: active ? 12 : highlighted ? 9 : selected ? 8.2 :
+            dim ? Math.max(2.5,data.size*0.67) :
+            visited ? 6.6 : data.size,
           hidden: false,
           label: (dim && !active) ? "" : data.label,
           zIndex: active ? 10 : highlighted ? 8 : selected ? 7 : visited ? 5 : 0
@@ -157,7 +160,7 @@ export default function SigmaNetwork({
         const hasPath = f.highlightedNodes.size > 0 || f.highlightedEdges.size > 0;
         return {
           ...data,
-          color: marked ? "#67dfc8" : hasPath || f.simulationRunning ? "#27404e" : data.color,
+          color: marked ? "#67dfc8" : hasPath || f.simulationRunning ? "rgba(77,112,127,0.15)" : "rgba(73,108,124,0.37)",
           size: marked ? 2.9 : data.size,
           zIndex: marked ? 10 : 0
         };

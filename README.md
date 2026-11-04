@@ -2,7 +2,7 @@
 
 **ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The C++17 engine stores and searches the full reaction graph, while the browser renders a focused working set so the catalog can grow without forcing Cytoscape to lay out every compound at once.
 
-> **Mid-semester stable build:** 690 compounds, 884 curated reaction records and about 3,044 directed compound-participation edges. The browser renders at most roughly 520 focused compounds for a smoother classroom demo.
+> **Two separate scales:** The curated reaction graph contains 690 compounds, 884 reaction records and ~3,044 directed participation links. A new optional **500,000 real PubChem CID–SMILES catalog** provides disk-backed structure search without implying that 500,000 compounds have reaction pathways. Install the catalog once with `npm run data:500k`.
 
 ## Product workspace (Studio UI)
 
@@ -18,7 +18,7 @@ compact navigation shell without changing the C++17 engine or HTTP API.
   Pareto analysis, consolidated into grouped Laboratory tools.
 - **Laboratory:** Learn / Optimize / Experiment groupings for existing DSA
   traces, SCCs, graph playground and benchmark instruments.
-- **Data Library:** compound directory and optional indexed ORD database.
+- **Data Library:** curated compound directory, an optional **500k real PubChem CID–SMILES catalog**, and indexed ORD reaction database.
 - **Quick commands:** **⌘K** on macOS, **Ctrl+K** elsewhere, or **/** when
   not editing text. Search indexed compound names and change source/target.
 - **Appearance:** dark graphite and light themes, a collapsible sidebar,
@@ -31,6 +31,27 @@ workflow, which uploads desktop, widescreen and mobile screenshots.
 
 See [Studio design/implementation notes](docs/STUDIO_UI.md) for tokens,
 architecture, a walkthrough, and remaining accessibility/polish work.
+
+## Optional: install 500,000 real PubChem compounds
+
+ChemPath can browse **500,000 genuine PubChem compound structures** after
+one disk-backed import. The SQLite catalog is deliberately separate from the
+C++ reaction graph: new PubChem CIDs are **not** assumed to be connected
+by reactions, and the UI shows the actual installed count.
+
+~~~bash
+npm run data:500k        # Requires Python 3.10+ and a network connection once
+npm run dev              # Data Library → PubChem compound catalog
+~~~
+
+The importer streams the official NCBI PubChem CID–SMILES gzip data, stops
+once 500,000 distinct CIDs are stored, and only publishes the index after
+verifying the exact record count. The browser uses indexed search and paged
+results instead of rendering half a million compounds at once.
+
+See [the PubChem 500k architecture, setup and scientific limits](docs/PUBCHEM_500K.md).
+The existing `npm run verify:release` remains offline and checks the
+importer using a small temporary CID–SMILES fixture, not the real 500k file.
 
 ## End-semester release verification and demo
 

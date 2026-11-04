@@ -43,7 +43,7 @@ export function StudioSidebar({ view, onChange, collapsed, onToggle, stats }) {
 
 export function StudioTopbar({
   view, status, onSearch, onToggleSidebar, onToggleInspector,
-  onToggleTheme, theme, inspectorOpen
+  onToggleTheme, theme, inspectorOpen, onToggleTransparency, reduceTransparency
 }) {
   const label=STUDIO_VIEWS.find(item=>item.id===view)?.label??"Explore";
   const online=status?.includes("online");
@@ -68,6 +68,12 @@ export function StudioTopbar({
       <button type="button" className="studio-icon-btn" onClick={onToggleTheme}
         aria-label={theme==="dark"?"Use light appearance":"Use dark appearance"}
         title="Toggle appearance">{theme==="dark"?<Sun size={18}/>:<Moon size={18}/>}</button>
+      <button type="button" className={"studio-icon-btn"+(reduceTransparency?" is-active":"")}
+        onClick={onToggleTransparency} aria-pressed={reduceTransparency}
+        aria-label={reduceTransparency?"Enable transparency effects":"Reduce transparency effects"}
+        title={reduceTransparency?"Enable glass effects":"Reduce transparency"}>
+        <Layers3 size={17}/>
+      </button>
       {view==="explore"&&<button type="button" className={"studio-icon-btn"+(inspectorOpen?" is-active":"")}
         onClick={onToggleInspector} aria-label={inspectorOpen?"Hide inspector":"Show inspector"}
         title="Toggle inspector"><PanelRight size={18}/></button>}

@@ -1,4 +1,5 @@
 import {useEffect,useRef} from "react";
+import {spreadClusterMarkers} from "./graphClusters.js";
 
 /**
  * Camera-locked cluster markers like labeled map neighborhoods.
@@ -18,12 +19,17 @@ export default function ClusterOverlay({clusters,rendererRef}){
       const renderer=rendererRef.current;
       if(!renderer||disposed)return;
       const {width,height}=renderer.getDimensions();
-      for(const cluster of clusters){
+      const project=clusters.map(cluster=>{
+        const point=renderer.graphToViewport({x:cluster.x,y:cluster.y});
+        return {...cluster,anchorX:point.x,anchorY:point.y,x:point.x,y:point.y};
+      });
+      const placed=spreadClusterMarkers(project,width,height);
+      for(const cluster of placed){
         const element=byId.get(cluster.id);
         if(!element)continue;
-        const point=renderer.graphToViewport({x:cluster.x,y:cluster.y});
-        const visible=point.x>16&&point.y>16&&point.x<width-16&&point.y<height-16;
-        element.style.transform="translate3d("+point.x+"px,"+point.y+"px,0) translate(-50%,-50%)";
+        const visible=cluster.anchorX>12&&cluster.anchorY>12&&
+          cluster.anchorX<width-12&&cluster.anchorY<height-12;
+        element.style.transform="translate3d("+cluster.x+"px,"+cluster.y+"px,0) translate(-50%,-50%)";
         element.style.opacity=visible?"1":"0";
         element.style.pointerEvents=visible?"auto":"none";
       }

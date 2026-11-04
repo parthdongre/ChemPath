@@ -31,3 +31,6 @@ __pycache__/
 data/catalog/*.sqlite
 data/catalog/*.sqlite-*
 data/catalog/*.partial
+
+# Interrupted atomic catalog imports can leave SQLite journal sidecars.
+data/catalog/*.partial-*

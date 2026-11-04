@@ -13,7 +13,10 @@
     "build:web": "npm --workspace web run build",
     "audit:chemistry": "node scripts/audit-chemistry.mjs",
     "verify:release": "node scripts/verify-release.mjs",
-    "data:500k": "python3 scripts/import-pubchem.py"
+    "data:500k": "python3 scripts/import-pubchem.py --target 500000",
+    "data:8m": "python3 scripts/import-pubchem.py",
+    "data:sync": "python3 scripts/import-pubchem.py",
+    "data:full": "python3 scripts/import-pubchem.py --all"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

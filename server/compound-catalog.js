@@ -55,21 +55,26 @@ function optionalDb(){
     return null;
   }
 }
+const DEFAULT_TARGET=8_000_000;
 export function catalogStatus(){
   const handle=optionalDb();
+  const installedCount=handle?Number(metadata.count):0;
   return {
-    ok:true,available:Boolean(handle),target:500000,
-    compounds:handle?Number(metadata.count):0,
+    ok:true,available:Boolean(handle),target:DEFAULT_TARGET,
+    compounds:installedCount,
+    meetsTarget:installedCount>=DEFAULT_TARGET,
+    scope:handle?(metadata.scope==="full"?"full":"prefix"):null,
     source:"PubChem Compound Extras",
     format:"CID-SMILES",structureOnly:true,
-    setup:"npm run data:500k",
-    distinction:"The 500,000 catalog records do not imply reaction connectivity.",
+    setup:"npm run data:8m",
+    fullSetup:"npm run data:full",
+    distinction:"PubChem CID/SMILES structures are not verified reaction-network connections.",
     importedAt:metadata?.imported_at||null
   };
 }
 function requiredDb(){
   return optionalDb()||failure(
-    "PubChem catalog is not installed. Run npm run data:500k on your machine.",503);
+    "PubChem catalog is not installed. Run npm run data:8m on your machine.",503);
 }
 const summary=row=>({
   cid:row.cid,

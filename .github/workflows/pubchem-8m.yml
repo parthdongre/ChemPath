@@ -1,0 +1,60 @@
+name: Build Real PubChem 8M Catalog
+
+# Independently validates the actual official PubChem CID–SMILES stream.
+# The catalog stays outside Git; archive artifacts are temporary.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/import-pubchem.py'
+      - '.github/workflows/pubchem-8m.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pubchem-8m-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  import-real-pubchem-8m:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Show available disk space
+        run: df -h .
+      - name: Build 8,000,000 real PubChem CIDs from official source
+        timeout-minutes: 45
+        run: |
+          set -euo pipefail
+          python3 scripts/import-pubchem.py --target 8000000
+      - name: Verify the real indexed source
+        timeout-minutes: 10
+        run: |
+          python3 - <<'PY'
+          import sqlite3
+          from pathlib import Path
+          filepath=Path('data/catalog/pubchem.sqlite')
+          assert filepath.exists(), 'PubChem SQLite artifact missing'
+          with sqlite3.connect(filepath) as db:
+            actual=db.execute('SELECT COUNT(*) FROM compounds').fetchone()[0]
+            assert actual==8_000_000, f'Expected 8,000,000 CIDs, got {actual}'
+            meta=dict(db.execute('SELECT key,value FROM catalog_meta'))
+            assert meta['source']=='PubChem Compound Extras', meta
+            assert meta['scope']=='prefix', meta
+            assert int(meta['count'])==actual, meta
+            indexes=[row[1] for row in db.execute("PRAGMA index_list('compounds')")]
+            assert 'idx_compounds_smiles' in indexes, indexes
+            assert db.execute('PRAGMA quick_check').fetchone()[0]=='ok'
+            print('VERIFIED: 8,000,000 real PubChem CID-SMILES records; bytes:',filepath.stat().st_size)
+          PY
+      - name: Publish optional installable SQLite artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pubchem-8m-real-sqlite
+          path: data/catalog/pubchem.sqlite
+          retention-days: 7
+          compression-level: 5
+          if-no-files-found: error

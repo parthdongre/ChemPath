@@ -11,6 +11,7 @@ import Database from "better-sqlite3";
 const root=fs.mkdtempSync(path.join(os.tmpdir(),"chempath-pubchem-test-"));
 const source=path.join(root,"CID-SMILES.tsv");
 const db=path.join(root,"catalog","pubchem.sqlite");
+const fullDb=path.join(root,"catalog","full-fixture.sqlite");
 const records=[
   [1,"CC"],[2,"CCO"],[3,"CC=O"],[4,"CC(=O)O"],[5,"C1CCCCC1"],
   [6,"N"],[7,"O"],[8,"C=C"],[9,"C#C"],[10,"CCN"],
@@ -27,9 +28,36 @@ assert.equal(ok.status,0,ok.stderr||ok.stdout);
 const jsonStart=ok.stdout.indexOf("{");
 assert.ok(jsonStart>=0,ok.stdout);
 const result=JSON.parse(ok.stdout.slice(jsonStart));
+assert.equal(result.status,"imported");
+assert.equal(result.scope,"prefix");
 assert.equal(result.count,12);
 assert.equal(result.target,12);
 assert.ok(fs.statSync(db).size>1000);
+// Ensure mode is idempotent and preserves a larger existing installation.
+const skipped=importer(12);
+assert.equal(skipped.status,0,skipped.stderr);
+assert.equal(JSON.parse(skipped.stdout).status,"already-installed");
+const smaller=importer(10);
+assert.equal(smaller.status,0,smaller.stderr);
+assert.equal(JSON.parse(smaller.stdout).count,12);
+
+// Full mode must consume EOF instead of stopping at an arbitrary target.
+const full=spawnSync("python3",[
+  "scripts/import-pubchem.py","--source-file",source,
+  "--all","--output",fullDb
+],{encoding:"utf8",timeout:25000});
+assert.equal(full.status,0,full.stderr||full.stdout);
+const fullResult=JSON.parse(full.stdout.slice(full.stdout.indexOf("{")));
+assert.equal(fullResult.status,"imported");
+assert.equal(fullResult.scope,"full");
+assert.equal(fullResult.count,13);
+const fullSkipped=spawnSync("python3",[
+  "scripts/import-pubchem.py","--source-file",source,
+  "--all","--output",fullDb
+],{encoding:"utf8",timeout:25000});
+assert.equal(fullSkipped.status,0,fullSkipped.stderr);
+assert.equal(JSON.parse(fullSkipped.stdout).status,"already-installed");
+
 
 // Atomic promotion: an insufficient source must never replace a valid file.
 const originalSize=fs.statSync(db).size;
@@ -92,7 +120,11 @@ try{
   assert.ok(ready,"PubChem fixture API never started: "+logs);
   const status=await get("/api/catalog/status");
   assert.equal(status.compounds,12);
-  assert.equal(status.target,500000);
+  assert.equal(status.target,8000000);
+  assert.equal(status.meetsTarget,false);
+  assert.equal(status.scope,"prefix");
+  assert.equal(status.setup,"npm run data:8m");
+  assert.equal(status.fullSetup,"npm run data:full");
   assert.equal(status.structureOnly,true);
   const first=await get("/api/catalog/search?limit=5");
   assert.equal(first.matches.length,5);
@@ -114,7 +146,7 @@ try{
   await get("/api/catalog/search?limit=200",400);
   await get("/api/catalog/search?after=-1",400);
   await get("/api/catalog/search?q=CC&after=4",400);
-  console.log("PubChem offline smoke passed: source import, integrity, indexed search, cursor browsing, structure distinction and atomic rollback.");
+  console.log("PubChem smoke passed: 8M default, full-mode EOF, idempotent sync, atomic rollback, indexed SQLite and API.");
 }finally{
   server.kill();
   fs.rmSync(root,{recursive:true,force:true});

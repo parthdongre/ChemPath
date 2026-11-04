@@ -229,11 +229,11 @@ try {
     const response=await fetch("/api/catalog/status");
     return response.json();
   });
-  assert.equal(pubchemStatus.target,500000,"The PubChem catalog target must be 500k");
-  assert.ok(await pubchem.getByText("500,000").count()>0,
+  assert.equal(pubchemStatus.target,8000000,"The PubChem catalog target must be 8 million");
+  assert.ok(await pubchem.getByText("8,000,000").count()>0,
     "Data Library must show the exact PubChem target");
   if(!pubchemStatus.available){
-    await pubchem.getByText("npm run data:500k").first()
+    await pubchem.getByText("npm run data:8m").first()
       .waitFor({state:"visible",timeout:10000});
   }
   await pubchem.screenshot({

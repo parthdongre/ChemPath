@@ -5,7 +5,7 @@ import "./PubChemCatalog.css";
 
 /**
  * PubChem is intentionally a separate indexed structure catalog. Displaying
- * 500,000 molecules does not claim they have connected reaction graph edges.
+ * millions of structures does not claim connected reaction graph edges.
  */
 export default function PubChemCatalog(){
   const [status,setStatus]=useState(null);
@@ -51,14 +51,14 @@ export default function PubChemCatalog(){
     if(!status?.available)return undefined;
     const timer=setTimeout(()=>{setSelected(null);load(query.trim());},query.trim()?210:0);
     return ()=>clearTimeout(timer);
-  },[query,status?.available,load]);
+  },[query,status?.available,status?.compounds,load]);
   return <section className="pubchem-catalog" aria-label="PubChem compound catalog">
     <header className="pubchem-heading">
       <div className="pubchem-symbol"><Database size={19}/></div>
       <div>
         <span className="pubchem-overline">PUBLIC CHEMICAL STRUCTURE INDEX</span>
         <h2>PubChem compound catalog</h2>
-        <p>500,000 real CID/SMILES records · disk-backed and searchable on demand</p>
+        <p>8 million real CID/SMILES records by default · searchable without loading them into the graph</p>
       </div>
       <button type="button" onClick={refresh} className="pubchem-icon"
         aria-label="Refresh catalog status" title="Refresh status"><RefreshCw size={17}/></button>
@@ -71,7 +71,7 @@ export default function PubChemCatalog(){
       </div>
       <div>
         <span>CATALOG TARGET</span>
-        <strong>500,000</strong>
+        <strong>{status?.scope==="full"?"Full corpus":(status?.target??8000000).toLocaleString()}</strong>
       </div>
       <div>
         <span>SOURCE</span>
@@ -79,20 +79,23 @@ export default function PubChemCatalog(){
       </div>
     </div>
     <p className="pubchem-disclaimer">
-      This is a structure catalog, not 500,000 verified reaction pathways.
+      This is a structure catalog, not 8 million verified reaction pathways.
       The curated C++ graph and imported Rhea/ORD reaction sources remain separate.
     </p>
-    {status&&!status.available&&<div className="pubchem-install">
-      <strong>Install the 500k real-compound library</strong>
-      <p>Run this command once from your ChemPath project folder. It streams an official PubChem CID-SMILES snapshot and builds a local indexed SQLite database.</p>
+    {status&&!status.meetsTarget&&<div className="pubchem-install">
+      <strong>{status.available?"Upgrade your compound catalog to 8 million":"Install the 8-million-compound library"}</strong>
+      <p>{status.available?
+        `You currently have ${status.compounds.toLocaleString()} source records. Upgrade to 8 million genuine PubChem CIDs without losing your working catalog if the download fails.`:
+        "From your ChemPath folder, stream the official PubChem CID–SMILES source into a local SQLite index. The graph and reaction data stay unchanged."
+      }</p>
       <div className="pubchem-command">
-        <code>npm run data:500k</code>
+        <code>npm run data:8m</code>
         <button type="button" title="Copy install command"
-          onClick={()=>navigator.clipboard?.writeText("npm run data:500k")}>
+          onClick={()=>navigator.clipboard?.writeText("npm run data:8m")}>
           <Copy size={15}/> Copy
         </button>
       </div>
-      <small>A network connection is needed for the initial import. No 500k-node graph is sent to your browser.</small>
+      <small>The importer keeps existing data until the new 8M index passes verification. After a Git pull, an installed catalog stays on disk. For an optional full PubChem CID–SMILES import, use <code>npm run data:full</code>.</small>
     </div>}
     {status?.available&&<>
       <label className="pubchem-search">
@@ -135,7 +138,10 @@ export default function PubChemCatalog(){
     <footer className="pubchem-attribution">
       <span>Data source: <a href="https://pubchem.ncbi.nlm.nih.gov/docs/downloads"
         target="_blank" rel="noopener noreferrer">NCBI PubChem <ExternalLink size={12}/></a></span>
-      <span>{status?.available?"Local SQLite catalog ready":"External dataset not bundled with Git"}</span>
+      <span>{status?.available?
+        (status.scope==="full"?"Complete local CID–SMILES corpus":
+          status.meetsTarget?"8M local catalog ready":"Existing catalog · upgrade available"):
+        "External dataset not bundled with Git"}</span>
     </footer>
   </section>;
 }

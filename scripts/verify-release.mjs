@@ -56,7 +56,8 @@ const evidence = {
   excludedFromThisCheck: [
     "online full Rhea download", "complete real ORD corpus performance",
     "experimental chemical synthesis validation",
-    "full online PubChem 500k catalog import (requires npm run data:500k)",
+    "full online PubChem 8M catalog import (requires npm run data:8m)",
+    "optional complete PubChem CID-SMILES corpus (requires npm run data:full)",
   ],
   checks: [],
   success: false,

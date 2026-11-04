@@ -214,6 +214,15 @@
 .studio-app .reaction-audit-body{min-width:0;overflow-wrap:anywhere}
 .studio-app .reaction-audit-body code{white-space:pre-wrap;overflow-wrap:anywhere}
 .studio-app .result-live{padding:18px 20px;max-width:100%}
+.studio-reaction-selection{padding:14px;border-radius:10px;margin:9px 0 12px;
+  border:1px solid var(--line-strong);background:var(--bg-2)}
+.studio-reaction-selection>span{display:block;font-size:9px;letter-spacing:.12em;
+  font-weight:750;color:var(--accent);margin-bottom:9px}
+.studio-reaction-selection>strong{display:block;font-size:12px;color:var(--ink-1);
+  overflow-wrap:anywhere}
+.studio-reaction-selection p{font:11px/1.5 "JetBrains Mono",monospace;
+  color:var(--ink-2);overflow-wrap:anywhere;margin:8px 0}
+.studio-reaction-selection small{display:block;color:var(--ink-3);font-size:10px;margin-top:5px}
 .studio-inspector-heading{padding:18px 21px 17px;flex:none}
 .studio-inspector-topline{display:flex;align-items:center;justify-content:space-between;
   color:var(--ink-4);font-size:9px;font-weight:760;letter-spacing:.13em}
@@ -255,7 +264,18 @@
 .studio-app .lab-header{padding:23px 27px 19px}
 .studio-app .lab-header h2{font-size:22px;color:var(--ink-1)}
 .studio-app .lab-header p{color:var(--ink-3)}
-.studio-app .lab-tabs{border-color:var(--line);padding:8px 16px;gap:4px}
+.studio-lab-navigation{border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding-top:13px}
+.studio-lab-groups{display:flex;gap:6px;margin:0 20px;padding:4px;
+  width:max-content;max-width:calc(100% - 40px);background:var(--bg-2);border:1px solid var(--line);
+  border-radius:11px}
+.studio-lab-groups button{border:0;background:transparent;color:var(--ink-3);
+  border-radius:8px;padding:9px 16px;font-size:11px;font-weight:610}
+.studio-lab-groups button.selected{background:var(--bg-3);color:var(--ink-1);
+  box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.studio-app .lab-tabs{border:0;border-top:1px solid var(--line);margin-top:13px;
+  padding:8px 17px;gap:4px}
+
 .studio-app .lab-tabs button{font-size:11px;color:var(--ink-3);border-radius:9px}
 .studio-app .lab-tabs button.selected{color:var(--accent);background:var(--accent-soft)}
 .studio-app .lab-section{padding:22px 27px}

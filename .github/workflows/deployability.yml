@@ -69,6 +69,7 @@ jobs:
             screenshots/studio-cartography.png
             screenshots/studio-lens.png
             screenshots/studio-clusters.png
+            screenshots/studio-refractive-controls.png
           if-no-files-found: warn
       - name: Container logs
         if: failure()

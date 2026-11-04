@@ -38,6 +38,50 @@ try {
   );
   assert.ok(rootWebGL, "No usable browser WebGL canvas");
 
+  // Cartographic detail is visualization-only; C++ paths are unaffected.
+  const map=page.locator(".cartographic-graph");
+  await map.waitFor({state:"visible"});
+  assert.equal(await map.getAttribute("data-graph-detail"),"adaptive");
+  await page.waitForFunction(()=>
+    document.querySelector(".cartographic-graph")?.getAttribute("data-map-stage")==="overview");
+  const counts=await page.locator(".sigma-footnote").innerText();
+  const match=counts.match(/([\d,]+)\/([\d,]+) drawn links/);
+  assert.ok(match,"The visible/total graph-edge counts must be disclosed");
+  assert.ok(Number(match[1].replaceAll(",",""))<Number(match[2].replaceAll(",","")),
+    "Overview must hide secondary edges to prevent a hairball");
+
+  await page.getByRole("button",{name:"All links"}).click();
+  assert.equal(await map.getAttribute("data-graph-detail"),"all");
+  await page.getByRole("button",{name:"Map clarity"}).click();
+  assert.equal(await map.getAttribute("data-graph-detail"),"adaptive");
+
+  await page.getByRole("button",{name:"Zoom in"}).click();
+  await page.getByRole("button",{name:"Zoom in"}).click();
+  await page.waitForFunction(()=>
+    document.querySelector(".cartographic-graph")?.getAttribute("data-map-stage")==="neighborhood",
+    null,{timeout:10000});
+  await page.getByRole("button",{name:"Fit network"}).click();
+  await page.waitForFunction(()=>
+    document.querySelector(".cartographic-graph")?.getAttribute("data-map-stage")==="overview",
+    null,{timeout:10000});
+
+  await page.getByRole("button",{name:"Focus lens"}).click();
+  const lens=page.locator('[data-testid="graph-focus-lens"]');
+  assert.equal(await lens.count(),1,"An enabled map lens must mount");
+  await graph.hover({position:{x:Math.max(40,size.width/2),y:Math.max(40,size.height/2)}});
+  await page.waitForFunction(()=>
+    document.querySelector('[data-testid="graph-focus-lens"]')?.style.opacity==="1");
+  fs.mkdirSync("screenshots",{recursive:true});
+  await page.locator(".graph-frame").screenshot({
+    path:"screenshots/studio-lens.png",animations:"disabled"
+  });
+  await page.getByRole("button",{name:"Focus lens"}).click();
+  assert.equal(await lens.count(),0,"Disabling the map lens must unmount the overlay");
+
+  await page.getByRole("button",{name:"Reduce transparency effects"}).click();
+  assert.equal(await page.locator(".studio-app").getAttribute("data-reduce-transparency"),"true");
+  await page.getByRole("button",{name:"Enable transparency effects"}).click();
+  assert.equal(await page.locator(".studio-app").getAttribute("data-reduce-transparency"),"false");
   // Verify the fallback renderer remains accessible.
   await page.getByRole("button", { name: "Path Layout" }).click();
   await page.locator(".network-canvas").waitFor({ state: "visible" });
@@ -54,6 +98,7 @@ try {
     "Computed route not shown immediately in inspector");
   fs.mkdirSync("screenshots", {recursive:true});
   await page.screenshot({path:"screenshots/studio-hosted.png",animations:"disabled"});
+  await page.locator(".graph-frame").screenshot({path:"screenshots/studio-cartography.png",animations:"disabled"});
   await page.locator('[data-studio-view="compare"]').click();
   await page.locator("#algorithm-lab").waitFor({state:"visible"});
   await page.locator("#algorithm-lab .lab-tabs button").filter({ hasText: "Comparison" }).click();

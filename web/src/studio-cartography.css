@@ -33,6 +33,13 @@
     filter:url("#studio-optical-displacement");
   }
 }
+/* Glass material must NEVER override absolute positioning of map overlays.
+   The generic position:relative was pushing toolbars into document flow. */
+.studio-app .studio-graph-grid .renderer-switch.studio-liquid-glass,
+.studio-app .studio-graph-grid .sigma-toolbar.studio-liquid-glass,
+.studio-app .studio-graph-grid .sigma-footnote.studio-liquid-glass{
+  position:absolute!important
+}
 .studio-app .studio-top-search{background:rgba(31,46,57,.62)}
 .studio-app .studio-command-dialog{background:rgba(18,28,38,.93)}
 .studio-app .studio-graph-grid .renderer-switch.studio-liquid-glass{
@@ -113,6 +120,9 @@
 .studio-app .cartographic-graph .sigma-canvas canvas{image-rendering:auto}
 .studio-app .graph-legend{opacity:.72;transition:opacity 140ms ease}
 .studio-app .graph-legend:hover{opacity:1}
+/* Replace the legacy full-graph count with the truthful visible/total
+   counter in Sigma's footer (the legacy caption is not LOD-aware). */
+.studio-app .studio-graph-grid .graph-caption{display:none!important}
 .studio-app .graph-caption span{font-weight:620}
 .studio-app[data-reduce-transparency="true"] .studio-liquid-glass,
 .studio-app[data-reduce-transparency="true"] .studio-graph-grid .sigma-toolbar.studio-liquid-glass,

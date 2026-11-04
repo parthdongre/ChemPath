@@ -67,6 +67,14 @@ try {
   await page.locator(".graph-frame").screenshot({
     path:"screenshots/studio-clusters.png",animations:"disabled"
   });
+  const markerOverlaps=await page.locator(".sigma-cluster-layer").evaluate(layer=>{
+    const boxes=[...layer.querySelectorAll(".sigma-compound-cluster")]
+      .filter(node=>getComputedStyle(node).opacity!=="0")
+      .map(node=>node.getBoundingClientRect());
+    return boxes.some((a,i)=>boxes.slice(i+1).some(b=>
+      Math.hypot(a.x+a.width/2-b.x-b.width/2,a.y+a.height/2-b.y-b.height/2)<47));
+  });
+  assert.equal(markerOverlaps,false,"Overview compound groups must not overlap");
   const counts=await page.locator(".sigma-footnote").innerText();
   const match=counts.match(/([\d,]+)\/([\d,]+) drawn links/);
   assert.ok(match,"The visible/total graph-edge counts must be disclosed");
@@ -90,6 +98,18 @@ try {
     document.querySelector(".cartographic-graph")?.getAttribute("data-map-stage")==="overview",
     null,{timeout:10000});
 
+  // The same glass control samples changing live graph content when moved.
+  const handle=page.getByRole("button",{name:"Move glass controls"});
+  const toolbar=page.locator(".sigma-toolbar");
+  const beforeDrag=await toolbar.boundingBox(),grip=await handle.boundingBox();
+  await page.mouse.move(grip.x+grip.width/2,grip.y+grip.height/2);
+  await page.mouse.down();
+  await page.mouse.move(grip.x+grip.width/2-65,grip.y+grip.height/2+90,{steps:7});
+  await page.mouse.up();
+  const afterDrag=await toolbar.boundingBox();
+  assert.ok(afterDrag.y>beforeDrag.y+40,"Glass toolbar should be movable over live graph");
+  assert.ok(afterDrag.x<beforeDrag.x-25,"Dragging should move controls horizontally");
+  await handle.dblclick();
   await page.getByRole("button",{name:"Focus lens"}).click();
   const lens=page.locator('[data-testid="graph-focus-lens"]');
   assert.equal(await lens.count(),1,"An enabled map lens must mount");

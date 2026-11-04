@@ -100,13 +100,24 @@ try {
   await page.getByRole("dialog", {name:"Command palette"}).waitFor({state:"visible"});
   await page.keyboard.press("Escape");
   await page.getByRole("dialog", {name:"Command palette"}).waitFor({state:"hidden"});
+  const sourceTargetBefore=await page.locator(".compound-picker-value").allInnerTexts();
+  const expectedApiResult=await page.evaluate(async()=>{
+    const response=await fetch("/api/path?from=Methane&to=Bicarbonate&algorithm=bfs");
+    return {status:response.status,...await response.json()};
+  });
+  assert.ok(expectedApiResult.found&&expectedApiResult.reactionPath?.length>0,
+    "Backend reference query Methane to Bicarbonate should contain a verified participation path");
   await page.getByRole("button", {name:"Find pathway"}).click();
   await page.locator(".result-dock .run-meta").waitFor({state:"visible",timeout:35000});
+  await page.locator(".result-dock .reaction-audit-card").first()
+    .waitFor({state:"visible",timeout:4500}).catch(()=>{});
   const routeCards=await page.locator(".result-dock .reaction-audit-card").count();
   if(routeCards===0){
     const details=await page.locator(".result-dock").innerText().catch(()=>"Inspector was unmounted");
     throw new Error("Computed route not shown immediately in inspector. "+
       JSON.stringify({details,source:await page.locator(".compound-picker-value").allInnerTexts(),
+        sourceTargetBefore,apiReference:{status:expectedApiResult.status,
+          found:expectedApiResult.found,steps:expectedApiResult.steps},
         consoleErrors:errors}));
   }
   fs.mkdirSync("screenshots", {recursive:true});

@@ -96,6 +96,18 @@
 .studio-app .sigma-route-path{stroke:#6de9d2;stroke-width:3.8}
 .studio-app .sigma-route-start{fill:#f0c888;stroke:#122c32;stroke-width:3.2}
 .studio-app .sigma-route-end{fill:#5ce4cc;stroke:#122c32;stroke-width:3.2}
+.studio-app .sigma-route-origin-label rect,
+.studio-app .sigma-route-destination-label rect{
+  stroke:#3f6670;stroke-width:1;fill:#132b34;fill-opacity:.96;
+}
+.studio-app .sigma-route-origin-label text,
+.studio-app .sigma-route-destination-label text{
+  font:600 11px -apple-system,BlinkMacSystemFont,Inter,sans-serif;
+  letter-spacing:.01em;fill:#d9f1ee;paint-order:stroke;
+}
+.studio-app .sigma-route-origin-label rect{stroke:#b39b73}
+.studio-app .sigma-route-origin-label text{fill:#f2d4a2}
+
 .studio-app .sigma-live-lens{
   position:absolute;top:0;left:0;z-index:14;
   display:block;width:180px;height:180px;overflow:hidden;pointer-events:none;

@@ -4,6 +4,7 @@ import forceAtlas2 from "graphology-layout-forceatlas2";
 import Sigma from "sigma";
 import {buildCartographicIndex,cartographicVisibility,mapStageForRatio} from "./graphCartography.js";
 import GraphLens from "./GraphLens.jsx";
+import RouteOverlay from "./RouteOverlay.jsx";
 import "./SigmaNetwork.css";
 
 const palette = {
@@ -181,6 +182,7 @@ export default function SigmaNetwork({
             visited?"#85c7be":data.color,
           size:secondary?Math.max(2.5,size*.76):size,
           label:labeled?data.label:"",
+          forceLabel:highlighted||selected||active||hovered,
           zIndex:active?12:highlighted?10:selected?9:hovered?7:rank<25?3:0
         };
       },
@@ -312,6 +314,9 @@ export default function SigmaNetwork({
     </div>
     <div className="sigma-canvas" ref={container} role="img"
       aria-label={"Reaction network: " + graph.order + " compounds, " + graph.size + " directed edges"} />
+    <RouteOverlay graph={graph} rendererRef={sigmaRef}
+      routeNodes={highlightedEdgeIds.length?highlightedNodeIds:[]}
+      routeEdges={highlightedEdgeIds}/>
     <GraphLens enabled={lensEnabled} containerRef={container} rendererRef={sigmaRef}
       graph={graph} cartography={cartography}
       highlightedEdgeIds={highlightedEdgeIds} selectedNodeId={selectedNodeId}/>

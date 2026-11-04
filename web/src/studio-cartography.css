@@ -1,0 +1,184 @@
+/**
+ * ChemPath Studio — cartographic presentation and optical materials.
+ *
+ * Material belongs to the *controls* layer, never on chemical labels/data.
+ * Graph backdrop is opaque for GPU stability; SVG rim distortion and specular
+ * response are secondary effects with clear reduced-transparency fallbacks.
+ */
+.studio-app .studio-glass-svg-filter{
+  position:absolute;width:0;height:0;pointer-events:none;overflow:hidden
+}
+.studio-app .studio-liquid-glass{
+  --glass-pointer-x:50%;--glass-pointer-y:0%;
+  position:relative;isolation:isolate;
+  -webkit-backdrop-filter:blur(13px) saturate(1.18);
+  backdrop-filter:blur(13px) saturate(1.18);
+  transition:box-shadow 160ms ease,background-color 160ms ease,border-color 160ms ease
+}
+.studio-app .studio-liquid-glass::after{
+  content:"";pointer-events:none;position:absolute;inset:0;z-index:3;
+  border-radius:inherit;opacity:.26;
+  background:
+    radial-gradient(ellipse 150px 75px at var(--glass-pointer-x) var(--glass-pointer-y),
+      rgba(225,250,255,.17),transparent 80%),
+    linear-gradient(155deg,rgba(255,255,255,.15),transparent 32%,
+      transparent 75%,rgba(182,218,236,.11));
+  box-shadow:inset 0 1px 0 rgba(234,251,255,.14),inset 0 -1px 0 rgba(114,160,178,.11);
+  transition:opacity 180ms ease;
+}
+.studio-app .studio-liquid-glass:hover::after,
+.studio-app .studio-liquid-glass:focus-within::after{opacity:.82}
+@supports(filter:url("#studio-optical-displacement")){
+  .studio-app .studio-liquid-glass::after{
+    filter:url("#studio-optical-displacement");
+  }
+}
+/* Glass material must NEVER override absolute positioning of map overlays.
+   The generic position:relative was pushing toolbars into document flow. */
+.studio-app .studio-graph-grid .renderer-switch.studio-liquid-glass,
+.studio-app .studio-graph-grid .sigma-toolbar.studio-liquid-glass,
+.studio-app .studio-graph-grid .sigma-footnote.studio-liquid-glass{
+  position:absolute!important
+}
+.studio-app .studio-top-search{background:rgba(31,46,57,.62)}
+.studio-app .studio-command-dialog{background:rgba(18,28,38,.93)}
+.studio-app .studio-graph-grid .renderer-switch.studio-liquid-glass{
+  background:rgba(15,27,38,.83);border:1px solid rgba(150,184,198,.22);
+  border-radius:12px;box-shadow:0 8px 26px rgba(0,0,0,.16)
+}
+.studio-app .studio-graph-grid .sigma-toolbar.studio-liquid-glass{
+  display:flex;align-items:center;gap:5px;padding:5px!important;max-width:calc(100% - 24px);
+  color:#d7e6ed!important;border:1px solid rgba(170,211,224,.22)!important;
+  border-radius:13px!important;background:rgba(19,31,42,.85)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 9px 26px rgba(0,0,0,.23)
+}
+.studio-app .studio-graph-grid .sigma-toolbar button{
+  border-radius:8px!important;padding:7px 9px!important;min-width:30px;
+  font-size:11px!important;line-height:1.2;font-weight:600
+}
+.studio-app .studio-graph-grid .sigma-toolbar button:focus-visible{
+  outline:2px solid #a0eee0;outline-offset:2px
+}
+.studio-app .sigma-map-modes{display:flex;align-items:center;gap:2px;
+  padding:3px;background:rgba(4,14,24,.42);border:1px solid rgba(170,211,224,.12);
+  border-radius:9px}
+.studio-app .sigma-map-modes button{background:transparent!important;
+  border-color:transparent!important;color:#9eb7c1!important}
+.studio-app .sigma-map-modes button.selected,.studio-app .sigma-lens-toggle.selected{
+  background:rgba(109,224,207,.17)!important;color:#9ef5e5!important;
+  border-color:rgba(114,226,205,.20)!important
+}
+.studio-app .sigma-toolbar-divider{width:1px;height:22px;
+  background:rgba(180,206,218,.20);margin:0 2px;flex:none}
+.studio-app .sigma-footnote.studio-liquid-glass{
+  display:flex;align-items:baseline;flex-wrap:wrap;gap:5px 8px;
+  left:14px;right:auto;bottom:14px;width:max-content;
+  max-width:calc(100% - 28px);padding:8px 12px!important;
+  border:1px solid rgba(160,195,208,.18);border-radius:11px;
+  background:rgba(13,26,37,.87)!important;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  text-shadow:none;color:#b0c4cd!important;font-family:inherit!important;
+  box-shadow:0 5px 20px rgba(0,0,0,.16)
+}
+.studio-app .sigma-footnote strong{color:#bdece1;font-size:10px;font-weight:650}
+.studio-app .sigma-footnote span{font-size:10px;color:#acbdc7}
+.studio-app .sigma-footnote small{display:block;flex-basis:100%;
+  color:#7896a4;font-size:9px;letter-spacing:.01em}
+.studio-app .sigma-canvas{cursor:grab}
+.studio-app .sigma-canvas:active{cursor:grabbing}
+.studio-app .sigma-route-overlay{
+  position:absolute;inset:0;z-index:2;width:100%;height:100%;overflow:hidden;
+  pointer-events:none;opacity:0;
+}
+.studio-app .sigma-route-overlay path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.studio-app .sigma-route-casing{stroke:#112b31;stroke-width:8.5;
+  opacity:.91;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+.studio-app .sigma-route-path{stroke:#6de9d2;stroke-width:3.8}
+.studio-app .sigma-route-start{fill:#f0c888;stroke:#122c32;stroke-width:3.2}
+.studio-app .sigma-route-end{fill:#5ce4cc;stroke:#122c32;stroke-width:3.2}
+.studio-app .sigma-route-origin-label rect,
+.studio-app .sigma-route-destination-label rect{
+  stroke:#3f6670;stroke-width:1;fill:#132b34;fill-opacity:.96;
+}
+.studio-app .sigma-route-origin-label text,
+.studio-app .sigma-route-destination-label text{
+  font:600 11px -apple-system,BlinkMacSystemFont,Inter,sans-serif;
+  letter-spacing:.01em;fill:#d9f1ee;paint-order:stroke;
+}
+.studio-app .sigma-route-origin-label rect{stroke:#b39b73}
+.studio-app .sigma-route-origin-label text{fill:#f2d4a2}
+
+.studio-app .sigma-live-lens{
+  position:absolute;top:0;left:0;z-index:14;
+  display:block;width:180px;height:180px;overflow:hidden;pointer-events:none;
+  border-radius:50%;opacity:0;border:1px solid rgba(230,255,252,.65);
+  background:#13222f;will-change:transform;
+  box-shadow:0 12px 50px rgba(0,0,0,.43),inset 0 0 0 4px rgba(210,242,245,.10),
+    0 0 0 4px rgba(56,94,104,.22);
+}
+.studio-app .sigma-live-lens canvas{
+  display:block;width:180px;height:180px;border-radius:50%
+}
+.studio-app .sigma-live-lens::after{
+  opacity:1;z-index:4;border-radius:50%;
+  background:radial-gradient(circle at 25% 14%,rgba(250,255,255,.40),transparent 36%),
+    radial-gradient(ellipse at 75% 87%,rgba(211,247,244,.11),transparent 60%);
+  box-shadow:inset 0 2px 3px rgba(255,255,255,.30),
+    inset -7px -10px 14px rgba(1,15,26,.25);
+  filter:none!important
+}
+.studio-app .sigma-lens-rim{position:absolute;inset:2px;pointer-events:none;
+  border:1px solid rgba(230,255,255,.18);border-radius:50%}
+.studio-app .cartographic-graph .sigma-canvas canvas{image-rendering:auto}
+.studio-app .graph-legend{opacity:.72;transition:opacity 140ms ease}
+.studio-app .graph-legend:hover{opacity:1}
+/* Replace the legacy full-graph count with the truthful visible/total
+   counter in Sigma's footer (the legacy caption is not LOD-aware). */
+.studio-app .studio-graph-grid .graph-caption{display:none!important}
+.studio-app .graph-caption span{font-weight:620}
+.studio-app[data-reduce-transparency="true"] .studio-liquid-glass,
+.studio-app[data-reduce-transparency="true"] .studio-graph-grid .sigma-toolbar.studio-liquid-glass,
+.studio-app[data-reduce-transparency="true"] .studio-graph-grid .renderer-switch.studio-liquid-glass,
+.studio-app[data-reduce-transparency="true"] .sigma-footnote.studio-liquid-glass{
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  background:#192632!important
+}
+.studio-app[data-reduce-transparency="true"] .studio-liquid-glass::after{display:none!important}
+.studio-app[data-reduce-transparency="true"] .studio-live-lens::after{display:block!important}
+.studio-app[data-theme="light"] .studio-liquid-glass:not(.sigma-toolbar):not(.sigma-footnote){
+  background:rgba(246,249,251,.93)
+}
+@media (prefers-reduced-transparency:reduce){
+  .studio-app .studio-liquid-glass{
+    backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+    background:#192632!important
+  }
+  .studio-app .studio-liquid-glass::after{display:none!important}
+}
+@media (prefers-contrast:more){
+  .studio-app .studio-liquid-glass{border-color:currentColor!important}
+  .studio-app .studio-liquid-glass::after{display:none!important}
+}
+@media (prefers-reduced-motion:reduce){
+  .studio-app .studio-liquid-glass,
+  .studio-app .studio-liquid-glass::after,
+  .studio-app .graph-legend{transition:none!important}
+}
+@media(max-width:1150px){
+  .studio-app .studio-graph-grid .sigma-toolbar.studio-liquid-glass{
+    top:54px!important;right:11px!important;
+  }
+}
+@media(max-width:650px){
+  .studio-app .studio-graph-grid .sigma-toolbar.studio-liquid-glass{
+    top:54px!important;left:auto!important;right:9px!important;
+    gap:2px;padding:4px!important;
+  }
+  .studio-app .studio-graph-grid .sigma-toolbar button{
+    font-size:10px!important;padding:6px!important;min-width:26px
+  }
+  .studio-app .sigma-map-modes{gap:0;padding:2px}
+  .studio-app .sigma-footnote.studio-liquid-glass{
+    bottom:43px;max-width:calc(100% - 20px);
+  }
+}

@@ -4,8 +4,11 @@ import {api} from "../api";
 import NetworkGraph from "./NetworkGraph.jsx";
 import "./Lab.css";
 
-const tabs=[["trace","Execution"],["compare","Comparison"],["paths","Routes"],
-  ["components","Components"],["dependencies","Dependencies"],["constrained","Constraints"],["pareto","Pareto"],["bench","Benchmarks"],["trie","Trie"],["sandbox","Playground"]];
+const groups=[
+  {id:"learn",name:"Learn",tabs:[["trace","Execution"],["components","Components"],["dependencies","Dependencies"],["trie","Trie"]]},
+  {id:"optimize",name:"Optimize",tabs:[["compare","Comparison"],["paths","Routes"],["constrained","Constraints"],["pareto","Pareto"]]},
+  {id:"experiment",name:"Experiment",tabs:[["bench","Benchmarks"],["sandbox","Playground"]]}
+];
 const number=(x)=>typeof x==="number"?x.toLocaleString(undefined,{maximumFractionDigits:3}):"—";
 function Metric({title,value,unit=""}){
   return <div className="lab-metric"><span>{title}</span><strong>{number(value)}</strong><small>{unit}</small></div>;
@@ -23,7 +26,8 @@ function RouteView({route}){
       <p>{r.equation}</p><small>{r.conditions} · weight {r.cost}</small></details>)}</div>
     </div>;
 }
-export default function LabPanel({network,from,to}){
+export default function LabPanel({network,from,to,viewMode="lab"}){
+  const [group,setGroup]=useState("learn");
   const [tab,setTab]=useState("trace"),[algorithm,setAlgorithm]=useState("dijkstra");
   const [trace,setTrace]=useState(null),[step,setStep]=useState(0),[playing,setPlaying]=useState(false);
   const [speed,setSpeed]=useState(1),[comparison,setComparison]=useState(null);
@@ -43,6 +47,11 @@ export default function LabPanel({network,from,to}){
   const [paretoObjective,setParetoObjective]=useState("steps-cost");
   const [paretoResult,setParetoResult]=useState(null);
   const [availableInput,setAvailableInput]=useState("");
+  useEffect(()=>{
+    if(viewMode==="compare"){setGroup("optimize");setTab("compare");}
+    else {setGroup("learn");setTab("trace");}
+    setPlaying(false);
+  },[viewMode]);
   const [feasibility,setFeasibility]=useState(null);
   const byId=useMemo(()=>new Map((network?.nodes||[]).map(n=>[n.id,n])),[network]);
   const sourceId=network?.nodes?.find(n=>n.name===from)?.id;
@@ -107,9 +116,19 @@ export default function LabPanel({network,from,to}){
       <p>Interactive algorithm state, graph connectivity and real performance measurements.</p></div>
       <span className="lab-pill"><Network size={15}/>{network?.nodes?.length??"—"} compounds</span>
     </header>
-    <nav className="lab-tabs" aria-label="Lab views">{tabs.map(([id,label])=>
-      <button type="button" key={id} onClick={()=>{setTab(id);setPlaying(false);setError("");}}
-        className={tab===id?"selected":""}>{label}</button>)}</nav>
+    <nav className="studio-lab-navigation" aria-label="Laboratory tools">
+      <div className="studio-lab-groups" role="group" aria-label="Lab category">
+        {groups.map(item=><button key={item.id} type="button"
+          className={group===item.id?"selected":""} aria-pressed={group===item.id}
+          onClick={()=>{setGroup(item.id);setTab(item.tabs[0][0]);setPlaying(false);setError("");}}>
+          {item.name}</button>)}
+      </div>
+      <div className="lab-tabs" aria-label="Lab views">
+        {groups.find(item=>item.id===group)?.tabs.map(([id,label])=>
+          <button type="button" key={id} onClick={()=>{setTab(id);setPlaying(false);setError("");}}
+            className={tab===id?"selected":""}>{label}</button>)}
+      </div>
+    </nav>
     {error&&<div role="alert" className="lab-error">{error}</div>}
     {tab==="trace"&&<div className="lab-section">
       <div className="lab-toolbar">

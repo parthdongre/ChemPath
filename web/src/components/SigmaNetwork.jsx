@@ -122,6 +122,7 @@ export default function SigmaNetwork({
   const [edgeInfo, setEdgeInfo] = useState(null);
   const [hovered, setHovered] = useState(null);
   const hoveredRef = useRef(null);
+  const lastFocusedSelection=useRef(null);
   const onSelectRef = useRef(onSelectCompound);
   const onEdgeRef = useRef(onSelectEdge);
   onSelectRef.current = onSelectCompound;
@@ -260,6 +261,27 @@ export default function SigmaNetwork({
     const { x, y } = graph.getNodeAttributes(key);
     animateCamera(renderer.getCamera(),{x,y,ratio:0.35},260);
   }, [graph, activeNodeId]);
+
+  // Choosing a compound behaves like searching a place on a map:
+  // center it only on a *new* selection, never override initial overview or
+  // the user's own camera pan / route navigation.
+  useEffect(()=>{
+    if(selectedNodeId==null||!graph.order)return;
+    const key=String(selectedNodeId);
+    if(lastFocusedSelection.current==null){
+      lastFocusedSelection.current=key;
+      return;
+    }
+    if(lastFocusedSelection.current===key)return;
+    lastFocusedSelection.current=key;
+    if(highlightedEdgeIds.length||!graph.hasNode(key))return;
+    const renderer=sigmaRef.current;
+    if(!renderer)return;
+    const {x,y}=graph.getNodeAttributes(key);
+    animateCamera(renderer.getCamera(),{
+      x,y,ratio:Math.min(.50,renderer.getCamera().ratio)
+    },320);
+  },[graph,selectedNodeId,highlightedEdgeIds]);
 
   // A selected route should become the visual center rather than simply
   // changing color somewhere in the full, dense network.

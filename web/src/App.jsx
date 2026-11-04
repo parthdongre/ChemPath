@@ -749,7 +749,7 @@ export default function App() {
       hash==="#algorithm-lab"?"lab":"explore";
   });
   const [sidebarCollapsed,setSidebarCollapsed]=useState(false);
-  const [inspectorOpen,setInspectorOpen]=useState(true);
+  const [inspectorOpen,setInspectorOpen]=useState(()=>window.innerWidth>1140);
   const [commandOpen,setCommandOpen]=useState(false);
   const [studioTheme,setStudioTheme]=useState(()=>{
     try{return localStorage.getItem("chempath-theme")==="light"?"light":"dark";}
@@ -796,6 +796,13 @@ export default function App() {
       (view==="explore"?"#explorer":view==="data"?"#data-library":
         view==="compare"?"#algorithm-compare":"#algorithm-lab"));
   };
+  useEffect(()=>{
+    const onResize=()=>{
+      if(window.innerWidth<=900)setInspectorOpen(false);
+    };
+    window.addEventListener("resize",onResize);
+    return ()=>window.removeEventListener("resize",onResize);
+  },[]);
   useEffect(()=>{
     try{localStorage.setItem("chempath-theme",studioTheme);}
     catch{/* ephemeral theme preference */}

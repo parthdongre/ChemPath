@@ -19,6 +19,9 @@ export default function OrdExplorer() {
   const [selected, setSelected] = useState(null);
   const [neighborhood, setNeighborhood] = useState(null);
   const [busy, setBusy] = useState("");
+  const [pathFrom, setPathFrom] = useState("CCO");
+  const [pathTo, setPathTo] = useState("CC=O");
+  const [pathResult, setPathResult] = useState(null);
   const [error, setError] = useState("");
   const refresh = () => api.ordStatus().then(setStatus).catch(err => setError(err.message));
 
@@ -86,6 +89,41 @@ export default function OrdExplorer() {
           </button>
         </div>
         <small>SMILES prefixes are structure strings, not common chemical names. Try CCO, CC(=O), or an ORD identifier.</small>
+      </div>
+
+      <div className="ord-search">
+        <div className="ord-subheading"><Network size={17}/> C++ on-demand shortest path</div>
+        <p className="ord-muted">Exact compound-participation BFS over the local SQLite index. Multi-reactant availability is not guaranteed. Search results are complete only when no resource limit was reached.</p>
+        <label htmlFor="ord-path-from">Starting indexed SMILES</label>
+        <div className="ord-query-row">
+          <input id="ord-path-from" type="text" value={pathFrom} maxLength={512}
+            onChange={e=>{setPathFrom(e.target.value);setPathResult(null);}} placeholder="e.g. CCO"/>
+        </div>
+        <label htmlFor="ord-path-to">Target indexed SMILES</label>
+        <div className="ord-query-row">
+          <input id="ord-path-to" type="text" value={pathTo} maxLength={512}
+            onChange={e=>{setPathTo(e.target.value);setPathResult(null);}} placeholder="e.g. CC=O"/>
+          <button disabled={!!busy||!pathFrom.trim()||!pathTo.trim()}
+            onClick={()=>action("route",async()=>{
+              setPathResult(await api.ordPath(pathFrom.trim(),pathTo.trim(),2500));
+            })}>{busy==="route"?"Searching…":"Find indexed path"}</button>
+        </div>
+        {pathResult&&<div className="ord-reaction">
+          <strong>{pathResult.found
+            ? "Shortest participation path: "+pathResult.hopCount+" hops"
+            : pathResult.complete ? "No path in indexed dataset"
+              : "Search incomplete — "+pathResult.limitReason}</strong>
+          <p className="ord-muted">Expanded {fmt(pathResult.metrics?.expanded)} compounds ·
+            {fmt(pathResult.metrics?.sqlQueries)} SQLite queries ·
+            {fmt(pathResult.metrics?.cacheHits)} cache hits ·
+            {fmt(pathResult.metrics?.elapsedMs)} ms</p>
+          {pathResult.found&&<ol>
+            {(pathResult.steps||[]).map((step,i)=><li key={step.recordId+"-"+i}>
+              <code>{step.from}</code> → <code>{step.to}</code> via <strong>{step.ordId}</strong>
+            </li>)}
+          </ol>}
+          {!pathResult.complete&&<p className="ord-muted">Resource limit reached. This does not establish that no route exists.</p>}
+        </div>}
       </div>
       {results.length > 0 && <div className="ord-results">
         <h3>Matching reactions <span>{results.length} displayed</span></h3>

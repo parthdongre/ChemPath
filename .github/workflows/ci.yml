@@ -2,9 +2,9 @@ name: ChemPath CI
 
 on:
   push:
-    branches: [main, midsem-build]
+    branches: [main, midsem-build, feat/milestone-c-ord-lazy-benchmarks]
   pull_request:
-    branches: [main]
+    branches: [main, feat/milestone-b-csr-constrained-pareto]
 
 jobs:
   build-and-test:
@@ -19,6 +19,11 @@ jobs:
         with:
           node-version: 22
 
+      - name: Install native SQLite3 development files
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libsqlite3-dev
+
       - name: Install JavaScript dependencies
         run: npm install
 
@@ -30,6 +35,11 @@ jobs:
 
       - name: Test C++ engine
         run: npm run test:engine
+
+      - name: Verify ORD read-only C++ backend was compiled
+        run: |
+          test -x engine/build/chempath_ord_tests
+          test -x engine/build/chempath_ord_bench
 
       - name: Compare CSR and adjacency graph core footprint
         run: |
@@ -55,6 +65,35 @@ jobs:
           cmake --build engine/build-release --config Release
           ctest --test-dir engine/build-release --output-on-failure -C Release
           ./engine/build-release/chempath_bench data/compounds.csv data/reactions.csv 96
+
+      - name: Benchmark exact ORD lazy, cold and eager graph queries
+        timeout-minutes: 8
+        run: |
+          mkdir -p /tmp/chempath-ord-bench
+          for nodes in 900 3000 9000 30000; do
+            d="/tmp/chempath-ord-bench/$nodes"
+            python3 scripts/generate-ord-benchmark.py --output-dir "$d" --nodes "$nodes" --queries 25 --seed 42
+            python3 scripts/index-ord-graph.py --db "$d/ord.sqlite"
+            for mode in eager lazy cold; do
+              ./engine/build-release/chempath_ord_bench "$d/ord.sqlite" "$d/queries.tsv" "$mode" 2 > "$d/$mode.csv"
+            done
+          done
+          python3 scripts/summarize-ord-benchmarks.py             --input-dir /tmp/chempath-ord-bench             --out /tmp/chempath-ord-bench > /tmp/chempath-ord-bench/summary.txt
+          cat /tmp/chempath-ord-bench/summary.txt
+
+      - name: Publish inspectable ORD benchmark evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: chempath-milestone-c-benchmark-evidence
+          path: |
+            /tmp/chempath-ord-bench/milestone-c-benchmarks.md
+            /tmp/chempath-ord-bench/milestone-c-benchmarks.json
+            /tmp/chempath-ord-bench/summary.txt
+            /tmp/chempath-ord-bench/*/manifest.json
+            /tmp/chempath-ord-bench/*/queries.tsv
+            /tmp/chempath-ord-bench/*/*.csv
+          retention-days: 30
+          if-no-files-found: error
 
       - name: Compare baseline and optimized engine
         run: bash scripts/compare-engine-baseline.sh
@@ -110,3 +149,15 @@ jobs:
           ./engine/build/chempath stats
           ./engine/build/chempath path Methane Bicarbonate
           ./engine/build/chempath search meth
+
+      - name: One-command final academic release verification
+        timeout-minutes: 6
+        run: npm run verify:release -- --report /tmp/chempath-release-checks.json
+
+      - name: Publish final release verification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: chempath-final-review-checks
+          path: /tmp/chempath-release-checks.json
+          retention-days: 30
+          if-no-files-found: error

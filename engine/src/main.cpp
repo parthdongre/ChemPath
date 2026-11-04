@@ -1,4 +1,7 @@
 #include "ReactionGraph.hpp"
+#ifdef CHEMPATH_HAS_SQLITE
+#include "OrdGraphProvider.hpp"
+#endif
 #include "ReactionDependencyGraph.hpp"
 #include "ConstrainedSearch.hpp"
 #include "MultiObjective.hpp"
@@ -10,6 +13,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <iomanip>
+#include <memory>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -198,6 +202,85 @@ std::vector<std::string> splitProtocol(const std::string& line){
 int runCommand(const ReactionGraph& graph,const std::vector<std::string>& args) {
     if(args.empty()){printError("Command required");return 1;}
     const std::string command = args[0];
+
+    if (command == "ordpath") {
+#ifndef CHEMPATH_HAS_SQLITE
+        printError("ORD C++ disk search requires SQLite3 development libraries at CMake build time");
+        return 1;
+#else
+        if(args.size()<3 || args.size()>7) {
+            printError("ordpath requires exactSource exactTarget [maxExpanded] [maxVisited] [maxNeighborLinks] [cacheMB]");
+            return 1;
+        }
+        try {
+            chempath::OrdSearchOptions opts;
+            opts.cacheBudgetBytes = 8 * 1024 * 1024;
+            auto parseSize=[](const std::string& arg) -> std::size_t {
+                std::size_t used=0;
+                const auto value=std::stoull(arg,&used);
+                if(used!=arg.size() || value==0 || value>1000000000ULL)
+                    throw std::invalid_argument("Invalid positive search limit");
+                return static_cast<std::size_t>(value);
+            };
+            if(args.size()>3) opts.maxExpanded=parseSize(args[3]);
+            if(args.size()>4) opts.maxVisited=parseSize(args[4]);
+            if(args.size()>5) opts.maxNeighborLinks=parseSize(args[5]);
+            if(args.size()>6) {
+                const auto mb=parseSize(args[6]);
+                if(mb>256)throw std::invalid_argument("Cache limit exceeds 256 MiB");
+                opts.cacheBudgetBytes=mb*1024*1024;
+            }
+            const char* configured=std::getenv("CHEMPATH_ORD_DB");
+            const std::string dbPath=configured&&*configured ? configured : "data/ord/ord.sqlite";
+            // Persistent serve worker reuses SQLite prepared statements and LRU.
+            static std::unique_ptr<chempath::OrdGraphProvider> provider;
+            static std::string providerPath;
+            if(!provider || providerPath!=dbPath) {
+                provider=std::make_unique<chempath::OrdGraphProvider>(dbPath,opts.cacheBudgetBytes);
+                providerPath=dbPath;
+            }
+            const auto result=provider->shortestPath(args[1],args[2],opts);
+            std::cout << "{\"ok\":true,\"backend\":\"sqlite-lazy\","
+                      << "\"mode\":\"ord-participation\","
+                      << "\"source\":\"" << jsonEscape(args[1])
+                      << "\",\"target\":\"" << jsonEscape(args[2]) << "\""
+                      << ",\"found\":" << (result.found?"true":"false")
+                      << ",\"complete\":" << (result.complete?"true":"false")
+                      << ",\"limitReason\":\"" << jsonEscape(result.limitReason) << "\""
+                      << ",\"hopCount\":" << result.steps.size()
+                      << ",\"compounds\":[";
+            for(std::size_t i=0;i<result.compounds.size();++i) {
+                if(i)std::cout<<",";
+                std::cout << "\"" << jsonEscape(result.compounds[i]) << "\"";
+            }
+            std::cout << "],\"steps\":[";
+            for(std::size_t i=0;i<result.steps.size();++i) {
+                if(i)std::cout<<",";
+                const auto& step=result.steps[i];
+                std::cout << "{\"from\":\"" << jsonEscape(step.from)
+                          << "\",\"to\":\"" << jsonEscape(step.to)
+                          << "\",\"recordId\":" << step.reactionRecordId
+                          << ",\"ordId\":\"" << jsonEscape(step.ordId) << "\"}";
+            }
+            std::cout << "],\"metrics\":{"
+                      << "\"expanded\":" << result.expanded
+                      << ",\"visited\":" << result.visited
+                      << ",\"participationLinksExamined\":" << result.participationLinksExamined
+                      << ",\"sqlQueries\":" << result.sqlQueries
+                      << ",\"cacheHits\":" << result.cacheHits
+                      << ",\"cacheMisses\":" << result.cacheMisses
+                      << ",\"cachedBytes\":" << result.cachedBytes
+                      << ",\"cacheEntries\":" << result.cacheEntries
+                      << ",\"elapsedMs\":" << std::fixed << std::setprecision(4)
+                      << result.elapsedMs << "}}\n";
+        } catch(const std::exception& ex) {
+            printError(std::string("ORD query failed: ")+ex.what());
+            return 1;
+        }
+        return 0;
+#endif
+    }
+
 
     if (command == "constrained") {
         // from, to, k, excluded reaction IDs, excluded compound IDs,

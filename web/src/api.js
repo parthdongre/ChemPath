@@ -45,6 +45,8 @@ export const api = {
   labCsr: () => request("/lab/csr"),
   labSynthetic: (nodes,edges,seed) => request(`/lab/synthetic?nodes=${nodes}&edges=${edges}&seed=${seed}`),
   ordStatus: () => request("/ord/status"),
+  ordPath: (from,to,maxExpanded=2500) =>
+    request(`/ord/path?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&maxExpanded=${maxExpanded}`),
   ordSearch: (q, limit=24) => request(`/ord/search?q=${encodeURIComponent(q)}&limit=${limit}`),
   ordReaction: (id) => request(`/ord/reaction/${encodeURIComponent(id)}`),
   ordNeighborhood: (smiles,limit=26) =>

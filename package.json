@@ -11,7 +11,8 @@
     "test:engine": "ctest --test-dir engine/build --output-on-failure",
     "dev": "concurrently \"npm --workspace server run dev\" \"npm --workspace web run dev\"",
     "build:web": "npm --workspace web run build",
-    "audit:chemistry": "node scripts/audit-chemistry.mjs"
+    "audit:chemistry": "node scripts/audit-chemistry.mjs",
+    "verify:release": "node scripts/verify-release.mjs"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

@@ -4,6 +4,25 @@
 
 > **Mid-semester stable build:** 690 compounds, 884 curated reaction records and about 3,044 directed compound-participation edges. The browser renders at most roughly 520 focused compounds for a smoother classroom demo.
 
+## End-semester release verification and demo
+
+After installing dependencies, you can verify the curated C++ engine, DSA
+algorithms, backend APIs, synthetic ORD SQLite integration, React production
+build and single-origin deployment **offline in one command**:
+
+~~~bash
+npm install
+npm run verify:release
+# Optional detailed JSON checklist for a project report:
+npm run verify:release -- --report /tmp/chempath-review.json
+npm run dev
+~~~
+
+The offline check does not download full Rhea or ORD source files.
+The optional ORD full index must be imported separately. See the
+[final review guide](docs/FINAL_REVIEW.md) for a seven-minute demonstration,
+file-by-file algorithm explanations, viva questions and limitations.
+
 ## Core idea
 
 Chemical compounds are represented as graph vertices and documented educational transformations as directed edges. ChemPath lets the user inspect that graph with multiple algorithms while seeing the traversal happen step by step.
@@ -277,7 +296,7 @@ ChemPath now supports an **on-demand local SQLite index** of the official
 [Open Reaction Database](https://huggingface.co/datasets/open-reaction-database/ord-data).
 The full upstream source contains millions of records and roughly gigabyte-scale
 Parquet files. The dataset files and SQLite database are downloaded on your
-machine, not committed to Git and not loaded into the React graph or C++ engine.
+machine, not committed to Git and not fully materialized in React or the C++ ORD search. The C++ engine can traverse indexed neighborhoods lazily from SQLite.
 
 ### Mac / Linux: install and sample the ORD dataset
 
@@ -314,6 +333,47 @@ The importer processes Parquet in batches and resumes completed source files.
 A full import requires substantial download space, SQLite storage and processing
 time; the existing curated and Rhea datasets remain usable while no ORD index
 is installed.
+
+### New: C++ shortest paths directly over the disk-backed ORD index
+
+Milestone C enables **C++ breadth-first search through the local full ORD
+SQLite index**, fetching only the reactant→product participation links needed
+for each expansion. The algorithm uses prepared SQL queries and an LRU
+adjacency cache, but does **not** load all ORD reaction records into memory.
+
+Upgrade an existing ORD SQLite database to the indexed graph schema:
+
+~~~bash
+python3 scripts/index-ord-graph.py --db data/ord/ord.sqlite
+npm run build:engine
+CHEMPATH_ORD_DB=data/ord/ord.sqlite ./engine/build/chempath ordpath CCO 'CC=O'
+npm run dev
+~~~
+
+The ORD Explorer now includes a **C++ on-demand shortest-path** panel.
+Every query clearly reports whether its result is complete or interrupted
+by a resource limit; a capped search is never labeled globally unreachable.
+The C++ search uses exact stored SMILES strings, not canonical molecular
+identity, and participation paths are not synthesis-feasibility proofs.
+
+### Reproducible DSA benchmark evidence
+
+The same deterministic synthetic ORD-shaped graphs are benchmarked with
+**eager in-memory BFS, persistent lazy SQLite BFS and cold SQLite BFS**.
+C++ records per-query timings, SQL access and cache metrics, setup time
+and process peak memory; the Python summarizer checks every exact path
+against the eager reference before generating a Markdown/JSON report.
+The full raw query pairs, CSV results and reports are downloadable as
+GitHub Actions benchmark artifacts. **These fixtures are synthetic, not
+real reaction examples**.
+
+See [docs/MILESTONE_C.md](docs/MILESTONE_C.md) for algorithm complexity,
+commands, tests, benchmark methodology and important limits.
+
+**Measured Release-mode benchmark results (900–30,000 synthetic vertices):**
+[docs/BENCHMARKS_MILESTONE_C.md](docs/BENCHMARKS_MILESTONE_C.md).
+The report includes exact-result checks, p50/p95, RSS, setup times and
+explicit limitations of small synthetic experiments.
 
 ### Use ORD with C++ BFS/Dijkstra/Tarjan
 

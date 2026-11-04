@@ -12,7 +12,8 @@
     "dev": "concurrently \"npm --workspace server run dev\" \"npm --workspace web run dev\"",
     "build:web": "npm --workspace web run build",
     "audit:chemistry": "node scripts/audit-chemistry.mjs",
-    "verify:release": "node scripts/verify-release.mjs"
+    "verify:release": "node scripts/verify-release.mjs",
+    "data:500k": "python3 scripts/import-pubchem.py"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

@@ -2,10 +2,22 @@
 // authoritative for pathfinding; this indexed catalog is NOT an edge graph.
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import Database from "better-sqlite3";
 
-const dbPath=path.resolve(process.env.CHEMPATH_PUBCHEM_DB||
-  path.join(process.env.CHEMPATH_DATA_DIR||"data","catalog","pubchem.sqlite"));
+// npm workspace commands launch the server with cwd=server/, whereas the
+// importer writes to the repository's data/ directory. Resolve the default
+// relative to THIS module, not the caller's current working directory.
+const repoRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
+export function catalogDatabasePath(env=process.env){
+  if(env.CHEMPATH_PUBCHEM_DB)
+    return path.resolve(env.CHEMPATH_PUBCHEM_DB);
+  const dataDir=env.CHEMPATH_DATA_DIR
+    ? path.resolve(env.CHEMPATH_DATA_DIR)
+    : path.join(repoRoot,"data");
+  return path.join(dataDir,"catalog","pubchem.sqlite");
+}
+const dbPath=catalogDatabasePath();
 let db=null;
 let openedMtime=null;
 let metadata=null;

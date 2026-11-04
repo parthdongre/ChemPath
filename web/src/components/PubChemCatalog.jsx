@@ -19,7 +19,20 @@ export default function PubChemCatalog(){
   const refresh=useCallback(()=>{
     api.catalogStatus().then(setStatus).catch(err=>setError(err.message));
   },[]);
-  useEffect(()=>{refresh();},[refresh]);
+  useEffect(()=>{
+    // Import happens outside the browser. Recheck after returning from the
+    // terminal, and periodically while the Data Library remains visible.
+    refresh();
+    const onFocus=()=>refresh();
+    window.addEventListener("focus",onFocus);
+    const poll=window.setInterval(()=>{
+      if(document.visibilityState==="visible")refresh();
+    },20000);
+    return ()=>{
+      window.removeEventListener("focus",onFocus);
+      window.clearInterval(poll);
+    };
+  },[refresh]);
   const load=useCallback(async(nextQuery="",after=null,append=false)=>{
     const request=++requestNumber.current;
     setBusy(true);setError("");

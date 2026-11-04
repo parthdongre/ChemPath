@@ -69,6 +69,27 @@ try {
   await page.locator(".graph-frame").screenshot({
     path: "screenshots/webgl-hosted.png", animations: "disabled"
   });
+
+  // Responsive real-Chromium QA on the same running application.
+  await page.setViewportSize({width:1920,height:1080});
+  await page.waitForTimeout(180);
+  await page.screenshot({path:"screenshots/studio-widescreen.png",animations:"disabled"});
+
+  await page.setViewportSize({width:390,height:844});
+  await page.waitForTimeout(180);
+  const mobileCanvas=await page.locator(".sigma-canvas").boundingBox();
+  assert.ok(mobileCanvas?.width>200 && mobileCanvas?.height>300,
+    "Mobile graph workspace is clipped or invisible");
+  await page.getByRole("button",{name:"Use light appearance"}).click();
+  assert.equal(await page.locator(".studio-app").getAttribute("data-theme"),"light");
+  await page.getByRole("button",{name:"Use dark appearance"}).click();
+  await page.locator('[data-studio-view="data"]').click();
+  await page.locator("#data-library").waitFor({state:"visible"});
+  await page.locator('[data-studio-view="explore"]').click();
+  await page.locator(".sigma-canvas").waitFor({state:"visible"});
+  await page.waitForTimeout(200);
+  await page.screenshot({path:"screenshots/studio-mobile.png",animations:"disabled"});
+
   assert.deepEqual(errors, [], "Browser JavaScript errors: " + errors.join("; "));
   console.log(JSON.stringify({
     status: "passed", webgl: rootWebGL, canvasCount, graphSize: size,

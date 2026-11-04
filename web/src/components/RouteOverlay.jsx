@@ -16,6 +16,8 @@ export default function RouteOverlay({graph,rendererRef,routeNodes=[],routeEdges
     const first=svg.querySelector(".sigma-route-start");
     const last=svg.querySelector(".sigma-route-end");
     const paths=[...svg.querySelectorAll("path")];
+    const originTag=svg.querySelector(".sigma-route-origin-label");
+    const destinationTag=svg.querySelector(".sigma-route-destination-label");
     let frame=0,disposed=false,camera=null;
     const draw=()=>{
       frame=0;
@@ -37,6 +39,22 @@ export default function RouteOverlay({graph,rendererRef,routeNodes=[],routeEdges
       first?.setAttribute("cy",String(points[0].y));
       last?.setAttribute("cx",String(points[points.length-1].x));
       last?.setAttribute("cy",String(points[points.length-1].y));
+      const annotate=(element,point,key,prefix)=>{
+        if(!element||!graph.hasNode(String(key)))return;
+        const compound=graph.getNodeAttributes(String(key));
+        const label=String(compound.formula||compound.name||key).slice(0,24);
+        const text=element.querySelector("text");
+        const box=element.querySelector("rect");
+        const width=Math.max(51,label.length*7+22);
+        const parentWidth=svg.parentElement?.clientWidth||900;
+        const x=Math.max(6,Math.min(parentWidth-width-6,point.x-width/2));
+        const y=Math.max(31,point.y-33);
+        element.setAttribute("transform","translate("+x+","+y+")");
+        if(text)text.textContent=label;
+        if(box)box.setAttribute("width",String(width));
+      };
+      annotate(originTag,points[0],routeNodes[0],"start");
+      annotate(destinationTag,points[points.length-1],routeNodes[routeNodes.length-1],"target");
       svg.style.opacity="1";
     };
     const schedule=()=>{
@@ -70,5 +88,13 @@ export default function RouteOverlay({graph,rendererRef,routeNodes=[],routeEdges
     <path className="sigma-route-path"/>
     <circle className="sigma-route-start" r="6.8"/>
     <circle className="sigma-route-end" r="7.9"/>
+    <g className="sigma-route-origin-label">
+      <rect x="0" y="0" height="24" rx="8"/>
+      <text x="11" y="15.5"/>
+    </g>
+    <g className="sigma-route-destination-label">
+      <rect x="0" y="0" height="24" rx="8"/>
+      <text x="11" y="15.5"/>
+    </g>
   </svg>;
 }

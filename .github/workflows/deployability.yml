@@ -64,6 +64,8 @@ jobs:
           path: |
             screenshots/webgl-hosted.png
             screenshots/studio-hosted.png
+            screenshots/studio-widescreen.png
+            screenshots/studio-mobile.png
           if-no-files-found: warn
       - name: Container logs
         if: failure()

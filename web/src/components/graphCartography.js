@@ -82,7 +82,7 @@ export function cartographicVisibility(index, {
   if(selected!=null)contextualNodes.add(String(selected));
   if(hasRoute&&!showAll){
     for(const entry of index.entries){
-      if(contextualEdges.size>=56)break;
+      if(contextualEdges.size>=110)break;
       if(routeNodeIds.has(entry.source)||routeNodeIds.has(entry.target)){
         contextualEdges.add(entry.id);
         contextualNodes.add(entry.source);
@@ -103,11 +103,18 @@ export function cartographicVisibility(index, {
       if(routeEdgeIds.has(entry.id)||contextualEdges.has(entry.id))
         visibleEdges.add(entry.id);
     }
-    // Maintain a tiny amount of geographical context without the hairball.
+    // A route should sit *within* a recognizable network, like a route in
+    // Apple Maps. Preserve a muted backbone and representative background
+    // compounds, while still drawing far fewer links than the full graph.
+    let placeCount=0;
+    for(const id of index.priority.keys()){
+      if(placeCount++>=index.counts.overviewNodes)break;
+      visibleNodes.add(id);
+    }
     for(const entry of index.entries){
-      if(visibleEdges.size>=86)break;
       if(index.overview.has(entry.id)){
-        visibleEdges.add(entry.id);visibleNodes.add(entry.source);visibleNodes.add(entry.target);
+        visibleEdges.add(entry.id);
+        visibleNodes.add(entry.source);visibleNodes.add(entry.target);
       }
     }
   }else{

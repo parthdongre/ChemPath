@@ -61,7 +61,9 @@ jobs:
         if: always()
         with:
           name: chempath-sigma-ui
-          path: screenshots/webgl-hosted.png
+          path: |
+            screenshots/webgl-hosted.png
+            screenshots/studio-hosted.png
           if-no-files-found: warn
       - name: Container logs
         if: failure()

@@ -104,10 +104,13 @@ try {
   const beforeDrag=await toolbar.boundingBox(),grip=await handle.boundingBox();
   await page.mouse.move(grip.x+grip.width/2,grip.y+grip.height/2);
   await page.mouse.down();
-  await page.mouse.move(grip.x+grip.width/2-65,grip.y+grip.height/2+90,{steps:7});
+  await page.mouse.move(grip.x+grip.width/2-145,grip.y+grip.height/2+205,{steps:9});
   await page.mouse.up();
   const afterDrag=await toolbar.boundingBox();
   assert.ok(afterDrag.y>beforeDrag.y+40,"Glass toolbar should be movable over live graph");
+  await page.locator(".graph-frame").screenshot({
+    path:"screenshots/studio-refractive-controls.png",animations:"disabled"
+  });
   assert.ok(afterDrag.x<beforeDrag.x-25,"Dragging should move controls horizontally");
   await handle.dblclick();
   await page.getByRole("button",{name:"Focus lens"}).click();

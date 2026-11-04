@@ -96,7 +96,7 @@ def import_compounds(
             "scope": existing.get("scope", "prefix"),
             "output": str(output),
             "source": existing.get("source_url"),
-            "hint": "Use --force (or npm run data:update) to fetch a fresh PubChem snapshot."
+            "hint": "Use --force to reimport explicitly from PubChem; existing data remains otherwise."
         }
         print(json.dumps(details, indent=2), flush=True)
         return details

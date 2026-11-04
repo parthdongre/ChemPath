@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import "./styles.css";
 import "./studio.css";
 import "./studio-cartography.css";
+import "./studio-liquid-optics.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

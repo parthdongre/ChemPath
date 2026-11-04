@@ -2,7 +2,7 @@
 
 **ChemPath** is an interactive chemical reaction-network explorer built as a Data Structures course project. The C++17 engine stores and searches the full reaction graph, while the browser renders a focused working set so the catalog can grow without forcing Cytoscape to lay out every compound at once.
 
-> **Two separate scales:** The curated reaction graph contains 690 compounds, 884 reaction records and ~3,044 directed participation links. A new optional **500,000 real PubChem CID–SMILES catalog** provides disk-backed structure search without implying that 500,000 compounds have reaction pathways. Install the catalog once with `npm run data:500k`.
+> **Two separate scales:** The curated reaction graph contains 690 compounds, 884 reaction records and ~3,044 directed participation links. The default extended catalog now supports **8,000,000 real PubChem CID–SMILES records** (optional full-source mode), with indexed disk search rather than a massive browser graph. Install or upgrade once with `npm run data:8m`. It does not imply 8 million connected reaction pathways.
 
 ## Product workspace (Studio UI)
 
@@ -18,7 +18,7 @@ compact navigation shell without changing the C++17 engine or HTTP API.
   Pareto analysis, consolidated into grouped Laboratory tools.
 - **Laboratory:** Learn / Optimize / Experiment groupings for existing DSA
   traces, SCCs, graph playground and benchmark instruments.
-- **Data Library:** curated compound directory, an optional **500k real PubChem CID–SMILES catalog**, and indexed ORD reaction database.
+- **Data Library:** curated compound directory, an optional **8M real PubChem CID–SMILES catalog**, and indexed ORD reaction database.
 - **Quick commands:** **⌘K** on macOS, **Ctrl+K** elsewhere, or **/** when
   not editing text. Search indexed compound names and change source/target.
 - **Appearance:** dark graphite and light themes, a collapsible sidebar,
@@ -32,26 +32,29 @@ workflow, which uploads desktop, widescreen and mobile screenshots.
 See [Studio design/implementation notes](docs/STUDIO_UI.md) for tokens,
 architecture, a walkthrough, and remaining accessibility/polish work.
 
-## Optional: install 500,000 real PubChem compounds
+## Extended compound catalog: 8 million PubChem structures
 
-ChemPath can browse **500,000 genuine PubChem compound structures** after
-one disk-backed import. The SQLite catalog is deliberately separate from the
-C++ reaction graph: new PubChem CIDs are **not** assumed to be connected
-by reactions, and the UI shows the actual installed count.
+ChemPath Studio's default extended catalog now supports **8,000,000 genuine
+PubChem compound CID/SMILES records** in an indexed SQLite database. Full
+PubChem CID–SMILES import remains opt-in. The C++ reaction graph and its
+actual reaction edges remain independent.
 
-~~~bash
-npm run data:500k        # Requires Python 3.10+ and a network connection once
-npm run dev              # Data Library → PubChem compound catalog
-~~~
+```bash
+npm run data:8m      # Build/upgrade to the recommended 8M compound catalog
+npm run data:sync    # After git pull: skip if 8M or more is already installed
+npm run data:500k    # Legacy smaller catalog; never downgrade larger installs
+npm run data:full    # Optional full PubChem CID–SMILES corpus
+npm run dev          # Data Library → PubChem compound catalog
+```
 
-The importer streams the official NCBI PubChem CID–SMILES gzip data, stops
-once 500,000 distinct CIDs are stored, and only publishes the index after
-verifying the exact record count. The browser uses indexed search and paged
-results instead of rendering half a million compounds at once.
+These files are local and gitignored: Git pulls do **not** re-download them,
+and unsuccessful upgrades do not replace a working catalog. The UI shows the
+actual installed count and prompts to upgrade a smaller installation.
 
-See [the PubChem 500k architecture, setup and scientific limits](docs/PUBCHEM_500K.md).
-The existing `npm run verify:release` remains offline and checks the
-importer using a small temporary CID–SMILES fixture, not the real 500k file.
+See [PubChem catalog installation and indexing guide](docs/PUBCHEM_CATALOG.md)
+for source attribution, disk/storage considerations, optional full-corpus
+behavior and the distinction between structures and reaction connectivity.
+Offline release tests use small fixtures; they do not claim an 8M import.
 
 ## End-semester release verification and demo
 

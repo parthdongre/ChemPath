@@ -4,6 +4,7 @@ import NetworkGraph from "./components/NetworkGraph.jsx";
 import SigmaNetwork from "./components/SigmaNetwork.jsx";
 import LabPanel from "./components/LabPanel.jsx";
 import OrdExplorer from "./components/OrdExplorer.jsx";
+import { StudioTopbar, StudioSidebar, StudioCommandPalette, StudioInspectorHeading } from "./components/StudioChrome.jsx";
 
 const EMPTY_HIGHLIGHT = { nodes: [], edges: [] };
 const MAX_SIMULATION_MS = 120_000;
@@ -742,6 +743,18 @@ function SimulationHud({ simulation, currentCompound, onSkip }) {
 export default function App() {
   const [network, setNetwork] = useState(null);
   const [rendererMode, setRendererMode] = useState('sigma');
+  const [studioView,setStudioView]=useState(()=>{
+    const hash=window.location.hash;
+    return hash==="#ord-database"||hash==="#data-library"?"data":
+      hash==="#algorithm-lab"?"lab":"explore";
+  });
+  const [sidebarCollapsed,setSidebarCollapsed]=useState(false);
+  const [inspectorOpen,setInspectorOpen]=useState(true);
+  const [commandOpen,setCommandOpen]=useState(false);
+  const [studioTheme,setStudioTheme]=useState(()=>{
+    try{return localStorage.getItem("chempath-theme")==="light"?"light":"dark";}
+    catch{return "dark";}
+  });
   const [neighborhood, setNeighborhood] = useState(null);
   const [neighborhoodError, setNeighborhoodError] = useState("");
   const [stats, setStats] = useState(null);
@@ -776,6 +789,28 @@ export default function App() {
   });
 
   const runTokenRef = useRef(0);
+  const setStudioPage=(view)=>{
+    setStudioView(view);
+    window.history.replaceState(null,"",window.location.pathname+window.location.search+
+      (view==="explore"?"#explorer":view==="data"?"#data-library":
+        view==="compare"?"#algorithm-compare":"#algorithm-lab"));
+  };
+  useEffect(()=>{
+    try{localStorage.setItem("chempath-theme",studioTheme);}
+    catch{/* ephemeral theme preference */}
+  },[studioTheme]);
+  useEffect(()=>{
+    const onKey=(event)=>{
+      const typing=event.target?.closest?.('input,textarea,select,[contenteditable="true"]');
+      if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==="k"){
+        event.preventDefault();setCommandOpen(open=>!open);
+      }else if(event.key==="/"&&!typing&&!event.metaKey&&!event.ctrlKey&&!event.altKey){
+        event.preventDefault();setCommandOpen(true);
+      }else if(event.key==="Escape"&&!typing)setCommandOpen(false);
+    };
+    document.addEventListener("keydown",onKey);
+    return ()=>document.removeEventListener("keydown",onKey);
+  },[]);
 
   useEffect(() => {
     Promise.all([api.network(), api.stats()])
@@ -1144,26 +1179,25 @@ export default function App() {
   }
 
   async function runPath() {
+    // Render computed paths immediately. Replay is a deliberate second action.
     cancelReplay();
     setBusy(true);
     setMode("path");
     setResult(null);
-
-    try {
-      const data = await api.path(from, to, pathAlgorithm);
+    try{
+      const data=await api.path(from,to,pathAlgorithm);
       setResult(data);
-
-      await replay(
-        data.visitedOrder,
-        data.algorithm,
-        buildPathHighlight(data)
-      );
-    } catch (error) {
-      setResult({ error: error.message });
+      setHighlight(buildPathHighlight(data));
+      setInspectorOpen(true);
+    }catch(error){
+      setResult({error:error.message});
       setHighlight(EMPTY_HIGHLIGHT);
-    } finally {
-      if (!simulation.running) setBusy(false);
-    }
+      setInspectorOpen(true);
+    }finally{setBusy(false);}
+  }
+  async function replayCurrentPath() {
+    if(!result?.found||simulation.running)return;
+    await replay(result.visitedOrder,result.algorithm,buildPathHighlight(result));
   }
 
   async function runDfs() {

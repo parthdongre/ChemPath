@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {createGlassDisplacement,REFRACTION_SCALE} from "../web/src/components/liquidOptics.js";
-import {buildOverviewClusters} from "../web/src/components/graphClusters.js";
+import {buildOverviewClusters,spreadClusterMarkers} from "../web/src/components/graphClusters.js";
 import {layoutKey,rememberLayout,restoreLayout,clearLayoutCache} from "../web/src/components/graphLayoutCache.js";
 
 test("a glass SDF keeps its center optically neutral",()=>{
@@ -64,4 +64,22 @@ test("layout caching restores coordinates and never mutates network records",()=
   assert.equal(restoreLayout("unrelated",graph),false);
   assert.equal(network.nodes[0].name,"A");
   clearLayoutCache();
+});
+
+test("cluster circles repel without overlapping at normal viewport size",()=>{
+  const points=[
+    {id:"a",x:100,y:100},{id:"b",x:115,y:105},
+    {id:"c",x:112,y:120},{id:"d",x:215,y:190}
+  ];
+  const spread=spreadClusterMarkers(points,500,400);
+  for(let i=0;i<spread.length;i++)for(let j=i+1;j<spread.length;j++){
+    const d=Math.hypot(spread[i].x-spread[j].x,spread[i].y-spread[j].y);
+    assert.ok(d>51,"Marker pair "+i+","+j+" should not overlap");
+  }
+  for(const p of spread){
+    assert.ok(p.x>=37&&p.x<=463);
+    assert.ok(p.y>=37&&p.y<=363);
+  }
+  assert.deepEqual(points[0],{id:"a",x:100,y:100},
+    "screen layout must not mutate input positions");
 });

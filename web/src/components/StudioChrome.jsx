@@ -56,7 +56,7 @@ export function StudioTopbar({
       <span className="studio-breadcrumb" aria-hidden="true"><ChevronRight size={14}/>{label}</span>
     </div>
     <div className="studio-top-actions">
-      <button type="button" className="studio-top-search" onClick={onSearch}
+      <button type="button" className="studio-top-search studio-liquid-glass" onClick={onSearch}
         aria-label="Search commands and compounds">
         <Search size={15}/><span>Search anything</span>
         <kbd>⌘ K</kbd>
@@ -116,7 +116,7 @@ export function StudioCommandPalette({
   return <div className="studio-command-overlay" onPointerDown={event=>{
       if(event.target===event.currentTarget)onClose();
     }}>
-    <section className="studio-command-dialog" role="dialog" aria-modal="true"
+    <section className="studio-command-dialog studio-liquid-glass" role="dialog" aria-modal="true"
       aria-label="Command palette" ref={dialog}>
       <div className="studio-command-input">
         <Search size={19}/>

@@ -5,6 +5,7 @@ import SigmaNetwork from "./components/SigmaNetwork.jsx";
 import LabPanel from "./components/LabPanel.jsx";
 import OrdExplorer from "./components/OrdExplorer.jsx";
 import { StudioTopbar, StudioSidebar, StudioCommandPalette, StudioInspectorHeading } from "./components/StudioChrome.jsx";
+import StudioGlassEffects from "./components/StudioGlassEffects.jsx";
 
 const EMPTY_HIGHLIGHT = { nodes: [], edges: [] };
 const MAX_SIMULATION_MS = 120_000;
@@ -1300,6 +1301,7 @@ export default function App() {
   const selectedCompound=compounds.find(compound=>compound.name===from)??null;
   return (
     <main className="site-shell studio-app" data-theme={studioTheme}>
+      <StudioGlassEffects/>
       <StudioTopbar
         view={studioView} status={status}
         onSearch={()=>setCommandOpen(true)}
@@ -1509,7 +1511,7 @@ export default function App() {
 
           {graphNetwork ? (
             <>
-              <div className="renderer-switch" role="group" aria-label="Graph renderer">
+              <div className="renderer-switch studio-liquid-glass" role="group" aria-label="Graph renderer">
                 <button type="button" className={rendererMode === "sigma" ? "active" : ""}
                   onClick={() => setRendererMode("sigma")}>GPU Network</button>
                 <button type="button" className={rendererMode === "cytoscape" ? "active" : ""}

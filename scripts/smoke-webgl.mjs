@@ -38,12 +38,35 @@ try {
   );
   assert.ok(rootWebGL, "No usable browser WebGL canvas");
 
+  // Real browser optical material: SDF maps, SVG displacement and CSS backdrop.
+  const optics=await page.locator(".sigma-toolbar").evaluate(element=>{
+    const first=getComputedStyle(element,"::before");
+    const mapCount=document.querySelectorAll(
+      ".studio-glass-svg-filter feDisplacementMap").length;
+    const mode=element.dataset.liquidRefraction;
+    return {mode,mapCount,backdrop:first.backdropFilter||first.webkitBackdropFilter,
+      prefersReduced:document.querySelector(".studio-app")?.dataset.reduceTransparency};
+  });
+  assert.ok(optics.mode==="displacement"||optics.mode==="frosted",
+    "Glass must declare real refractive or readable fallback mode");
+  if(optics.mode==="displacement"){
+    assert.ok(optics.mapCount>=3,"Refraction must use RGB displacement maps");
+    assert.match(optics.backdrop,/url\(/,
+      "Chrome liquid glass must bend its actual backdrop, not only a decorative highlight");
+  }
   // Cartographic detail is visualization-only; C++ paths are unaffected.
   const map=page.locator(".cartographic-graph");
   await map.waitFor({state:"visible"});
   assert.equal(await map.getAttribute("data-graph-detail"),"adaptive");
   await page.waitForFunction(()=>
     document.querySelector(".cartographic-graph")?.getAttribute("data-map-stage")==="overview");
+  const clusters=page.locator(".sigma-compound-cluster");
+  assert.ok(await clusters.count()>0,
+    "Map clarity overview must group nearby lower-salience compounds");
+  fs.mkdirSync("screenshots",{recursive:true});
+  await page.locator(".graph-frame").screenshot({
+    path:"screenshots/studio-clusters.png",animations:"disabled"
+  });
   const counts=await page.locator(".sigma-footnote").innerText();
   const match=counts.match(/([\d,]+)\/([\d,]+) drawn links/);
   assert.ok(match,"The visible/total graph-edge counts must be disclosed");
@@ -60,6 +83,8 @@ try {
   await page.waitForFunction(()=>
     document.querySelector(".cartographic-graph")?.getAttribute("data-map-stage")==="neighborhood",
     null,{timeout:10000});
+  assert.equal(await page.locator(".sigma-compound-cluster").count(),0,
+    "Zooming into neighborhood must dissolve overview clusters");
   await page.getByRole("button",{name:"Fit network"}).click();
   await page.waitForFunction(()=>
     document.querySelector(".cartographic-graph")?.getAttribute("data-map-stage")==="overview",

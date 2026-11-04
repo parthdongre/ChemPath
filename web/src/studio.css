@@ -414,6 +414,41 @@ to{opacity:1;transform:translateY(0) scale(1)}}
   .studio-footer{flex-direction:column;font-size:9px}
   .studio-command-overlay{padding-top:8vh}
 }
+
+/* Browser screenshot QA: keep graph status, renderer switch and camera controls
+ * in separate corners; the legacy overlay positioning overlapped text. */
+.studio-graph-grid .graph-caption{
+  top:auto;bottom:17px;right:auto;left:16px;
+  width:max-content;max-width:min(330px,46%);
+  display:block;padding:8px 10px;border:1px solid rgba(164,190,207,.18);
+  border-radius:9px;background:rgba(13,25,36,.88);
+  backdrop-filter:blur(10px);
+}
+.studio-graph-grid .graph-caption span{
+  color:#b2ccc9;font-size:9px;font-weight:530;letter-spacing:0;
+  overflow-wrap:anywhere;
+}
+.studio-graph-grid .graph-caption p{display:none}
+.studio-graph-grid .renderer-switch{
+  top:15px;left:15px;display:flex;gap:3px;padding:5px;
+  border:1px solid rgba(164,190,207,.18);border-radius:11px;
+  background:rgba(19,27,36,.90);backdrop-filter:blur(10px);
+  box-shadow:0 6px 28px rgba(0,0,0,.16);
+}
+.studio-graph-grid .renderer-switch button{
+  color:#a8bdc9;border-radius:7px;font-size:11px;padding:8px 11px}
+.studio-graph-grid .renderer-switch button.active{
+  background:rgba(93,214,193,.14);color:#7ce5d2}
+.studio-graph-grid .sigma-toolbar{top:15px!important}
+.studio-app .result-label span{font-family:inherit;font-size:9px;font-weight:700}
+@media(max-width:750px){
+  .studio-graph-grid .graph-caption{display:none}
+  .studio-graph-grid .graph-legend{max-width:calc(100% - 26px);flex-wrap:wrap;
+    justify-content:center;gap:7px;right:13px;left:13px;bottom:12px}
+  .studio-graph-grid .renderer-switch{top:12px;left:11px}
+  .studio-graph-grid .sigma-toolbar{top:60px!important;right:11px!important}
+}
+
 @media(prefers-reduced-motion:reduce){
   .studio-app *, .studio-command-dialog{animation-duration:.01ms!important;
     transition-duration:.01ms!important;scroll-behavior:auto!important}

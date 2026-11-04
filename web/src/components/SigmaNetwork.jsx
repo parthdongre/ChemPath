@@ -5,6 +5,8 @@ import Sigma from "sigma";
 import {buildCartographicIndex,cartographicVisibility,mapStageForRatio} from "./graphCartography.js";
 import GraphLens from "./GraphLens.jsx";
 import RouteOverlay from "./RouteOverlay.jsx";
+import {buildOverviewClusters} from "./graphClusters.js";
+import ClusterOverlay from "./ClusterOverlay.jsx";
 import "./SigmaNetwork.css";
 
 const palette = {
@@ -117,6 +119,16 @@ export default function SigmaNetwork({
     stage:mapStage,showAll:showAllLinks,routeNodes:highlightedNodeIds,
     routeEdges:highlightedEdgeIds,selected:selectedNodeId
   }),[cartography,mapStage,showAllLinks,highlightedNodeIds,highlightedEdgeIds,selectedNodeId]);
+  const clustersInfo=useMemo(()=>{
+    if(mapStage!=="overview"||showAllLinks||visibility.hasRoute)
+      return {clusters:[],hiddenNodeIds:new Set()};
+    return buildOverviewClusters(graph,cartography,visibility.visibleNodes);
+  },[graph,cartography,mapStage,showAllLinks,visibility]);
+  const displayedEdges=useMemo(()=>cartography.entries.filter(edge=>
+    visibility.visibleEdges.has(edge.id)&&
+    !clustersInfo.hiddenNodeIds.has(edge.source)&&
+    !clustersInfo.hiddenNodeIds.has(edge.target)
+  ).length,[cartography,visibility,clustersInfo]);
   const filters = useRef({});
   const [inspected, setInspected] = useState(null);
   const [edgeInfo, setEdgeInfo] = useState(null);
@@ -135,7 +147,8 @@ export default function SigmaNetwork({
     active: activeNodeId == null ? null : String(activeNodeId),
     selected: selectedNodeId == null ? null : String(selectedNodeId),
     simulationRunning, hovered: hoveredRef.current,
-    visibility, stage:mapStage, showAll:showAllLinks
+    visibility, stage:mapStage, showAll:showAllLinks,
+    clusterHidden:clustersInfo.hiddenNodeIds
   };
 
   useEffect(() => {
@@ -177,7 +190,8 @@ export default function SigmaNetwork({
           hovered?8:rank<14?6.5:rank<90?4.7:3.1;
         return {
           ...data,
-          hidden:!shown,
+          hidden:!shown||(!highlighted&&!selected&&!active&&
+            f.clusterHidden.has(key)),
           color:active?"#f4da9b":highlighted?"#66e4ce":
             selected?"#efc98e":secondary?"#496574":
             visited?"#85c7be":data.color,
@@ -194,7 +208,9 @@ export default function SigmaNetwork({
         const background=v.hasRoute&&!marked;
         return {
           ...data,
-          hidden:!v.visibleEdges.has(key),
+          hidden:!v.visibleEdges.has(key)||
+            f.clusterHidden.has(graph.source(key))||
+            f.clusterHidden.has(graph.target(key)),
           // Opaque packed colors avoid Chromium/SwiftShader alpha fallbacks.
           color:marked?"#6eead2":background?"#293e4b":
             tier==="arterial"?"#5d7787":tier==="collector"?"#405868":"#304454",
@@ -251,7 +267,7 @@ export default function SigmaNetwork({
   useEffect(() => {
     sigmaRef.current?.refresh();
   }, [highlightedNodeIds,highlightedEdgeIds,selectedNodeId,
-      visitedNodeIds,activeNodeId,simulationRunning,visibility,mapStage,showAllLinks]);
+      visitedNodeIds,activeNodeId,simulationRunning,visibility,mapStage,showAllLinks,clustersInfo]);
 
   useEffect(() => {
     const renderer = sigmaRef.current;
@@ -382,6 +398,7 @@ export default function SigmaNetwork({
     </div>
     <div className="sigma-canvas" ref={container} role="img"
       aria-label={"Reaction network: " + graph.order + " compounds, " + graph.size + " directed edges"} />
+    <ClusterOverlay clusters={clustersInfo.clusters} rendererRef={sigmaRef}/>
     <RouteOverlay graph={graph} rendererRef={sigmaRef}
       routeNodes={highlightedEdgeIds.length?highlightedNodeIds:[]}
       routeEdges={highlightedEdgeIds}/>
@@ -390,8 +407,9 @@ export default function SigmaNetwork({
       highlightedEdgeIds={highlightedEdgeIds} selectedNodeId={selectedNodeId}/>
     <div className="sigma-footnote studio-liquid-glass" data-liquid-glass="true" role="status">
       <strong>{visibility.mode}</strong>
-      <span>{visibility.visibleNodes.size.toLocaleString()}/{graph.order.toLocaleString()} compounds ·
-        {" "}{visibility.visibleEdges.size.toLocaleString()}/{graph.size.toLocaleString()} drawn links</span>
+      <span>{(visibility.visibleNodes.size-clustersInfo.hiddenNodeIds.size).toLocaleString()}/{graph.order.toLocaleString()} compounds ·
+        {" "}{displayedEdges.toLocaleString()}/{graph.size.toLocaleString()} drawn links</span>
+      {clustersInfo.clusters.length>0&&<span className="sigma-cluster-status">· {clustersInfo.clusters.length} groups</span>}
       {hovered&&graph.hasNode(hovered)&&<span> · {graph.getNodeAttribute(hovered,"name")}</span>}
       <small>{showAllLinks?"Every participation edge drawn":"Visual simplification only · zoom for more detail"}</small>
     </div>

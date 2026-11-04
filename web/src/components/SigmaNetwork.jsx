@@ -300,7 +300,16 @@ export default function SigmaNetwork({
       if(!liveRenderer)return;
       const {width,height}=liveRenderer.getDimensions();
       if(width<100||height<100)return;
-      const framed=points.map(point=>liveRenderer.graphToFramedGraph({x:point.x,y:point.y}));
+      // sigma@3's normalized framed coordinates are derived from its bbox.
+      // Avoid newer Sigma APIs unavailable in the pinned 3.x package.
+      const bbox=liveRenderer.getBBox();
+      const centerX=(bbox.x[0]+bbox.x[1])/2;
+      const centerY=(bbox.y[0]+bbox.y[1])/2;
+      const span=Math.max(bbox.x[1]-bbox.x[0],bbox.y[1]-bbox.y[0],1e-6);
+      const framed=points.map(point=>({
+        x:0.5+(point.x-centerX)/span,
+        y:0.5+(point.y-centerY)/span
+      }));
       const x=(Math.min(...framed.map(p=>p.x))+Math.max(...framed.map(p=>p.x)))/2;
       const y=(Math.min(...framed.map(p=>p.y))+Math.max(...framed.map(p=>p.y)))/2;
       const padX=Math.min(100,Math.max(40,width*.12));

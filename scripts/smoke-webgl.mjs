@@ -82,6 +82,14 @@ try {
   assert.equal(await page.locator(".studio-app").getAttribute("data-reduce-transparency"),"true");
   await page.getByRole("button",{name:"Enable transparency effects"}).click();
   assert.equal(await page.locator(".studio-app").getAttribute("data-reduce-transparency"),"false");
+  // Prevent glass surfaces from taking document flow space.
+  const toolbarBox=await page.locator(".sigma-toolbar").boundingBox();
+  const footerBox=await page.locator(".sigma-footnote").boundingBox();
+  const graphBox=await graph.boundingBox();
+  assert.ok(toolbarBox&&toolbarBox.width<470,
+    "Map controls must remain a compact floating toolbar");
+  assert.ok(footerBox&&graphBox&&footerBox.y>graphBox.y+graphBox.height-95,
+    "Graph status must stay anchored near the canvas bottom");
   // Verify the fallback renderer remains accessible.
   await page.getByRole("button", { name: "Path Layout" }).click();
   await page.locator(".network-canvas").waitFor({ state: "visible" });
@@ -97,6 +105,11 @@ try {
   assert.ok(await page.locator(".result-dock .reaction-audit-card").count()>0,
     "Computed route not shown immediately in inspector");
   fs.mkdirSync("screenshots", {recursive:true});
+  await page.evaluate(()=>{
+    document.documentElement.style.scrollBehavior="auto";
+    window.scrollTo(0,0);
+  });
+  await page.waitForTimeout(120);
   await page.screenshot({path:"screenshots/studio-hosted.png",animations:"disabled"});
   await page.locator(".graph-frame").screenshot({path:"screenshots/studio-cartography.png",animations:"disabled"});
   await page.locator('[data-studio-view="compare"]').click();
@@ -118,6 +131,7 @@ try {
   // Responsive real-Chromium QA on the same running application.
   await page.setViewportSize({width:1920,height:1080});
   await page.waitForTimeout(180);
+  await page.evaluate(()=>window.scrollTo(0,0));
   await page.screenshot({path:"screenshots/studio-widescreen.png",animations:"disabled"});
 
   await page.setViewportSize({width:390,height:844});

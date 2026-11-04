@@ -795,6 +795,7 @@ export default function App() {
     window.history.replaceState(null,"",window.location.pathname+window.location.search+
       (view==="explore"?"#explorer":view==="data"?"#data-library":
         view==="compare"?"#algorithm-compare":"#algorithm-lab"));
+    window.scrollTo({top:0,behavior:"instant"});
   };
   useEffect(()=>{
     const onResize=()=>{

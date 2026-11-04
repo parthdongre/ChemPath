@@ -33,6 +33,9 @@ jobs:
       - name: Verify optical glass, compound clustering and stable layouts
         run: node --test scripts/test-studio-optics.mjs
 
+      - name: Validate PubChem CID index and REST API with offline source fixture
+        run: node scripts/test-pubchem-catalog.mjs
+
       - name: Audit chemistry dataset
         run: npm run audit:chemistry
 

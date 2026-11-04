@@ -26,3 +26,8 @@ data/rhea/cache/
 data/rhea/full/
 __pycache__/
 *.pyc
+
+# Large sourced PubChem catalog is an optional local SQLite install.
+data/catalog/*.sqlite
+data/catalog/*.sqlite-*
+data/catalog/*.partial

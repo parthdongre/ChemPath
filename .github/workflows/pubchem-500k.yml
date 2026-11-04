@@ -1,0 +1,61 @@
+name: Build Real PubChem 500k Catalog
+
+# Downloads actual PubChem CID-SMILES data, not synthetic graph vertices.
+# Produces a local SQLite artifact that can be installed without reimporting.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/import-pubchem.py'
+      - '.github/workflows/pubchem-500k.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pubchem-500k-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  import-real-pubchem:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build 500,000 real PubChem CID records from official source
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if python3 scripts/import-pubchem.py; then
+              break
+            fi
+            if [ "$attempt" = 3 ]; then
+              echo "::error::Official PubChem mirror unavailable after 3 tries."
+              exit 1
+            fi
+            sleep 12
+          done
+      - name: Verify real record count, source and database indexes
+        run: |
+          python3 - <<'PY'
+          import sqlite3
+          db=sqlite3.connect('data/catalog/pubchem.sqlite')
+          actual=db.execute('SELECT COUNT(*) FROM compounds').fetchone()[0]
+          assert actual == 500_000, f'Expected 500k, got {actual}'
+          source=db.execute("SELECT value FROM catalog_meta WHERE key='source'").fetchone()[0]
+          assert source == 'PubChem Compound Extras', source
+          assert db.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
+          indexes=[row[1] for row in db.execute("PRAGMA index_list('compounds')")]
+          assert 'idx_compounds_smiles' in indexes,indexes
+          print('VALIDATED: 500,000 actual PubChem CID-SMILES records')
+          db.close()
+          PY
+      - name: Publish 500k compound database for offline installation
+        uses: actions/upload-artifact@v4
+        with:
+          name: pubchem-500k-real-sqlite
+          path: data/catalog/pubchem.sqlite
+          retention-days: 14
+          compression-level: 5
+          if-no-files-found: error

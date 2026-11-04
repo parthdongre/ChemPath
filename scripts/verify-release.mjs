@@ -35,6 +35,7 @@ const checks = [
   ["C++ engine, CSR, dependency, Pareto and ORD tests", "npm", ["run", "test:engine"]],
   ["Persistent C++/Node DSA API", process.execPath, ["scripts/smoke-api.mjs"]],
   ["On-demand ORD SQLite integration", process.execPath, ["scripts/test-ord-api.mjs"]],
+  ["PubChem CID catalog SQLite integration (offline fixture)", process.execPath, ["scripts/test-pubchem-catalog.mjs"]],
   ["Production React build", "npm", ["run", "build:web"]],
   ["Single-origin production API + frontend", process.execPath, ["scripts/smoke-production.mjs"]],
 ];
@@ -55,6 +56,7 @@ const evidence = {
   excludedFromThisCheck: [
     "online full Rhea download", "complete real ORD corpus performance",
     "experimental chemical synthesis validation",
+    "full online PubChem 500k catalog import (requires npm run data:500k)",
   ],
   checks: [],
   success: false,

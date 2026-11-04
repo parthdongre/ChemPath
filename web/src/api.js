@@ -44,6 +44,12 @@ export const api = {
     request(`/lab/edit?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&mode=${mode}&edgeFrom=${edgeFrom}&edgeTo=${edgeTo}&reactionId=${reactionId}&weight=${weight}`),
   labCsr: () => request("/lab/csr"),
   labSynthetic: (nodes,edges,seed) => request(`/lab/synthetic?nodes=${nodes}&edges=${edges}&seed=${seed}`),
+  catalogStatus: () => request("/catalog/status"),
+  catalogSearch: (q="",limit=24,after=null) =>
+    request("/catalog/search?"+new URLSearchParams({
+      q,limit:String(limit),...(after!=null?{after:String(after)}:{})
+    })),
+  catalogCompound: cid => request("/catalog/compound/"+encodeURIComponent(cid)),
   ordStatus: () => request("/ord/status"),
   ordPath: (from,to,maxExpanded=2500) =>
     request(`/ord/path?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&maxExpanded=${maxExpanded}`),

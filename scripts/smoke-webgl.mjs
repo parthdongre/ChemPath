@@ -223,6 +223,23 @@ try {
   await page.getByRole("button",{name:"Use dark appearance"}).click();
   await page.locator('[data-studio-view="data"]').click();
   await page.locator("#data-library").waitFor({state:"visible"});
+  const pubchem=page.locator(".pubchem-catalog");
+  await pubchem.waitFor({state:"visible",timeout:10000});
+  const pubchemStatus=await page.evaluate(async()=>{
+    const response=await fetch("/api/catalog/status");
+    return response.json();
+  });
+  assert.equal(pubchemStatus.target,500000,"The PubChem catalog target must be 500k");
+  assert.ok(await pubchem.getByText("500,000").count()>0,
+    "Data Library must show the exact PubChem target");
+  if(!pubchemStatus.available){
+    await pubchem.getByText("npm run data:500k").first()
+      .waitFor({state:"visible",timeout:10000});
+  }
+  await pubchem.screenshot({
+    path:"screenshots/studio-pubchem-catalog.png",animations:"disabled"
+  });
+
   await page.locator('[data-studio-view="explore"]').click();
   await page.locator(".sigma-canvas").waitFor({state:"visible"});
   await page.waitForTimeout(200);

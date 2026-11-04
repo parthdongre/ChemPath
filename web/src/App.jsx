@@ -4,6 +4,7 @@ import NetworkGraph from "./components/NetworkGraph.jsx";
 import SigmaNetwork from "./components/SigmaNetwork.jsx";
 import LabPanel from "./components/LabPanel.jsx";
 import OrdExplorer from "./components/OrdExplorer.jsx";
+import PubChemCatalog from "./components/PubChemCatalog.jsx";
 import { StudioTopbar, StudioSidebar, StudioCommandPalette, StudioInspectorHeading } from "./components/StudioChrome.jsx";
 import StudioGlassEffects from "./components/StudioGlassEffects.jsx";
 
@@ -1739,7 +1740,7 @@ export default function App() {
             <div>
               <span className="studio-section-eyebrow">WORKSPACE / DATA LIBRARY</span>
               <h1>Discover the data<span className="studio-title-period">.</span></h1>
-              <p>Explore compounds, reaction records, and local source collections.</p>
+              <p>Browse the curated reaction graph and the optional 500,000-compound PubChem structure catalog.</p>
             </div>
             <button type="button" className="studio-compact-btn" onClick={()=>setStudioPage("explore")}>Back to graph ↗</button>
           </div>
@@ -1776,6 +1777,7 @@ export default function App() {
               )
             }
           />
+          <PubChemCatalog/>
           <OrdExplorer/>
         </section>
       )}

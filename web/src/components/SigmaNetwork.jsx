@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { MultiDirectedGraph } from "graphology";
 import forceAtlas2 from "graphology-layout-forceatlas2";
 import Sigma from "sigma";
+import {GripVertical} from "lucide-react";
 import {buildCartographicIndex,cartographicVisibility,mapStageForRatio} from "./graphCartography.js";
 import GraphLens from "./GraphLens.jsx";
 import RouteOverlay from "./RouteOverlay.jsx";
@@ -113,6 +114,8 @@ export default function SigmaNetwork({
   onSelectEdge, showPopovers = true
 }) {
   const container = useRef(null);
+  const glassBar=useRef(null);
+  const glassDrag=useRef(null);
   const sigmaRef = useRef(null);
   const graph = useMemo(() => buildGraph(network), [network]);
   const cartography=useMemo(()=>buildCartographicIndex(graph),[graph]);
@@ -371,9 +374,59 @@ export default function SigmaNetwork({
     };
   },[graph,highlightedNodeIds,highlightedEdgeIds,simulationRunning]);
 
+  const onGlassDragStart=event=>{
+    if(event.button!==0)return;
+    const bar=glassBar.current,region=bar?.parentElement;
+    if(!bar||!region)return;
+    const rect=bar.getBoundingClientRect(),bounds=region.getBoundingClientRect();
+    glassDrag.current={
+      pointer:event.pointerId,startX:event.clientX,startY:event.clientY,
+      startOffsetX:Number(bar.dataset.offsetX)||0,
+      startOffsetY:Number(bar.dataset.offsetY)||0,
+      rect,bounds
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  };
+  const onGlassDragMove=event=>{
+    const d=glassDrag.current,bar=glassBar.current;
+    if(!d||!bar||d.pointer!==event.pointerId)return;
+    const x=d.startOffsetX+event.clientX-d.startX;
+    const y=d.startOffsetY+event.clientY-d.startY;
+    const leftAtZero=d.rect.left-d.startOffsetX;
+    const topAtZero=d.rect.top-d.startOffsetY;
+    const nextX=Math.max(d.bounds.left+9-leftAtZero,
+      Math.min(d.bounds.right-9-d.rect.width-leftAtZero,x));
+    const nextY=Math.max(d.bounds.top+9-topAtZero,
+      Math.min(d.bounds.bottom-9-d.rect.height-topAtZero,y));
+    bar.dataset.offsetX=String(nextX);
+    bar.dataset.offsetY=String(nextY);
+    bar.style.transform="translate3d("+nextX+"px,"+nextY+"px,0)";
+  };
+  const onGlassDragEnd=event=>{
+    const d=glassDrag.current;
+    if(!d||d.pointer!==event.pointerId)return;
+    if(event.currentTarget.hasPointerCapture(event.pointerId))
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    glassDrag.current=null;
+  };
+  const resetGlassBar=()=>{
+    const bar=glassBar.current;
+    if(!bar)return;
+    bar.dataset.offsetX="0";bar.dataset.offsetY="0";
+    bar.style.transform="translate3d(0,0,0)";
+  };
+
   return <div className="sigma-shell cartographic-graph" data-map-stage={mapStage}
     data-graph-detail={showAllLinks?"all":"adaptive"}>
-    <div className="sigma-toolbar studio-liquid-glass" data-liquid-glass="true">
+    <div className="sigma-toolbar studio-liquid-glass" data-liquid-glass="true" ref={glassBar}>
+      <button type="button" className="sigma-toolbar-drag"
+        aria-label="Move glass controls" title="Drag to reposition · double-click to reset"
+        onPointerDown={onGlassDragStart}
+        onPointerMove={onGlassDragMove}
+        onPointerUp={onGlassDragEnd}
+        onPointerCancel={onGlassDragEnd}
+        onDoubleClick={resetGlassBar}><GripVertical size={15}/></button>
       <div className="sigma-map-modes" role="group" aria-label="Graph rendering detail">
         <button type="button" aria-pressed={!showAllLinks} className={!showAllLinks?"selected":""}
           onClick={()=>setShowAllLinks(false)} title="Map-like clarity with progressive detail">Map clarity</button>

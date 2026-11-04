@@ -43,12 +43,26 @@ try {
   await page.locator(".network-canvas").waitFor({ state: "visible" });
   await page.getByRole("button", { name: "GPU Network" }).click();
   await page.locator(".sigma-canvas").waitFor({ state: "visible" });
-  await page.locator("#algorithm-lab").scrollIntoViewIfNeeded();
+  // Product shell: keyboard command palette and instant path results.
+  await page.keyboard.press("Control+k");
+  await page.getByRole("dialog", {name:"Command palette"}).waitFor({state:"visible"});
+  await page.keyboard.press("Escape");
+  await page.getByRole("dialog", {name:"Command palette"}).waitFor({state:"hidden"});
+  await page.getByRole("button", {name:"Find pathway"}).click();
+  await page.locator(".result-dock .run-meta").waitFor({state:"visible",timeout:35000});
+  assert.ok(await page.locator(".result-dock .reaction-audit-card").count()>0,
+    "Computed route not shown immediately in inspector");
+  fs.mkdirSync("screenshots", {recursive:true});
+  await page.screenshot({path:"screenshots/studio-hosted.png",animations:"disabled"});
+  await page.locator('[data-studio-view="compare"]').click();
+  await page.locator("#algorithm-lab").waitFor({state:"visible"});
   await page.locator("#algorithm-lab .lab-tabs button").filter({ hasText: "Comparison" }).click();
   await page.getByRole("button", { name: "Compare all 8 algorithms" }).click();
   await page.locator(".lab-compare-row").nth(8).waitFor({ state: "visible", timeout: 35000 });
 
   // Capture running GPU graph, not a mockup or static rendering.
+  await page.locator('[data-studio-view="explore"]').click();
+  await page.locator(".sigma-canvas").waitFor({state:"visible",timeout:35000});
   await page.evaluate(() => document.querySelector(".graph-frame").scrollIntoView());
   await page.waitForTimeout(350);
   fs.mkdirSync("screenshots", { recursive: true });
@@ -58,7 +72,8 @@ try {
   assert.deepEqual(errors, [], "Browser JavaScript errors: " + errors.join("; "));
   console.log(JSON.stringify({
     status: "passed", webgl: rootWebGL, canvasCount, graphSize: size,
-    comparisonRows: 8, screenshot: "screenshots/webgl-hosted.png"
+    comparisonRows: 8, screenshot: "screenshots/webgl-hosted.png",
+    studioScreenshot: "screenshots/studio-hosted.png"
   }));
 } finally {
   await browser.close();

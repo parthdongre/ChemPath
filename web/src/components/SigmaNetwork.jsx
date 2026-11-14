@@ -292,7 +292,7 @@ export default function SigmaNetwork({
       sigmaRef.current = null;
       renderer.kill();
     };
-  }, [graph]); // highlight changes refresh the existing WebGL canvas, not rebuild it.
+  }, [graph, cartography]); // cartography derives from graph; highlight changes refresh the existing WebGL canvas, not rebuild it.
 
   useEffect(() => {
     sigmaRef.current?.refresh();

@@ -1,0 +1,9 @@
+node_modules/
+web/dist/
+engine/
+data/
+docs/
+*.md
+*.py
+*.yml
+*.json

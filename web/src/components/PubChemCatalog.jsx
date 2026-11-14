@@ -1,6 +1,6 @@
 import {useCallback,useEffect,useRef,useState} from "react";
 import {Check,ChevronRight,Copy,Download,ExternalLink,RefreshCw,Search} from "lucide-react";
-import {api} from "../api.js";
+import {api,isAbortError} from "../api.js";
 import {Alert,AlertDescription,AlertTitle} from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
 import {Card,CardAction,CardContent,CardDescription,CardHeader,CardTitle} from "@/components/ui/card";
@@ -25,6 +25,7 @@ export default function PubChemCatalog(){
   const [error,setError]=useState("");
   const [selected,setSelected]=useState(null);
   const requestNumber=useRef(0);
+  const controllerRef=useRef(null);
   const [copied,setCopied]=useState(false);
   const copyCommand=()=>{
     navigator.clipboard?.writeText("npm run data:8m").then(()=>{
@@ -50,14 +51,18 @@ export default function PubChemCatalog(){
   },[refresh]);
   const load=useCallback(async(nextQuery="",after=null,append=false)=>{
     const request=++requestNumber.current;
+    // Cancel the previous page request; the counter still guards late replies.
+    controllerRef.current?.abort();
+    const controller=new AbortController();
+    controllerRef.current=controller;
     setBusy(true);setError("");
     try{
-      const page=await api.catalogSearch(nextQuery,24,after);
+      const page=await api.catalogSearch(nextQuery,24,after,{signal:controller.signal});
       if(request!==requestNumber.current)return;
       setItems(old=>append?[...old,...page.matches]:page.matches);
       setCursor(page.nextAfter);
     }catch(err){
-      if(request===requestNumber.current)setError(err.message);
+      if(request===requestNumber.current&&!isAbortError(err))setError(err.message);
     }finally{
       if(request===requestNumber.current)setBusy(false);
     }

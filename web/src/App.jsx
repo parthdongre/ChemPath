@@ -1,10 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { api } from "./api";
-import NetworkGraph from "./components/NetworkGraph.jsx";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
+import { api, isAbortError } from "./api";
 import SigmaNetwork from "./components/SigmaNetwork.jsx";
-import LabPanel from "./components/LabPanel.jsx";
-import OrdExplorer from "./components/OrdExplorer.jsx";
-import PubChemCatalog from "./components/PubChemCatalog.jsx";
 import { StudioTopbar, StudioCommandPalette, StudioInspectorHeading } from "./components/StudioChrome.jsx";
 import Formula from "./components/Formula.jsx";
 import { ThemeContext, categoryColor } from "./theme.js";
@@ -29,6 +25,19 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnnotatedText } from "@/components/ui/annotated-text";
 import { SplitFlapDisplay } from "@/components/ui/split-flap-display";
 import { Hint, MapPanel, PageHeader, SectionHeader, Stat, StatStrip } from "@/components/studio/primitives.jsx";
+
+// Views outside the default Explore map load on demand. The Cytoscape diagram,
+// the laboratory and the data library account for most of the bundle.
+const NetworkGraph = lazy(() => import("./components/NetworkGraph.jsx"));
+const LabPanel = lazy(() => import("./components/LabPanel.jsx"));
+const OrdExplorer = lazy(() => import("./components/OrdExplorer.jsx"));
+const PubChemCatalog = lazy(() => import("./components/PubChemCatalog.jsx"));
+
+function ViewLoading() {
+  return <div className="grid min-h-40 place-items-center" role="status" aria-label="Loading">
+    <Spinner className="size-5"/>
+  </div>;
+}
 
 const EMPTY_HIGHLIGHT = { nodes: [], edges: [] };
 const MAX_SIMULATION_MS = 120_000;
@@ -723,16 +732,22 @@ export default function App() {
       return;
     }
 
+    // Abort the previous request so a slow, stale response cannot overwrite
+    // results for what the user has typed since.
+    const controller = new AbortController();
     const timer = window.setTimeout(() => {
-      api.search(value)
+      api.search(value, { signal: controller.signal })
         .then((data) => setMatches(data.matches || []))
-        .catch(() => setMatches([]));
+        .catch((error) => { if (!isAbortError(error)) setMatches([]); });
     }, 120);
 
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
   }, [search]);
 
-  const compounds = network?.nodes ?? [];
+  const compounds = useMemo(() => network?.nodes ?? [], [network]);
 
   const directoryCategories = useMemo(() => {
     const values = Array.from(
@@ -1331,15 +1346,17 @@ export default function App() {
                   onExpandNode={(id, name) => expandNeighborhood(name)}
                 />
               ) : (
-                <NetworkGraph
-                  network={graphNetwork}
-                  highlightedNodeIds={highlight.nodes}
-                  highlightedEdgeIds={highlight.edges}
-                  selectedNodeId={selectedFromId}
-                  visitedNodeIds={simulation.visited}
-                  activeNodeId={simulation.active}
-                  simulationRunning={simulation.running}
-                />
+                <Suspense fallback={<ViewLoading/>}>
+                  <NetworkGraph
+                    network={graphNetwork}
+                    highlightedNodeIds={highlight.nodes}
+                    highlightedEdgeIds={highlight.edges}
+                    selectedNodeId={selectedFromId}
+                    visitedNodeIds={simulation.visited}
+                    activeNodeId={simulation.active}
+                    simulationRunning={simulation.running}
+                  />
+                </Suspense>
               )}
             </>
           ) : (
@@ -1490,7 +1507,9 @@ export default function App() {
               : <>Step through traces of the C++ data structures
                   for <b className="font-medium text-foreground">{from}</b> → <b className="font-medium text-foreground">{to}</b>, and run experiments.</>}
           </PageHeader>
-          <LabPanel network={network} from={from} to={to} viewMode={studioView}/>
+          <Suspense fallback={<ViewLoading/>}>
+            <LabPanel network={network} from={from} to={to} viewMode={studioView}/>
+          </Suspense>
         </section>
       )}
 
@@ -1541,8 +1560,10 @@ export default function App() {
               )
             }
           />
-          <PubChemCatalog/>
-          <OrdExplorer/>
+          <Suspense fallback={<ViewLoading/>}>
+            <PubChemCatalog/>
+            <OrdExplorer/>
+          </Suspense>
         </section>
       )}
       </div>

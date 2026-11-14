@@ -111,7 +111,7 @@ export function catalogSearch(query,rawLimit,rawAfter){
       .all(after,limit);
   }else{
     if(after)failure("after cursor is supported for browse mode only");
-    const match=/^(?:cid[: #\-]*)?(\d{1,12})$/i.exec(q);
+    const match=/^(?:cid[: #-]*)?(\d{1,12})$/i.exec(q);
     if(match){
       mode="cid";
       rows=handle.prepare("SELECT cid,smiles FROM compounds WHERE cid=? LIMIT 1")

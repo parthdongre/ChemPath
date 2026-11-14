@@ -6,7 +6,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY . .
-RUN npm install --no-audit --no-fund
+# Install exactly what package-lock.json pins. Install scripts are skipped:
+# better-sqlite3 ships prebuilt binaries, but with the committed lockfile the
+# image's npm 10 would otherwise try `node-gyp rebuild`, which needs Python.
+RUN npm ci --ignore-scripts --no-audit --no-fund
 RUN cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release \
  && cmake --build engine/build --config Release -j 2
 RUN npm run build:web

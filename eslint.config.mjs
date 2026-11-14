@@ -48,7 +48,10 @@ export default [
     rules: {
       // Input validation intentionally matches control characters.
       "no-control-regex": "off",
-      "no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^(_|React$)", caughtErrors: "none" }]
+      "no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^(_|React$)", caughtErrors: "none" }
+      ]
     }
   }
 ];

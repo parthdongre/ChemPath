@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState, useCallback } from "react";
 
@@ -14,12 +14,7 @@ function getNextChar(current) {
 
 /* ─── Individual Flap Cell ──────────────────────────────────── */
 
-function FlapCell({
-  targetChar,
-  size = "md",
-  delay = 0,
-  flipSpeed = 35
-}) {
+function FlapCell({ targetChar, size = "md", delay = 0, flipSpeed = 35 }) {
   const [displayChar, setDisplayChar] = useState(" ");
   const [isFlipping, setIsFlipping] = useState(false);
   const [flipPhase, setFlipPhase] = useState("idle");
@@ -46,7 +41,7 @@ function FlapCell({
       setIsFlipping(true);
 
       intervalRef.current = setInterval(() => {
-        setDisplayChar((prev) => {
+        setDisplayChar(prev => {
           const next = getNextChar(prev);
           // Trigger flip animation phases
           setFlipPhase("top-down");
@@ -74,17 +69,14 @@ function FlapCell({
   const sizeMap = {
     sm: { cell: "w-[26px] h-[38px] text-[16px]", gap: "gap-[1px]" },
     md: { cell: "w-[38px] h-[54px] text-[24px]", gap: "gap-[1px]" },
-    lg: { cell: "w-[52px] h-[72px] text-[34px]", gap: "gap-[2px]" },
+    lg: { cell: "w-[52px] h-[72px] text-[34px]", gap: "gap-[2px]" }
   };
 
   const s = sizeMap[size];
 
   return (
     <div
-      className={cn(
-        "relative select-none font-mono font-bold",
-        s.cell
-      )}
+      className={cn("relative select-none font-mono font-bold", s.cell)}
       style={{ perspective: "400px" }}
     >
       {/* ── Static top half ──────────────── */}
@@ -92,7 +84,7 @@ function FlapCell({
         className="absolute inset-x-0 top-0 h-1/2 overflow-hidden rounded-t-[3px]"
         style={{
           background: "linear-gradient(180deg, #1e1e1e 0%, #181818 100%)",
-          borderBottom: "none",
+          borderBottom: "none"
         }}
       >
         <span
@@ -107,7 +99,7 @@ function FlapCell({
       <div
         className="absolute inset-x-0 bottom-0 h-1/2 overflow-hidden rounded-b-[3px]"
         style={{
-          background: "linear-gradient(180deg, #151515 0%, #111111 100%)",
+          background: "linear-gradient(180deg, #151515 0%, #111111 100%)"
         }}
       >
         <span
@@ -125,7 +117,7 @@ function FlapCell({
           style={{
             background: "linear-gradient(180deg, #222 0%, #1a1a1a 100%)",
             transformOrigin: "bottom center",
-            animation: `flapTopDown ${flipSpeed * 0.4}ms ease-in forwards`,
+            animation: `flapTopDown ${flipSpeed * 0.4}ms ease-in forwards`
           }}
         >
           <span
@@ -144,7 +136,7 @@ function FlapCell({
           style={{
             background: "linear-gradient(180deg, #181818 0%, #111 100%)",
             transformOrigin: "top center",
-            animation: `flapBottomUp ${flipSpeed * 0.4}ms ease-out forwards`,
+            animation: `flapBottomUp ${flipSpeed * 0.4}ms ease-out forwards`
           }}
         >
           <span
@@ -161,8 +153,9 @@ function FlapCell({
         className="absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 pointer-events-none"
         style={{
           height: "2px",
-          background: "linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.9) 100%)",
-          boxShadow: "0 1px 0 rgba(255,255,255,0.04)",
+          background:
+            "linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.9) 100%)",
+          boxShadow: "0 1px 0 rgba(255,255,255,0.04)"
         }}
       />
 
@@ -170,7 +163,7 @@ function FlapCell({
       <div
         className="absolute inset-0 rounded-[3px] z-20 pointer-events-none"
         style={{
-          boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5), inset 0 -1px 2px rgba(0,0,0,0.3)",
+          boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5), inset 0 -1px 2px rgba(0,0,0,0.3)"
         }}
       />
     </div>
@@ -179,17 +172,14 @@ function FlapCell({
 
 /* ─── Indicator Strip (green side bar) ──────────────────────── */
 
-function IndicatorStrip({
-  color = "#22c55e",
-  size = "md"
-}) {
+function IndicatorStrip({ color = "#22c55e", size = "md" }) {
   const heightMap = { sm: "h-[38px]", md: "h-[54px]", lg: "h-[72px]" };
   return (
     <div
       className={cn("w-[6px] rounded-[2px] flex-shrink-0 self-stretch", heightMap[size])}
       style={{
         background: `linear-gradient(180deg, ${color} 0%, ${color}99 40%, ${color}66 60%, ${color}99 100%)`,
-        boxShadow: `0 0 8px ${color}44, inset 0 1px 2px rgba(255,255,255,0.2)`,
+        boxShadow: `0 0 8px ${color}44, inset 0 1px 2px rgba(255,255,255,0.2)`
       }}
     />
   );
@@ -276,15 +266,12 @@ export function SplitFlapDisplay({
   if (text && !rows) {
     return (
       <div
-        className={cn(
-          "inline-flex flex-col gap-2 p-4 rounded-2xl",
-          className
-        )}
+        className={cn("inline-flex flex-col gap-2 p-4 rounded-2xl", className)}
         style={{
           background: "linear-gradient(145deg, #0c0c0c 0%, #080808 50%, #0a0a0a 100%)",
           border: "1px solid rgba(255,255,255,0.06)",
           boxShadow:
-            "0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.04)",
+            "0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.04)"
         }}
       >
         <FlapRow
@@ -303,15 +290,12 @@ export function SplitFlapDisplay({
   // Multi-row board mode
   return (
     <div
-      className={cn(
-        "inline-flex flex-col gap-2 p-5 rounded-2xl",
-        className
-      )}
+      className={cn("inline-flex flex-col gap-2 p-5 rounded-2xl", className)}
       style={{
         background: "linear-gradient(145deg, #0c0c0c 0%, #080808 50%, #0a0a0a 100%)",
         border: "1px solid rgba(255,255,255,0.06)",
         boxShadow:
-          "0 25px 80px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.04)",
+          "0 25px 80px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.04)"
       }}
     >
       {(rows ?? []).map((row, idx) => {

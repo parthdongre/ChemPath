@@ -28,11 +28,12 @@ export function createEnginePool({
 
   function spawnWorker(slot) {
     const child = spawn(enginePath, ["serve", "--data", dataDir], {
-      cwd, stdio: ["pipe", "pipe", "pipe"]
+      cwd,
+      stdio: ["pipe", "pipe", "pipe"]
     });
     const worker = { slot, child, job: null, alive: true };
     const lines = readline.createInterface({ input: child.stdout });
-    lines.on("line", (line) => {
+    lines.on("line", line => {
       const job = worker.job;
       if (!job) return;
       worker.job = null;
@@ -51,8 +52,8 @@ export function createEnginePool({
       }
       dispatch();
     });
-    child.stderr.on("data", (chunk) => log.warn("[ChemPath engine]", String(chunk)));
-    const stop = (cause) => {
+    child.stderr.on("data", chunk => log.warn("[ChemPath engine]", String(chunk)));
+    const stop = cause => {
       if (!worker.alive) return;
       worker.alive = false;
       if (workers[slot] === worker) workers[slot] = null;
@@ -63,9 +64,9 @@ export function createEnginePool({
       }
       dispatch();
     };
-    child.on("error", (err) => stop(err.message));
-    child.on("exit", (code) => stop("exit code " + code));
-    child.stdin.on("error", (err) => stop(err.message));
+    child.on("error", err => stop(err.message));
+    child.on("exit", code => stop("exit code " + code));
+    child.stdin.on("error", err => stop(err.message));
     workers[slot] = worker;
     return worker;
   }
@@ -98,7 +99,7 @@ export function createEnginePool({
   }
 
   function run(args = []) {
-    if (args.some((part) => /[\t\r\n]/.test(String(part)))) {
+    if (args.some(part => /[\t\r\n]/.test(String(part)))) {
       return Promise.reject(httpError("Invalid control characters in request", 400));
     }
     if (!fs.existsSync(enginePath)) {

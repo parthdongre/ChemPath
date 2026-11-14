@@ -8,14 +8,20 @@ const rows = fs.readFileSync(reactionsPath, "utf8").trim().split("\n");
 
 const header = rows.shift()?.split("|") ?? [];
 const expectedHeader = [
-  "id","name","reactants","products","equation","conditions",
-  "reversible","note","source","cost"
+  "id",
+  "name",
+  "reactants",
+  "products",
+  "equation",
+  "conditions",
+  "reversible",
+  "note",
+  "source",
+  "cost"
 ];
 
 if (JSON.stringify(header) !== JSON.stringify(expectedHeader)) {
-  throw new Error(
-    `Unexpected reactions.csv header. Expected ${expectedHeader.join("|")}`
-  );
+  throw new Error(`Unexpected reactions.csv header. Expected ${expectedHeader.join("|")}`);
 }
 
 const allowedSources = new Set([
@@ -49,9 +55,7 @@ const banned = [
 function parseFormula(rawFormula) {
   let formula = rawFormula.trim();
 
-  formula = formula
-    .replace(/\((?:aq|s|l|g)\)$/i, "")
-    .trim();
+  formula = formula.replace(/\((?:aq|s|l|g)\)$/i, "").trim();
 
   let charge = 0;
   const explicitCharge = formula.match(/\^(\d+)([+-])$/);
@@ -106,9 +110,7 @@ function parseFormula(rawFormula) {
       }
 
       if (!/[A-Z]/.test(ch)) {
-        throw new Error(
-          `Unsupported token '${ch}' in formula ${rawFormula}`
-        );
+        throw new Error(`Unsupported token '${ch}' in formula ${rawFormula}`);
       }
 
       let element = ch;
@@ -165,10 +167,7 @@ function totalSide(side) {
 }
 
 function sameAtoms(left, right) {
-  const keys = new Set([
-    ...Object.keys(left),
-    ...Object.keys(right)
-  ]);
+  const keys = new Set([...Object.keys(left), ...Object.keys(right)]);
 
   for (const key of keys) {
     if ((left[key] ?? 0) !== (right[key] ?? 0)) return false;
@@ -183,61 +182,52 @@ rows.forEach((line, rowIndex) => {
   const cols = line.split("|");
 
   if (cols.length !== 10) {
-    throw new Error(
-      `Row ${rowIndex + 2} has ${cols.length} columns instead of 10`
-    );
+    throw new Error(`Row ${rowIndex + 2} has ${cols.length} columns instead of 10`);
   }
 
-  const [
-    id,name,reactants,products,equation,conditions,
-    reversible,note,source,cost
-  ] = cols;
+  const [id, name, reactants, products, equation, conditions, reversible, note, source, cost] =
+    cols;
 
   if (Number(id) !== rowIndex) {
-    throw new Error(
-      `Reaction IDs must be sequential. Row ${rowIndex + 2} has id ${id}`
-    );
+    throw new Error(`Reaction IDs must be sequential. Row ${rowIndex + 2} has id ${id}`);
   }
 
   for (const [label, value] of Object.entries({
-    name,reactants,products,equation,conditions,note,source,cost
+    name,
+    reactants,
+    products,
+    equation,
+    conditions,
+    note,
+    source,
+    cost
   })) {
     if (!value.trim()) {
       throw new Error(`Reaction ${id} (${name}) is missing ${label}`);
     }
   }
 
-  if (!["true","false"].includes(reversible)) {
-    throw new Error(
-      `Reaction ${id} (${name}) has invalid reversible flag ${reversible}`
-    );
+  if (!["true", "false"].includes(reversible)) {
+    throw new Error(`Reaction ${id} (${name}) has invalid reversible flag ${reversible}`);
   }
 
   if (!allowedSources.has(source)) {
-    throw new Error(
-      `Reaction ${id} (${name}) has unknown source key ${source}`
-    );
+    throw new Error(`Reaction ${id} (${name}) has unknown source key ${source}`);
   }
 
   const signature = `${name} ${reactants} ${products}`;
-  if (banned.some((pattern) => pattern.test(signature))) {
-    throw new Error(
-      `Known misleading chemistry pattern found in reaction ${id}: ${name}`
-    );
+  if (banned.some(pattern => pattern.test(signature))) {
+    throw new Error(`Known misleading chemistry pattern found in reaction ${id}: ${name}`);
   }
 
   if (!Number.isFinite(Number(cost)) || Number(cost) <= 0) {
-    throw new Error(
-      `Reaction ${id} (${name}) has invalid graph weight ${cost}`
-    );
+    throw new Error(`Reaction ${id} (${name}) has invalid graph weight ${cost}`);
   }
 
   // [O] is a conventional oxidizing-equivalent notation rather than a
   // literal species. Hydroboration entries are stored as reaction schemes
   // because the multi-step reagents are kept in the conditions field.
-  const schematic =
-    equation.includes("[O]") ||
-    source === "S3_HYDROBORATION_OXIDATION";
+  const schematic = equation.includes("[O]") || source === "S3_HYDROBORATION_OXIDATION";
 
   if (schematic) {
     schemesSkipped += 1;
@@ -248,9 +238,7 @@ rows.forEach((line, rowIndex) => {
   const parts = equation.split(arrow);
 
   if (parts.length !== 2) {
-    throw new Error(
-      `Reaction ${id} (${name}) has an unsupported equation: ${equation}`
-    );
+    throw new Error(`Reaction ${id} (${name}) has an unsupported equation: ${equation}`);
   }
 
   const left = totalSide(parts[0]);
@@ -272,6 +260,6 @@ rows.forEach((line, rowIndex) => {
 
 console.log(
   `Chemistry audit passed: ${rows.length} reactions, ` +
-  `${balanced} atom/charge-balanced equations, ` +
-  `${schemesSkipped} explicitly marked reaction schemes.`
+    `${balanced} atom/charge-balanced equations, ` +
+    `${schemesSkipped} explicitly marked reaction schemes.`
 );

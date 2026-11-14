@@ -1,9 +1,6 @@
-import { cn } from "cn"
+import { cn } from "cn";
 
-function Kbd({
-  className,
-  ...props
-}) {
+function Kbd({ className, ...props }) {
   return (
     <kbd
       data-slot="kbd"
@@ -13,20 +10,17 @@ function Kbd({
       )}
       {...props}
     />
-  )
+  );
 }
 
-function KbdGroup({
-  className,
-  ...props
-}) {
+function KbdGroup({ className, ...props }) {
   return (
     <kbd
       data-slot="kbd-group"
       className={cn("inline-flex items-center gap-1", className)}
       {...props}
     />
-  )
+  );
 }
 
-export { Kbd, KbdGroup }
+export { Kbd, KbdGroup };

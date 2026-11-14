@@ -35,13 +35,19 @@ const checks = [
   ["C++ engine, CSR, dependency, Pareto and ORD tests", "npm", ["run", "test:engine"]],
   ["Persistent C++/Node DSA API", process.execPath, ["scripts/smoke-api.mjs"]],
   ["On-demand ORD SQLite integration", process.execPath, ["scripts/test-ord-api.mjs"]],
-  ["PubChem CID catalog SQLite integration (offline fixture)", process.execPath, ["scripts/test-pubchem-catalog.mjs"]],
+  [
+    "PubChem CID catalog SQLite integration (offline fixture)",
+    process.execPath,
+    ["scripts/test-pubchem-catalog.mjs"]
+  ],
   ["Production React build", "npm", ["run", "build:web"]],
-  ["Single-origin production API + frontend", process.execPath, ["scripts/smoke-production.mjs"]],
+  ["Single-origin production API + frontend", process.execPath, ["scripts/smoke-production.mjs"]]
 ];
 function gitRevision() {
   const result = spawnSync("git", ["rev-parse", "--short", "HEAD"], {
-    cwd: repoRoot, encoding: "utf8", timeout: 5000
+    cwd: repoRoot,
+    encoding: "utf8",
+    timeout: 5000
   });
   return result.status === 0 ? result.stdout.trim() : "unknown";
 }
@@ -54,13 +60,14 @@ const evidence = {
   revision: gitRevision(),
   dataScope: "curated dataset + locally created synthetic ORD SQLite test fixtures",
   excludedFromThisCheck: [
-    "online full Rhea download", "complete real ORD corpus performance",
+    "online full Rhea download",
+    "complete real ORD corpus performance",
     "experimental chemical synthesis validation",
     "full online PubChem 8M catalog import (requires npm run data:8m)",
-    "optional complete PubChem CID-SMILES corpus (requires npm run data:full)",
+    "optional complete PubChem CID-SMILES corpus (requires npm run data:full)"
   ],
   checks: [],
-  success: false,
+  success: false
 };
 for (const [name, command, args] of checks) {
   console.log("\n" + "=".repeat(64));
@@ -71,7 +78,7 @@ for (const [name, command, args] of checks) {
     cwd: repoRoot,
     stdio: "inherit",
     env: { ...process.env, CI: process.env.CI ?? "0" },
-    timeout: 180_000,
+    timeout: 180_000
   });
   const elapsedSec = Number(process.hrtime.bigint() - start) / 1e9;
   const passed = !run.error && run.status === 0;
@@ -81,14 +88,13 @@ for (const [name, command, args] of checks) {
     success: passed,
     seconds: Number(elapsedSec.toFixed(3)),
     exitCode: run.status,
-    error: run.error?.message ?? null,
+    error: run.error?.message ?? null
   });
-  console.log("RESULT: " + (passed ? "PASS" : "FAIL") +
-              " (" + elapsedSec.toFixed(2) + " seconds)");
+  console.log("RESULT: " + (passed ? "PASS" : "FAIL") + " (" + elapsedSec.toFixed(2) + " seconds)");
   if (!passed) break;
 }
-evidence.success = evidence.checks.length === checks.length &&
-                   evidence.checks.every(check => check.success);
+evidence.success =
+  evidence.checks.length === checks.length && evidence.checks.every(check => check.success);
 if (output) {
   mkdirSync(dirname(output), { recursive: true });
   writeFileSync(output, JSON.stringify(evidence, null, 2) + "\n");
@@ -96,10 +102,11 @@ if (output) {
 }
 console.log("\n" + "-".repeat(64));
 for (const check of evidence.checks) {
-  console.log((check.success ? "PASS" : "FAIL") +
-              "  " + check.name + "  (" + check.seconds + "s)");
+  console.log((check.success ? "PASS" : "FAIL") + "  " + check.name + "  (" + check.seconds + "s)");
 }
-console.log(evidence.success
-  ? "\nPASS: all offline ChemPath release checks passed."
-  : "\nFAIL: review the first failing check before deploying or presenting.");
+console.log(
+  evidence.success
+    ? "\nPASS: all offline ChemPath release checks passed."
+    : "\nFAIL: review the first failing check before deploying or presenting."
+);
 process.exit(evidence.success ? 0 : 1);

@@ -1,11 +1,7 @@
-import * as React from "react"
-import { cn } from "cn"
+import * as React from "react";
+import { cn } from "cn";
 
-function Input({
-  className,
-  type,
-  ...props
-}) {
+function Input({ className, type, ...props }) {
   return (
     <input
       type={type}
@@ -16,7 +12,7 @@ function Input({
       )}
       {...props}
     />
-  )
+  );
 }
 
-export { Input }
+export { Input };

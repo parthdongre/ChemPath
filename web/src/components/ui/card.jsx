@@ -1,11 +1,7 @@
-import * as React from "react"
-import { cn } from "cn"
+import * as React from "react";
+import { cn } from "cn";
 
-function Card({
-  className,
-  size = "default",
-  ...props
-}) {
+function Card({ className, size = "default", ...props }) {
   return (
     <div
       data-slot="card"
@@ -16,13 +12,10 @@ function Card({
       )}
       {...props}
     />
-  )
+  );
 }
 
-function CardHeader({
-  className,
-  ...props
-}) {
+function CardHeader({ className, ...props }) {
   return (
     <div
       data-slot="card-header"
@@ -32,13 +25,10 @@ function CardHeader({
       )}
       {...props}
     />
-  )
+  );
 }
 
-function CardTitle({
-  className,
-  ...props
-}) {
+function CardTitle({ className, ...props }) {
   return (
     <div
       data-slot="card-title"
@@ -48,55 +38,36 @@ function CardTitle({
       )}
       {...props}
     />
-  )
+  );
 }
 
-function CardDescription({
-  className,
-  ...props
-}) {
+function CardDescription({ className, ...props }) {
   return (
     <div
       data-slot="card-description"
       className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
-  )
+  );
 }
 
-function CardAction({
-  className,
-  ...props
-}) {
+function CardAction({ className, ...props }) {
   return (
     <div
       data-slot="card-action"
-      className={cn(
-        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
-        className
-      )}
+      className={cn("col-start-2 row-span-2 row-start-1 self-start justify-self-end", className)}
       {...props}
     />
-  )
+  );
 }
 
-function CardContent({
-  className,
-  ...props
-}) {
+function CardContent({ className, ...props }) {
   return (
-    <div
-      data-slot="card-content"
-      className={cn("px-(--card-spacing)", className)}
-      {...props}
-    />
-  )
+    <div data-slot="card-content" className={cn("px-(--card-spacing)", className)} {...props} />
+  );
 }
 
-function CardFooter({
-  className,
-  ...props
-}) {
+function CardFooter({ className, ...props }) {
   return (
     <div
       data-slot="card-footer"
@@ -106,15 +77,7 @@ function CardFooter({
       )}
       {...props}
     />
-  )
+  );
 }
 
-export {
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardAction,
-  CardDescription,
-  CardContent,
-}
+export { Card, CardHeader, CardFooter, CardTitle, CardAction, CardDescription, CardContent };

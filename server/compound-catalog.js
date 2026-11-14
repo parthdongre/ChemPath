@@ -8,135 +8,162 @@ import Database from "better-sqlite3";
 // npm workspace commands launch the server with cwd=server/, whereas the
 // importer writes to the repository's data/ directory. Resolve the default
 // relative to THIS module, not the caller's current working directory.
-const repoRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
-export function catalogDatabasePath(env=process.env){
-  if(env.CHEMPATH_PUBCHEM_DB)
-    return path.resolve(env.CHEMPATH_PUBCHEM_DB);
-  const dataDir=env.CHEMPATH_DATA_DIR
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+export function catalogDatabasePath(env = process.env) {
+  if (env.CHEMPATH_PUBCHEM_DB) return path.resolve(env.CHEMPATH_PUBCHEM_DB);
+  const dataDir = env.CHEMPATH_DATA_DIR
     ? path.resolve(env.CHEMPATH_DATA_DIR)
-    : path.join(repoRoot,"data");
-  return path.join(dataDir,"catalog","pubchem.sqlite");
+    : path.join(repoRoot, "data");
+  return path.join(dataDir, "catalog", "pubchem.sqlite");
 }
-const dbPath=catalogDatabasePath();
-let db=null;
-let openedMtime=null;
-let metadata=null;
+const dbPath = catalogDatabasePath();
+let db = null;
+let openedMtime = null;
+let metadata = null;
 
-function failure(message,status=400){
-  const error=new Error(message);
-  error.status=status;
+function failure(message, status = 400) {
+  const error = new Error(message);
+  error.status = status;
   throw error;
 }
-function optionalDb(){
-  if(!fs.existsSync(dbPath)){
-    if(db){db.close();db=null;metadata=null;openedMtime=null;}
+function optionalDb() {
+  if (!fs.existsSync(dbPath)) {
+    if (db) {
+      db.close();
+      db = null;
+      metadata = null;
+      openedMtime = null;
+    }
     return null;
   }
-  const info=fs.statSync(dbPath);
-  const version=info.mtimeMs+":"+info.size+":"+info.ino;
-  if(db&&openedMtime===version)return db;
-  if(db)db.close();
-  db=null;metadata=null;
-  try{
-    const opened=new Database(dbPath,{readonly:true,fileMustExist:true,timeout:4000});
+  const info = fs.statSync(dbPath);
+  const version = info.mtimeMs + ":" + info.size + ":" + info.ino;
+  if (db && openedMtime === version) return db;
+  if (db) db.close();
+  db = null;
+  metadata = null;
+  try {
+    const opened = new Database(dbPath, { readonly: true, fileMustExist: true, timeout: 4000 });
     opened.pragma("query_only=ON");
     // Verify this is a complete, atomically published PubChem import.
-    const values=opened.prepare("SELECT key,value FROM catalog_meta").all();
-    const meta=Object.fromEntries(values.map(row=>[row.key,row.value]));
-    if(!/^\d+$/.test(meta.count||"")||meta.format!=="CID-SMILES"){
+    const values = opened.prepare("SELECT key,value FROM catalog_meta").all();
+    const meta = Object.fromEntries(values.map(row => [row.key, row.value]));
+    if (!/^\d+$/.test(meta.count || "") || meta.format !== "CID-SMILES") {
       opened.close();
       return null;
     }
-    db=opened;metadata=meta;openedMtime=version;
+    db = opened;
+    metadata = meta;
+    openedMtime = version;
     return db;
-  }catch(error){
+  } catch (error) {
     // Existing malformed SQLite DB should not crash ChemPath startup.
-    console.warn("[ChemPath catalog] Database not readable:",error.message);
+    console.warn("[ChemPath catalog] Database not readable:", error.message);
     return null;
   }
 }
-const DEFAULT_TARGET=8_000_000;
-export function catalogStatus(){
-  const handle=optionalDb();
-  const installedCount=handle?Number(metadata.count):0;
+const DEFAULT_TARGET = 8_000_000;
+export function catalogStatus() {
+  const handle = optionalDb();
+  const installedCount = handle ? Number(metadata.count) : 0;
   return {
-    ok:true,available:Boolean(handle),target:DEFAULT_TARGET,
-    compounds:installedCount,
-    meetsTarget:installedCount>=DEFAULT_TARGET,
-    scope:handle?(metadata.scope==="full"?"full":"prefix"):null,
-    source:"PubChem Compound Extras",
-    format:"CID-SMILES",structureOnly:true,
-    setup:"npm run data:8m",
-    fullSetup:"npm run data:full",
-    distinction:"PubChem CID/SMILES structures are not verified reaction-network connections.",
-    importedAt:metadata?.imported_at||null
+    ok: true,
+    available: Boolean(handle),
+    target: DEFAULT_TARGET,
+    compounds: installedCount,
+    meetsTarget: installedCount >= DEFAULT_TARGET,
+    scope: handle ? (metadata.scope === "full" ? "full" : "prefix") : null,
+    source: "PubChem Compound Extras",
+    format: "CID-SMILES",
+    structureOnly: true,
+    setup: "npm run data:8m",
+    fullSetup: "npm run data:full",
+    distinction: "PubChem CID/SMILES structures are not verified reaction-network connections.",
+    importedAt: metadata?.imported_at || null
   };
 }
-function requiredDb(){
-  return optionalDb()||failure(
-    "PubChem catalog is not installed. Run npm run data:8m on your machine.",503);
+function requiredDb() {
+  return (
+    optionalDb() ||
+    failure("PubChem catalog is not installed. Run npm run data:8m on your machine.", 503)
+  );
 }
-const summary=row=>({
-  cid:row.cid,
-  id:"pubchem:"+row.cid,
-  label:"PubChem CID "+row.cid,
-  smiles:row.smiles,
-  url:"https://pubchem.ncbi.nlm.nih.gov/compound/"+row.cid,
-  source:"PubChem",
-  hasCuratedReactionEdges:false
+const summary = row => ({
+  cid: row.cid,
+  id: "pubchem:" + row.cid,
+  label: "PubChem CID " + row.cid,
+  smiles: row.smiles,
+  url: "https://pubchem.ncbi.nlm.nih.gov/compound/" + row.cid,
+  source: "PubChem",
+  hasCuratedReactionEdges: false
 });
-function parseLimit(raw){
-  const limit=raw==null?24:Number(raw);
-  if(!Number.isSafeInteger(limit)||limit<1||limit>100)
+function parseLimit(raw) {
+  const limit = raw == null ? 24 : Number(raw);
+  if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100)
     failure("limit must be an integer 1-100");
   return limit;
 }
-function parseCursor(raw){
-  if(raw==null)return 0;
-  const cursor=Number(raw);
-  if(!Number.isSafeInteger(cursor)||cursor<0)
+function parseCursor(raw) {
+  if (raw == null) return 0;
+  const cursor = Number(raw);
+  if (!Number.isSafeInteger(cursor) || cursor < 0)
     failure("after must be a nonnegative PubChem CID");
   return cursor;
 }
-export function catalogSearch(query,rawLimit,rawAfter){
-  const handle=requiredDb();
-  const limit=parseLimit(rawLimit);
-  const after=parseCursor(rawAfter);
-  const q=typeof query==="string"?query.trim():"";
-  if(q.length>180||/[\x00-\x1f]/.test(q))failure("query must contain up to 180 printable characters");
+export function catalogSearch(query, rawLimit, rawAfter) {
+  const handle = requiredDb();
+  const limit = parseLimit(rawLimit);
+  const after = parseCursor(rawAfter);
+  const q = typeof query === "string" ? query.trim() : "";
+  if (q.length > 180 || /[\x00-\x1f]/.test(q))
+    failure("query must contain up to 180 printable characters");
   let rows, mode;
-  if(!q){
-    mode="browse";
-    rows=handle.prepare("SELECT cid,smiles FROM compounds WHERE cid > ? ORDER BY cid LIMIT ?")
-      .all(after,limit);
-  }else{
-    if(after)failure("after cursor is supported for browse mode only");
-    const match=/^(?:cid[: #-]*)?(\d{1,12})$/i.exec(q);
-    if(match){
-      mode="cid";
-      rows=handle.prepare("SELECT cid,smiles FROM compounds WHERE cid=? LIMIT 1")
+  if (!q) {
+    mode = "browse";
+    rows = handle
+      .prepare("SELECT cid,smiles FROM compounds WHERE cid > ? ORDER BY cid LIMIT ?")
+      .all(after, limit);
+  } else {
+    if (after) failure("after cursor is supported for browse mode only");
+    const match = /^(?:cid[: #-]*)?(\d{1,12})$/i.exec(q);
+    if (match) {
+      mode = "cid";
+      rows = handle
+        .prepare("SELECT cid,smiles FROM compounds WHERE cid=? LIMIT 1")
         .all(Number(match[1]));
-    }else{
-      mode="smiles-prefix";
+    } else {
+      mode = "smiles-prefix";
       // Binary prefix matches preserve meaningful uppercase/lowercase in SMILES.
-      rows=handle.prepare("SELECT cid,smiles FROM compounds "+
-        "WHERE smiles >= ? AND smiles < ? ORDER BY smiles,cid LIMIT ?")
-        .all(q,q+"\uffff",limit);
+      rows = handle
+        .prepare(
+          "SELECT cid,smiles FROM compounds " +
+            "WHERE smiles >= ? AND smiles < ? ORDER BY smiles,cid LIMIT ?"
+        )
+        .all(q, q + "\uffff", limit);
     }
   }
-  return {ok:true,mode,query:q,limit,matches:rows.map(summary),
-    nextAfter:mode==="browse"&&rows.length===limit?rows[rows.length-1].cid:null,
-    total:Number(metadata.count),source:"PubChem",structureOnly:true};
+  return {
+    ok: true,
+    mode,
+    query: q,
+    limit,
+    matches: rows.map(summary),
+    nextAfter: mode === "browse" && rows.length === limit ? rows[rows.length - 1].cid : null,
+    total: Number(metadata.count),
+    source: "PubChem",
+    structureOnly: true
+  };
 }
-export function catalogCompound(rawCid){
-  const handle=requiredDb();
-  if(!/^\d{1,12}$/.test(String(rawCid)))failure("Invalid PubChem CID");
-  const row=handle.prepare("SELECT cid,smiles FROM compounds WHERE cid=?")
-    .get(Number(rawCid));
-  if(!row)failure("PubChem CID not in installed catalog",404);
-  return {ok:true,compound:summary(row)};
+export function catalogCompound(rawCid) {
+  const handle = requiredDb();
+  if (!/^\d{1,12}$/.test(String(rawCid))) failure("Invalid PubChem CID");
+  const row = handle.prepare("SELECT cid,smiles FROM compounds WHERE cid=?").get(Number(rawCid));
+  if (!row) failure("PubChem CID not in installed catalog", 404);
+  return { ok: true, compound: summary(row) };
 }
-export function closeCatalogDb(){
-  if(db)db.close();
-  db=null;metadata=null;openedMtime=null;
+export function closeCatalogDb() {
+  if (db) db.close();
+  db = null;
+  metadata = null;
+  openedMtime = null;
 }

@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 
@@ -33,7 +33,7 @@ function trace(points, close = false) {
       return;
     }
     d += ` Q${round(anchor.x)},${round(anchor.y)} ${round(
-      (anchor.x + next.x) / 2,
+      (anchor.x + next.x) / 2
     )},${round((anchor.y + next.y) / 2)}`;
   });
 
@@ -41,12 +41,7 @@ function trace(points, close = false) {
 }
 
 /** A nearly straight stroke that bows by `sag` and trembles by `wobble`. */
-function stroke(
-  from,
-  to,
-  options,
-  rand,
-) {
+function stroke(from, to, options, rand) {
   const { sag = 0, wobble = 0.55, steps = 12 } = options;
   const points = [];
 
@@ -57,11 +52,7 @@ function stroke(
     const loose = i === 0 || i === steps ? 0 : 1;
     points.push({
       x: from.x + (to.x - from.x) * t + shake(rand, wobble) * loose,
-      y:
-        from.y +
-        (to.y - from.y) * t +
-        Math.sin(t * Math.PI) * sag +
-        shake(rand, wobble) * loose,
+      y: from.y + (to.y - from.y) * t + Math.sin(t * Math.PI) * sag + shake(rand, wobble) * loose
     });
   }
 
@@ -69,12 +60,7 @@ function stroke(
 }
 
 /** A horizontal sine, sampled four times per cycle. */
-function wave(
-  from,
-  to,
-  options,
-  rand,
-) {
+function wave(from, to, options, rand) {
   const { amplitude, cycles, wobble = 0.35 } = options;
   const steps = Math.round(cycles * 4);
   const points = [];
@@ -87,7 +73,7 @@ function wave(
         from.y +
         (to.y - from.y) * t +
         Math.sin(t * cycles * Math.PI * 2) * amplitude +
-        shake(rand, wobble),
+        shake(rand, wobble)
     });
   }
 
@@ -95,13 +81,7 @@ function wave(
 }
 
 /** An elliptical sweep whose radius drifts as it goes around. */
-function arc(
-  center,
-  radii,
-  sweep,
-  options,
-  rand,
-) {
+function arc(center, radii, sweep, options, rand) {
   const { wobble = 0.03, steps = 28 } = options;
   const points = [];
 
@@ -111,7 +91,7 @@ function arc(
     const drift = 1 + shake(rand, wobble);
     points.push({
       x: center.x + Math.cos(angle) * radii.rx * drift,
-      y: center.y + Math.sin(angle) * radii.ry * drift,
+      y: center.y + Math.sin(angle) * radii.ry * drift
     });
   }
 
@@ -122,24 +102,15 @@ function wavyStrokes() {
   const rand = createRandom(17);
   return [
     {
-      d: trace(
-        wave(
-          { x: 2, y: 7 },
-          { x: 138, y: 7 },
-          { amplitude: 3, cycles: 9 },
-          rand,
-        ),
-      ),
-      width: 2.2,
-    },
+      d: trace(wave({ x: 2, y: 7 }, { x: 138, y: 7 }, { amplitude: 3, cycles: 9 }, rand)),
+      width: 2.2
+    }
   ];
 }
 
 function underlineStrokes() {
   const rand = createRandom(23);
-  return [
-    { d: trace(stroke({ x: 3, y: 6 }, { x: 137, y: 5 }, { sag: -2 }, rand)) },
-  ];
+  return [{ d: trace(stroke({ x: 3, y: 6 }, { x: 137, y: 5 }, { sag: -2 }, rand)) }];
 }
 
 function doubleUnderlineStrokes() {
@@ -149,33 +120,27 @@ function doubleUnderlineStrokes() {
     {
       d: trace(stroke({ x: 5, y: 12 }, { x: 135, y: 11 }, { sag: -1.2 }, rand)),
       width: 1.8,
-      opacity: 0.75,
-    },
+      opacity: 0.75
+    }
   ];
 }
 
 function strikethroughStrokes() {
   const rand = createRandom(59);
-  return [
-    { d: trace(stroke({ x: 3, y: 5 }, { x: 137, y: 5 }, { sag: 1.2 }, rand)) },
-  ];
+  return [{ d: trace(stroke({ x: 3, y: 5 }, { x: 137, y: 5 }, { sag: 1.2 }, rand)) }];
 }
 
 function crossOutStrokes() {
   const rand = createRandom(73);
   return [
     {
-      d: trace(
-        stroke({ x: 4, y: 32 }, { x: 136, y: 8 }, { sag: -4, wobble: 1 }, rand),
-      ),
+      d: trace(stroke({ x: 4, y: 32 }, { x: 136, y: 8 }, { sag: -4, wobble: 1 }, rand))
     },
     {
-      d: trace(
-        stroke({ x: 6, y: 10 }, { x: 134, y: 30 }, { sag: 4, wobble: 1 }, rand),
-      ),
+      d: trace(stroke({ x: 6, y: 10 }, { x: 134, y: 30 }, { sag: 4, wobble: 1 }, rand)),
       width: 2,
-      opacity: 0.7,
-    },
+      opacity: 0.7
+    }
   ];
 }
 
@@ -187,9 +152,9 @@ function arrowStrokes() {
       d: trace([
         { x: 132, y: 3 },
         { x: 142, y: 8 },
-        { x: 131, y: 13 },
-      ]),
-    },
+        { x: 131, y: 13 }
+      ])
+    }
   ];
 }
 
@@ -198,29 +163,17 @@ function circleStrokes() {
   return [
     {
       d: trace(
-        arc(
-          { x: 110, y: 32 },
-          { rx: 100, ry: 27 },
-          { from: 150, to: 520 },
-          { wobble: 0.035 },
-          rand,
-        ),
+        arc({ x: 110, y: 32 }, { rx: 100, ry: 27 }, { from: 150, to: 520 }, { wobble: 0.035 }, rand)
       ),
-      width: 3,
+      width: 3
     },
     {
       d: trace(
-        arc(
-          { x: 110, y: 32 },
-          { rx: 95, ry: 24 },
-          { from: 165, to: 480 },
-          { wobble: 0.03 },
-          rand,
-        ),
+        arc({ x: 110, y: 32 }, { rx: 95, ry: 24 }, { from: 165, to: 480 }, { wobble: 0.03 }, rand)
       ),
       width: 1.5,
-      opacity: 0.55,
-    },
+      opacity: 0.55
+    }
   ];
 }
 
@@ -236,7 +189,7 @@ function boxStrokes() {
     ...stroke(topLeft, topRight, { sag: -3, steps: 8 }, rand),
     ...stroke(topRight, bottomRight, { steps: 4 }, rand),
     ...stroke(bottomRight, bottomLeft, { sag: 3, steps: 8 }, rand),
-    ...stroke(bottomLeft, topLeft, { steps: 4 }, rand),
+    ...stroke(bottomLeft, topLeft, { steps: 4 }, rand)
   ];
 
   return [{ d: trace(outline, true), width: 2.6 }];
@@ -247,28 +200,16 @@ function bracketStrokes() {
   return [
     {
       d: trace(
-        arc(
-          { x: 30, y: 30 },
-          { rx: 24, ry: 34 },
-          { from: 130, to: 230 },
-          { steps: 14 },
-          rand,
-        ),
+        arc({ x: 30, y: 30 }, { rx: 24, ry: 34 }, { from: 130, to: 230 }, { steps: 14 }, rand)
       ),
-      width: 2.6,
+      width: 2.6
     },
     {
       d: trace(
-        arc(
-          { x: 130, y: 30 },
-          { rx: 24, ry: 34 },
-          { from: 50, to: -50 },
-          { steps: 14 },
-          rand,
-        ),
+        arc({ x: 130, y: 30 }, { rx: 24, ry: 34 }, { from: 50, to: -50 }, { steps: 14 }, rand)
       ),
-      width: 2.6,
-    },
+      width: 2.6
+    }
   ];
 }
 
@@ -279,7 +220,7 @@ function highlightStrokes() {
     ...stroke({ x: 5, y: 6 }, { x: 165, y: 5 }, { sag: -2, steps: 10 }, rand),
     ...stroke({ x: 165, y: 5 }, { x: 165, y: 21 }, { steps: 3 }, rand),
     ...stroke({ x: 165, y: 21 }, { x: 5, y: 22 }, { sag: 2, steps: 10 }, rand),
-    ...stroke({ x: 5, y: 22 }, { x: 5, y: 6 }, { steps: 3 }, rand),
+    ...stroke({ x: 5, y: 22 }, { x: 5, y: 6 }, { steps: 3 }, rand)
   ];
 
   return [{ d: trace(outline, true), fill: true }];
@@ -288,29 +229,26 @@ function highlightStrokes() {
 const marks = {
   wavy: {
     wrapper: "relative inline-block whitespace-nowrap",
-    decoration:
-      "pointer-events-none absolute bottom-[-0.4em] left-[-2%] h-[0.7em] w-[104%]",
+    decoration: "pointer-events-none absolute bottom-[-0.4em] left-[-2%] h-[0.7em] w-[104%]",
     color: "text-purple-500 dark:text-purple-300",
     viewBox: "0 0 140 14",
-    strokes: wavyStrokes(),
+    strokes: wavyStrokes()
   },
 
   underline: {
     wrapper: "relative inline-block whitespace-nowrap",
-    decoration:
-      "pointer-events-none absolute bottom-[-0.32em] left-[-1%] h-[0.5em] w-[102%]",
+    decoration: "pointer-events-none absolute bottom-[-0.32em] left-[-1%] h-[0.5em] w-[102%]",
     color: "text-purple-500 dark:text-purple-400",
     viewBox: "0 0 140 10",
-    strokes: underlineStrokes(),
+    strokes: underlineStrokes()
   },
 
   doubleUnderline: {
     wrapper: "relative inline-block whitespace-nowrap",
-    decoration:
-      "pointer-events-none absolute bottom-[-0.5em] left-[-1%] h-[0.7em] w-[102%]",
+    decoration: "pointer-events-none absolute bottom-[-0.5em] left-[-1%] h-[0.7em] w-[102%]",
     color: "text-emerald-600 dark:text-emerald-400",
     viewBox: "0 0 140 16",
-    strokes: doubleUnderlineStrokes(),
+    strokes: doubleUnderlineStrokes()
   },
 
   dottedUnderline: {
@@ -320,25 +258,23 @@ const marks = {
     color: "text-neutral-500 dark:text-neutral-400",
     css: cn(
       "bg-[radial-gradient(circle,currentColor_1.5px,transparent_1.5px)]",
-      "bg-size-[0.5em_100%] bg-position-[0_100%] bg-repeat-x",
-    ),
+      "bg-size-[0.5em_100%] bg-position-[0_100%] bg-repeat-x"
+    )
   },
 
   line: {
     wrapper: "relative inline-block whitespace-nowrap",
-    decoration:
-      "pointer-events-none absolute bottom-[-0.18em] left-[-1%] block h-[2px] w-[102%]",
+    decoration: "pointer-events-none absolute bottom-[-0.18em] left-[-1%] block h-[2px] w-[102%]",
     color: "text-neutral-500",
-    css: "rounded-full bg-current",
+    css: "rounded-full bg-current"
   },
 
   arrow: {
     wrapper: "relative inline-block whitespace-nowrap",
-    decoration:
-      "pointer-events-none absolute bottom-[-0.45em] left-[-1%] h-[0.8em] w-[106%]",
+    decoration: "pointer-events-none absolute bottom-[-0.45em] left-[-1%] h-[0.8em] w-[106%]",
     color: "text-blue-600 dark:text-blue-400",
     viewBox: "0 0 150 18",
-    strokes: arrowStrokes(),
+    strokes: arrowStrokes()
   },
 
   highlight: {
@@ -348,7 +284,7 @@ const marks = {
     color: "text-yellow-300/60",
     viewBox: "0 0 170 26",
     strokes: highlightStrokes(),
-    behindText: true,
+    behindText: true
   },
 
   circle: {
@@ -357,7 +293,7 @@ const marks = {
       "pointer-events-none absolute inset-[-0.6em_-0.55em] h-[calc(100%+1.2em)] w-[calc(100%+1.1em)]",
     color: "text-cyan-600 dark:text-cyan-200",
     viewBox: "0 0 220 64",
-    strokes: circleStrokes(),
+    strokes: circleStrokes()
   },
 
   box: {
@@ -366,7 +302,7 @@ const marks = {
       "pointer-events-none absolute inset-[-0.4em_-0.4em] h-[calc(100%+0.8em)] w-[calc(100%+0.8em)]",
     color: "text-orange-600 dark:text-orange-400",
     viewBox: "0 0 200 64",
-    strokes: boxStrokes(),
+    strokes: boxStrokes()
   },
 
   bracket: {
@@ -375,7 +311,7 @@ const marks = {
       "pointer-events-none absolute inset-y-[-0.25em] left-[-0.15em] h-[calc(100%+0.5em)] w-[calc(100%+0.3em)]",
     color: "text-neutral-500",
     viewBox: "0 0 160 60",
-    strokes: bracketStrokes(),
+    strokes: bracketStrokes()
   },
 
   strikethrough: {
@@ -384,7 +320,7 @@ const marks = {
       "pointer-events-none absolute top-1/2 left-[-1%] h-[0.5em] w-[102%] -translate-y-1/2",
     color: "text-red-500 dark:text-red-400",
     viewBox: "0 0 140 10",
-    strokes: strikethroughStrokes(),
+    strokes: strikethroughStrokes()
   },
 
   crossOut: {
@@ -393,7 +329,7 @@ const marks = {
       "pointer-events-none absolute top-1/2 left-[-2%] h-[1.4em] w-[104%] -translate-y-1/2",
     color: "text-red-500 dark:text-red-400",
     viewBox: "0 0 140 40",
-    strokes: crossOutStrokes(),
+    strokes: crossOutStrokes()
   }
 };
 
@@ -415,8 +351,7 @@ export function AnnotatedText({
 
     const drawings = element.querySelectorAll("[data-annotation-drawing]");
     const animations = Array.from(drawings, (drawing, index) => {
-      const reveal =
-        drawing.getAttribute("data-annotation-drawing") === "reveal";
+      const reveal = drawing.getAttribute("data-annotation-drawing") === "reveal";
       const opacity = Number(drawing.getAttribute("opacity") ?? 1);
       const animation = drawing.animate(
         reveal
@@ -428,27 +363,27 @@ export function AnnotatedText({
                 strokeDasharray: "1",
                 strokeDashoffset: "1",
                 opacity: 0,
-                offset: 0,
+                offset: 0
               },
               {
                 strokeDasharray: "1",
                 strokeDashoffset: "0.999",
                 opacity,
-                offset: 0.001,
+                offset: 0.001
               },
               {
                 strokeDasharray: "1",
                 strokeDashoffset: "0",
                 opacity,
-                offset: 1,
-              },
+                offset: 1
+              }
             ],
         {
           duration: Math.max(0, duration) * 1000,
           delay: Math.max(0, delay) * 1000 + index * 160,
           easing: "cubic-bezier(0.22, 0.61, 0.36, 1)",
-          fill: "backwards",
-        },
+          fill: "backwards"
+        }
       );
       animation.pause();
       return animation;
@@ -456,22 +391,22 @@ export function AnnotatedText({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting) return;
-        animations.forEach((animation) => animation.play());
+        animations.forEach(animation => animation.play());
         observer.disconnect();
       },
-      { threshold: 0.25 },
+      { threshold: 0.25 }
     );
     observer.observe(element);
 
     const finish = () => {
       if (!reducedMotion.matches) return;
       observer.disconnect();
-      animations.forEach((animation) => animation.cancel());
+      animations.forEach(animation => animation.cancel());
     };
     reducedMotion.addEventListener("change", finish);
     return () => {
       observer.disconnect();
-      animations.forEach((animation) => animation.cancel());
+      animations.forEach(animation => animation.cancel());
       reducedMotion.removeEventListener("change", finish);
     };
   }, [animate, delay, duration, variant]);
@@ -502,7 +437,7 @@ export function AnnotatedText({
           preserveAspectRatio="none"
           aria-hidden="true"
         >
-          {mark.strokes?.map((line) => (
+          {mark.strokes?.map(line => (
             <path
               key={line.d}
               d={line.d}

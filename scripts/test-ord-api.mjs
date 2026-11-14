@@ -32,11 +32,15 @@ const server = spawn(process.execPath, ["server/index.js"], {
   stdio: ["ignore", "pipe", "pipe"]
 });
 let logs = "";
-server.stdout.on("data", b => { logs += String(b); });
-server.stderr.on("data", b => { logs += String(b); });
+server.stdout.on("data", b => {
+  logs += String(b);
+});
+server.stderr.on("data", b => {
+  logs += String(b);
+});
 const base = "http://127.0.0.1:" + port;
 const sleep = ms => new Promise(done => setTimeout(done, ms));
-async function get(uri, status=200) {
+async function get(uri, status = 200) {
   const response = await fetch(base + uri);
   const payload = await response.json();
   assert.equal(response.status, status, uri + " " + JSON.stringify(payload));
@@ -44,9 +48,14 @@ async function get(uri, status=200) {
 }
 try {
   let ready = false;
-  for (let i=0;i<60;i++) {
-    try { const h = await get("/api/health"); ready=h.ok; if(ready)break; }
-    catch { await sleep(250); }
+  for (let i = 0; i < 60; i++) {
+    try {
+      const h = await get("/api/health");
+      ready = h.ok;
+      if (ready) break;
+    } catch {
+      await sleep(250);
+    }
   }
   assert.ok(ready, "Server failed: " + logs);
   const stats = await get("/api/ord/status");
@@ -59,12 +68,12 @@ try {
   assert.equal(byId.matches.length, 2);
   const detail = await get("/api/ord/reaction/1");
   assert.equal(detail.reaction.ordId, "ord-example-1");
-  assert.ok(detail.participants.some(p=>p.role === "reactant" && p.smiles === "CCO"));
+  assert.ok(detail.participants.some(p => p.role === "reactant" && p.smiles === "CCO"));
   const hood = await get("/api/ord/neighborhood?smiles=CCO");
   assert.equal(hood.reactions, 2);
-  assert.ok(hood.nodes.some(n=>n.id === "rxn:1"));
-  assert.ok(hood.nodes.some(n=>n.id === "mol:CCO"));
-  assert.equal(hood.edges.filter(e=>e.source === "mol:CCO").length, 2);
+  assert.ok(hood.nodes.some(n => n.id === "rxn:1"));
+  assert.ok(hood.nodes.some(n => n.id === "mol:CCO"));
+  assert.equal(hood.edges.filter(e => e.source === "mol:CCO").length, 2);
 
   const shortest = await get("/api/ord/path?from=CCO&to=CCOC");
   assert.equal(shortest.backend, "sqlite-lazy");
@@ -89,12 +98,14 @@ try {
   assert.equal(degLimited.found, false);
   assert.equal(degLimited.complete, false);
   assert.equal(degLimited.limitReason, "maxNeighborLinks");
-  await get("/api/ord/path?from=CCO&to=CCOC&maxExpanded=0",400);
-  await get("/api/ord/path?from=CCO",400);
+  await get("/api/ord/path?from=CCO&to=CCOC&maxExpanded=0", 400);
+  await get("/api/ord/path?from=CCO", 400);
   await get("/api/ord/reaction/999", 404);
   await get("/api/ord/search?q=x", 400);
   await get("/api/ord/neighborhood?smiles=CCO&limit=999", 400);
-  console.log("ORD SQLite API integration passed: browsing, exact lazy C++ paths, cache reuse, limits, validation.");
+  console.log(
+    "ORD SQLite API integration passed: browsing, exact lazy C++ paths, cache reuse, limits, validation."
+  );
 } finally {
   server.kill();
   fs.rmSync(dir, { recursive: true, force: true });

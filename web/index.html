@@ -1,14 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0c1117" />
+    <meta name="theme-color" content="#121316" />
     <meta
       name="description"
-      content="ChemPath Studio — explore reaction networks, compare graph algorithms, and inspect C++ pathway results."
+      content="ChemPath — explore a chemical reaction network and compare graph algorithms computed by a C++17 engine."
     />
-    <title>ChemPath Studio — Explore reactions. Understand pathways.</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23121316'/%3E%3Cpath d='M12 3.6 19.4 7.8v8.4L12 20.4 4.6 16.2V7.8Z' fill='none' stroke='%23ececea' stroke-width='1.6' stroke-linejoin='round' opacity='.6'/%3E%3Cpath d='M4.6 7.8 12 12l7.4 4.2' stroke='%23f59e3b' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='19.4' cy='16.2' r='2' fill='%23f59e3b'/%3E%3C/svg%3E"
+    />
+    <title>ChemPath — reaction network explorer</title>
+    <script>
+      try {
+        if (localStorage.getItem("chempath-theme") === "light") {
+          document.documentElement.dataset.theme = "light";
+          document.documentElement.classList.remove("dark");
+        }
+      } catch {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

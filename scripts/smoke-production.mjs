@@ -4,13 +4,23 @@ import { spawn } from "node:child_process";
 
 const port = 9993;
 const base = "http://127.0.0.1:" + port;
-const env = { ...process.env, NODE_ENV: "production", PORT: String(port), CHEMPATH_DATA_DIR: "data" };
+const env = {
+  ...process.env,
+  NODE_ENV: "production",
+  PORT: String(port),
+  CHEMPATH_DATA_DIR: "data"
+};
 const server = spawn(process.execPath, ["server/index.js"], {
-  env, stdio: ["ignore", "pipe", "pipe"]
+  env,
+  stdio: ["ignore", "pipe", "pipe"]
 });
 let log = "";
-server.stdout.on("data", chunk => { log += String(chunk); });
-server.stderr.on("data", chunk => { log += String(chunk); });
+server.stdout.on("data", chunk => {
+  log += String(chunk);
+});
+server.stderr.on("data", chunk => {
+  log += String(chunk);
+});
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function json(url) {
   const res = await fetch(base + url);
@@ -25,7 +35,9 @@ try {
       const health = await json("/api/health");
       ready = health.compounds >= 690;
       if (ready) break;
-    } catch { await sleep(250); }
+    } catch {
+      await sleep(250);
+    }
   }
   assert.ok(ready, "Production backend not healthy: " + log);
   const page = await fetch(base);
@@ -34,7 +46,14 @@ try {
   assert.match(html, /<div id="root"><\/div>/);
   assert.match(html, /\/assets\/index-/);
   const fallback = await fetch(base + "/dashboard");
-  if (fallback.status !== 200) console.error("Deep-link response:", fallback.status, (await fallback.clone().text()).slice(0, 1000), "\nSERVER LOG:", log);
+  if (fallback.status !== 200)
+    console.error(
+      "Deep-link response:",
+      fallback.status,
+      (await fallback.clone().text()).slice(0, 1000),
+      "\nSERVER LOG:",
+      log
+    );
   assert.equal(fallback.status, 200);
   assert.match(await fallback.text(), /<div id="root"><\/div>/);
   const network = await json("/api/network");

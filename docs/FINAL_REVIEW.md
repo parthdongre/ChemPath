@@ -126,9 +126,9 @@ nonexistent large-corpus availability claim.
 ## 5. Evidence and links
 
 - [Milestone A: dependency graph and full Rhea importer](RHEA_FULL.md)
-- [Milestone B: CSR, constraints, Pareto](MILESTONE_B.md)
-- [Milestone C: lazy ORD and reproducible benchmarks](MILESTONE_C.md)
-- [Actual benchmark results, with methodology and caveats](BENCHMARKS_MILESTONE_C.md)
+- [Milestone B: CSR, constraints, Pareto](archive/MILESTONE_B.md)
+- [Milestone C: lazy ORD and reproducible benchmarks](archive/MILESTONE_C.md)
+- [Actual benchmark results, with methodology and caveats](archive/BENCHMARKS_MILESTONE_C.md)
 - [DSA lab algorithm notes](DSA_LAB.md)
 - [Chemistry dataset audit](../data/CHEMISTRY_AUDIT.md)
 

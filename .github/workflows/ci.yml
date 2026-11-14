@@ -2,11 +2,44 @@ name: ChemPath CI
 
 on:
   push:
-    branches: [main, midsem-build, feat/milestone-c-ord-lazy-benchmarks]
+    branches: [main]
   pull_request:
-    branches: [main, feat/milestone-b-csr-constrained-pareto]
+
+# A newer push to the same branch or PR cancels the superseded run.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  # Fast feedback (about a minute): lint, formatting, unit tests, frontend build.
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install JavaScript dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Unit tests (server pool and validation, web helpers)
+        run: npm run test:unit
+
+      - name: Build frontend
+        run: npm run build:web
+
+  # Full engine build, data imports, benchmarks and end-to-end smoke tests.
   build-and-test:
     runs-on: ubuntu-latest
 

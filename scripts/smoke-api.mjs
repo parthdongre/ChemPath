@@ -9,8 +9,12 @@ const server = spawn(process.execPath, ["server/index.js"], {
   stdio: ["ignore", "pipe", "pipe"]
 });
 let log = "";
-server.stdout.on("data", b => { log += String(b); });
-server.stderr.on("data", b => { log += String(b); });
+server.stdout.on("data", b => {
+  log += String(b);
+});
+server.stderr.on("data", b => {
+  log += String(b);
+});
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const base = "http://127.0.0.1:" + port;
 async function get(path, expectedStatus = 200) {
@@ -23,8 +27,13 @@ try {
   for (let i = 0; i < 80; ++i) {
     try {
       const health = await get("/api/health");
-      if (health.compounds >= 650) { ready = true; break; }
-    } catch { await sleep(250); }
+      if (health.compounds >= 650) {
+        ready = true;
+        break;
+      }
+    } catch {
+      await sleep(250);
+    }
   }
   assert.ok(ready, "API never became healthy. Logs: " + log);
   const [stats, network, trace, comparison, components, csr, synthetic, paths] = await Promise.all([
@@ -47,45 +56,71 @@ try {
   assert.equal(synthetic.reachable, 250);
   assert.ok(paths.routes.length >= 1);
   const first = paths.routes[0];
-  const edit = await get("/api/lab/playground?from=Methane&to=Bicarbonate&edgeFrom=" +
-    first.path[0].id + "&edgeTo=" + first.path[1].id +
-    "&reactionId=" + first.reactionPath[0].reactionId);
+  const edit = await get(
+    "/api/lab/playground?from=Methane&to=Bicarbonate&edgeFrom=" +
+      first.path[0].id +
+      "&edgeTo=" +
+      first.path[1].id +
+      "&reactionId=" +
+      first.reactionPath[0].reactionId
+  );
   assert.ok(edit.ok);
-  const add = await get("/api/lab/edit?from=Methane&to=Bicarbonate&mode=add&edgeFrom=" +
-    first.path[0].id + "&edgeTo=" + first.path[first.path.length - 1].id +
-    "&reactionId=-2&weight=1");
+  const add = await get(
+    "/api/lab/edit?from=Methane&to=Bicarbonate&mode=add&edgeFrom=" +
+      first.path[0].id +
+      "&edgeTo=" +
+      first.path[first.path.length - 1].id +
+      "&reactionId=-2&weight=1"
+  );
   assert.equal(add.route.found, true);
   assert.equal(add.route.totalCost, 1);
   assert.equal(add.route.reactionPath[0].sourceKey, "SANDBOX");
-  await get("/api/lab/edit?from=Methane&to=Bicarbonate&mode=add&edgeFrom=0&edgeTo=1&reactionId=-2&weight=0", 400);
-  const feasibility = await get("/api/feasible?available=Water%3BCarbon%20Dioxide&target=Bicarbonate");
+  await get(
+    "/api/lab/edit?from=Methane&to=Bicarbonate&mode=add&edgeFrom=0&edgeTo=1&reactionId=-2&weight=0",
+    400
+  );
+  const feasibility = await get(
+    "/api/feasible?available=Water%3BCarbon%20Dioxide&target=Bicarbonate"
+  );
   assert.equal(feasibility.mode, "reaction-dependency");
   assert.equal(typeof feasibility.targetAvailable, "boolean");
   assert.ok(feasibility.availableCount >= 2);
   assert.ok(Array.isArray(feasibility.activationSample));
   await get("/api/feasible?available=UnknownFakeCompound&target=Bicarbonate", 400);
-  const pareto = await get("/api/path/pareto?from=Methane&to=Bicarbonate&maxLabels=5000&maxRoutes=3");
+  const pareto = await get(
+    "/api/path/pareto?from=Methane&to=Bicarbonate&maxLabels=5000&maxRoutes=3"
+  );
   assert.equal(pareto.algorithm, "multi-label-dijkstra");
   assert.equal(typeof pareto.complete, "boolean");
   assert.ok(pareto.labelsGenerated >= 1);
   const constraintResponse = await fetch(base + "/api/path/constrained", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({source:"Methane",target:"Bicarbonate",k:2,
-      blockedReactionIds:[],blockedCompoundIds:[],availableReagents:[],
-      availableCatalysts:[],unknownRequirements:"allow"})
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      source: "Methane",
+      target: "Bicarbonate",
+      k: 2,
+      blockedReactionIds: [],
+      blockedCompoundIds: [],
+      availableReagents: [],
+      availableCatalysts: [],
+      unknownRequirements: "allow"
+    })
   });
-  assert.equal(constraintResponse.status,200);
+  assert.equal(constraintResponse.status, 200);
   const constrained = await constraintResponse.json();
-  assert.equal(constrained.algorithm,"constrained-yen");
+  assert.equal(constrained.algorithm, "constrained-yen");
   assert.ok(constrained.routes.length >= 1);
-  assert.equal(constrained.routes[0].totalCost,
-    (await get("/api/path?from=Methane&to=Bicarbonate&algorithm=dijkstra")).totalCost);
+  assert.equal(
+    constrained.routes[0].totalCost,
+    (await get("/api/path?from=Methane&to=Bicarbonate&algorithm=dijkstra")).totalCost
+  );
   const invalidConstraints = await fetch(base + "/api/path/constrained", {
-    method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({source:"Methane",target:"Bicarbonate",blockedReactionIds:["oops"]})
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ source: "Methane", target: "Bicarbonate", blockedReactionIds: ["oops"] })
   });
-  assert.equal(invalidConstraints.status,400);
+  assert.equal(invalidConstraints.status, 400);
   const bfs = await get("/api/lab/trace?algorithm=bfs&from=Methane&to=Bicarbonate");
   assert.ok(bfs.events.some(e => e.type === "enqueue"));
   const tarjan = await get("/api/lab/trace?algorithm=tarjan");

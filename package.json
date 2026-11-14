@@ -16,9 +16,19 @@
     "data:500k": "python3 scripts/import-pubchem.py --target 500000",
     "data:8m": "python3 scripts/import-pubchem.py",
     "data:sync": "python3 scripts/import-pubchem.py",
-    "data:full": "python3 scripts/import-pubchem.py --all"
+    "data:full": "python3 scripts/import-pubchem.py --all",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test:unit": "node --test scripts/test-server-units.mjs && npm --workspace web run test"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "@eslint/js": "^9.39.5",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.14.0",
+    "prettier": "^3.10.1"
   }
 }

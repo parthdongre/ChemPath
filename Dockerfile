@@ -10,6 +10,8 @@ RUN npm install --no-audit --no-fund
 RUN cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release \
  && cmake --build engine/build --config Release -j 2
 RUN npm run build:web
+# Ship only runtime packages (express, cors, better-sqlite3) to the final image.
+RUN npm prune --omit=dev --no-audit --no-fund
 
 FROM node:22-bookworm-slim AS runtime
 WORKDIR /app
@@ -25,5 +27,5 @@ COPY --from=builder /app/data ./data
 USER node
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:'+process.env.PORT+'/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+  CMD node -e "fetch('http://127.0.0.1:'+process.env.PORT+'/api/live').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 CMD ["node", "server/index.js"]

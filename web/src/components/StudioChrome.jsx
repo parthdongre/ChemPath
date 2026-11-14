@@ -1,208 +1,378 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  ArrowLeftRight, ArrowRight, BookOpen, Check, ChevronRight,
-  Command, Database, FlaskConical, GitCompareArrows, Keyboard,
-  Layers3, Menu, Moon, Network, PanelLeftClose, PanelLeftOpen,
-  PanelRight, Play, Search, Sun, X
+  ArrowRight,
+  BookOpen,
+  Database,
+  FlaskConical,
+  GitCompareArrows,
+  Moon,
+  Network,
+  PanelRight,
+  Play,
+  Search,
+  Sun,
+  X
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Kbd } from "@/components/ui/kbd";
+import { Separator } from "@/components/ui/separator";
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandShortcut
+} from "@/components/ui/command";
+import Formula from "./Formula.jsx";
+import { CategoryBadge, Hint } from "./studio/primitives.jsx";
+import { categoryColor } from "../theme.js";
 
 export const STUDIO_VIEWS = [
-  { id: "explore", label: "Explore", icon: Network, description: "Interactive reaction network" },
-  { id: "compare", label: "Compare", icon: GitCompareArrows, description: "Algorithm and route alternatives" },
-  { id: "lab", label: "Laboratory", icon: FlaskConical, description: "Step-by-step graph algorithms" },
-  { id: "data", label: "Data Library", icon: Database, description: "Compounds and source datasets" }
+  {
+    id: "explore",
+    label: "Explore",
+    icon: Network,
+    description: "Reaction network and pathfinding"
+  },
+  {
+    id: "compare",
+    label: "Compare",
+    icon: GitCompareArrows,
+    description: "Algorithms and route alternatives"
+  },
+  {
+    id: "lab",
+    label: "Laboratory",
+    icon: FlaskConical,
+    description: "Step-by-step data structures"
+  },
+  { id: "data", label: "Data", icon: Database, description: "Compounds and source datasets" }
 ];
 
-export function StudioSidebar({ view, onChange, collapsed, onToggle, stats }) {
-  return <aside className={"studio-sidebar"+(collapsed?" is-collapsed":"")} aria-label="Studio navigation">
-    <div className="studio-sidebar-head">
-      {!collapsed&&<span className="studio-sidebar-heading">WORKSPACE</span>}
-      <button type="button" className="studio-icon-btn" onClick={onToggle}
-        aria-label={collapsed?"Expand sidebar":"Collapse sidebar"}
-        title={collapsed?"Expand sidebar":"Collapse sidebar"}>
-        {collapsed?<PanelLeftOpen size={17}/>:<PanelLeftClose size={17}/>}
-      </button>
-    </div>
-    <nav className="studio-nav" aria-label="Primary">
-      {STUDIO_VIEWS.map(({id,label,icon:Icon,description})=>
-        <button key={id} type="button" className={"studio-nav-item"+(view===id?" is-active":"")}
-          onClick={()=>onChange(id)} aria-current={view===id?"page":undefined}
-          title={collapsed?label:description} data-studio-view={id}>
-          <Icon size={18} strokeWidth={1.8}/>
-          {!collapsed&&<span>{label}</span>}
-          {!collapsed&&view===id&&<ChevronRight className="studio-nav-indicator" size={15}/>}
-        </button>)}
-    </nav>
-    {!collapsed&&<div className="studio-sidebar-bottom">
-      <div className="studio-dataset-label"><Layers3 size={15}/> CURATED NETWORK</div>
-      <strong>{stats?.compounds?.toLocaleString()??"—"} <span>compounds</span></strong>
-      <small>Participation graph · C++17</small>
-    </div>}
-  </aside>;
+/** Hexagonal ring with a highlighted route across it. */
+function BrandMark() {
+  return (
+    <svg
+      className="shrink-0 text-foreground"
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      aria-hidden="true"
+    >
+      <path
+        d="M12 2.6 20.2 7.3v9.4L12 21.4 3.8 16.7V7.3Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+        opacity=".5"
+      />
+      <path
+        d="M3.8 7.3 12 12l8.2 4.7"
+        fill="none"
+        stroke="var(--route)"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <circle
+        cx="3.8"
+        cy="7.3"
+        r="2.2"
+        fill="var(--card)"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <circle cx="20.2" cy="16.7" r="2.2" fill="var(--route)" />
+    </svg>
+  );
 }
 
 export function StudioTopbar({
-  view, status, onSearch, onToggleSidebar, onToggleInspector,
-  onToggleTheme, theme, inspectorOpen, onToggleTransparency, reduceTransparency
+  view,
+  onChange,
+  status,
+  onSearch,
+  onToggleInspector,
+  onToggleTheme,
+  theme,
+  inspectorOpen
 }) {
-  const label=STUDIO_VIEWS.find(item=>item.id===view)?.label??"Explore";
-  const online=status?.includes("online");
-  return <header className="studio-topbar">
-    <div className="studio-brand">
-      <button type="button" onClick={onToggleSidebar} className="studio-icon-btn studio-menu-btn"
-        title="Toggle navigation" aria-label="Toggle navigation"><Menu size={18}/></button>
-      <span className="studio-brand-icon" aria-hidden="true"><Network size={18} strokeWidth={2.1}/></span>
-      <span className="studio-brand-name">ChemPath <span>Studio</span></span>
-      <span className="studio-breadcrumb" aria-hidden="true"><ChevronRight size={14}/>{label}</span>
-    </div>
-    <div className="studio-top-actions">
-      <button type="button" className="studio-top-search studio-liquid-glass" onClick={onSearch}
-        aria-label="Search commands and compounds">
-        <Search size={15}/><span>Search anything</span>
-        <kbd>⌘ K</kbd>
-      </button>
-      <div className={"studio-engine-state"+(online?" is-online":"")} title={status}>
-        <span className="studio-engine-dot"/>
-        <span>{online?"Engine ready":"Engine offline"}</span>
+  const online = status?.includes("online");
+  return (
+    <header className="sticky top-0 z-40 flex h-13 shrink-0 items-center gap-5 border-b bg-card px-3 sm:px-4">
+      <div className="flex items-center gap-2.5">
+        <BrandMark />
+        <span className="text-sm font-semibold tracking-tight max-md:hidden">ChemPath</span>
       </div>
-      <button type="button" className="studio-icon-btn" onClick={onToggleTheme}
-        aria-label={theme==="dark"?"Use light appearance":"Use dark appearance"}
-        title="Toggle appearance">{theme==="dark"?<Sun size={18}/>:<Moon size={18}/>}</button>
-      <button type="button" className={"studio-icon-btn"+(reduceTransparency?" is-active":"")}
-        onClick={onToggleTransparency} aria-pressed={reduceTransparency}
-        aria-label={reduceTransparency?"Enable transparency effects":"Reduce transparency effects"}
-        title={reduceTransparency?"Enable glass effects":"Reduce transparency"}>
-        <Layers3 size={17}/>
-      </button>
-      {view==="explore"&&<button type="button" className={"studio-icon-btn"+(inspectorOpen?" is-active":"")}
-        onClick={onToggleInspector} aria-label={inspectorOpen?"Hide inspector":"Show inspector"}
-        title="Toggle inspector"><PanelRight size={18}/></button>}
-    </div>
-  </header>;
+      <nav className="flex min-w-0 items-center gap-0.5" aria-label="Primary">
+        {STUDIO_VIEWS.map(({ id, label, icon: Icon, description }) => (
+          <Hint key={id} label={description}>
+            <Button
+              variant={view === id ? "secondary" : "ghost"}
+              size="sm"
+              className={cn(
+                "text-muted-foreground",
+                view === id && "text-foreground [&_svg]:text-route"
+              )}
+              onClick={() => onChange(id)}
+              aria-current={view === id ? "page" : undefined}
+              data-studio-view={id}
+            >
+              <Icon data-icon="inline-start" />
+              <span className="max-md:sr-only">{label}</span>
+            </Button>
+          </Hint>
+        ))}
+      </nav>
+      <div className="ml-auto flex items-center gap-1">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onSearch}
+          aria-label="Search commands and compounds"
+          className="w-56 justify-start text-muted-foreground max-lg:w-auto"
+        >
+          <Search data-icon="inline-start" />
+          <span className="flex-1 text-left max-lg:sr-only">Search compounds</span>
+          <Kbd className="max-lg:hidden">⌘K</Kbd>
+        </Button>
+        <Hint label={status}>
+          <span
+            className="flex h-8 items-center gap-2 px-2 text-xs text-muted-foreground"
+            tabIndex={0}
+          >
+            <span
+              className={cn("size-1.5 rounded-full", online ? "bg-success" : "bg-destructive")}
+            />
+            <span className="max-md:sr-only">{online ? "C++ engine" : "Engine offline"}</span>
+          </span>
+        </Hint>
+        <Separator orientation="vertical" className="mx-1 h-5 self-center max-sm:hidden" />
+        <Hint label={theme === "dark" ? "Light appearance" : "Dark appearance"}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onToggleTheme}
+            aria-label={theme === "dark" ? "Use light appearance" : "Use dark appearance"}
+          >
+            {theme === "dark" ? <Sun /> : <Moon />}
+          </Button>
+        </Hint>
+        {view === "explore" && (
+          <Hint label={inspectorOpen ? "Hide inspector" : "Show inspector"}>
+            <Button
+              variant={inspectorOpen ? "secondary" : "ghost"}
+              size="icon"
+              onClick={onToggleInspector}
+              aria-label={inspectorOpen ? "Hide inspector" : "Show inspector"}
+              aria-pressed={inspectorOpen}
+            >
+              <PanelRight />
+            </Button>
+          </Hint>
+        )}
+      </div>
+    </header>
+  );
 }
 
-const commands=[
-  {id:"explore",title:"Explore reaction network",hint:"Workspace",icon:Network},
-  {id:"compare",title:"Compare graph algorithms",hint:"Workspace",icon:GitCompareArrows},
-  {id:"lab",title:"Open algorithm laboratory",hint:"Workspace",icon:FlaskConical},
-  {id:"data",title:"Browse compound data library",hint:"Workspace",icon:Database},
-  {id:"find",title:"Find reaction pathway",hint:"Run",icon:ArrowRight}
+const commands = [
+  { id: "explore", title: "Explore reaction network", icon: Network },
+  { id: "compare", title: "Compare graph algorithms", icon: GitCompareArrows },
+  { id: "lab", title: "Open algorithm laboratory", icon: FlaskConical },
+  { id: "data", title: "Browse compound data", icon: Database },
+  { id: "find", title: "Find pathway for current query", icon: ArrowRight }
 ];
 
 export function StudioCommandPalette({
-  open,onClose,onNavigate,compounds,onSelectSource,onSelectTarget,onFind
+  open,
+  onClose,
+  onNavigate,
+  compounds,
+  onSelectSource,
+  onSelectTarget,
+  onFind,
+  theme = "dark"
 }) {
-  const [query,setQuery]=useState("");
-  const input=useRef(null);
-  const dialog=useRef(null);
-  useEffect(()=>{
-    if(!open)return undefined;
-    setQuery("");
-    const token=requestAnimationFrame(()=>input.current?.focus());
-    const onKey=(event)=>{
-      if(event.key==="Escape"){event.preventDefault();onClose();}
-      // Focus stays inside the modal when tabbing.
-      if(event.key==="Tab"){
-        const buttons=[...dialog.current.querySelectorAll("button:not([disabled]), input:not([disabled])")];
-        if(!buttons.length)return;
-        const first=buttons[0],last=buttons[buttons.length-1];
-        if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
-        if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
-      }
-    };
-    document.addEventListener("keydown",onKey);
-    return ()=>{cancelAnimationFrame(token);document.removeEventListener("keydown",onKey);};
-  },[open,onClose]);
-  const q=query.trim().toLowerCase();
-  const filteredCommands=useMemo(()=>commands.filter(item=>!q||item.title.toLowerCase().includes(q)),[q]);
-  const filteredCompounds=useMemo(()=>q.length<2?[]:compounds.filter(item=>
-    (item.name+" "+item.formula+" "+item.category).toLowerCase().includes(q)).slice(0,7),[compounds,q]);
-  if(!open)return null;
-  const perform=(callback)=>{callback();onClose();};
-  return <div className="studio-command-overlay" onPointerDown={event=>{
-      if(event.target===event.currentTarget)onClose();
-    }}>
-    <section className="studio-command-dialog studio-liquid-glass" role="dialog" aria-modal="true"
-      aria-label="Command palette" ref={dialog}>
-      <div className="studio-command-input">
-        <Search size={19}/>
-        <input ref={input} aria-label="Search commands and compounds" value={query}
-          onChange={event=>setQuery(event.target.value)} placeholder="Search commands or compounds…"
-          onKeyDown={event=>{
-            if(event.key==="Enter"){
-              const cmd=filteredCommands[0];
-              if(cmd)perform(()=>cmd.id==="find"?onFind():onNavigate(cmd.id));
-              else if(filteredCompounds[0])perform(()=>onSelectSource(filteredCompounds[0].name));
-            }
-          }}/>
-        <button type="button" onClick={onClose} className="studio-icon-btn" aria-label="Close search"><X size={17}/></button>
-      </div>
-      <div className="studio-command-results">
-        {filteredCommands.length>0&&<>
-          <p className="studio-command-category">COMMANDS</p>
-          {filteredCommands.map(({id,title,hint,icon:Icon})=><button key={id} type="button"
-            className="studio-command-row" onClick={()=>perform(()=>id==="find"?onFind():onNavigate(id))}>
-            <Icon size={17}/><span>{title}</span><small>{hint}</small><ArrowRight size={14}/>
-          </button>)}
-        </>}
-        {filteredCompounds.length>0&&<>
-          <p className="studio-command-category">COMPOUNDS</p>
-          {filteredCompounds.map(item=><div className="studio-command-compound" key={item.id}>
-            <div><strong>{item.formula||"—"}</strong><span>{item.name}</span></div>
-            <button type="button" onClick={()=>perform(()=>onSelectSource(item.name))}>Set start</button>
-            <button type="button" onClick={()=>perform(()=>onSelectTarget(item.name))}>Set target</button>
-          </div>)}
-        </>}
-        {!filteredCommands.length&&!filteredCompounds.length&&<p className="studio-command-empty">No matching commands or compounds.</p>}
-      </div>
-      <div className="studio-command-footer"><Keyboard size={14}/> Enter to select · Esc to close
-        <span>CHEMPATH STUDIO</span>
-      </div>
-    </section>
-  </div>;
+  const [query, setQuery] = useState("");
+  useEffect(() => {
+    if (open) setQuery("");
+  }, [open]);
+  const q = query.trim().toLowerCase();
+  // Pre-filter so the dialog never mounts hundreds of rows for one keystroke.
+  const matches = useMemo(
+    () =>
+      q.length < 2
+        ? []
+        : compounds
+            .filter(item =>
+              `${item.name} ${item.formula} ${item.category}`.toLowerCase().includes(q)
+            )
+            .slice(0, 12),
+    [compounds, q]
+  );
+  const perform = callback => {
+    callback();
+    onClose();
+  };
+  return (
+    <CommandDialog
+      open={open}
+      onOpenChange={next => {
+        if (!next) onClose();
+      }}
+      title="Command palette"
+      description="Search compounds or run a command"
+      className="sm:max-w-xl"
+    >
+      <Command>
+        <CommandInput
+          value={query}
+          onValueChange={setQuery}
+          placeholder="Type a compound, formula or command…"
+          aria-label="Search commands and compounds"
+        />
+        <CommandList className="max-h-[min(420px,60vh)]">
+          <CommandEmpty>No matching compounds or commands.</CommandEmpty>
+          {matches.length > 0 && (
+            <CommandGroup heading="Compounds">
+              {matches.map(item => (
+                <CommandItem
+                  key={item.id}
+                  value={`${item.name} ${item.formula} ${item.category}`}
+                  className="[&>svg:last-child]:hidden"
+                  onSelect={() => perform(() => onSelectSource(item.name))}
+                >
+                  <span
+                    className="category-dot"
+                    style={{ background: categoryColor(theme, item.category) }}
+                  />
+                  <Formula compound={item} className="font-semibold" />
+                  <span className="truncate text-muted-foreground">{item.name}</span>
+                  <span className="ml-auto flex gap-1">
+                    <Button
+                      size="xs"
+                      variant="outline"
+                      onClick={event => {
+                        event.stopPropagation();
+                        perform(() => onSelectSource(item.name));
+                      }}
+                    >
+                      From
+                    </Button>
+                    <Button
+                      size="xs"
+                      variant="outline"
+                      onClick={event => {
+                        event.stopPropagation();
+                        perform(() => onSelectTarget(item.name));
+                      }}
+                    >
+                      To
+                    </Button>
+                  </span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+          <CommandGroup heading="Commands">
+            {commands.map(({ id, title, icon: Icon }) => (
+              <CommandItem
+                key={id}
+                value={title}
+                onSelect={() => perform(() => (id === "find" ? onFind() : onNavigate(id)))}
+              >
+                <Icon />
+                <span>{title}</span>
+                <CommandShortcut>{id === "find" ? "Run" : "Go to"}</CommandShortcut>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    </CommandDialog>
+  );
 }
 
 export function StudioInspectorHeading({
-  compound, reaction, from, to, result, busy, running, onClose, onReplay, onSwap, onExplore, onExpand
+  compound,
+  reaction,
+  result,
+  busy,
+  running,
+  onClose,
+  onReplay,
+  onExplore,
+  onExpand,
+  theme = "dark"
 }) {
-  return <div className="studio-inspector-heading">
-    <div className="studio-inspector-topline">
-      <span>INSPECTOR</span>
-      <button type="button" className="studio-icon-btn" onClick={onClose}
-        aria-label="Close inspector" title="Close inspector"><X size={16}/></button>
-    </div>
-    {compound?<div className="studio-compound-card">
-      <div className="studio-formula-block">{compound.formula||"—"}</div>
-      <div className="studio-compound-info">
-        <strong>{compound.name}</strong>
-        <span>{compound.category||"Compound"}</span>
+  return (
+    <div className="border-b px-4 pt-2.5 pb-4">
+      <div className="-mr-2 flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">Selected compound</span>
+        <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Close inspector">
+          <X />
+        </Button>
       </div>
-    </div>:<div className="studio-compound-placeholder">Select a compound to inspect its graph relationships.</div>}
-    {reaction&&<div className="studio-reaction-selection">
-      <span>SELECTED REACTION</span>
-      <strong>{reaction.reaction||"Reaction participation"}</strong>
-      <p>{reaction.equation||"Directed graph edge"}</p>
-      {reaction.conditions&&<small>{reaction.conditions}</small>}
-      {reaction.cost!=null&&<small>Illustrative graph weight: {reaction.cost}</small>}
-    </div>}
-    <div className="studio-inspector-route">
-      <div className="studio-inspector-route-caption">CURRENT QUERY</div>
-      <div className="studio-inspector-route-endpoints">
-        <span title={from}>{from}</span><ArrowRight size={14}/><span title={to}>{to}</span>
+      {compound ? (
+        <div className="mt-0.5 flex flex-col items-start">
+          <Formula
+            compound={compound}
+            className="max-w-full truncate text-[26px] leading-tight font-semibold tracking-tight"
+          />
+          <strong className="mt-0.5 text-sm font-medium break-words">{compound.name}</strong>
+          <CategoryBadge category={compound.category} theme={theme} className="mt-2" />
+        </div>
+      ) : (
+        <p className="mt-1 text-[13px] text-muted-foreground">
+          Click a compound on the map to inspect it.
+        </p>
+      )}
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {compound && onExpand && (
+          <Hint label="Compounds within two reactions">
+            <Button variant="outline" size="sm" onClick={onExpand}>
+              <Network data-icon="inline-start" />
+              Neighborhood
+            </Button>
+          </Hint>
+        )}
+        <Button variant="outline" size="sm" onClick={onExplore}>
+          <BookOpen data-icon="inline-start" />
+          Directory
+        </Button>
+        {result?.found && !running && (
+          <Hint label="Replay the traversal order returned by C++">
+            <Button variant="outline" size="sm" onClick={onReplay} disabled={busy}>
+              <Play data-icon="inline-start" />
+              Replay
+            </Button>
+          </Hint>
+        )}
       </div>
+      {reaction && (
+        <div className="mt-4 space-y-1 rounded-lg border bg-muted/50 p-3">
+          <span className="text-xs font-medium text-muted-foreground">Selected reaction</span>
+          <p className="text-[13px] font-medium break-words">
+            {reaction.reaction || "Reaction participation"}
+          </p>
+          {reaction.equation && (
+            <code className="block font-mono text-xs break-words whitespace-pre-wrap text-muted-foreground">
+              {reaction.equation}
+            </code>
+          )}
+          {reaction.conditions && (
+            <p className="text-xs text-muted-foreground">{reaction.conditions}</p>
+          )}
+          {reaction.cost != null && (
+            <p className="text-xs text-muted-foreground">Graph weight {reaction.cost}</p>
+          )}
+        </div>
+      )}
     </div>
-    <div className="studio-inspector-actions">
-      <button type="button" onClick={onSwap} disabled={busy||running}
-        title="Swap start and target compounds"><ArrowLeftRight size={15}/> Swap</button>
-      <button type="button" onClick={onExplore} title="Open compound library"><BookOpen size={15}/> Library</button>
-    </div>
-    {compound&&onExpand&&
-      <button type="button" className="studio-replay-action" onClick={onExpand}>
-        <Layers3 size={14}/> Explore neighborhood <ChevronRight size={14}/>
-      </button>}
-    {result?.found&&!running&&
-      <button type="button" className="studio-replay-action" onClick={onReplay} disabled={busy}>
-        <Play size={14}/> Replay traversal <ChevronRight size={14}/>
-      </button>}
-  </div>;
+  );
 }

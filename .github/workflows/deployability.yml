@@ -43,7 +43,8 @@ jobs:
           TEST_APP_URL: http://127.0.0.1:8080
         run: node scripts/smoke-webgl.mjs
       - name: Publish production WebGL screenshot
-        if: success() && github.event_name == 'pull_request'
+        # Fork PRs get a read-only token and cannot push the screenshot branch.
+        if: success() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         run: |
           cp screenshots/webgl-hosted.png /tmp/chempath-webgl-hosted.png
           git fetch origin docs/chempath-screenshots

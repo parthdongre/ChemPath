@@ -1,30 +1,26 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import {createGlassDisplacement,REFRACTION_SCALE} from "../web/src/components/liquidOptics.js";
 import {buildOverviewClusters,spreadClusterMarkers} from "../web/src/components/graphClusters.js";
 import {layoutKey,rememberLayout,restoreLayout,clearLayoutCache} from "../web/src/components/graphLayoutCache.js";
+import {formulaText,looksLikeSmiles,isStructureRecord,compoundLabel} from "../web/src/theme.js";
 
-test("a glass SDF keeps its center optically neutral",()=>{
-  const m=createGlassDisplacement(180,60,{radius:15});
-  assert.equal(m.data.length,180*60*4);
-  const center=(30*180+90)*4;
-  assert.ok(Math.abs(m.data[center]-128)<=1);
-  assert.ok(Math.abs(m.data[center+1]-128)<=1);
-  assert.equal(m.data[center+2],0);
-  assert.equal(m.data[center+3],255);
+test("formulas render with subscripts and charges",()=>{
+  assert.equal(formulaText("CH4"),"CH₄");
+  assert.equal(formulaText("HCO3-"),"HCO₃⁻");
+  assert.equal(formulaText("SO4^2-"),"SO₄²⁻");
+  assert.equal(formulaText("Fe^3+"),"Fe³⁺");
+  assert.equal(formulaText("Al(OH)3"),"Al(OH)₃");
+  assert.equal(formulaText("NH4+"),"NH₄⁺");
+  assert.equal(formulaText("C7H11NO9P-2"),"C₇H₁₁NO₉P²⁻");
+  assert.equal(formulaText("2H2O"),"2H₂O","leading coefficients stay full size");
 });
-test("real refraction only bends pixels near the curved rim",()=>{
-  const map=createGlassDisplacement(160,58,{radius:15,bezel:16,depth:13});
-  let refracted=0,flat=0;
-  for(let y=0;y<map.height;y++)for(let x=0;x<map.width;x++){
-    const i=(y*map.width+x)*4;
-    if(Math.abs(map.data[i]-128)>2||Math.abs(map.data[i+1]-128)>2)refracted++;
-    else flat++;
-    assert.equal(map.data[i+3],255);
-  }
-  assert.ok(refracted>400,"Rim should contain a meaningful optical bend");
-  assert.ok(flat>1000,"Most center/background pixels should remain stable");
-  assert.equal(REFRACTION_SCALE,30);
+test("SMILES identifiers are never reformatted",()=>{
+  assert.ok(looksLikeSmiles("CC(=O)O"));
+  assert.ok(!looksLikeSmiles("Cl-"));
+  assert.equal(formulaText("C1=CC=CC=C1"),"C1=CC=CC=C1");
+  const ord={name:"SMILES:C1CCCCC1",formula:"C1CCCCC1",category:"ORD molecule"};
+  assert.ok(isStructureRecord(ord));
+  assert.equal(compoundLabel(ord),"C1CCCCC1");
 });
 test("spatial clusters are repeatable and leave hubs unaggregated",()=>{
   const nodes=Array.from({length:90},(_,i)=>String(i));

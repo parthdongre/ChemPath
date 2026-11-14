@@ -1,8 +1,19 @@
 import { useEffect, useState } from "react";
-import { Database, Search, Network, FlaskConical, ExternalLink, RefreshCw } from "lucide-react";
+import { Database, FlaskConical, Network, RefreshCw, Search } from "lucide-react";
 import SigmaNetwork from "./SigmaNetwork.jsx";
 import { api } from "../api.js";
-import "./OrdExplorer.css";
+import { cn } from "@/lib/utils";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { Kbd } from "@/components/ui/kbd";
+import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { SectionHeader, Stat, StatStrip } from "@/components/studio/primitives.jsx";
 
 const fmt = n => typeof n === "number" ? n.toLocaleString() : "—";
 const setupCommands = [
@@ -56,124 +67,161 @@ export default function OrdExplorer() {
     });
   }
 
-  return <section id="ord-database" className="ord-panel" aria-label="Open Reaction Database explorer">
-    <div className="ord-header">
-      <div>
-        <p className="ord-eyebrow"><Database size={14}/> LARGE DATASET / SQLITE</p>
-        <h2>Open Reaction Database</h2>
-        <p>Explore millions of source reaction records without loading the entire network into your browser.</p>
-      </div>
-      <div className="ord-status">
-        <span className={status?.available ? "ord-dot connected" : "ord-dot"}/>
-        {status?.available ? "Indexed locally" : "Optional local dataset"}
-      </div>
-    </div>
+  const installed = status?.available;
+  return <section id="ord-database" className="ord-panel mt-12" aria-label="Open Reaction Database explorer">
+    <SectionHeader title="Open Reaction Database"
+      description="Search source reaction records from a local SQLite index and run C++ breadth-first search over it, without loading the corpus into the browser."
+      actions={<Badge variant="outline" className="gap-1.5 font-normal">
+        <span className={cn("size-1.5 rounded-full", installed ? "bg-success" : "bg-muted-foreground")}/>
+        {installed ? "Indexed locally" : "Not installed"}
+      </Badge>}/>
 
-    {status?.available ? <>
-      <div className="ord-metrics">
-        <div><small>Indexed reaction records</small><strong>{fmt(status.reactions)}</strong></div>
-        <div><small>With reaction SMILES</small><strong>{fmt(status.withReactionSmiles)}</strong></div>
-        <div><small>Parquet files processed</small><strong>{fmt(status.importedFiles)}</strong></div>
-        <div><small>Data license</small><strong>CC BY-SA 4.0</strong></div>
-      </div>
-      <div className="ord-search">
-        <label htmlFor="ord-query">Search molecular SMILES or an ORD reaction ID</label>
-        <div className="ord-query-row">
-          <Search size={17}/>
-          <input id="ord-query" type="text" value={query}
-            onChange={e => setQuery(e.target.value)}
-            onKeyDown={e => { if (e.key === "Enter") search(); }}
-            placeholder="e.g. CCO or ord-…" maxLength={180}/>
-          <button disabled={!!busy || query.trim().length < 2} onClick={search}>
-            {busy === "search" ? "Searching…" : "Search database"}
-          </button>
-        </div>
-        <small>SMILES prefixes are structure strings, not common chemical names. Try CCO, CC(=O), or an ORD identifier.</small>
-      </div>
+    {installed ? <div className="space-y-3">
+      <StatStrip className="max-sm:grid-flow-row max-sm:grid-cols-2 max-sm:divide-x-0">
+        <Stat label="Reaction records" value={fmt(status.reactions)}/>
+        <Stat label="With reaction SMILES" value={fmt(status.withReactionSmiles)}/>
+        <Stat label="Parquet files" value={fmt(status.importedFiles)}/>
+        <Stat label="Licence" value="CC BY-SA 4.0"/>
+      </StatStrip>
 
-      <div className="ord-search">
-        <div className="ord-subheading"><Network size={17}/> C++ on-demand shortest path</div>
-        <p className="ord-muted">Exact compound-participation BFS over the local SQLite index. Multi-reactant availability is not guaranteed. Search results are complete only when no resource limit was reached.</p>
-        <label htmlFor="ord-path-from">Starting indexed SMILES</label>
-        <div className="ord-query-row">
-          <input id="ord-path-from" type="text" value={pathFrom} maxLength={512}
-            onChange={e=>{setPathFrom(e.target.value);setPathResult(null);}} placeholder="e.g. CCO"/>
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle>Search records</CardTitle>
+          <CardDescription>SMILES prefixes are structure strings, not names. Try CCO, CC(=O) or an ORD identifier.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form className="flex gap-2 max-sm:flex-col" onSubmit={event => { event.preventDefault(); search(); }}>
+            <InputGroup>
+              <InputGroupAddon><Search/></InputGroupAddon>
+              <InputGroupInput id="ord-query" value={query} onChange={e => setQuery(e.target.value)}
+                placeholder="e.g. CCO or ord-…" maxLength={180} className="font-mono"
+                aria-label="Search molecular SMILES or an ORD reaction ID"/>
+            </InputGroup>
+            <Button type="submit" disabled={!!busy || query.trim().length < 2}>
+              {busy === "search" && <Spinner data-icon="inline-start"/>}Search
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Network className="size-4 text-muted-foreground"/>C++ on-demand shortest path</CardTitle>
+          <CardDescription>Exact participation BFS over the SQLite index. A result is complete only when no resource limit was reached.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid gap-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="ord-path-from" className="text-xs text-muted-foreground">From (indexed SMILES)</Label>
+              <Input id="ord-path-from" value={pathFrom} maxLength={512} className="font-mono"
+                onChange={e=>{setPathFrom(e.target.value);setPathResult(null);}} placeholder="e.g. CCO"/>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="ord-path-to" className="text-xs text-muted-foreground">To (indexed SMILES)</Label>
+              <Input id="ord-path-to" value={pathTo} maxLength={512} className="font-mono"
+                onChange={e=>{setPathTo(e.target.value);setPathResult(null);}} placeholder="e.g. CC=O"/>
+            </div>
+            <Button disabled={!!busy||!pathFrom.trim()||!pathTo.trim()}
+              onClick={()=>action("route",async()=>{
+                setPathResult(await api.ordPath(pathFrom.trim(),pathTo.trim(),2500));
+              })}>{busy==="route"&&<Spinner data-icon="inline-start"/>}Find indexed path</Button>
+          </div>
+          {pathResult&&<Alert className={pathResult.found ? "border-l-2 border-l-route" : ""}>
+            <AlertTitle>{pathResult.found
+              ? `Shortest participation path: ${pathResult.hopCount} hops`
+              : pathResult.complete ? "No path in the indexed dataset"
+                : `Search incomplete: ${pathResult.limitReason}`}</AlertTitle>
+            <AlertDescription className="space-y-2">
+              <p className="tabular-nums">Expanded {fmt(pathResult.metrics?.expanded)} compounds · {fmt(pathResult.metrics?.sqlQueries)} SQLite
+                queries · {fmt(pathResult.metrics?.cacheHits)} cache hits · {fmt(pathResult.metrics?.elapsedMs)} ms</p>
+              {pathResult.found&&<ol className="list-decimal space-y-1 pl-5 text-foreground">
+                {(pathResult.steps||[]).map((step,i)=><li key={step.recordId+"-"+i}>
+                  <code className="font-mono text-xs">{step.from}</code> → <code className="font-mono text-xs">{step.to}</code>
+                  <span className="text-muted-foreground"> via {step.ordId}</span>
+                </li>)}
+              </ol>}
+              {!pathResult.complete&&<p>A resource limit was reached, so this does not prove that no route exists.</p>}
+            </AlertDescription>
+          </Alert>}
+        </CardContent>
+      </Card>
+
+      {results.length > 0 && <div className="overflow-hidden rounded-lg border bg-card">
+        <div className="flex justify-between border-b bg-muted/50 px-3 py-2 text-xs">
+          <span className="font-medium">Matching reactions</span>
+          <span className="text-muted-foreground">{results.length} shown</span>
         </div>
-        <label htmlFor="ord-path-to">Target indexed SMILES</label>
-        <div className="ord-query-row">
-          <input id="ord-path-to" type="text" value={pathTo} maxLength={512}
-            onChange={e=>{setPathTo(e.target.value);setPathResult(null);}} placeholder="e.g. CC=O"/>
-          <button disabled={!!busy||!pathFrom.trim()||!pathTo.trim()}
-            onClick={()=>action("route",async()=>{
-              setPathResult(await api.ordPath(pathFrom.trim(),pathTo.trim(),2500));
-            })}>{busy==="route"?"Searching…":"Find indexed path"}</button>
-        </div>
-        {pathResult&&<div className="ord-reaction">
-          <strong>{pathResult.found
-            ? "Shortest participation path: "+pathResult.hopCount+" hops"
-            : pathResult.complete ? "No path in indexed dataset"
-              : "Search incomplete — "+pathResult.limitReason}</strong>
-          <p className="ord-muted">Expanded {fmt(pathResult.metrics?.expanded)} compounds ·
-            {fmt(pathResult.metrics?.sqlQueries)} SQLite queries ·
-            {fmt(pathResult.metrics?.cacheHits)} cache hits ·
-            {fmt(pathResult.metrics?.elapsedMs)} ms</p>
-          {pathResult.found&&<ol>
-            {(pathResult.steps||[]).map((step,i)=><li key={step.recordId+"-"+i}>
-              <code>{step.from}</code> → <code>{step.to}</code> via <strong>{step.ordId}</strong>
-            </li>)}
-          </ol>}
-          {!pathResult.complete&&<p className="ord-muted">Resource limit reached. This does not establish that no route exists.</p>}
-        </div>}
-      </div>
-      {results.length > 0 && <div className="ord-results">
-        <h3>Matching reactions <span>{results.length} displayed</span></h3>
-        {results.map(item => <button key={item.id} className={selected?.reaction?.id === item.id ? "ord-result selected" : "ord-result"}
-          onClick={() => chooseReaction(item.id)}>
-          <span className="ord-record-id">{item.ordId}</span>
-          <code>{item.smiles || "No reaction SMILES provided"}</code>
-          <span className="ord-go">Inspect →</span>
-        </button>)}
+        <Table>
+          <TableBody>
+            {results.map(item => <TableRow key={item.id} role="button" tabIndex={0}
+              data-state={selected?.reaction?.id === item.id ? "selected" : undefined}
+              className="cursor-pointer data-[state=selected]:bg-route/10"
+              onClick={() => chooseReaction(item.id)}
+              onKeyDown={event => { if (event.key === "Enter") chooseReaction(item.id); }}>
+              <TableCell className="w-48 max-w-48 truncate font-medium">{item.ordId}</TableCell>
+              <TableCell className="max-w-0 truncate font-mono text-xs text-muted-foreground">{item.smiles || "No reaction SMILES provided"}</TableCell>
+              <TableCell className="w-20 text-right text-xs text-muted-foreground">Inspect</TableCell>
+            </TableRow>)}
+          </TableBody>
+        </Table>
       </div>}
-      {selected && <div className="ord-reaction">
-        <div className="ord-subheading"><FlaskConical size={17}/> Reaction details</div>
-        <strong>{selected.reaction.ordId}</strong>
-        <p className="ord-smiles">{selected.reaction.smiles || "No structural reaction SMILES in source"}</p>
-        <div className="ord-role-groups">
-          {["reactant", "agent", "product"].map(role =>
-            <div key={role}><h4>{role}s</h4>
-              {selected.participants.filter(p => p.role === role).map(p =>
-                <button key={role+p.smiles} title="Explore related reactions"
-                  onClick={() => showNeighborhood(p.smiles)}>{p.smiles} <Network size={13}/></button>)}
-            </div>)}
-        </div>
-        <p className="ord-muted">Select a compound to explore nearby records as a compound–reaction network. Multiple reactants remain attached to one reaction node.</p>
-      </div>}
-      {neighborhood && <div className="ord-graph">
-        <div className="ord-subheading"><Network size={17}/> Reaction participation network</div>
-        <p className="ord-muted">{fmt(neighborhood.reactions)} source reactions · {fmt(neighborhood.nodes.length)} visible nodes ·
-          reactants → reaction nodes → products</p>
-        {neighborhood.nodes.length ? <div className="ord-network">
-          <SigmaNetwork network={neighborhood}
-            onSelectCompound={(name) => {
-              if (!String(name).startsWith("ord-")) showNeighborhood(name);
-            }}/>
-        </div> : <p className="ord-muted">No indexed relationships for this SMILES string.</p>}
-      </div>}
-    </> : <div className="ord-setup">
-      <div className="ord-subheading"><Database size={20}/> Enable the large reaction library</div>
-      <p>The optional ORD index has not been installed on this machine. Open Terminal in your ChemPath folder:</p>
-      <pre>{setupCommands}</pre>
-      <p>For the complete official dataset, run <code>python3 scripts/import-ord.py --all</code>.
-        Keep several gigabytes of free disk space available. No dataset import is required to use the existing DSA algorithms.</p>
-      <button onClick={() => action("refresh", refresh)} disabled={!!busy}>
-        <RefreshCw size={15}/> Check database again
-      </button>
-    </div>}
-    {error && <p className="ord-error" role="alert">{error}</p>}
-    <footer className="ord-footer">
-      <span>Source: <a href="https://huggingface.co/datasets/open-reaction-database/ord-data"
-        target="_blank" rel="noreferrer">Open Reaction Database <ExternalLink size={12}/></a></span>
-      <span>ORD data CC BY-SA 4.0 · Graph relationships are not verified syntheses</span>
+
+      {selected && <Card size="sm">
+        <CardHeader>
+          <CardDescription className="flex items-center gap-2"><FlaskConical className="size-3.5"/>Reaction details</CardDescription>
+          <CardTitle className="break-all">{selected.reaction.ordId}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="font-mono text-xs leading-relaxed break-all text-muted-foreground">
+            {selected.reaction.smiles || "No structural reaction SMILES in source"}</p>
+          <div className="grid gap-3 md:grid-cols-3">
+            {["reactant", "agent", "product"].map(role =>
+              <div key={role}>
+                <h4 className="mb-1.5 text-xs font-medium text-muted-foreground capitalize">{role}s</h4>
+                <div className="flex flex-col gap-1">
+                  {selected.participants.filter(p => p.role === role).map(p =>
+                    <Button key={role+p.smiles} variant="outline" size="sm" title="Explore related reactions"
+                      className="h-auto justify-between py-1.5 text-left font-mono text-xs font-normal break-all whitespace-normal"
+                      onClick={() => showNeighborhood(p.smiles)}>{p.smiles}<Network data-icon="inline-end"/></Button>)}
+                </div>
+              </div>)}
+          </div>
+          <p className="text-xs text-muted-foreground">Pick a compound to see nearby records as a compound–reaction network. Reactants stay attached to a single reaction node.</p>
+        </CardContent>
+      </Card>}
+
+      {neighborhood && <Card size="sm">
+        <CardHeader>
+          <CardTitle>Reaction participation network</CardTitle>
+          <CardDescription>{fmt(neighborhood.reactions)} source reactions · {fmt(neighborhood.nodes.length)} nodes ·
+            reactants → reaction nodes → products</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {neighborhood.nodes.length ? <div className="relative h-[480px] overflow-hidden rounded-lg border max-sm:h-[340px]">
+            <SigmaNetwork network={neighborhood}
+              onSelectCompound={(name) => {
+                if (!String(name).startsWith("ord-")) showNeighborhood(name);
+              }}/>
+          </div> : <p className="text-[13px] text-muted-foreground">No indexed relationships for this SMILES string.</p>}
+        </CardContent>
+      </Card>}
+    </div> : <Alert>
+      <Database/>
+      <AlertTitle>Install the reaction index</AlertTitle>
+      <AlertDescription className="space-y-3">
+        <p>The ORD index is optional and not installed on this machine. From the ChemPath folder, run:</p>
+        <pre className="overflow-x-auto rounded-lg border bg-muted/50 px-3 py-2.5 font-mono text-xs leading-relaxed text-foreground">{setupCommands}</pre>
+        <p>For the complete dataset, run <Kbd className="font-mono">python3 scripts/import-ord.py --all</Kbd> and keep several gigabytes free. The DSA algorithms work without it.</p>
+        <Button variant="outline" size="sm" onClick={() => action("refresh", refresh)} disabled={!!busy}>
+          <RefreshCw data-icon="inline-start"/>Check again
+        </Button>
+      </AlertDescription>
+    </Alert>}
+    {error && <p className="mt-3 text-[13px] text-destructive" role="alert">{error}</p>}
+    <footer className="mt-3 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
+      <span>Source: <a className="underline underline-offset-3 hover:text-foreground"
+        href="https://huggingface.co/datasets/open-reaction-database/ord-data" target="_blank" rel="noreferrer">Open Reaction Database</a></span>
+      <span>ORD data CC BY-SA 4.0 · graph relationships are not verified syntheses</span>
     </footer>
   </section>;
 }

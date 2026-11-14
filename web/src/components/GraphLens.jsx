@@ -1,4 +1,5 @@
 import {useEffect,useRef} from "react";
+import {categoryColor,graphTheme,useTheme} from "../theme.js";
 
 const SIZE=180;
 const RADIUS=SIZE/2;
@@ -18,6 +19,7 @@ export default function GraphLens({
 }) {
   const shell=useRef(null);
   const canvasRef=useRef(null);
+  const theme=useTheme();
 
   useEffect(()=>{
     const container=containerRef.current;
@@ -31,6 +33,7 @@ export default function GraphLens({
     canvas.width=SIZE*dpr;canvas.height=SIZE*dpr;
     ctx.setTransform(dpr,0,0,dpr,0,0);
 
+    const colors=graphTheme(theme);
     const highlighted=new Set(highlightedEdgeIds.map(String));
     const selected=selectedNodeId==null?null:String(selectedNodeId);
     let position={x:0,y:0};
@@ -54,7 +57,7 @@ export default function GraphLens({
       ctx.save();
       ctx.clearRect(0,0,SIZE,SIZE);
       ctx.beginPath();ctx.arc(RADIUS,RADIUS,RADIUS,0,Math.PI*2);ctx.clip();
-      ctx.fillStyle="#13222f";ctx.fillRect(0,0,SIZE,SIZE);
+      ctx.fillStyle=colors.lensBg;ctx.fillRect(0,0,SIZE,SIZE);
       // Draw ranked local relationships only: a lens reveals detail, not noise.
       let drawn=0;
       for(const edge of cartography.entries){
@@ -65,8 +68,8 @@ export default function GraphLens({
         if(Math.max(p.x,q.x)<-8||Math.min(p.x,q.x)>SIZE+8||
           Math.max(p.y,q.y)<-8||Math.min(p.y,q.y)>SIZE+8)continue;
         const route=highlighted.has(edge.id);
-        ctx.strokeStyle=route?"#6de9d2":
-          cartography.overview.has(edge.id)?"#687f8c":"#3b5361";
+        ctx.strokeStyle=route?colors.route:
+          cartography.overview.has(edge.id)?colors.edgeArterial:colors.edgeCollector;
         ctx.lineWidth=route?2.35:cartography.overview.has(edge.id)?1.25:.62;
         ctx.globalAlpha=route?1:cartography.overview.has(edge.id)?.66:.38;
         ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.stroke();
@@ -81,14 +84,14 @@ export default function GraphLens({
         const isSelected=selected===key;
         const routeNode=highlightedEdgeIds.length>0&&rank<8;
         const attrs=graph.getNodeAttributes(key);
-        ctx.fillStyle=isSelected?"#f0c888":rank<45?"#a2c5cf":"#7795a2";
+        ctx.fillStyle=isSelected?colors.selected:categoryColor(theme,attrs.category);
         const radius=isSelected?5:rank<20?3.3:2.25;
         ctx.beginPath();ctx.arc(p.x,p.y,radius,0,Math.PI*2);ctx.fill();
         if(labels<9&&(isSelected||rank<21||routeNode)){
-          ctx.font="600 10px -apple-system,BlinkMacSystemFont,Inter,sans-serif";
+          ctx.font="600 10px 'Geist Variable',-apple-system,sans-serif";
           ctx.textAlign="left";ctx.textBaseline="middle";
-          ctx.fillStyle="#e6f4f5";
-          ctx.fillText(String(attrs.formula||attrs.name||key).slice(0,24),
+          ctx.fillStyle=colors.lensLabel;
+          ctx.fillText(String(attrs.label||attrs.name||key).slice(0,24),
             Math.min(SIZE-49,p.x+8),p.y-9,95);
           labels++;
         }
@@ -118,10 +121,10 @@ export default function GraphLens({
       container.removeEventListener("wheel",onWheel);
       shellElement.style.opacity="0";
     };
-  },[enabled,containerRef,rendererRef,graph,cartography,highlightedEdgeIds,selectedNodeId]);
+  },[enabled,containerRef,rendererRef,graph,cartography,highlightedEdgeIds,selectedNodeId,theme]);
 
   if(!enabled)return null;
-  return <div className="sigma-live-lens studio-liquid-glass" ref={shell}
+  return <div className="sigma-live-lens" ref={shell}
     aria-hidden="true" data-testid="graph-focus-lens">
     <canvas ref={canvasRef} width={SIZE} height={SIZE}/>
     <span className="sigma-lens-rim"/>

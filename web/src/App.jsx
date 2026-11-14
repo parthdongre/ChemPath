@@ -5,8 +5,30 @@ import SigmaNetwork from "./components/SigmaNetwork.jsx";
 import LabPanel from "./components/LabPanel.jsx";
 import OrdExplorer from "./components/OrdExplorer.jsx";
 import PubChemCatalog from "./components/PubChemCatalog.jsx";
-import { StudioTopbar, StudioSidebar, StudioCommandPalette, StudioInspectorHeading } from "./components/StudioChrome.jsx";
-import StudioGlassEffects from "./components/StudioGlassEffects.jsx";
+import { StudioTopbar, StudioCommandPalette, StudioInspectorHeading } from "./components/StudioChrome.jsx";
+import Formula from "./components/Formula.jsx";
+import { ThemeContext, categoryColor } from "./theme.js";
+import { ArrowLeftRight, ChevronsUpDown, Route, Search } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { AnnotatedText } from "@/components/ui/annotated-text";
+import { SplitFlapDisplay } from "@/components/ui/split-flap-display";
+import { Hint, MapPanel, PageHeader, SectionHeader, Stat, StatStrip } from "@/components/studio/primitives.jsx";
 
 const EMPTY_HIGHLIGHT = { nodes: [], edges: [] };
 const MAX_SIMULATION_MS = 120_000;
@@ -216,254 +238,154 @@ function matchesChemistryCenter(compound, center) {
 
 function relationshipLabel(compound, from, distanceByName) {
   if (!from) return "";
-  if (compound.name === from) return "CENTER";
+  if (compound.name === from) return "Start";
   const hops = distanceByName?.[compound.name];
-  if (!Number.isFinite(hops)) return "NO CURRENT PATH";
-  return `${hops} ${hops === 1 ? "STEP" : "STEPS"}`;
+  if (!Number.isFinite(hops)) return "—";
+  return `${hops} ${hops === 1 ? "step" : "steps"}`;
 }
 
-function Stat({ value, label }) {
-  return (
-    <div className="stat">
-      <strong>{value ?? "—"}</strong>
-      <span>{label}</span>
-    </div>
-  );
+/** C++ timings are often sub-millisecond; show them in µs so they fit and stay readable. */
+function engineTime(ms) {
+  const value = Number(ms);
+  if (!Number.isFinite(value)) return { value: "—" };
+  if (value < 1) return { value: Math.max(1, Math.round(value * 1000)).toLocaleString(), unit: "µs" };
+  return { value: value.toFixed(value < 10 ? 2 : 1), unit: "ms" };
 }
 
+function FieldCaption({ children, hint }) {
+  return <span className="mb-1.5 flex items-baseline justify-between gap-2 text-xs font-medium whitespace-nowrap text-muted-foreground">
+    {children}{hint && <span className="font-normal tabular-nums opacity-80">{hint}</span>}
+  </span>;
+}
+
+/** Searchable compound combobox: shadcn Popover + Command with ChemPath ranking. */
 function CompoundSelect({
   label,
+  hint = "",
   value,
   onChange,
   compounds,
   disabled,
-  distanceByName = null
+  distanceByName = null,
+  className = ""
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [centerFilter, setCenterFilter] = useState("All");
-  const [activeIndex, setActiveIndex] = useState(0);
-  const rootRef = useRef(null);
-  const listRef = useRef(null);
-
-  const distanceMap = useMemo(
-    () => distanceByName ?? {},
-    [distanceByName]
-  );
-
+  const distanceMap = useMemo(() => distanceByName ?? {}, [distanceByName]);
   const selected = useMemo(
     () => compounds.find((compound) => compound.name === value) ?? null,
     [compounds, value]
   );
 
   const filtered = useMemo(() => {
-    const centered = compounds.filter((compound) =>
-      matchesChemistryCenter(compound, centerFilter)
-    );
+    const centered = compounds.filter((compound) => matchesChemistryCenter(compound, centerFilter));
     const ranked = rankedCompounds(centered, query);
-
     return ranked.sort((left, right) => {
       if (distanceByName) {
         const leftDistance = distanceMap[left.name];
         const rightDistance = distanceMap[right.name];
         const leftReachable = Number.isFinite(leftDistance);
         const rightReachable = Number.isFinite(rightDistance);
-
-        if (leftReachable !== rightReachable) {
-          return leftReachable ? -1 : 1;
-        }
-
+        if (leftReachable !== rightReachable) return leftReachable ? -1 : 1;
         if (leftReachable && rightReachable && leftDistance !== rightDistance) {
           return leftDistance - rightDistance;
         }
       }
-
       if (query.trim()) {
         return compoundSearchScore(right, query) - compoundSearchScore(left, query);
       }
-
       return left.name.localeCompare(right.name);
     });
   }, [compounds, query, centerFilter, distanceByName, distanceMap]);
 
   const visible = filtered.slice(0, PICKER_RENDER_LIMIT);
 
-  function choose(compound) {
-    if (!compound) return;
-    onChange(compound.name);
-    setOpen(false);
-    setQuery("");
-    setActiveIndex(0);
-  }
-
-  function handleSearchKeyDown(event) {
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      setActiveIndex((index) => Math.min(visible.length - 1, index + 1));
-    } else if (event.key === "ArrowUp") {
-      event.preventDefault();
-      setActiveIndex((index) => Math.max(0, index - 1));
-    } else if (event.key === "Enter") {
-      event.preventDefault();
-      choose(visible[activeIndex]);
-    } else if (event.key === "Escape") {
-      event.preventDefault();
-      setOpen(false);
-    }
-  }
-
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [query, centerFilter]);
-
-  useEffect(() => {
-    if (!open) return undefined;
-
-    const closeOnOutsideClick = (event) => {
-      if (!rootRef.current?.contains(event.target)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("pointerdown", closeOnOutsideClick);
-    return () => document.removeEventListener("pointerdown", closeOnOutsideClick);
-  }, [open]);
-
   useEffect(() => {
     if (disabled) setOpen(false);
   }, [disabled]);
 
-  useEffect(() => {
-    if (!open) return;
-    listRef.current
-      ?.querySelector(`[data-picker-index="${activeIndex}"]`)
-      ?.scrollIntoView({ block: "nearest" });
-  }, [activeIndex, open]);
+  function choose(compound) {
+    if (!compound) return;
+    onChange(compound.name);
+    setOpen(false);
+  }
 
   return (
-    <div className="field compound-picker" ref={rootRef}>
-      <span>{label}</span>
-
-      <button
-        type="button"
-        className="compound-picker-trigger"
-        disabled={disabled}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        onClick={() => {
-          setOpen((current) => !current);
-          if (!open) {
-            setQuery("");
-            setCenterFilter("All");
-            setActiveIndex(0);
-          }
-        }}
-      >
-        <span className="compound-picker-value">
-          <strong>{selected?.formula ?? "—"}</strong>
-          <small>{selected?.name ?? "Choose compound"}</small>
-        </span>
-        <span className="compound-picker-count">{compounds.length}</span>
-        <span className="compound-picker-chevron">⌄</span>
-      </button>
-
-      {open && (
-        <div className="compound-picker-popover">
-          <div className="compound-picker-search">
-            <input
-              autoFocus
-              value={query}
-              onChange={(event) => {
-                const next = event.target.value;
-                setQuery(next);
-                if (next.trim()) setCenterFilter("All");
-              }}
-              onKeyDown={handleSearchKeyDown}
-              placeholder="Search name, formula, alias…"
-              aria-label="Search compound catalog"
-            />
-            <span>
-              {Math.min(filtered.length, PICKER_RENDER_LIMIT)} / {filtered.length}
-              {filtered.length !== compounds.length ? ` of ${compounds.length}` : ""}
-              {distanceByName
-                ? ` · ${Object.keys(distanceMap).length} reachable`
-                : ""}
+    <div className={cn("compound-picker flex min-w-0 flex-col", className)}>
+      <FieldCaption hint={hint}>{label}</FieldCaption>
+      <Popover open={open} onOpenChange={(next) => {
+        setOpen(next);
+        if (next) { setQuery(""); setCenterFilter("All"); }
+      }}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            aria-label={`${label}: ${selected?.name ?? "choose compound"}`}
+            disabled={disabled}
+            className="compound-picker-trigger w-full justify-between gap-2 px-2.5"
+          >
+            <span className="compound-picker-value flex min-w-0 items-baseline gap-2">
+              <strong className="shrink-0 font-semibold">{selected ? <Formula compound={selected}/> : "—"}</strong>
+              <small className="truncate text-[13px] font-normal text-muted-foreground">
+                {selected?.name ?? "Choose compound"}
+              </small>
             </span>
-          </div>
-
-          <div className="compound-picker-centers" aria-label="Filter by atom family">
-            <span>CONTAINS ATOM</span>
-            {CHEMISTRY_CENTERS.map((center) => (
-              <button
-                type="button"
-                key={center}
-                className={centerFilter === center ? "active" : ""}
-                onClick={() => setCenterFilter(center)}
-              >
-                {center}
-              </button>
-            ))}
-          </div>
-
-          {filtered.length > PICKER_RENDER_LIMIT && (
-            <div className="compound-picker-hint">
-              Showing the best {PICKER_RENDER_LIMIT} matches · keep typing to narrow · ↑↓ Enter supported
+            <ChevronsUpDown className="text-muted-foreground"/>
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent align="start" className="w-[min(420px,92vw)] p-0">
+          <Command shouldFilter={false}>
+            <CommandInput value={query} onValueChange={(next) => {
+              setQuery(next);
+              if (next.trim()) setCenterFilter("All");
+            }} placeholder="Search name, formula or alias…" aria-label="Search compound catalog"/>
+            <div className="flex flex-wrap items-center gap-1 border-b px-2 py-1.5">
+              <span className="mr-1 text-[11px] text-muted-foreground">Contains</span>
+              <ToggleGroup type="single" size="sm" spacing={0} value={centerFilter}
+                onValueChange={(next) => next && setCenterFilter(next)} className="flex-wrap">
+                {CHEMISTRY_CENTERS.map((center) =>
+                  <ToggleGroupItem key={center} value={center} className="h-6 px-2 text-xs">{center}</ToggleGroupItem>)}
+              </ToggleGroup>
             </div>
-          )}
-
-          <div className="compound-picker-list" role="listbox" ref={listRef}>
-            {visible.map((compound, index) => {
-              const hops = distanceByName
-                ? distanceMap[compound.name]
-                : null;
-              const isReachable = Number.isFinite(hops);
-
-              return (
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={compound.name === value}
-                  data-picker-index={index}
-                  key={compound.id}
-                  className={[
-                    compound.name === value ? "selected" : "",
-                    index === activeIndex ? "keyboard-active" : ""
-                  ].filter(Boolean).join(" ")}
-                  onMouseEnter={() => setActiveIndex(index)}
-                  onClick={() => choose(compound)}
-                >
-                  <strong>{compound.formula}</strong>
-                  <span>
-                    <b>{compound.name}</b>
-                    <small>
-                      {chemistryCenter(compound)} · {compound.category}
-                      {" · "}
-                      {formulaElements(compound.formula).join(" ")}
-                      {compoundAliases(compound).length
-                        ? ` · ${compoundAliases(compound)[0]}`
-                        : ""}
-                    </small>
-                  </span>
-
-                  {distanceByName && (
-                    <em className={isReachable ? "reachable" : "unreachable"}>
-                      {isReachable
-                        ? `${hops} ${hops === 1 ? "STEP" : "STEPS"}`
-                        : "NO CURRENT PATH"}
-                    </em>
-                  )}
-                </button>
-              );
-            })}
-
-            {filtered.length === 0 && (
-              <div className="compound-picker-empty">
-                No compounds match “{query}”.
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+            <CommandList className="max-h-[340px]">
+              <CommandEmpty>No compounds match “{query}”.</CommandEmpty>
+              <CommandGroup heading={
+                `${Math.min(filtered.length, PICKER_RENDER_LIMIT)} of ${filtered.length}` +
+                (distanceByName ? ` · ${Object.keys(distanceMap).length} reachable` : "")
+              }>
+                {visible.map((compound) => {
+                  const hops = distanceByName ? distanceMap[compound.name] : null;
+                  const isReachable = Number.isFinite(hops);
+                  const aliases = compoundAliases(compound);
+                  return (
+                    <CommandItem key={compound.id} value={String(compound.id)}
+                      onSelect={() => choose(compound)} className="gap-3 py-1.5"
+                      data-checked={compound.name === value}>
+                      <Formula compound={compound} className="w-24 shrink-0 truncate font-semibold"/>
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <span className="truncate">{compound.name}</span>
+                        <span className="truncate text-xs text-muted-foreground">
+                          {compound.category}{aliases.length ? ` · also ${aliases[0]}` : ""}
+                        </span>
+                      </span>
+                      {distanceByName && <span className={cn("text-xs tabular-nums whitespace-nowrap",
+                        isReachable ? "text-muted-foreground" : "text-muted-foreground/60")}>
+                        {isReachable ? `${hops} ${hops === 1 ? "step" : "steps"}` : "no path"}
+                      </span>}
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
+            </CommandList>
+            {filtered.length > PICKER_RENDER_LIMIT && <p className="border-t px-3 py-1.5 text-[11px] text-muted-foreground">
+              Showing the best {PICKER_RENDER_LIMIT} matches. Keep typing to narrow.
+            </p>}
+          </Command>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }
@@ -486,208 +408,179 @@ function CompoundDirectory({
   selectedName,
   onSelect,
   hasMore,
-  onLoadMore
+  onLoadMore,
+  theme
 }) {
   return (
-    <section className="compound-directory" aria-label="Compound directory">
-      <div className="compound-directory-head">
-        <div>
-          <span>CHEMISTRY-CENTERED CATALOG</span>
-          <strong>{total} compounds · centered around {from || "the full network"}</strong>
-        </div>
-        <p>{compounds.length} shown · {filteredTotal} matched</p>
+    <section className="compound-directory mt-10" aria-label="Compound directory">
+      <SectionHeader
+        title="Curated compounds"
+        description={<>{total.toLocaleString()} compounds in the reaction graph. Distances are reaction steps
+          from <strong className="font-medium text-foreground">{from || "the start compound"}</strong>. Select a row to make it the start.</>}
+        actions={<span className="text-xs text-muted-foreground tabular-nums">
+          {compounds.length.toLocaleString()} of {filteredTotal.toLocaleString()}
+        </span>}
+      />
+
+      <div className="grid gap-2 md:grid-cols-[minmax(0,1fr)_200px_180px]">
+        <InputGroup>
+          <InputGroupAddon><Search/></InputGroupAddon>
+          <InputGroupInput value={query} onChange={(event) => onQueryChange(event.target.value)}
+            placeholder="Filter by name, formula, alias or element" aria-label="Filter compound directory"/>
+        </InputGroup>
+        <NativeSelect value={relation} onChange={(event) => onRelationChange(event.target.value)}
+          aria-label={`Relationship to ${from || "start"}`} className="w-full">
+          <NativeSelectOption value="All">Any distance</NativeSelectOption>
+          <NativeSelectOption value="Reachable">Reachable from start</NativeSelectOption>
+          <NativeSelectOption value="Near3">Within 3 steps</NativeSelectOption>
+          <NativeSelectOption value="Near10">Within 10 steps</NativeSelectOption>
+          <NativeSelectOption value="Unreachable">No path from start</NativeSelectOption>
+        </NativeSelect>
+        <NativeSelect value={category} onChange={(event) => onCategoryChange(event.target.value)}
+          aria-label="Filter compound directory by category" className="w-full">
+          {categories.map((item) => (
+            <NativeSelectOption key={item} value={item}>{item === "All" ? "All classes" : item}</NativeSelectOption>
+          ))}
+        </NativeSelect>
       </div>
 
-      <div className="compound-directory-centers">
-        <span>CONTAINS ATOM</span>
-        {CHEMISTRY_CENTERS.map((item) => (
-          <button
-            type="button"
-            key={item}
-            className={center === item ? "active" : ""}
-            onClick={() => onCenterChange(item)}
-          >
-            {item}
-          </button>
-        ))}
-      </div>
+      <ToggleGroup type="single" size="sm" spacing={1} value={center}
+        onValueChange={(next) => next && onCenterChange(next)}
+        className="my-3 flex-wrap justify-start" aria-label="Contains element">
+        {CHEMISTRY_CENTERS.map((item) =>
+          <ToggleGroupItem key={item} value={item} className="px-2.5 text-xs">
+            {item === "All" ? "Any element" : item}
+          </ToggleGroupItem>)}
+      </ToggleGroup>
 
-      <div className="compound-directory-controls">
-        <label className="compound-directory-search">
-          <span>Search name / formula / alias / element</span>
-          <input
-            value={query}
-            onChange={(event) => onQueryChange(event.target.value)}
-            placeholder="CO2 · ethanoic acid · C8H18O · sulfur · chloride…"
-            aria-label="Filter compound directory"
-          />
-        </label>
-
-        <label>
-          <span>Relationship to {from || "start"}</span>
-          <select
-            value={relation}
-            onChange={(event) => onRelationChange(event.target.value)}
-          >
-            <option value="All">All compounds</option>
-            <option value="Reachable">Reachable from start</option>
-            <option value="Near3">Within 3 steps</option>
-            <option value="Near10">Within 10 steps</option>
-            <option value="Unreachable">No current path</option>
-          </select>
-        </label>
-
-        <label>
-          <span>Compound class</span>
-          <select
-            value={category}
-            onChange={(event) => onCategoryChange(event.target.value)}
-            aria-label="Filter compound directory by category"
-          >
-            {categories.map((item) => (
-              <option key={item} value={item}>{item}</option>
+      <div className="max-h-[600px] overflow-auto rounded-lg border bg-card">
+        <Table>
+          <TableHeader className="sticky top-0 z-10 bg-muted/80 backdrop-blur">
+            <TableRow>
+              <TableHead className="w-32">Formula</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead className="max-md:hidden">Class</TableHead>
+              <TableHead className="max-md:hidden">Elements</TableHead>
+              <TableHead className="text-right">From start</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {compounds.map((compound) => (
+              <TableRow key={compound.id} tabIndex={0} role="button"
+                data-state={compound.name === selectedName ? "selected" : undefined}
+                onClick={() => onSelect(compound)}
+                onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect(compound); } }}
+                className="cursor-pointer data-[state=selected]:bg-route/10 data-[state=selected]:shadow-[inset_2px_0_0_var(--route)]">
+                <TableCell className="font-semibold"><Formula compound={compound}/></TableCell>
+                <TableCell className="max-w-0 truncate">{compound.name}</TableCell>
+                <TableCell className="max-md:hidden">
+                  <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+                    <span className="category-dot" style={{ background: categoryColor(theme, compound.category) }}/>
+                    {compound.category}
+                  </span>
+                </TableCell>
+                <TableCell className="font-mono text-xs text-muted-foreground max-md:hidden">
+                  {formulaElements(compound.formula).slice(0, 6).join(" ")}
+                </TableCell>
+                <TableCell className="text-right tabular-nums text-muted-foreground">
+                  {relationshipLabel(compound, from, distanceByName)}
+                </TableCell>
+              </TableRow>
             ))}
-          </select>
-        </label>
-      </div>
-
-      <div className="compound-directory-grid">
-        {compounds.map((compound, index) => (
-          <button
-            type="button"
-            key={compound.id}
-            className={compound.name === selectedName ? "selected" : ""}
-            onClick={() => onSelect(compound)}
-          >
-            <span>{String(index + 1).padStart(4, "0")}</span>
-            <strong>{compound.formula}</strong>
-            <small>{compound.name}</small>
-            <div className="compound-element-tags">
-              {formulaElements(compound.formula).slice(0, 6).map((element) => (
-                <i key={element}>{element}</i>
-              ))}
-            </div>
-            <em>{chemistryCenter(compound)} · {compound.category}</em>
-            <b className="compound-relation">
-              {relationshipLabel(compound, from, distanceByName)}
-            </b>
-          </button>
-        ))}
+          </TableBody>
+        </Table>
+        {filteredTotal === 0 && (
+          <Empty className="py-10">
+            <EmptyHeader>
+              <EmptyTitle>No compounds match</EmptyTitle>
+              <EmptyDescription>Clear the filters or try a different formula.</EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        )}
       </div>
 
       {hasMore && (
-        <button type="button" className="compound-directory-more" onClick={onLoadMore}>
-          Load {Math.min(DIRECTORY_PAGE_SIZE, filteredTotal - compounds.length)} more
-          <span>{filteredTotal - compounds.length} remaining</span>
-        </button>
-      )}
-
-      {filteredTotal === 0 && (
-        <div className="compound-directory-empty">
-          No compounds match these chemistry filters.
-        </div>
+        <Button variant="outline" className="mt-3" onClick={onLoadMore}>
+          Show {Math.min(DIRECTORY_PAGE_SIZE, filteredTotal - compounds.length)} more
+          <span className="text-muted-foreground">{(filteredTotal - compounds.length).toLocaleString()} remaining</span>
+        </Button>
       )}
     </section>
   );
 }
 
+/** A route reads like a transit line: compounds are stops, reactions are legs. */
 function PathResult({ result }) {
   if (!result?.found) return null;
 
   return (
-    <>
-      <div className="path-line">
-        {result.path.map((compound, index) => (
-          <div className="path-node-wrap" key={compound.id}>
-            <div className="path-node">
-              <strong>{compound.formula}</strong>
-              <span>{compound.name}</span>
+    <ol className="px-4 pt-4 pb-2" aria-label="Reaction pathway">
+      {result.path.map((compound, index) => {
+        const reaction = result.reactionPath[index];
+        const first = index === 0;
+        const last = index === result.path.length - 1;
+        return (
+          <li key={`${compound.id}-${index}`} className="relative pl-6">
+            {!last && <span aria-hidden="true" className="absolute top-3 -bottom-1 left-[6px] w-0.5 bg-route"/>}
+            <span aria-hidden="true" className={cn(
+              "absolute top-[3px] left-0 size-3.5 rounded-full border-[3px]",
+              first ? "border-route-start bg-route-start" : last ? "border-route bg-route" : "border-route bg-card"
+            )}/>
+            <div className="flex min-h-5 min-w-0 items-baseline gap-2">
+              <Formula compound={compound} className="text-sm font-semibold"/>
+              <span className="truncate text-[13px] text-muted-foreground">{compound.name}</span>
             </div>
-
-            {index < result.path.length - 1 && (
-              <div className="reaction-edge">
-                <span>→</span>
-                <div>
-                  <small>{result.reactionPath[index]?.reaction}</small>
-                  <em>graph weight {result.reactionPath[index]?.cost ?? 1}</em>
+            {!last && reaction && (
+              <article className="reaction-audit-card mt-2 mb-4 rounded-lg border bg-muted/40 px-3.5 py-3">
+                <div className="flex items-start justify-between gap-2">
+                  <strong className="text-[15px] leading-snug font-semibold break-words">{reaction.reaction}</strong>
+                  <Badge variant="outline" className="shrink-0 font-normal text-muted-foreground">
+                    {reaction.reversible ? "Reversible" : "Directed"}
+                  </Badge>
                 </div>
-              </div>
+                {reaction.equation && <code className="mt-2 block font-mono text-[13px] leading-relaxed break-words whitespace-pre-wrap text-foreground/90">
+                  {reaction.equation}
+                </code>}
+                {reaction.conditions && <p className="mt-1.5 text-[13px] text-muted-foreground">{reaction.conditions}</p>}
+                <div className="mt-2 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground/80">
+                  <span>Weight {reaction.cost ?? 1}</span>
+                  {reaction.sourceKey && <span className="font-mono">{reaction.sourceKey}</span>}
+                </div>
+              </article>
             )}
-          </div>
-        ))}
-      </div>
-
-      <div className="reaction-audit-list">
-        {result.reactionPath.map((reaction, index) => (
-          <article className="reaction-audit-card" key={reaction.reactionId}>
-            <div className="reaction-audit-index">
-              {String(index + 1).padStart(2, "0")}
-            </div>
-            <div className="reaction-audit-body">
-              <div className="reaction-audit-title">
-                <strong>{reaction.reaction}</strong>
-                <span>{reaction.reversible ? "REVERSIBLE" : "DIRECTED"}</span>
-              </div>
-              <code>{reaction.equation || "Equation metadata unavailable"}</code>
-              <p>{reaction.conditions}</p>
-              <div className="reaction-audit-meta">
-                <span>{reaction.sourceKey}</span>
-                <span>graph weight {reaction.cost}</span>
-              </div>
-            </div>
-          </article>
-        ))}
-      </div>
-    </>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
-function Status({ status }) {
-  const online = status.includes("online");
+const PATH_ALGORITHMS = [
+  ["bfs", "BFS — fewest reactions"],
+  ["dijkstra", "Dijkstra — lowest weight"],
+  ["astar", "A* — reverse-hop heuristic"],
+  ["dial", "Dial — bucket queue"],
+  ["bellmanford", "Bellman-Ford — relaxation"],
+  ["bidirectional", "Bidirectional BFS"],
+  ["bidijkstra", "Bidirectional Dijkstra"],
+  ["duan2025", "Pivot frontier (Duan et al. 2025)"]
+];
+const STRUCTURE_ALGORITHMS = [
+  ["scc", "Tarjan — strongly connected components"],
+  ["cycle", "DFS — first directed cycle"]
+];
 
+function OptionSelect({ label, value, onChange, disabled, options, className = "" }) {
   return (
-    <div className={`status-chip ${online ? "online" : ""}`}>
-      <span className="status-dot" />
-      <span>{status}</span>
+    <div className={cn("flex min-w-0 flex-col", className)}>
+      <FieldCaption>{label}</FieldCaption>
+      <Select value={value} onValueChange={onChange} disabled={disabled}>
+        <SelectTrigger className="w-full" aria-label={label}><SelectValue/></SelectTrigger>
+        <SelectContent position="popper">
+          {options.map(([id, text]) => <SelectItem key={id} value={id}>{text}</SelectItem>)}
+        </SelectContent>
+      </Select>
     </div>
-  );
-}
-
-function AlgorithmSelect({ value, onChange, disabled }) {
-  return (
-    <label className="field algorithm-select">
-      <span>Path algorithm</span>
-      <select
-        value={value}
-        disabled={disabled}
-        onChange={(event) => onChange(event.target.value)}
-      >
-        <option value="bfs">BFS · minimum reaction steps</option>
-        <option value="dijkstra">Dijkstra · binary heap weighted path</option>
-        <option value="astar">A* · admissible reverse-hop heuristic</option>
-        <option value="dial">Dial · integer-weight bucket queue</option>
-        <option value="bellmanford">Bellman-Ford · repeated relaxation</option>
-        <option value="bidirectional">Bidirectional BFS · two-front search</option>
-        <option value="bidijkstra">Bidirectional Dijkstra · weighted two-front search</option>
-        <option value="duan2025">2025 Pivot Frontier · research-inspired hybrid</option>
-      </select>
-    </label>
-  );
-}
-
-function StructureSelect({ value, onChange, disabled }) {
-  return (
-    <label className="field algorithm-select">
-      <span>Structure algorithm</span>
-      <select
-        value={value}
-        disabled={disabled}
-        onChange={(event) => onChange(event.target.value)}
-      >
-        <option value="scc">Tarjan SCC · strongly connected regions</option>
-        <option value="cycle">DFS cycle detection · first directed cycle</option>
-      </select>
-    </label>
   );
 }
 
@@ -699,48 +592,27 @@ function SimulationHud({ simulation, currentCompound, onSkip }) {
     : 0;
 
   return (
-    <div className="simulation-hud">
-      <div className="simulation-hud-top">
-        <div>
-          <span className="simulation-kicker">ADAPTIVE ALGORITHM REPLAY</span>
-          <strong>{simulation.algorithm}</strong>
+    <Card size="sm" role="status" className="absolute top-14 left-1/2 z-20 w-[min(380px,calc(100%-1.5rem))] -translate-x-1/2 gap-2 bg-overlay shadow-lg">
+      <CardHeader>
+        <CardDescription>Replaying {simulation.algorithm}</CardDescription>
+        <CardTitle className="flex items-baseline gap-2 text-base">
+          {currentCompound ? <Formula compound={currentCompound}/> : "—"}
+          {currentCompound && <span className="truncate text-xs font-normal text-muted-foreground">{currentCompound.name}</span>}
+        </CardTitle>
+        <CardAction><Button size="sm" variant="outline" onClick={onSkip}>Skip</Button></CardAction>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <Progress value={progress} className="h-1 [&>[data-slot=progress-indicator]]:bg-route"/>
+        <div className="flex gap-4 text-xs text-muted-foreground tabular-nums">
+          <span>Step <b className="font-semibold text-foreground">{simulation.step}</b> of {simulation.total}</span>
+          <span>Visited <b className="font-semibold text-foreground">{simulation.visited.length}</b></span>
+          <span><b className="font-semibold text-foreground">{simulation.elapsed.toFixed(1)}</b> / {((simulation.duration ?? FINAL_HOLD_MS) / 1000).toFixed(1)} s</span>
         </div>
-        <button onClick={onSkip}>Skip replay</button>
-      </div>
-
-      <div className="simulation-progress">
-        <i style={{ width: `${progress}%` }} />
-      </div>
-
-      <div className="simulation-meta">
-        <span>
-          STEP <b>{simulation.step}</b> / {simulation.total}
-        </span>
-        <span>
-          CURRENT{" "}
-          <b>{currentCompound ? currentCompound.formula : "—"}</b>
-        </span>
-        <span>
-          VISITED <b>{simulation.visited.length}</b>
-        </span>
-        <span>
-          ELAPSED <b>{simulation.elapsed.toFixed(1)}s</b>
-        </span>
-        <span>
-          TARGET <b>{((simulation.duration ?? FINAL_HOLD_MS) / 1000).toFixed(1)}s</b>
-        </span>
-      </div>
-
-      {currentCompound && (
-        <div className="current-compound-card">
-          <span>{currentCompound.category}</span>
-          <strong>{currentCompound.formula}</strong>
-          <p>{currentCompound.name}</p>
-        </div>
-      )}
-    </div>
+      </CardContent>
+    </Card>
   );
 }
+
 
 export default function App() {
   const [network, setNetwork] = useState(null);
@@ -750,13 +622,8 @@ export default function App() {
     return hash==="#ord-database"||hash==="#data-library"?"data":
       hash==="#algorithm-lab"?"lab":"explore";
   });
-  const [sidebarCollapsed,setSidebarCollapsed]=useState(false);
-  const [inspectorOpen,setInspectorOpen]=useState(()=>window.innerWidth>1140);
+  const [inspectorOpen,setInspectorOpen]=useState(()=>window.innerWidth>1100);
   const [commandOpen,setCommandOpen]=useState(false);
-  const [reduceTransparency,setReduceTransparency]=useState(()=>{
-    try{return localStorage.getItem("chempath-reduce-transparency")==="true";}
-    catch{return false;}
-  });
   const [studioTheme,setStudioTheme]=useState(()=>{
     try{return localStorage.getItem("chempath-theme")==="light"?"light":"dark";}
     catch{return "dark";}
@@ -811,12 +678,13 @@ export default function App() {
     return ()=>window.removeEventListener("resize",onResize);
   },[]);
   useEffect(()=>{
-    try{localStorage.setItem("chempath-reduce-transparency",String(reduceTransparency));}
-    catch{/* ephemeral setting */}
-  },[reduceTransparency]);
-  useEffect(()=>{
     try{localStorage.setItem("chempath-theme",studioTheme);}
     catch{/* ephemeral theme preference */}
+    // Match the browser chrome and native form controls to the active theme.
+    document.documentElement.dataset.theme=studioTheme;
+    document.documentElement.classList.toggle("dark",studioTheme==="dark");
+    document.querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content",studioTheme==="light"?"#fbfaf8":"#121316");
   },[studioTheme]);
   useEffect(()=>{
     const onKey=(event)=>{
@@ -1069,24 +937,24 @@ export default function App() {
 
   const algorithmDescription = useMemo(() => {
     if (mode === "dfs") {
-      return "DFS · explicit stack · full reachability traversal";
+      return "Depth-first search with an explicit stack visits every compound reachable from the start.";
     }
 
     if (mode === "structure") {
       return structureAlgorithm === "scc"
-        ? "Tarjan SCC · low-link values + stack"
-        : "Directed cycle detection · DFS recursion state";
+        ? "Tarjan's algorithm groups compounds that can all reach each other, using low-link values and a stack."
+        : "Depth-first search with three-colour marking reports the first directed cycle it finds.";
     }
 
     const descriptions = {
-      bfs: "BFS · queue · minimum number of reaction edges",
-      dijkstra: "Dijkstra · binary heap · minimum total graph weight",
-      astar: "A* · priority queue + admissible reverse-hop heuristic",
-      dial: "Dial · bucket queue · optimized for small integer weights",
-      bellmanford: "Bellman-Ford · repeated edge relaxation · O(VE) baseline",
-      bidirectional: "Bidirectional BFS · unweighted search from both ends",
-      bidijkstra: "Bidirectional Dijkstra · weighted search from both ends",
-      duan2025: "Research mode · pivot/frontier hybrid inspired by Duan et al. STOC 2025"
+      bfs: "Breadth-first search with a queue finds the route with the fewest reactions.",
+      dijkstra: "Dijkstra with a binary heap finds the route with the lowest total graph weight.",
+      astar: "A* adds an admissible reverse-hop heuristic to Dijkstra's priority queue.",
+      dial: "Dial's algorithm uses integer-weight buckets instead of a heap.",
+      bellmanford: "Bellman-Ford relaxes every edge repeatedly; O(VE) baseline.",
+      bidirectional: "Bidirectional BFS searches from both ends and meets in the middle.",
+      bidijkstra: "Bidirectional Dijkstra runs two weighted searches that meet in the middle.",
+      duan2025: "Pivot/frontier hybrid inspired by Duan et al., STOC 2025. Output is exact."
     };
 
     return descriptions[pathAlgorithm] ?? descriptions.bfs;
@@ -1308,231 +1176,138 @@ export default function App() {
   }
 
   const selectedCompound=compounds.find(compound=>compound.name===from)??null;
+  const expandNeighborhood=(name)=>{
+    setNeighborhoodError("");
+    api.neighborhood(name,2,350).then(setNeighborhood)
+      .catch(error=>setNeighborhoodError(error.message));
+  };
+  const outputTitle = mode === "path" ? "Route" : mode === "dfs" ? "Reachable compounds" :
+    structureAlgorithm === "scc" ? "Strongly connected components" : "Cycle check";
+  const boardRows = stats ? [
+    { label: "COMPOUNDS", value: stats.compounds?.toLocaleString() ?? "-" },
+    { label: "REACTIONS", value: stats.reactions?.toLocaleString() ?? "-" },
+    { label: "EDGES", value: stats.directedEdges?.toLocaleString() ?? "-" },
+    { label: "STORAGE", value: String(stats.backend ?? "-").toUpperCase() }
+  ] : [];
   return (
-    <main className="site-shell studio-app" data-theme={studioTheme}
-      data-reduce-transparency={reduceTransparency?"true":"false"}>
-      <StudioGlassEffects/>
+    <ThemeContext.Provider value={studioTheme}>
+    <TooltipProvider delayDuration={300}>
+    <main className="studio-app flex min-h-dvh flex-col bg-background text-foreground" data-theme={studioTheme}>
       <StudioTopbar
-        view={studioView} status={status}
+        view={studioView} onChange={setStudioPage} status={status}
         onSearch={()=>setCommandOpen(true)}
-        onToggleSidebar={()=>setSidebarCollapsed(value=>!value)}
         onToggleInspector={()=>setInspectorOpen(value=>!value)}
         onToggleTheme={()=>setStudioTheme(value=>value==="dark"?"light":"dark")}
         theme={studioTheme} inspectorOpen={inspectorOpen}
-        reduceTransparency={reduceTransparency}
-        onToggleTransparency={()=>setReduceTransparency(previous=>!previous)}
       />
-      <div className={"studio-shell"+(sidebarCollapsed?" sidebar-collapsed":"")}>
-        <StudioSidebar
-          view={studioView} onChange={setStudioPage} collapsed={sidebarCollapsed}
-          onToggle={()=>setSidebarCollapsed(value=>!value)}
-          stats={stats}
-        />
-        <div className="studio-content">
-          {studioView==="explore"&&(
-          <section className={"explorer studio-explore"+(!inspectorOpen?" inspector-collapsed":"")} id="explorer">
-            <div className="studio-page-intro">
-              <div>
-                <span className="studio-section-eyebrow">WORKSPACE / EXPLORE</span>
-                <h1>Find your pathway<span className="studio-title-period">.</span></h1>
-                <p>Explore the network, choose two compounds, and inspect every graph step.</p>
-              </div>
-              <button type="button" className="studio-compact-btn" onClick={()=>setStudioPage("compare")}>
-                Compare algorithms <span aria-hidden="true">↗</span>
-              </button>
-            </div>
-        <header className="explorer-head">
-          <div className="mode-switch" role="tablist" aria-label="Algorithm mode">
-            <button
-              className={mode === "path" ? "active" : ""}
-              onClick={() => setModeClean("path")}
-              disabled={simulation.running}
-            >
-              Pathfinding
-            </button>
-            <button
-              className={mode === "dfs" ? "active" : ""}
-              onClick={() => setModeClean("dfs")}
-              disabled={simulation.running}
-            >
-              DFS / Explore
-            </button>
-            <button
-              className={mode === "structure" ? "active" : ""}
-              onClick={() => setModeClean("structure")}
-              disabled={simulation.running}
-            >
-              Structure
-            </button>
-          </div>
+      <div className="flex min-w-0 flex-1 flex-col">
+      {studioView==="explore"&&(
+      <section id="explorer" className={cn("explorer studio-explore flex flex-col",
+        "md:h-[calc(100dvh-3.25rem)] md:min-h-[520px]", !inspectorOpen && "inspector-collapsed")}>
+        <div className="relative z-20 flex shrink-0 flex-wrap items-end gap-3 border-b bg-card px-4 py-2.5 md:flex-nowrap">
+          <Tabs value={mode} onValueChange={setModeClean} className="max-md:w-full">
+            <TabsList aria-label="Algorithm mode" className="max-md:w-full">
+              <TabsTrigger value="path" disabled={simulation.running}>Pathfinding</TabsTrigger>
+              <TabsTrigger value="dfs" disabled={simulation.running}>Reachability</TabsTrigger>
+              <TabsTrigger value="structure" disabled={simulation.running}>Structure</TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-          <div className="algorithm-readout">
-            <span>{algorithmDescription}</span>
-            <em>
-              {simulation.running ? "Replaying traversal" : "Computed in C++ · replay optional"}
-            </em>
-          </div>
-
-          <button className="reset-button" onClick={reset}>
-            Clear
-          </button>
-        </header>
-
-        <div className="command-bar">
-          <div className="command-primary">
+          <div className="flex min-w-0 flex-1 flex-wrap items-end gap-2 md:flex-nowrap">
             {mode === "path" && (
               <>
-                <AlgorithmSelect
-                  value={pathAlgorithm}
-                  onChange={setPathAlgorithm}
-                  disabled={busy}
-                />
-                <CompoundSelect
-                  label="Start"
-                  value={from}
-                  onChange={setFrom}
-                  compounds={compounds}
-                  disabled={busy}
-                />
-                <span className="command-arrow">→</span>
-                <CompoundSelect
-                  label={
-                    targetsLoading
-                      ? "Target · checking reachability"
-                      : `Target · ${compounds.length} total / ${reachableTargets.length} reachable`
-                  }
-                  value={to}
-                  onChange={setTo}
-                  compounds={compounds}
-                  distanceByName={targetDistances}
-                  disabled={busy || targetsLoading}
-                />
-                <button
-                  className="run-button"
-                  disabled={
-                    busy ||
-                    !network ||
-                    targetsLoading ||
-                    !to
-                  }
-                  onClick={runPath}
-                >
+                <OptionSelect label="Algorithm" value={pathAlgorithm} onChange={setPathAlgorithm}
+                  disabled={busy} options={PATH_ALGORITHMS} className="w-full md:w-56 md:shrink-0"/>
+                <CompoundSelect label="From" value={from} onChange={setFrom}
+                  compounds={compounds} disabled={busy} className="flex-1 basis-40 md:max-w-72"/>
+                <Hint label="Swap start and target">
+                  <Button variant="outline" size="icon" aria-label="Swap start and target"
+                    disabled={busy||simulation.running} className="max-sm:hidden"
+                    onClick={()=>{setFrom(to);setTo(from);reset();}}>
+                    <ArrowLeftRight/>
+                  </Button>
+                </Hint>
+                <CompoundSelect label="To"
+                  hint={targetsLoading ? "checking…" : `${reachableTargets.length} reachable`}
+                  value={to} onChange={setTo} compounds={compounds}
+                  distanceByName={targetDistances} disabled={busy || targetsLoading}
+                  className="flex-1 basis-40 md:max-w-72"/>
+                <Button className="run-button max-md:flex-1" disabled={busy || !network || targetsLoading || !to}
+                  onClick={runPath}>
+                  {busy ? <Spinner data-icon="inline-start"/> : <Route data-icon="inline-start"/>}
                   {busy ? "Searching…" : "Find pathway"}
-                </button>
+                </Button>
               </>
             )}
 
             {mode === "dfs" && (
               <>
-                <CompoundSelect
-                  label="Explore from"
-                  value={from}
-                  onChange={setFrom}
-                  compounds={compounds}
-                  disabled={busy}
-                />
-                <div className="algorithm-summary">
-                  <span>STACK</span>
-                  <strong>Depth-first reachability</strong>
-                </div>
-                <button
-                  className="run-button"
-                  disabled={busy || !network}
-                  onClick={runDfs}
-                >
+                <CompoundSelect label="From" value={from} onChange={setFrom}
+                  compounds={compounds} disabled={busy} className="flex-1 basis-48 md:max-w-80"/>
+                <Button disabled={busy || !network} onClick={runDfs}>
                   {simulation.running ? "Replaying…" : "Run DFS"}
-                </button>
+                </Button>
               </>
             )}
 
             {mode === "structure" && (
               <>
-                <StructureSelect
-                  value={structureAlgorithm}
-                  onChange={setStructureAlgorithm}
-                  disabled={busy}
-                />
-                <div className="algorithm-summary">
-                  <span>GRAPH STRUCTURE</span>
-                  <strong>
-                    {structureAlgorithm === "scc"
-                      ? "Find mutually reachable regions"
-                      : "Find a directed cycle"}
-                  </strong>
-                </div>
-                <button
-                  className="run-button"
-                  disabled={busy || !network}
-                  onClick={runStructure}
-                >
+                <OptionSelect label="Analysis" value={structureAlgorithm} onChange={setStructureAlgorithm}
+                  disabled={busy} options={STRUCTURE_ALGORITHMS} className="w-full md:w-72"/>
+                <Button disabled={busy || !network} onClick={runStructure}>
                   {simulation.running ? "Replaying…" : "Analyze graph"}
-                </button>
+                </Button>
               </>
             )}
           </div>
 
-          <div className="compound-search">
-            <label>
-              <span>Trie search</span>
-              <input
-                value={search}
-                disabled={simulation.running}
+          <div className="relative w-44 shrink-0 max-xl:hidden">
+            <FieldCaption>Trie lookup</FieldCaption>
+            <InputGroup>
+              <InputGroupAddon><Search/></InputGroupAddon>
+              <InputGroupInput value={search} disabled={simulation.running}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="meth…"
-                aria-label="Search compounds using Trie"
-              />
-            </label>
-
+                placeholder="Prefix, e.g. meth" aria-label="Search compounds using Trie"/>
+            </InputGroup>
             {matches.length > 0 && (
-              <div className="search-popover">
+              <div className="absolute top-full right-0 z-50 mt-1.5 w-64 rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
                 {matches.map((compound) => (
-                  <button
-                    key={compound.id}
-                    onClick={() => {
-                      setFrom(compound.name);
-                      setSearch(compound.name);
-                      setMatches([]);
-                    }}
-                  >
-                    <span>{compound.formula}</span>
-                    <small>{compound.name}</small>
+                  <button type="button" key={compound.id}
+                    className="flex w-full items-baseline gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted"
+                    onClick={() => { setFrom(compound.name); setSearch(compound.name); setMatches([]); }}>
+                    <Formula compound={compound} className="font-semibold"/>
+                    <span className="truncate text-xs text-muted-foreground">{compound.name}</span>
                   </button>
                 ))}
               </div>
             )}
           </div>
+          <Button variant="ghost" onClick={reset} className="text-muted-foreground max-md:hidden">Reset</Button>
         </div>
 
-        <div className="studio-graph-grid">
-        <div className="graph-frame">
-          <div className="graph-caption">
-            <span>
-              LIVE VIEW · {graphNetwork?.nodes?.length ?? "—"} / {stats?.compounds ?? "—"} COMPOUNDS
-              · {graphNetwork?.edges?.length ?? "—"} VISIBLE EDGES
-            </span>
-            <p>
-              full C++ graph: {stats?.directedEdges ?? "—"} edges · focused rendering keeps the browser smooth
-            </p>
-          </div>
-
-          <SimulationHud
-            simulation={simulation}
-            currentCompound={currentCompound}
-            onSkip={cancelReplay}
-          />
+        <div className={cn("studio-graph-grid relative flex min-h-0 flex-1 max-md:flex-col md:grid md:grid-cols-1",
+          inspectorOpen && "lg:grid-cols-[minmax(0,1fr)_340px]")}>
+        <div className="graph-frame relative min-h-0 min-w-0 overflow-hidden bg-canvas max-md:h-[62dvh] max-md:min-h-[380px] [&>.network-canvas]:absolute [&>.network-canvas]:inset-0 [&>.sigma-shell]:absolute [&>.sigma-shell]:inset-0">
+          <SimulationHud simulation={simulation} currentCompound={currentCompound} onSkip={cancelReplay}/>
 
           {graphNetwork ? (
             <>
-              <div className="renderer-switch studio-liquid-glass" role="group" aria-label="Graph renderer">
-                <button type="button" className={rendererMode === "sigma" ? "active" : ""}
-                  onClick={() => setRendererMode("sigma")}>GPU Network</button>
-                <button type="button" className={rendererMode === "cytoscape" ? "active" : ""}
-                  onClick={() => setRendererMode("cytoscape")}>Path Layout</button>
-                {neighborhood && <button type="button" onClick={() => setNeighborhood(null)}>
-                  Full graph
-                </button>}
-              </div>
-              {neighborhoodError && <div className="graph-neighborhood-error" role="alert">{neighborhoodError}</div>}
+              <MapPanel className="renderer-switch top-3 left-3 gap-0.5">
+                <ButtonGroup aria-label="Graph renderer">
+                  <Hint label="WebGL map of the network">
+                    <Button size="sm" variant={rendererMode === "sigma" ? "secondary" : "ghost"}
+                      aria-pressed={rendererMode === "sigma"} onClick={() => setRendererMode("sigma")}>Map</Button>
+                  </Hint>
+                  <Hint label="Clustered or layered diagram">
+                    <Button size="sm" variant={rendererMode === "cytoscape" ? "secondary" : "ghost"}
+                      aria-pressed={rendererMode === "cytoscape"} onClick={() => setRendererMode("cytoscape")}>Diagram</Button>
+                  </Hint>
+                </ButtonGroup>
+                {neighborhood && <Button size="sm" variant="ghost" onClick={() => setNeighborhood(null)}>Full graph</Button>}
+              </MapPanel>
+              {neighborhoodError && <div role="alert" className="absolute top-14 left-3 z-10 max-w-80 rounded-lg border border-destructive/50 bg-card px-3 py-2 text-xs text-destructive">
+                {neighborhoodError}
+              </div>}
               {rendererMode === "sigma" ? (
                 <SigmaNetwork
                   network={neighborhood || graphNetwork}
@@ -1553,12 +1328,7 @@ export default function App() {
                     setSelectedReaction(null);
                     setInspectorOpen(true);
                   }}
-                  onExpandNode={(id, name) => {
-                    setNeighborhoodError("");
-                    api.neighborhood(name, 2, 350)
-                      .then(setNeighborhood)
-                      .catch((error) => setNeighborhoodError(error.message));
-                  }}
+                  onExpandNode={(id, name) => expandNeighborhood(name)}
                 />
               ) : (
                 <NetworkGraph
@@ -1573,182 +1343,175 @@ export default function App() {
               )}
             </>
           ) : (
-            <div className="graph-loading">Waiting for C++ engine</div>
-          )}
-
-          <div className="graph-legend">
-            <span><i className="organic" /> Organic</span>
-            <span><i className="acid" /> Acid</span>
-            <span><i className="ion" /> Ion</span>
-            <span><i className="bio" /> Biochemical</span>
-            <span><i className="salt" /> Salt</span>
-            <span><i className="inorganic" /> Inorganic</span>
-          </div>
-        </div>
-
-        <section className="result-dock" aria-label="Compound and pathway inspector">
-          <StudioInspectorHeading
-            compound={selectedCompound} reaction={selectedReaction} from={from} to={to} result={result}
-            busy={busy} running={simulation.running}
-            onClose={()=>setInspectorOpen(false)}
-            onSwap={()=>{setFrom(to);setTo(from);reset();}}
-            onReplay={replayCurrentPath}
-            onExplore={()=>setStudioPage("data")}
-            onExpand={selectedCompound?()=>{
-              setNeighborhoodError("");
-              api.neighborhood(selectedCompound.name,2,350).then(setNeighborhood)
-                .catch(error=>setNeighborhoodError(error.message));
-            }:null}
-          />
-          <div className="result-label">
-            <span>OUTPUT</span>
-            <strong>
-              {mode === "path" && "Reaction pathway"}
-              {mode === "dfs" && "Reachability"}
-              {mode === "structure" &&
-                (structureAlgorithm === "scc" ? "Strong components" : "Cycle analysis")}
-            </strong>
-          </div>
-
-          {!result && (
-            <div className="result-empty">
-              Select an algorithm and run it. Replay duration follows the actual traversal size with no forced minimum, capped at 2 minutes.
+            <div className="graph-loading absolute inset-0 grid place-items-center">
+              <Empty>
+                <EmptyHeader>
+                  <EmptyMedia><Spinner className="size-5"/></EmptyMedia>
+                  <EmptyTitle>Loading the reaction network</EmptyTitle>
+                  <EmptyDescription>Waiting for the C++ engine to answer.</EmptyDescription>
+                </EmptyHeader>
+              </Empty>
             </div>
           )}
 
-          {result?.error && <div className="result-error">{result.error}</div>}
+          <MapPanel aria-label="Compound classes" className="pointer-events-none right-3 bottom-3 gap-3 px-2.5 py-1.5 text-[11.5px] text-muted-foreground max-lg:hidden">
+            {["Organic","Biochemical","Acid","Base","Ion","Salt","Inorganic"].map(category=>
+              <span key={category} className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                <span className="category-dot size-1.5" style={{background:categoryColor(studioTheme,category)}}/>{category}
+              </span>)}
+          </MapPanel>
+        </div>
+
+        <aside className={cn("result-dock flex min-h-0 min-w-0 flex-col overflow-y-auto border-l bg-card *:shrink-0",
+          "max-md:border-t max-md:border-l-0",
+          "md:max-lg:absolute md:max-lg:inset-y-0 md:max-lg:right-0 md:max-lg:z-30 md:max-lg:w-[min(360px,92%)] md:max-lg:shadow-2xl",
+          !inspectorOpen && "hidden")}
+          aria-label="Compound and pathway inspector">
+          <StudioInspectorHeading
+            compound={selectedCompound} reaction={selectedReaction} result={result}
+            busy={busy} running={simulation.running} theme={studioTheme}
+            onClose={()=>setInspectorOpen(false)}
+            onReplay={replayCurrentPath}
+            onExplore={()=>setStudioPage("data")}
+            onExpand={selectedCompound?()=>expandNeighborhood(selectedCompound.name):null}
+          />
+          <div className="px-4 pt-4">
+            <h2 className="text-[13px] font-semibold">{outputTitle}</h2>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{algorithmDescription}</p>
+          </div>
+
+          {!result && !simulation.running && (
+            <p className="px-4 pt-3 pb-4 text-[13px] leading-relaxed text-muted-foreground">
+              {mode === "path"
+                ? <>Choose two compounds and press <b className="font-medium text-foreground">Find pathway</b>. Shift-click a compound on the map to set the target.</>
+                : <>Run the analysis to see results here.</>}
+            </p>
+          )}
+
+          {result?.error && <div role="alert" className="mx-4 mt-3 rounded-lg border border-destructive/50 px-3 py-2 text-[13px] text-destructive">{result.error}</div>}
 
           {simulation.running && (
-            <div className="result-live">
-              <span>SIMULATION IN PROGRESS</span>
-              <strong>
-                {simulation.algorithm} · step {simulation.step}/{simulation.total}
-              </strong>
-              <p>
-                The computation already finished in C++; this deliberately slowed replay
-                visualizes each node expansion.
-              </p>
+            <div className="px-4 pt-3">
+              <p className="text-[13px] font-medium">Replaying step {simulation.step} of {simulation.total}</p>
+              <p className="mt-1 text-xs text-muted-foreground">C++ already finished the search. The replay slows it down so you can follow each expansion.</p>
             </div>
           )}
 
           {mode === "path" && result && !result.error && !simulation.running && (
             <>
-              <div className="run-meta">
-                <span><b>{result.algorithm}</b> algorithm</span>
-                <span><b>{result.steps ?? 0}</b> reaction steps</span>
-                <span><b>{result.totalCost ?? 0}</b> graph weight</span>
-                <span><b>{result.visitedCount ?? 0}</b> visited</span>
-                <span><b>{result.elapsedMs ?? "—"}</b> ms C++ runtime</span>
-              </div>
-
-              {result.found ? (
-                <PathResult result={result} />
-              ) : (
-                <div className="result-empty">No directed pathway found.</div>
+              <StatStrip className="run-meta mx-4 mt-3">
+                <Stat label="Reactions" value={result.steps ?? 0}/>
+                <Stat label="Weight" value={result.totalCost ?? 0}/>
+                <Stat label="Visited" value={result.visitedCount ?? 0}/>
+                <Stat label="C++ time" {...engineTime(result.elapsedMs)}/>
+              </StatStrip>
+              {result.found ? <PathResult result={result}/> : (
+                <Empty className="py-8">
+                  <EmptyHeader>
+                    <EmptyTitle>No directed pathway</EmptyTitle>
+                    <EmptyDescription>No sequence of participation edges connects these compounds.</EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
               )}
             </>
           )}
 
           {mode === "dfs" && result?.reachable && !simulation.running && (
             <>
-              <div className="run-meta">
-                <span><b>{result.count ?? 0}</b> reachable compounds</span>
-                <span><b>{result.elapsedMs ?? "—"}</b> ms C++ runtime</span>
-              </div>
-
-              <div className="compound-strip">
-                {result.reachable.slice(0, 80).map((compound, index) => (
-                  <div key={compound.id}>
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-                    <strong>{compound.formula}</strong>
-                    <small>{compound.name}</small>
-                  </div>
+              <StatStrip className="run-meta mx-4 mt-3">
+                <Stat label="Reachable" value={result.count ?? 0}/>
+                <Stat label="C++ time" {...engineTime(result.elapsedMs)}/>
+              </StatStrip>
+              <ol className="grid grid-cols-2 gap-x-3 gap-y-1 px-4 py-3">
+                {result.reachable.slice(0, 80).map((compound) => (
+                  <li key={compound.id} className="flex min-w-0 items-baseline gap-1.5 text-[13px]">
+                    <Formula compound={compound} className="font-semibold"/>
+                    <span className="truncate text-xs text-muted-foreground">{compound.name}</span>
+                  </li>
                 ))}
+              </ol>
+            </>
+          )}
+
+          {mode === "structure" && structureAlgorithm === "cycle" && result?.cycle && !simulation.running && (
+            <>
+              <StatStrip className="run-meta mx-4 mt-3">
+                <Stat label="Directed cycle" value={result.hasCycle ? "Yes" : "No"}/>
+              </StatStrip>
+              <div className="flex flex-wrap gap-1.5 px-4 py-3">
+                {result.cycle.length > 0
+                  ? result.cycle.map((compound, index) => (
+                      <Badge key={`${compound.id}-${index}`} variant="outline" className="gap-1.5 font-normal">
+                        <Formula compound={compound} className="font-semibold"/>
+                        <span className="text-muted-foreground">{compound.name}</span>
+                      </Badge>
+                    ))
+                  : <p className="text-[13px] text-muted-foreground">No directed cycle found.</p>}
               </div>
             </>
           )}
 
-          {mode === "structure" &&
-            structureAlgorithm === "cycle" &&
-            result?.cycle &&
-            !simulation.running && (
-              <>
-                <div className="run-meta">
-                  <span><b>{result.hasCycle ? "YES" : "NO"}</b> directed cycle</span>
-                </div>
+          {mode === "structure" && structureAlgorithm === "scc" && result?.components && !simulation.running && (
+            <>
+              <StatStrip className="run-meta mx-4 mt-3">
+                <Stat label="Components" value={result.componentCount}/>
+                <Stat label="Largest" value={result.largestComponentSize}/>
+                <Stat label="C++ time" {...engineTime(result.elapsedMs)}/>
+              </StatStrip>
+              <p className="px-4 pt-3 text-xs font-medium text-muted-foreground">Members of the largest component</p>
+              <ol className="grid grid-cols-2 gap-x-3 gap-y-1 px-4 py-2">
+                {(result.components[0] ?? []).slice(0, 50).map((compound) => (
+                  <li key={compound.id} className="flex min-w-0 items-baseline gap-1.5 text-[13px]">
+                    <Formula compound={compound} className="font-semibold"/>
+                    <span className="truncate text-xs text-muted-foreground">{compound.name}</span>
+                  </li>
+                ))}
+              </ol>
+            </>
+          )}
 
-                <div className="cycle-path">
-                  {result.cycle.length > 0
-                    ? result.cycle.map((compound, index) => (
-                        <span key={`${compound.id}-${index}`}>
-                          <b>{compound.formula}</b>
-                          <small>{compound.name}</small>
-                          {index < result.cycle.length - 1 && <em>→</em>}
-                        </span>
-                      ))
-                    : "No directed cycle found."}
-                </div>
-              </>
-            )}
-
-          {mode === "structure" &&
-            structureAlgorithm === "scc" &&
-            result?.components &&
-            !simulation.running && (
-              <>
-                <div className="run-meta">
-                  <span><b>{result.componentCount}</b> strongly connected components</span>
-                  <span><b>{result.largestComponentSize}</b> nodes in largest SCC</span>
-                  <span><b>{result.elapsedMs ?? "—"}</b> ms C++ runtime</span>
-                </div>
-
-                <div className="scc-preview">
-                  {(result.components[0] ?? []).slice(0, 50).map((compound) => (
-                    <div key={compound.id}>
-                      <strong>{compound.formula}</strong>
-                      <span>{compound.name}</span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-
-        </section>
-        </div>{/* Graph + inspector */}
+          <p className="mt-auto border-t px-4 py-3.5 text-xs leading-relaxed text-muted-foreground">
+            Edges join compounds that take part in the same documented reaction. A route is a graph path
+            for teaching, <AnnotatedText variant="underline" color="text-route">not a verified synthesis</AnnotatedText>,
+            and weights are illustrative.
+          </p>
+        </aside>
+        </div>
       </section>
       )}
 
       {(studioView==="lab"||studioView==="compare")&&(
-        <section className="studio-view studio-lab-view" id="algorithm-lab-workspace">
-          <div className="studio-page-intro">
-            <div>
-              <span className="studio-section-eyebrow">
-                WORKSPACE / {studioView==="compare"?"COMPARE":"LABORATORY"}
-              </span>
-              <h1>{studioView==="compare"?"Compare methods":"Algorithm laboratory"}<span className="studio-title-period">.</span></h1>
-              <p>Inspect C++ traces, graph connectivity, route alternatives, and performance.</p>
-            </div>
-            <button type="button" className="studio-compact-btn" onClick={()=>setStudioPage("explore")}>Back to graph ↗</button>
-          </div>
+        <section className="studio-view mx-auto w-full max-w-6xl px-4 pt-7 pb-16 sm:px-6" id="algorithm-lab-workspace">
+          <PageHeader title={studioView==="compare"?"Compare algorithms":"Algorithm laboratory"}>
+            {studioView==="compare"
+              ? <>Run every shortest-path method, alternative routes, constraints and Pareto fronts
+                  on <b className="font-medium text-foreground">{from}</b> → <b className="font-medium text-foreground">{to}</b>.
+                  BFS minimises hops; weighted methods minimise <AnnotatedText variant="underline" color="text-route">illustrative</AnnotatedText> weights.</>
+              : <>Step through traces of the C++ data structures
+                  for <b className="font-medium text-foreground">{from}</b> → <b className="font-medium text-foreground">{to}</b>, and run experiments.</>}
+          </PageHeader>
           <LabPanel network={network} from={from} to={to} viewMode={studioView}/>
         </section>
       )}
 
       {studioView==="data"&&(
-        <section className="studio-view studio-data-view" id="data-library">
-          <div className="studio-page-intro">
-            <div>
-              <span className="studio-section-eyebrow">WORKSPACE / DATA LIBRARY</span>
-              <h1>Discover the data<span className="studio-title-period">.</span></h1>
-              <p>Browse the curated reaction graph and the optional 500,000-compound PubChem structure catalog.</p>
+        <section className="studio-view mx-auto w-full max-w-6xl px-4 pt-7 pb-16 sm:px-6" id="data-library">
+          <div className="flex flex-wrap items-start justify-between gap-6">
+            <div className="min-w-0 flex-1 basis-72">
+              <PageHeader title="Data">
+                The curated reaction graph used by every algorithm, plus optional structure and reaction
+                datasets you can install locally.
+              </PageHeader>
             </div>
-            <button type="button" className="studio-compact-btn" onClick={()=>setStudioPage("explore")}>Back to graph ↗</button>
+            {boardRows.length > 0 && <SplitFlapDisplay rows={boardRows} columns={17} size="sm"
+              accentColor="#f59e3b" staggerDelay={18} flipSpeed={28}
+              className="max-md:hidden"/>}
           </div>
-          <div className="studio-data-overview">
-            <div><span>CURATED COMPOUNDS</span><strong>{stats?.compounds?.toLocaleString()??"—"}</strong><small>Included network</small></div>
-            <div><span>REACTIONS</span><strong>{stats?.reactions?.toLocaleString()??"—"}</strong><small>Indexed reaction records</small></div>
-            <div><span>GRAPH EDGES</span><strong>{stats?.directedEdges?.toLocaleString()??"—"}</strong><small>Participation links</small></div>
-          </div>
+          <StatStrip className="md:hidden">
+            <Stat label="Compounds" value={stats?.compounds?.toLocaleString()}/>
+            <Stat label="Reactions" value={stats?.reactions?.toLocaleString()}/>
+            <Stat label="Edges" value={stats?.directedEdges?.toLocaleString()}/>
+          </StatStrip>
           <CompoundDirectory
             compounds={directoryCompounds}
             total={compounds.length}
@@ -1765,6 +1528,7 @@ export default function App() {
             from={from}
             distanceByName={directoryDistanceMap}
             selectedName={from}
+            theme={studioTheme}
             onSelect={(compound) => {
               setFrom(compound.name);
               setSearch(compound.name);
@@ -1781,20 +1545,16 @@ export default function App() {
           <OrdExplorer/>
         </section>
       )}
-
-      <footer className="studio-footer" aria-label="Application status">
-        <span>CHEMPATH STUDIO <span className="studio-footer-divider">/</span> C++17 GRAPH ENGINE</span>
-        <span>Educational participation paths · not verified syntheses</span>
-      </footer>
-        </div>{/* studio-content */}
-      </div>{/* studio-shell */}
+      </div>
       <StudioCommandPalette
         open={commandOpen} onClose={()=>setCommandOpen(false)}
-        onNavigate={setStudioPage} compounds={compounds}
+        onNavigate={setStudioPage} compounds={compounds} theme={studioTheme}
         onSelectSource={name=>{setFrom(name);setStudioPage("explore");reset();}}
         onSelectTarget={name=>{setTo(name);setStudioPage("explore");reset();}}
         onFind={()=>{setStudioPage("explore");runPath();}}
       />
     </main>
+    </TooltipProvider>
+    </ThemeContext.Provider>
   );
 }

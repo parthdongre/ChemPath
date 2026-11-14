@@ -1,5 +1,6 @@
 import {useEffect,useRef} from "react";
 import {spreadClusterMarkers} from "./graphClusters.js";
+import {categoryColor,useTheme} from "../theme.js";
 
 /**
  * Camera-locked cluster markers like labeled map neighborhoods.
@@ -7,6 +8,7 @@ import {spreadClusterMarkers} from "./graphClusters.js";
  */
 export default function ClusterOverlay({clusters,rendererRef}){
   const layer=useRef(null);
+  const theme=useTheme();
   useEffect(()=>{
     const root=layer.current;
     if(!root||!clusters.length)return undefined;
@@ -73,6 +75,7 @@ export default function ClusterOverlay({clusters,rendererRef}){
   return <div ref={layer} className="sigma-cluster-layer" aria-label="Compound groups">
     {clusters.map(cluster=><button key={cluster.id} type="button"
       data-cluster-id={cluster.id} className="sigma-compound-cluster"
+      style={{"--cluster-color":categoryColor(theme,cluster.category)}}
       title={"Zoom to "+cluster.count+" visible compounds; most common category: "+cluster.category}
       aria-label={"Zoom to group of "+cluster.count+" compounds"}
       onClick={()=>focus(cluster)}>

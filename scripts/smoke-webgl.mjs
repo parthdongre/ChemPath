@@ -38,22 +38,6 @@ try {
   );
   assert.ok(rootWebGL, "No usable browser WebGL canvas");
 
-  // Real browser optical material: SDF maps, SVG displacement and CSS backdrop.
-  const optics=await page.locator(".sigma-toolbar").evaluate(element=>{
-    const first=getComputedStyle(element,"::before");
-    const mapCount=document.querySelectorAll(
-      ".studio-glass-svg-filter feDisplacementMap").length;
-    const mode=element.dataset.liquidRefraction;
-    return {mode,mapCount,backdrop:first.backdropFilter||first.webkitBackdropFilter,
-      prefersReduced:document.querySelector(".studio-app")?.dataset.reduceTransparency};
-  });
-  assert.ok(optics.mode==="displacement"||optics.mode==="frosted",
-    "Glass must declare real refractive or readable fallback mode");
-  if(optics.mode==="displacement"){
-    assert.ok(optics.mapCount>=3,"Refraction must use RGB displacement maps");
-    assert.match(optics.backdrop,/url\(/,
-      "Chrome liquid glass must bend its actual backdrop, not only a decorative highlight");
-  }
   // Cartographic detail is visualization-only; C++ paths are unaffected.
   const map=page.locator(".cartographic-graph");
   await map.waitFor({state:"visible"});
@@ -83,7 +67,7 @@ try {
 
   await page.getByRole("button",{name:"All links"}).click();
   assert.equal(await map.getAttribute("data-graph-detail"),"all");
-  await page.getByRole("button",{name:"Map clarity"}).click();
+  await page.getByRole("button",{name:"Overview"}).click();
   assert.equal(await map.getAttribute("data-graph-detail"),"adaptive");
 
   await page.getByRole("button",{name:"Zoom in"}).click();
@@ -98,21 +82,6 @@ try {
     document.querySelector(".cartographic-graph")?.getAttribute("data-map-stage")==="overview",
     null,{timeout:10000});
 
-  // The same glass control samples changing live graph content when moved.
-  const handle=page.getByRole("button",{name:"Move glass controls"});
-  const toolbar=page.locator(".sigma-toolbar");
-  const beforeDrag=await toolbar.boundingBox(),grip=await handle.boundingBox();
-  await page.mouse.move(grip.x+grip.width/2,grip.y+grip.height/2);
-  await page.mouse.down();
-  await page.mouse.move(grip.x+grip.width/2-145,grip.y+grip.height/2+205,{steps:9});
-  await page.mouse.up();
-  const afterDrag=await toolbar.boundingBox();
-  assert.ok(afterDrag.y>beforeDrag.y+40,"Glass toolbar should be movable over live graph");
-  await page.locator(".graph-frame").screenshot({
-    path:"screenshots/studio-refractive-controls.png",animations:"disabled"
-  });
-  assert.ok(afterDrag.x<beforeDrag.x-25,"Dragging should move controls horizontally");
-  await handle.dblclick();
   await page.getByRole("button",{name:"Focus lens"}).click();
   const lens=page.locator('[data-testid="graph-focus-lens"]');
   assert.equal(await lens.count(),1,"An enabled map lens must mount");
@@ -126,11 +95,7 @@ try {
   await page.getByRole("button",{name:"Focus lens"}).click();
   assert.equal(await lens.count(),0,"Disabling the map lens must unmount the overlay");
 
-  await page.getByRole("button",{name:"Reduce transparency effects"}).click();
-  assert.equal(await page.locator(".studio-app").getAttribute("data-reduce-transparency"),"true");
-  await page.getByRole("button",{name:"Enable transparency effects"}).click();
-  assert.equal(await page.locator(".studio-app").getAttribute("data-reduce-transparency"),"false");
-  // Prevent glass surfaces from taking document flow space.
+  // Map overlays must float over the canvas, not take document flow space.
   const toolbarBox=await page.locator(".sigma-toolbar").boundingBox();
   const footerBox=await page.locator(".sigma-footnote").boundingBox();
   const graphBox=await graph.boundingBox();
@@ -139,9 +104,9 @@ try {
   assert.ok(footerBox&&graphBox&&footerBox.y>graphBox.y+graphBox.height-95,
     "Graph status must stay anchored near the canvas bottom");
   // Verify the fallback renderer remains accessible.
-  await page.getByRole("button", { name: "Path Layout" }).click();
+  await page.getByRole("button", { name: "Diagram", exact: true }).click();
   await page.locator(".network-canvas").waitFor({ state: "visible" });
-  await page.getByRole("button", { name: "GPU Network" }).click();
+  await page.getByRole("button", { name: "Map", exact: true }).click();
   await page.locator(".sigma-canvas").waitFor({ state: "visible" });
   // Product shell: keyboard command palette and instant path results.
   await page.keyboard.press("Control+k");

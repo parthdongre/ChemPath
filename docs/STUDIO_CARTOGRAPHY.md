@@ -29,10 +29,9 @@ network are never pruned by cartographic rendering.
 - A bounded local neighborhood remains visible around highlighted routes.
 - New compound selections recenter the camera without breaking initial overview.
 - Optional pointer-controlled **Lens** magnifies live graph coordinates.
-- Small floating controls respond to pointer position through specular lighting,
-  translucency and optional SVG-filter rim distortion.
-- Accessibility: reduced motion, high contrast, reduced transparency and a
-  persistent Reduce transparency toggle; no dependency on these effects.
+- Floating map controls use opaque surfaces; graph colours for both themes
+  come from `web/src/theme.js`.
+- Accessibility: reduced motion is respected for camera and overlay animation.
 - Unit tests for LOD, index determinism and route survival; real Chromium
   browser tests plus screenshots.
 

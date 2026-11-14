@@ -2,8 +2,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { MultiDirectedGraph } from "graphology";
 import forceAtlas2 from "graphology-layout-forceatlas2";
 import Sigma from "sigma";
-import {GripVertical} from "lucide-react";
+import {Maximize2,Minus,Plus,ScanSearch,X} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {ButtonGroup} from "@/components/ui/button-group";
+import {Separator} from "@/components/ui/separator";
+import {Card,CardAction,CardContent,CardDescription,CardHeader,CardTitle} from "@/components/ui/card";
+import {Hint,MapPanel} from "@/components/studio/primitives.jsx";
 import {buildCartographicIndex,cartographicVisibility,mapStageForRatio} from "./graphCartography.js";
+import {categoryColor,compoundLabel,graphTheme,useTheme} from "../theme.js";
 import GraphLens from "./GraphLens.jsx";
 import RouteOverlay from "./RouteOverlay.jsx";
 import {buildOverviewClusters} from "./graphClusters.js";
@@ -11,12 +17,6 @@ import ClusterOverlay from "./ClusterOverlay.jsx";
 import {layoutKey,restoreLayout,rememberLayout} from "./graphLayoutCache.js";
 import "./SigmaNetwork.css";
 
-const palette = {
-  organic: "#51cbbf", acid: "#ef8f96", ion: "#e6c27c",
-  biochemical: "#8dd1a9", salt: "#a5b7d4", base: "#75bde0",
-  inorganic: "#9dc6dd", scc: "#89c6e3"
-};
-const categoryColor = (category) => palette[String(category || "").toLowerCase()] || "#92bbcd";
 const prefersReducedMotion=()=>window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches??false;
 function animateCamera(camera, state, duration) {
   if(prefersReducedMotion())camera.setState(state);
@@ -50,9 +50,9 @@ export function buildGraph(network) {
     const id = String(n.id);
     graph.addNode(id, {
       x, y, size: 4.7,
-      label: n.formula || n.name || id,
+      label: compoundLabel(n) || id,
       name: n.name || id, formula: n.formula || "", category,
-      color: categoryColor(category)
+      color: categoryColor("dark", category)
     });
   }
   for (const e of network.edges || []) {
@@ -114,9 +114,10 @@ export default function SigmaNetwork({
   onSelectEdge, showPopovers = true
 }) {
   const container = useRef(null);
-  const glassBar=useRef(null);
-  const glassDrag=useRef(null);
   const sigmaRef = useRef(null);
+  const zoomTarget = useRef(null);
+  const theme = useTheme();
+  const colors = graphTheme(theme);
   const graph = useMemo(() => buildGraph(network), [network]);
   const cartography=useMemo(()=>buildCartographicIndex(graph),[graph]);
   const [mapStage,setMapStage]=useState("overview");
@@ -155,7 +156,8 @@ export default function SigmaNetwork({
     selected: selectedNodeId == null ? null : String(selectedNodeId),
     simulationRunning, hovered: hoveredRef.current,
     visibility, stage:mapStage, showAll:showAllLinks,
-    clusterHidden:clustersInfo.hiddenNodeIds
+    clusterHidden:clustersInfo.hiddenNodeIds,
+    theme, colors
   };
 
   useEffect(() => {
@@ -166,16 +168,35 @@ export default function SigmaNetwork({
       labelDensity: 0.65,
       labelGridCellSize: 94,
       labelRenderedSizeThreshold: 3.8,
-      labelFont: "-apple-system, BlinkMacSystemFont, Inter, sans-serif",
-      labelWeight: "600",
+      labelFont: "'Geist Variable', -apple-system, BlinkMacSystemFont, sans-serif",
+      labelWeight: "500",
       labelSize: 12,
-      labelColor: {color: "#b3c4ce"},
+      labelColor: {color: filters.current.colors.label},
       hideLabelsOnMove: true,
       hideEdgesOnMove: false,
       zoomingRatio: 1.38,
-      defaultNodeColor: "#809ca9",
-      defaultEdgeColor: "#344855",
+      defaultNodeColor: filters.current.colors.nodeMuted,
+      defaultEdgeColor: filters.current.colors.edgeLocal,
       enableEdgeEvents: true,
+      // Sigma's default hover draws a white card, unreadable with light labels.
+      defaultDrawNodeHover: (context, data, settings) => {
+        const c=filters.current.colors;
+        const size=settings.labelSize;
+        context.font=`600 ${size}px ${settings.labelFont}`;
+        context.beginPath();
+        context.arc(data.x,data.y,data.size+3.5,0,Math.PI*2);
+        context.fillStyle=c.hoverLine;context.fill();
+        if(!data.label)return;
+        const width=context.measureText(data.label).width;
+        const x=data.x+data.size+7, y=data.y;
+        context.beginPath();
+        if(context.roundRect)context.roundRect(x-6,y-size/2-5,width+12,size+10,5);
+        else context.rect(x-6,y-size/2-5,width+12,size+10);
+        context.fillStyle=c.hoverBg;context.fill();
+        context.lineWidth=1;context.strokeStyle=c.hoverLine;context.stroke();
+        context.fillStyle=c.hoverInk;
+        context.fillText(data.label,x,y+size/3);
+      },
       minCameraRatio: 0.035, maxCameraRatio: 16,
       zIndex: true,
       nodeReducer: (key, data) => {
@@ -195,13 +216,14 @@ export default function SigmaNetwork({
         const secondary=hasRoute&&!highlighted&&!selected&&!active;
         const size=active?11.5:highlighted?9.2:selected?9.5:
           hovered?8:rank<14?6.5:rank<90?4.7:3.1;
+        const c=f.colors;
         return {
           ...data,
           hidden:!shown||(!highlighted&&!selected&&!active&&
             f.clusterHidden.has(key)),
-          color:active?"#f4da9b":highlighted?"#66e4ce":
-            selected?"#efc98e":secondary?"#496574":
-            visited?"#85c7be":data.color,
+          color:active?c.active:highlighted?c.route:
+            selected?c.selected:secondary?c.nodeMuted:
+            visited?c.visited:categoryColor(f.theme,data.category),
           size:secondary?Math.max(2.5,size*.76):size,
           label:labeled?data.label:"",
           forceLabel:highlighted||selected||active||hovered,
@@ -213,14 +235,15 @@ export default function SigmaNetwork({
         const marked=v.routeEdgeIds.has(key)||f.highlightedEdges.has(key);
         const tier=cartography.tierByEdge.get(key)||"local";
         const background=v.hasRoute&&!marked;
+        const c=f.colors;
         return {
           ...data,
           hidden:!v.visibleEdges.has(key)||
             f.clusterHidden.has(graph.source(key))||
             f.clusterHidden.has(graph.target(key)),
           // Opaque packed colors avoid Chromium/SwiftShader alpha fallbacks.
-          color:marked?"#6eead2":background?"#293e4b":
-            tier==="arterial"?"#5d7787":tier==="collector"?"#405868":"#304454",
+          color:marked?c.route:background?c.edgeMuted:
+            tier==="arterial"?c.edgeArterial:tier==="collector"?c.edgeCollector:c.edgeLocal,
           size:marked?3.35:tier==="arterial"?1.22:tier==="collector"?.78:.53,
           zIndex:marked?12:tier==="arterial"?3:0
         };
@@ -275,6 +298,15 @@ export default function SigmaNetwork({
     sigmaRef.current?.refresh();
   }, [highlightedNodeIds,highlightedEdgeIds,selectedNodeId,
       visitedNodeIds,activeNodeId,simulationRunning,visibility,mapStage,showAllLinks,clustersInfo]);
+
+  useEffect(() => {
+    const renderer=sigmaRef.current;
+    if(!renderer)return;
+    renderer.setSetting("labelColor",{color:colors.label});
+    renderer.setSetting("defaultNodeColor",colors.nodeMuted);
+    renderer.setSetting("defaultEdgeColor",colors.edgeLocal);
+    renderer.refresh();
+  }, [colors]);
 
   useEffect(() => {
     const renderer = sigmaRef.current;
@@ -374,85 +406,49 @@ export default function SigmaNetwork({
     };
   },[graph,highlightedNodeIds,highlightedEdgeIds,simulationRunning]);
 
-  const onGlassDragStart=event=>{
-    if(event.button!==0)return;
-    const bar=glassBar.current,region=bar?.parentElement;
-    if(!bar||!region)return;
-    const rect=bar.getBoundingClientRect(),bounds=region.getBoundingClientRect();
-    glassDrag.current={
-      pointer:event.pointerId,startX:event.clientX,startY:event.clientY,
-      startOffsetX:Number(bar.dataset.offsetX)||0,
-      startOffsetY:Number(bar.dataset.offsetY)||0,
-      rect,bounds
-    };
-    event.currentTarget.setPointerCapture(event.pointerId);
-    event.preventDefault();
+  // Repeated clicks compound from the pending target, not the mid-animation ratio.
+  const zoomBy=factor=>{
+    const camera=sigmaRef.current?.getCamera();
+    if(!camera)return;
+    const base=camera.isAnimated?.()&&zoomTarget.current!=null?zoomTarget.current:camera.ratio;
+    const next=Math.max(.035,Math.min(16,base*factor));
+    zoomTarget.current=next;
+    animateCamera(camera,{ratio:next},220);
   };
-  const onGlassDragMove=event=>{
-    const d=glassDrag.current,bar=glassBar.current;
-    if(!d||!bar||d.pointer!==event.pointerId)return;
-    const x=d.startOffsetX+event.clientX-d.startX;
-    const y=d.startOffsetY+event.clientY-d.startY;
-    const leftAtZero=d.rect.left-d.startOffsetX;
-    const topAtZero=d.rect.top-d.startOffsetY;
-    const nextX=Math.max(d.bounds.left+9-leftAtZero,
-      Math.min(d.bounds.right-9-d.rect.width-leftAtZero,x));
-    const nextY=Math.max(d.bounds.top+9-topAtZero,
-      Math.min(d.bounds.bottom-9-d.rect.height-topAtZero,y));
-    bar.dataset.offsetX=String(nextX);
-    bar.dataset.offsetY=String(nextY);
-    bar.style.transform="translate3d("+nextX+"px,"+nextY+"px,0)";
-  };
-  const onGlassDragEnd=event=>{
-    const d=glassDrag.current;
-    if(!d||d.pointer!==event.pointerId)return;
-    if(event.currentTarget.hasPointerCapture(event.pointerId))
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    glassDrag.current=null;
-  };
-  const resetGlassBar=()=>{
-    const bar=glassBar.current;
-    if(!bar)return;
-    bar.dataset.offsetX="0";bar.dataset.offsetY="0";
-    bar.style.transform="translate3d(0,0,0)";
-  };
+  const shownNodes=visibility.visibleNodes.size-clustersInfo.hiddenNodeIds.size;
+  const hoveredName=hovered&&graph.hasNode(hovered)?graph.getNodeAttribute(hovered,"name"):null;
 
   return <div className="sigma-shell cartographic-graph" data-map-stage={mapStage}
     data-graph-detail={showAllLinks?"all":"adaptive"}>
-    <div className="sigma-toolbar studio-liquid-glass" data-liquid-glass="true" ref={glassBar}>
-      <button type="button" className="sigma-toolbar-drag"
-        aria-label="Move glass controls" title="Drag to reposition · double-click to reset"
-        onPointerDown={onGlassDragStart}
-        onPointerMove={onGlassDragMove}
-        onPointerUp={onGlassDragEnd}
-        onPointerCancel={onGlassDragEnd}
-        onDoubleClick={resetGlassBar}><GripVertical size={15}/></button>
-      <div className="sigma-map-modes" role="group" aria-label="Graph rendering detail">
-        <button type="button" aria-pressed={!showAllLinks} className={!showAllLinks?"selected":""}
-          onClick={()=>setShowAllLinks(false)} title="Map-like clarity with progressive detail">Map clarity</button>
-        <button type="button" aria-pressed={showAllLinks} className={showAllLinks?"selected":""}
-          onClick={()=>setShowAllLinks(true)} title="Show every graph edge regardless of zoom">All links</button>
-      </div>
-      <button type="button" aria-pressed={lensEnabled}
-        className={"sigma-lens-toggle"+(lensEnabled?" selected":"")}
-        title="Inspect the underlying network through a magnifying glass"
-        aria-label="Focus lens" onClick={()=>setLensEnabled(value=>!value)}>
-        Lens
-      </button>
-      <span className="sigma-toolbar-divider" aria-hidden="true"></span>
-      <button type="button" aria-label="Fit network" title="Fit network"
-        onClick={()=>animateCamera(sigmaRef.current?.getCamera(),{
-          x:0.5,y:0.5,ratio:1,angle:0
-        },270)}>Fit</button>
-      <button type="button" aria-label="Zoom in" title="Zoom in" onClick={()=>{
-        const camera=sigmaRef.current?.getCamera();
-        if(camera)animateCamera(camera,{ratio:Math.max(.035,camera.ratio/1.5)},220);
-      }}>+</button>
-      <button type="button" aria-label="Zoom out" title="Zoom out" onClick={()=>{
-        const camera=sigmaRef.current?.getCamera();
-        if(camera)animateCamera(camera,{ratio:Math.min(16,camera.ratio*1.5)},220);
-      }}>−</button>
-    </div>
+    <MapPanel className="sigma-toolbar top-3 right-3 gap-0.5 max-md:top-14" role="toolbar" aria-label="Map controls">
+      <ButtonGroup aria-label="Graph rendering detail">
+        <Hint label="Strongest links only; minor compounds grouped">
+          <Button size="sm" variant={!showAllLinks?"secondary":"ghost"} aria-pressed={!showAllLinks}
+            className={!showAllLinks?"selected":""} onClick={()=>setShowAllLinks(false)}>Overview</Button>
+        </Hint>
+        <Hint label="Draw every participation edge">
+          <Button size="sm" variant={showAllLinks?"secondary":"ghost"} aria-pressed={showAllLinks}
+            className={showAllLinks?"selected":""} onClick={()=>setShowAllLinks(true)}>All links</Button>
+        </Hint>
+      </ButtonGroup>
+      <Separator orientation="vertical" className="mx-0.5 h-4 self-center"/>
+      <Hint label="Magnifier lens">
+        <Button size="icon-sm" variant={lensEnabled?"secondary":"ghost"} aria-pressed={lensEnabled}
+          aria-label="Focus lens" className={lensEnabled?"text-route":""}
+          onClick={()=>setLensEnabled(value=>!value)}><ScanSearch/></Button>
+      </Hint>
+      <Hint label="Fit network">
+        <Button size="icon-sm" variant="ghost" aria-label="Fit network"
+          onClick={()=>animateCamera(sigmaRef.current?.getCamera(),{x:0.5,y:0.5,ratio:1,angle:0},270)}>
+          <Maximize2/></Button>
+      </Hint>
+      <Hint label="Zoom in">
+        <Button size="icon-sm" variant="ghost" aria-label="Zoom in" onClick={()=>zoomBy(1/1.5)}><Plus/></Button>
+      </Hint>
+      <Hint label="Zoom out">
+        <Button size="icon-sm" variant="ghost" aria-label="Zoom out" onClick={()=>zoomBy(1.5)}><Minus/></Button>
+      </Hint>
+    </MapPanel>
     <div className="sigma-canvas" ref={container} role="img"
       aria-label={"Reaction network: " + graph.order + " compounds, " + graph.size + " directed edges"} />
     <ClusterOverlay clusters={clustersInfo.clusters} rendererRef={sigmaRef}/>
@@ -462,25 +458,35 @@ export default function SigmaNetwork({
     <GraphLens enabled={lensEnabled} containerRef={container} rendererRef={sigmaRef}
       graph={graph} cartography={cartography}
       highlightedEdgeIds={highlightedEdgeIds} selectedNodeId={selectedNodeId}/>
-    <div className="sigma-footnote studio-liquid-glass" data-liquid-glass="true" role="status">
-      <strong>{visibility.mode}</strong>
-      <span>{(visibility.visibleNodes.size-clustersInfo.hiddenNodeIds.size).toLocaleString()}/{graph.order.toLocaleString()} compounds ·
-        {" "}{displayedEdges.toLocaleString()}/{graph.size.toLocaleString()} drawn links</span>
-      {clustersInfo.clusters.length>0&&<span className="sigma-cluster-status">· {clustersInfo.clusters.length} groups</span>}
-      {hovered&&graph.hasNode(hovered)&&<span> · {graph.getNodeAttribute(hovered,"name")}</span>}
-      <small>{showAllLinks?"Every participation edge drawn":"Visual simplification only · zoom for more detail"}</small>
-    </div>
-    {showPopovers && (inspected || edgeInfo) && <div className="sigma-inspector">
-      <button type="button" className="sigma-close" onClick={() => { setInspected(null); setEdgeInfo(null); }}
-        aria-label="Close inspector">×</button>
-      <small>{edgeInfo ? "REACTION EDGE" : "COMPOUND"}</small>
-      <strong>{edgeInfo ? edgeInfo.reaction : inspected.formula || inspected.name}</strong>
-      <p>{edgeInfo ? edgeInfo.equation || "Directed reaction participation" : inspected.name}</p>
-      {edgeInfo ? <p>{edgeInfo.conditions}</p> : <>
-        <p>{inspected.category}</p>
-        {onExpandNode && <button type="button" className="sigma-expand"
-          onClick={() => onExpandNode(inspected.id, inspected.name)}>Expand neighborhood</button>}
-      </>}
-    </div>}
+    <MapPanel role="status" className="sigma-footnote pointer-events-none bottom-3 left-3 max-w-[calc(100%-1.5rem)]
+      flex-wrap px-1 py-1 text-[11.5px] text-muted-foreground tabular-nums">
+      <span className="px-2 font-medium text-foreground">{visibility.mode}</span>
+      <span className="border-l px-2">{shownNodes.toLocaleString()}/{graph.order.toLocaleString()} compounds</span>
+      <span className="border-l px-2 max-sm:hidden">{displayedEdges.toLocaleString()}/{graph.size.toLocaleString()} drawn links</span>
+      {clustersInfo.clusters.length>0&&<span className="border-l px-2 max-sm:hidden">{clustersInfo.clusters.length} groups</span>}
+      {hoveredName&&<span className="border-l px-2 text-route">{hoveredName}</span>}
+    </MapPanel>
+    {showPopovers && (inspected || edgeInfo) &&
+      <Card size="sm" className="sigma-inspector absolute bottom-14 left-3 z-20 w-[min(320px,calc(100%-1.5rem))] gap-2 shadow-lg">
+        <CardHeader>
+          <CardDescription>{edgeInfo ? "Reaction" : "Compound"}</CardDescription>
+          <CardTitle className="break-words">{edgeInfo ? edgeInfo.reaction : inspected.label || inspected.name}</CardTitle>
+          <CardAction>
+            <Button size="icon-xs" variant="ghost" aria-label="Close inspector"
+              onClick={() => { setInspected(null); setEdgeInfo(null); }}><X/></Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent className="space-y-1 text-[13px] text-muted-foreground">
+          {edgeInfo ? <>
+            <p className="font-mono text-xs break-all">{edgeInfo.equation || "Directed reaction participation"}</p>
+            {edgeInfo.conditions && <p>{edgeInfo.conditions}</p>}
+          </> : <>
+            <p className="break-all">{inspected.name}</p>
+            <p>{inspected.category}</p>
+            {onExpandNode && <Button size="sm" variant="outline" className="mt-2"
+              onClick={() => onExpandNode(inspected.id, inspected.name)}>Show neighborhood</Button>}
+          </>}
+        </CardContent>
+      </Card>}
   </div>;
 }

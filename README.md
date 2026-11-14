@@ -177,7 +177,7 @@ settings; CI timings are informational, not fixed speed guarantees.
 
 The **main compound network now defaults to Sigma.js 3 + Graphology** for
 WebGL-backed rendering with stable coordinates and a bounded synchronous
-ForceAtlas2 layout. A **Path Layout** toggle keeps the existing Cytoscape
+ForceAtlas2 layout. A **Diagram** toggle keeps the existing Cytoscape
 renderer for the smaller directed and stepwise algorithm diagrams.
 
 Click a compound to inspect it; choose **Expand neighborhood** to request a

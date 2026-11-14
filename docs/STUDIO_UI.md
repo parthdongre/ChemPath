@@ -10,25 +10,31 @@ The previous landing hero, algorithm section, explorer, full Laboratory,
 ORD database, compound directory and result panels shared one continuously
 scrolling document. The current UI is a focused application shell:
 
-- **Topbar**: identity, current workspace, command search, engine
-  connection status, theme toggle, inspector visibility.
-- **Sidebar**: Explore / Compare / Laboratory / Data Library.
-- **Explore**: pathway composer, persistent graph workspace,
-  contextual right inspector, optional replay. Routes display **as soon
-  as the C++ response arrives**, rather than waiting through an animated
-  traversal first.
-- **Compare and Laboratory**: preserved existing C++ calls and 10 original
-  tools, reorganized into **Learn**, **Optimize** and **Experiment**.
-- **Data Library**: the original chemistry-centered compound catalog plus
-  the actual indexed ORD browser, with no fake dataset counts.
+- **Topbar**: identity, the four workspaces as tabs (Explore / Compare /
+  Laboratory / Data), command search, engine status, theme toggle and
+  inspector visibility. There is no sidebar.
+- **Explore**: a single query bar above a full-height graph, with a
+  contextual right inspector and optional replay. Routes display **as soon
+  as the C++ response arrives** and read as a vertical timeline of
+  compounds (stops) and reactions (legs).
+- **Compare**: the Optimize tools (comparison, routes, constraints, Pareto).
+- **Laboratory**: the Learn and Experiment tools (traces, components,
+  dependencies, Trie, benchmarks, playground).
+- **Data**: dataset totals, the curated compound table, the PubChem
+  structure catalog and the indexed ORD browser.
 
 ## Concrete frontend architecture
 
 | Source | Responsibility |
 |---|---|
-| web/src/components/StudioChrome.jsx | Product header, four-view sidebar, command palette and contextual inspector |
+| web/src/components/StudioChrome.jsx | Topbar with workspace tabs, command palette and contextual inspector |
 | web/src/App.jsx | Existing engine-backed state/query orchestration, view routing, graph workspace and results |
-| web/src/studio.css | Scoped graphite/mint design tokens and responsive application layouts |
+| web/src/index.css | Tailwind CSS v4 entry and the shadcn/ui theme tokens (dark and light) |
+| web/components.json | shadcn/ui config (radix-nova style, JSX) with the `@componentry` registry |
+| web/src/components/ui/ | shadcn/ui primitives plus Componentry `split-flap-display` and `annotated-text` |
+| web/src/components/studio/primitives.jsx | App-level building blocks (map panels, stat strips, section headers, tooltips) |
+| web/src/theme.js | Graph colours for WebGL/canvas renderers and chemical formula formatting |
+| web/src/components/Formula.jsx | Formulas with real subscripts and charges (HCO₃⁻); SMILES shown verbatim |
 | web/src/components/SigmaNetwork.jsx | Existing Sigma/WebGL graph, improved route contrast, camera focus, Shift-click target and edge inspector signals |
 | web/src/components/LabPanel.jsx | Preserved C++ Lab API tools, grouped into Learn/Optimize/Experiment |
 | web/src/components/OrdExplorer.jsx | Unchanged database browsing and indexed C++ shortest-path interaction |
@@ -41,13 +47,16 @@ instead of destabilizing the working engine/graph release.
 
 ## Visual system
 
-- Background #0C1117, panel #131B24, raised #19232E.
-- Text #F3F6F8 and muted #9BABB9.
-- Accent #5DD6C1; unknown/caution #E9BC78; error #E88B91.
-- System UI font, Inter fallback and JetBrains Mono for chemistry codes.
-- Modest 10–15px radii, thin borders, functional color.
-- Dark and light UI palettes selected in the title bar; local theme
-  preference stores only an appearance value.
+- Dark: neutral graphite (#0B0C0E canvas, #121316 surfaces). Light: warm
+  paper (#F1F0EC canvas, #FBFAF8 surfaces). Both are defined once in
+  `styles.css`; the graph canvas follows the theme.
+- One accent, amber (#F59E3B dark / #C9620C light), reserved for routes,
+  selection and focus. Primary buttons are neutral.
+- Compound classes use muted, distinct hues shared by the map, legend,
+  directory and inspector.
+- System UI font at a 13px base, sentence-case labels, monospace only for
+  equations, SMILES and commands.
+- 6–10px radii, hairline borders, no blur or glass effects.
 
 ## Primary interaction paths
 
@@ -76,15 +85,15 @@ outside a form. The palette offers navigation and compound search, with
 - Shift-click a node to change target.
 - Double-click a node to focus the camera.
 - Click an edge for reaction metadata in the inspector.
-- Use fit/zoom buttons and the optional **Path Layout** renderer.
-- Use **Explore neighborhood** for a bounded, indexed subgraph,
+- Use fit/zoom buttons and the optional **Diagram** renderer.
+- Use **Neighborhood** for a bounded, indexed subgraph,
   then **Full graph** to restore the normal visualization.
 
 ### Algorithm Laboratory
 
-Choose among **Learn**, **Optimize**, **Experiment**. The complete
-set of existing engine actions remains available, but the display
-reveals fewer unrelated controls at once.
+**Compare** shows the Optimize tools; **Laboratory** shows the Learn and
+Experiment tools in one tab row. Every existing engine action remains
+available.
 
 ## Tested viewports and evidence
 

@@ -16,6 +16,11 @@ docker run --rm -p 8080:8080 -e PORT=8080 chempath:local
 
 Open \`http://localhost:8080/\`. API endpoints live under \`/api\`.
 The readiness probe is \`GET /api/health\`.
+The Docker liveness check is \`GET /api/live\`, which does not query the engine,
+so a busy engine queue cannot mark the container unhealthy.
+\`CHEMPATH_ENGINE_WORKERS\` (default 2, max 8) sets how many C++ engine
+processes run; each one loads the graph. CORS is off in production unless
+\`CORS_ORIGIN\` lists the origins of a separately hosted frontend.
 
 ### Deploying to Railway
 

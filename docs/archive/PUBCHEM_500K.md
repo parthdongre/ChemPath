@@ -19,4 +19,4 @@ interrupted upgrades preserve your existing data.
 
 For complete installation commands, the full-corpus option, SQLite
 architecture, path troubleshooting and the scientific distinction between
-PubChem structures and reaction edges, see [PubChem catalog guide](PUBCHEM_CATALOG.md).
+PubChem structures and reaction edges, see [PubChem catalog guide](../PUBCHEM_CATALOG.md).

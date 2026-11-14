@@ -1,7 +1,7 @@
 # ChemPath Milestone B — production CSR, constrained routes, Pareto search
 
 This implements **only phases 3–5** of the DSA roadmap, stacked on
-[Milestone A](../README.md). All algorithms remain in C++17. These are
+[Milestone A](../../README.md). All algorithms remain in C++17. These are
 graph-theoretic education tools, **not** validated laboratory syntheses.
 
 ## Phase 3: Production compressed sparse row (CSR)
